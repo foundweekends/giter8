@@ -14,11 +14,15 @@ class Giter8 extends xsbti.AppMain {
       JField(name, JString(value)) <- blobs
       m <- re.findFirstMatchIn(name)
     } {
-      import java.io.{File,FileOutputStream}
+      import java.io.{File,FileWriter}
       import org.clapper.scalasti.StringTemplate
       val f = new File(m.group(1))
       new File(f.getParent).mkdirs()
-      http(gh / "blob" / "show" / repo / value >>> new FileOutputStream(f))
+      http(gh / "blob" / "show" / repo / value >- { in =>
+        val fw = new FileWriter(f)
+        fw.write(new StringTemplate(in).toString)
+        fw.close()
+      })
     }
     new Exit(1)
   }
