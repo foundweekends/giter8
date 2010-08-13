@@ -15,6 +15,7 @@ class Giter8 extends xsbti.AppMain {
       m <- re.findFirstMatchIn(name)
     } {
       import java.io.{File,FileOutputStream}
+      import org.clapper.scalasti.StringTemplate
       val f = new File(m.group(1))
       new File(f.getParent).mkdirs()
       http(gh / "blob" / "show" / repo / value >>> new FileOutputStream(f))
