@@ -31,7 +31,11 @@ class Giter8 extends xsbti.AppMain {
         case (name, _) => name == "default.properties" 
       }
       val parameters = (defaults(repo, default_props) /: params) { 
-        case (map, Param(key, value)) => map + (key -> value)
+        case (map, Param(key, value)) if map.contains(key) => 
+          map + (key -> value)
+        case (map, Param(key, _)) =>
+          println("\nIgnoring unregonized parameter: " + key)
+          map
       }
       val base = new File(normalize(parameters.getOrElse("name", "My Project")))
       if (base.exists) 
