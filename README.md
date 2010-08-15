@@ -1,4 +1,8 @@
-`.g8.sbt` -- in home directory, or wherever your `sbt` script is :
+`g8` -- executable script on path:
+
+    sbt @.giter8.launchconfig "$@"
+
+`.giter8.launchconfig` -- in your home directory:
 
     [scala]
       version: 2.8.0
@@ -12,7 +16,3 @@
       scala-tools-releases
     [boot]
       directory: /path/to/home/.giter8/boot
-
-`g8` -- executable script on path:
-
-    sbt @.g8.sbt "$@"
