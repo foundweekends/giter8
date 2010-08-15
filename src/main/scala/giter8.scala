@@ -8,9 +8,18 @@ class Giter8 extends xsbti.AppMain {
   import java.io.{File,FileWriter}
 
   val re = "^src/main/g8/(.+)$".r
+  val Param = """^--(\S+)=(.+)$""".r
+  val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   
-  def run(config: xsbti.AppConfiguration) = {
-    val repo = (config.arguments.headOption map { _ + ".g8" }) get
+  def run(config: xsbti.AppConfiguration) =
+    config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
+      case (params, Array(Repo(user, proj))) => copy("%s/%s.g8".format(user, proj), params)
+      case _ =>
+        println("\nUsage: g8 <gituser/project.g8> [--param=value ...]")
+        new Exit(0)
+    }
+
+  def copy(repo: String, params: Iterable[String]) = {
     val repo_files = for {
       blobs <- http(gh / "blob" / "all" / repo / "master" ># ('blobs ? obj))
       JField(name, JString(hash)) <- blobs
@@ -27,14 +36,17 @@ class Giter8 extends xsbti.AppMain {
         }
       } )
     }.headOption getOrElse Map.empty[String, String]
-    val base = new File(normalize(defaults.getOrElse("name", "My Project")))
+    val parameters = (defaults /: params) { 
+      case (map, Param(key, value)) => map + (key -> value)
+    }
+    val base = new File(normalize(parameters.getOrElse("name", "My Project")))
     templates foreach { case (name, hash) =>
       import org.clapper.scalasti.StringTemplate
       val f = new File(base, name)
       f.getParentFile.mkdirs()
       http(show(repo, hash) >- { in =>
         val fw = new FileWriter(f)
-        fw.write(new StringTemplate(in).setAttributes(defaults).toString)
+        fw.write(new StringTemplate(in).setAttributes(parameters).toString)
         fw.close()
       })
     }
