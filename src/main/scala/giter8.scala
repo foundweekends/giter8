@@ -30,13 +30,16 @@ class Giter8 extends xsbti.AppMain {
       val (default_props, templates) = repo_files.partition { 
         case (name, _) => name == "default.properties" 
       }
-      val parameters = (defaults(repo, default_props) /: params) { 
-        case (map, Param(key, value)) if map.contains(key) => 
-          map + (key -> value)
-        case (map, Param(key, _)) =>
-          println("\nIgnoring unregonized parameter: " + key)
+      val default_params = defaults(repo, default_props)
+      val parameters = 
+        if (params.isEmpty) interact(default_params)
+        else (defaults(repo, default_props) /: params) { 
+          case (map, Param(key, value)) if map.contains(key) => 
+            map + (key -> value)
+          case (map, Param(key, _)) =>
+            println("Ignoring unregonized parameter: " + key)
           map
-      }
+        }
       val base = new File(normalize(parameters.getOrElse("name", "My Project")))
       if (base.exists) 
         Left("This project directory already exists: " + base)
@@ -63,6 +66,32 @@ class Giter8 extends xsbti.AppMain {
         }
       } )
     }.headOption getOrElse Map.empty[String, String]
+
+  def interact(params: Map[String, String]) = {
+    val (desc, others) = params partition { case (k,_) => k == "description" }
+    desc.values.foreach { d => 
+      @scala.annotation.tailrec 
+      def liner(cursor: Int, rem: Iterable[String]) {
+        if (!rem.isEmpty) {
+          val next = cursor + 1 + rem.head.length
+          if (next > 70) {
+            println()
+            liner(0, rem)
+          } else {
+            print(rem.head + " ")
+            liner(next, rem.tail)
+          }
+        }
+      }
+      println()
+      liner(0, d.split(" "))
+      println("\n")
+    }
+    others map { case (k,v) =>
+      val in = Console.readLine("%s [%s]: ", k,v).trim
+      (k, if (in.isEmpty) v else in)
+    }
+  }
 
   def write(repo: String, templates: Iterable[(String, String)], parameters: Map[String,String], base: File) = {
     templates foreach { case (name, hash) =>
