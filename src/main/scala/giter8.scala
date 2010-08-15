@@ -7,26 +7,47 @@ class Giter8 extends xsbti.AppMain {
   import scala.collection.JavaConversions._
   import java.io.{File,FileWriter}
 
-  val re = "^src/main/g8/(.+)$".r
+  val Root = "^src/main/g8/(.+)$".r
   val Param = """^--(\S+)=(.+)$""".r
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   
   def run(config: xsbti.AppConfiguration) =
-    config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
-      case (params, Array(Repo(user, proj))) => copy("%s/%s.g8".format(user, proj), params)
-      case _ =>
-        println("\nUsage: g8 <gituser/project.g8> [--param=value ...]")
-        new Exit(0)
+    (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
+      case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
+      case _ => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
+    }) fold ({ error =>
+      System.err.println("\n" + error)
+      new Exit(0)
+    }, { message =>
+      println("\n" + message)
+      new Exit(1)
+    })
+
+  def inspect(repo: String, params: Iterable[String]) =
+    repo_files(repo).right.flatMap { repo_files =>
+      val (default_props, templates) = repo_files.partition { 
+        case (name, _) => name == "default.properties" 
+      }
+      val parameters = (defaults(repo, default_props) /: params) { 
+        case (map, Param(key, value)) => map + (key -> value)
+      }
+      val base = new File(normalize(parameters.getOrElse("name", "My Project")))
+      if (base.exists) 
+        Left("This project directory already exists: " + base)
+      else
+        write(repo, templates, parameters, base)
     }
 
-  def copy(repo: String, params: Iterable[String]) = {
-    val repo_files = for {
-      blobs <- http(gh / "blob" / "all" / repo / "master" ># ('blobs ? obj))
-      JField(name, JString(hash)) <- blobs
-      m <- re.findFirstMatchIn(name)
-    } yield (m.group(1), hash)
-    val (dp, templates) = repo_files.partition { case (name, _) => name == "default.properties" }
-    val defaults = dp.map { case (_, hash) => 
+  def repo_files(repo: String) = try { Right(for {
+    blobs <- http(gh / "blob" / "all" / repo / "master" ># ('blobs ? obj))
+    JField(name, JString(hash)) <- blobs
+    m <- Root.findFirstMatchIn(name)
+  } yield (m.group(1), hash)) } catch {
+    case StatusCode(404, _) => Left("Unable to find github repository: %s" format repo)
+  }
+
+  def defaults(repo: String, default_props: Iterable[(String, String)]) = 
+    default_props.map { case (_, hash) => 
       http(show(repo, hash) >> { stm =>
         val p = new java.util.Properties
         p.load(stm)
@@ -36,10 +57,8 @@ class Giter8 extends xsbti.AppMain {
         }
       } )
     }.headOption getOrElse Map.empty[String, String]
-    val parameters = (defaults /: params) { 
-      case (map, Param(key, value)) => map + (key -> value)
-    }
-    val base = new File(normalize(parameters.getOrElse("name", "My Project")))
+
+  def write(repo: String, templates: Iterable[(String, String)], parameters: Map[String,String], base: File) = {
     templates foreach { case (name, hash) =>
       import org.clapper.scalasti.StringTemplate
       val f = new File(base, name)
@@ -50,8 +69,9 @@ class Giter8 extends xsbti.AppMain {
         fw.close()
       })
     }
-    new Exit(1)
+    Right("Created project in %s" format base.toString)
   }
+
   class Exit(val code: Int) extends xsbti.Exit
   def http = new Http
   val gh = :/("github.com") / "api" / "v2" / "json"
