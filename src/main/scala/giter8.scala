@@ -11,15 +11,17 @@ class Giter8 extends xsbti.AppMain {
   val Param = """^--(\S+)=(.+)$""".r
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   
+  java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
+  
   def run(config: xsbti.AppConfiguration) =
     (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
       case _ => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
     }) fold ({ error =>
-      System.err.println("\n" + error)
+      System.err.println("\n%s\n" format error)
       new Exit(0)
     }, { message =>
-      println("\n" + message)
+      println("\n%s\n" format message)
       new Exit(1)
     })
 
@@ -73,7 +75,14 @@ class Giter8 extends xsbti.AppMain {
   }
 
   class Exit(val code: Int) extends xsbti.Exit
-  def http = new Http
+  def http = new Http {
+    override lazy val log = new dispatch.Logger {
+      val jdklog = java.util.logging.Logger.getLogger("dispatch")
+      def info(msg: String, items: Any*) { 
+        jdklog.info(msg.format(items: _*)) 
+      }
+    }
+  }
   val gh = :/("github.com") / "api" / "v2" / "json"
   def show(repo: String, hash: String) = gh / "blob" / "show" / repo / hash
   def normalize(s: String) = s.toLowerCase.replaceAll("""\s+""", "-")
