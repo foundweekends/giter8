@@ -6,8 +6,7 @@ class Giter8Project(info: ProjectInfo) extends ParentProject(info) {
     val dispatch = "net.databinder" %% "dispatch-lift-json" % "0.7.5"
 
     val clapperOrgRepo = "clapper.org Maven Repository" at "http://maven.clapper.org"
-    val scalasti = "org.clapper" %% "scalasti" % "0.4.1" intransitive()
-    val stringTemplate = "org.antlr" % "stringtemplate" % "3.2.1"
+    val scalasti = "org.clapper" %% "scalasti" % "0.5"
   })
   lazy val plugin = project("plugin", "giter8 plugin", new PluginProject(_) {
     val stringTemplate = "org.antlr" % "stringtemplate" % "3.2.1"
