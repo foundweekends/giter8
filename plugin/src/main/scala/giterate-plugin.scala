@@ -22,7 +22,8 @@ trait Template extends DefaultProject {
       case 0 => None
       case code => Some("failed to run `sbt update compile` in %s with code %d" format (templateOutput, code))
     }
-  } dependsOn writeTemplates
+  } dependsOn writeTemplates describedAs 
+    "Run `sbt update compile` in %s to smoke-test the templates".format(templateOutput)
 
   lazy val writeTemplates = fileTask(templateOutput from templateSources) {
     templateSources.get.filter(!_.isDirectory).partition { _ == defaultProperties } match {
@@ -32,7 +33,7 @@ trait Template extends DefaultProject {
           c orElse writeTemplate(in, Path.fromString(templateOutput, in.relativePath), params)
         } orElse FileUtilities.touch(templateOutput, log)
     }
-  }
+  } describedAs "Apply default parameters to input templates and write out to %s".format(templateOutput)
 
   private def readProps(f: Path) = {
     val p = new java.util.Properties
