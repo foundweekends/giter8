@@ -13,6 +13,9 @@
       class: giter8.Giter8
     [repositories]
       local
+      maven-local
       scala-tools-releases
+      maven-central
+      clapper: http://maven.clapper.org/
     [boot]
       directory: /path/to/home/.giter8/boot
