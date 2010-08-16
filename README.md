@@ -9,7 +9,7 @@
     [app]
       org: net.databinder
       name: giter8
-      version: 0.1.0-SNAPSHOT
+      version: 0.1.0
       class: giter8.Giter8
     [repositories]
       local
