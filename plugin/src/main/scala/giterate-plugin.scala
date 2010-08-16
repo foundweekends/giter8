@@ -37,8 +37,8 @@ trait Template extends DefaultProject {
 
   private def readProps(f: Path) = {
     val p = new java.util.Properties
-    FileUtilities.read(f.asFile, log) { reader =>
-      p.load(reader)
+    FileUtilities.readStream(f.asFile, log) { stm =>
+      p.load(stm)
       None
     }
     p
