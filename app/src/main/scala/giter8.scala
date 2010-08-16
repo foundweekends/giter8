@@ -60,8 +60,8 @@ class Giter8 extends xsbti.AppMain {
       http(show(repo, hash) >> { stm =>
         val p = new java.util.Properties
         p.load(stm)
-        (Map.empty[String, String] /: p.stringPropertyNames) { (m, k) =>
-          m + (k -> p.getProperty(k))
+        (Map.empty[String, String] /: p.propertyNames) { (m, k) =>
+          m + (k.toString -> p.getProperty(k.toString))
         }
       } )
     }.headOption getOrElse Map.empty[String, String]
