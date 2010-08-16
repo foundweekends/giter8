@@ -11,4 +11,7 @@ class Giter8Project(info: ProjectInfo) extends ParentProject(info) {
   lazy val plugin = project("plugin", "giter8 plugin", new PluginProject(_) {
     val stringTemplate = "org.antlr" % "stringtemplate" % "3.2.1"
   })
+  override def managedStyle = ManagedStyle.Maven
+  val publishTo = "Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/"
+  Credentials(Path.userHome / ".ivy2" / ".credentials", log)
 }
