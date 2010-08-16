@@ -3,6 +3,8 @@ import sbt._
 class Giter8Project(info: ProjectInfo) extends ParentProject(info) {
   lazy val app = project("app", "giter8", new DefaultProject(_) {
     val launchInterface = "org.scala-tools.sbt" % "launcher-interface" % "0.7.4" % "provided"
+
+    val databinder_net = "databinder.net repository" at "http://databinder.net/repo"
     val dispatch = "net.databinder" %% "dispatch-lift-json" % "0.7.5"
 
     val clapperOrgRepo = "clapper.org Maven Repository" at "http://maven.clapper.org"
