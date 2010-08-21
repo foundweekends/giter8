@@ -24,9 +24,9 @@ unix-like shells:
     sbt @.giter8.launchconfig "$@"
 
 The parameter passed to sbt tells its launcher to use the given launch
-configuration instead starting sbt itself. The launcher will look for the
-configuration several places; one of these is your home directory, and
-our launch configuration is prefixed with a dot so that you can store
+configuration instead of starting sbt itself. The launcher will look for the
+configuration in several places; one of these is your home directory, and
+giter8's launch configuration is prefixed with a dot so that you can store
 it there without it being all up in your face.
 
 Here is a launch configuration for the current version of
@@ -48,11 +48,11 @@ giter8.  You can paste it into a file `~/.giter8.launchconfig`
     [boot]
       directory: /path/to/home/.giter8/boot
 
-There is one thing you need to change, however! The last line
+There is one thing you need to change in it, however! The last line
 specifies the "boot" directory, where versions of giter8 will be
-downloaded and stored. You could keep these anywhere that your user
+downloaded and stored. You may keep these anywhere that your user
 account is permitted to write; we recommend using `.giter8/boot`
-under your home directory. *Tilde (~) is not supported* by the launcher
+under your home directory. Note: *tilde (~) is not supported* by the launcher
 so you'll need to enter the full path.
 
 To make sure everything is working, try running `g8` with no
@@ -65,10 +65,9 @@ to adjust the version number in `.giter8.launcher`.
 Usage
 -----
 
-Template repositories must reside on github and must be named with the 
-suffix ".g8". For example, the repository
-[softprops/unfiltered.g8][uft] is a giter8 template. You can apply it
-from the command line like so:
+Template repositories must reside on github and be named with the 
+suffix ".g8". For example, the repo [softprops/unfiltered.g8][uft] is
+a giter8 template. You can apply it from the command line like so:
 
 [uft]: http://github.com/softprops/unfiltered.g8
 
@@ -86,7 +85,7 @@ value in square brackets:
     name [My Web Project]: 
 
 Enter your own value or press enter to accept the default. After all
-the values have been entered, giter8 fetches the templates, applies
+the values have been supplied, giter8 fetches the templates, applies
 the parameters, and writes them to your filesystem. If the template
 has a "name" parameter it will be used to create base directory within
 the current directory. (Typically, this is the base directory for a new
@@ -105,7 +104,7 @@ values.
 Questions that will probably be frequent
 ----------------------------------
 
-*Isn't this like Lifty?*
+### Isn't this like Lifty?
 
 Nope. [Lifty] is an [sbt processor][processor], meaning it runs inside
 of sbt itself. You can't run sbt or any processor until you have a
@@ -117,7 +116,7 @@ that are not sbt projects at all.
 [Lifty]: http://lifty.github.com/
 [processor]: http://code.google.com/p/simple-build-tool/wiki/Processors
 
-*Neat, how can I make my own templates?*
+### Neat, how can I make my own templates?
 
 Use the template-template:
 
