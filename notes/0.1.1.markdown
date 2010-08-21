@@ -1,0 +1,1 @@
+* Write to current directory when the "name" parameter is absent.

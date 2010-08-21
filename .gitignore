@@ -2,3 +2,5 @@ lib_managed/
 project/boot/
 project/build/target/
 target/
+src_managed/
+project/plugins/project/
