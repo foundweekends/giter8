@@ -16,8 +16,8 @@ If you haven't already setup sbt, you need to [go do that][sbt]. Then...
 [sbt]: http://code.google.com/p/simple-build-tool/wiki/Setup
 
 Make sure that the `sbt` is on your path. You should be able to run it
-from any directory and be prompted to create a new project. Next,
-you'll need to create a`g8` script also on your executable path. For 
+from any directory and be prompted to create a new project (and then abort).
+You'll need to create a new `g8` script also on your executable path. For 
 unix-like shells:
 
     #!/bin/sh
