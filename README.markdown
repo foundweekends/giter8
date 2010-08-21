@@ -17,7 +17,8 @@ If you haven't already setup sbt, you need to [go do that][sbt]. Then...
 
 Make sure that the `sbt` is on your path. You should be able to run it
 from any directory and be prompted to create a new project (and then abort).
-Next, you need to create a new `g8` script also on your executable path. For 
+
+You need to create a new `g8` script also on your executable path. For 
 unix-like shells, it should contain:
 
     #!/bin/sh
