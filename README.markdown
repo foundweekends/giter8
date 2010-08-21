@@ -57,12 +57,11 @@ There is one thing you need to change in it, however! The last line
 specifies the "boot" directory, where versions of giter8 will be
 downloaded and stored. You may keep these anywhere that your user
 account is permitted to write; we recommend using `.giter8/boot`
-under your home directory. Note: *tilde (~) is not supported* by the launcher
+under your home directory. Note that *tilde (~) is not supported* by the launcher
 so you'll need to enter the full path.
 
 To make sure everything is working, try running `g8` with no
-parameters. (If it doesn't run at all, maybe you need to `chmod a+x
-g8`.) It should download giter8 and its dependencies, then print
+parameters. It should download giter8 and its dependencies, then print
 a usage message.
 
 When it's time to upgrade to a new version of giter8, you'll only need
