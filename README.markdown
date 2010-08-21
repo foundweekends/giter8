@@ -11,7 +11,7 @@ can produce output for any purpose.
 Installation
 ---------
 
-If you haven't already setup sbt, you need to [go to that][sbt].
+If you haven't already setup sbt, you need to [go do that][sbt]. Then...
 
 [sbt]: http://code.google.com/p/simple-build-tool/wiki/Setup
 
