@@ -17,11 +17,15 @@ If you haven't already setup sbt, you need to [go do that][sbt]. Then...
 
 Make sure that the `sbt` is on your path. You should be able to run it
 from any directory and be prompted to create a new project (and then abort).
-You'll need to create a new `g8` script also on your executable path. For 
-unix-like shells:
+Next, you need to create a new `g8` script also on your executable path. For 
+unix-like shells, it should contain:
 
     #!/bin/sh
     sbt @.giter8.launchconfig "$@"
+
+And it should be executable:
+
+    $ chmod a+x g8
 
 The parameter passed to sbt tells its launcher to use the given launch
 configuration instead of starting sbt itself. The launcher will look for the
@@ -56,7 +60,8 @@ under your home directory. Note: *tilde (~) is not supported* by the launcher
 so you'll need to enter the full path.
 
 To make sure everything is working, try running `g8` with no
-parameters. It should download giter8 and its dependencies, then print
+parameters. (If it doesn't run at all, maybe you need to `chmod a+x
+g8`.) It should download giter8 and its dependencies, then print
 a usage message.
 
 When it's time to upgrade to a new version of giter8, you'll only need
@@ -71,11 +76,11 @@ a giter8 template. You can apply it from the command line like so:
 
 [uft]: http://github.com/softprops/unfiltered.g8
 
-    g8 softprops/unfiltered.g8
+    $ g8 softprops/unfiltered.g8
 
 You can also drop the suffix and it will be assumed:
 
-    g8 softprops/unfiltered
+    $ g8 softprops/unfiltered
 
 Either way, giter8 resolves this to the softprops/unfiltered.g8
 repository and queries github for the project's template
@@ -96,7 +101,7 @@ skipping over  any files that already exist.
 Once you become familiar with a template's parameters, you can enter
 them on the command line and skip the interaction:
 
-    g8 softprops/unfiltered.g8 --name=my-new-website
+    $ g8 softprops/unfiltered.g8 --name=my-new-website
 
 Any parameters that are not supplied will be assigned their default
 values.
@@ -120,7 +125,7 @@ that are not sbt projects at all.
 
 Use the template-template:
 
-    g8 n8han/giter8
+    $ g8 n8han/giter8
 
 This will create an sbt project with the template sources nested under
 `src/main/g8`. It's an sbt project so that you can use sbt to apply
