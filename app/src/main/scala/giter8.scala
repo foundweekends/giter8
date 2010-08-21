@@ -38,13 +38,10 @@ class Giter8 extends xsbti.AppMain {
             map + (key -> value)
           case (map, Param(key, _)) =>
             println("Ignoring unregonized parameter: " + key)
-          map
+            map
         }
-      val base = new File(normalize(parameters.getOrElse("name", "My Project")))
-      if (base.exists) 
-        Left("This project directory already exists: " + base)
-      else
-        write(repo, templates, parameters, base)
+      val base = new File(parameters.get("name").map(normalize).getOrElse("."))
+      write(repo, templates, parameters, base)
     }
 
   def repo_files(repo: String) = try { Right(for {
@@ -96,14 +93,18 @@ class Giter8 extends xsbti.AppMain {
     templates foreach { case (name, hash) =>
       import org.clapper.scalasti.StringTemplate
       val f = new File(base, name)
-      f.getParentFile.mkdirs()
-      http(show(repo, hash) >- { in =>
-        val fw = new FileWriter(f)
-        fw.write(new StringTemplate(in).setAttributes(parameters).toString)
-        fw.close()
-      })
+      if (f.exists)
+        println("Skipping existing file: " + f.toString)
+      else {
+        f.getParentFile.mkdirs()
+        http(show(repo, hash) >- { in =>
+          val fw = new FileWriter(f)
+          fw.write(new StringTemplate(in).setAttributes(parameters).toString)
+          fw.close()
+        })
+      }
     }
-    Right("Created project in %s" format base.toString)
+    Right("Applied %s in %s" format (repo, base.toString))
   }
 
   class Exit(val code: Int) extends xsbti.Exit
