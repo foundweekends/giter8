@@ -38,7 +38,7 @@ Here is a launch configuration for the current version of
 giter8.  You can paste it into a file `~/.giter8.launchconfig`
 
     [app]
-      version: 0.1.0
+      version: 0.1.1
       org: net.databinder
       name: giter8
       class: giter8.Giter8
