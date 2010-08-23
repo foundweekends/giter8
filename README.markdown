@@ -50,6 +50,7 @@ giter8.  You can paste it into a file `~/.giter8.launchconfig`
       scala-tools-releases
       maven-central
       clapper: http://maven.clapper.org/
+      databinder: http://databinder.net/repo/
     [boot]
       directory: /path/to/home/.giter8/boot
 
