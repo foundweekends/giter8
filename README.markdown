@@ -110,7 +110,7 @@ them on the command line and skip the interaction:
 Any parameters that are not supplied will be assigned their default
 values.
 
-Making your own templates
+Making your own templates<a id="making"/>
 -------------------------
 
 The g8 runtime looks for templates in the `src/main/g8` directory of a
