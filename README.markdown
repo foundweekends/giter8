@@ -120,7 +120,7 @@ an sbt plugin can be employed to locally test templates before pushing
 changes to github.
 
 The easy way to start a new template project is with a giter8 template
-made expressly for that purpose.
+made expressly for that purpose:
 
     $ g8 n8han/giter8
 
