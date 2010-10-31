@@ -149,9 +149,9 @@ template's source directory are reproduced in its output.
 
 If you enter sbt's interactive mode in the base directory of a
 template project, the action "sbt-test" will apply the template in the
-default output directory (under `target/scala_2.7.7/g8`) and run `sbt
-update compile` for *that* project in a forked process. This is a good
-sanity check for templates that are supposed to produce sbt projects.
+default output directory (under `target/g8`) and run `sbt update
+compile` for *that* project in a forked process. This is a good sanity
+check for templates that are supposed to produce sbt projects.
 
 But what if your template is not for an sbt project? Such as:
 
@@ -160,8 +160,7 @@ But what if your template is not for an sbt project? Such as:
 
 You can still use sbt's interactive mode to test the template. The
 lower level `write-templates` action will apply default field values
-to the teplate and write it to the same `target/scala_2.7.7/g8`
-directory.
+to the template and write it to the same `target/g8` directory.
 
 As soon as you push your template to github (be sure to name the
 project with a ".g8" extension) you can test it with the actual g8
