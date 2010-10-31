@@ -115,9 +115,9 @@ Making your own templates
 
 The g8 runtime looks for templates in the `src/main/g8` directory of a
 given github project. This structure is used so that it is easy (but
-not required) for the template itself to be an sbt project. Then, a
-plugin ("giter8-plugin" to be specific) can be use to locally test
-templates before pushing changes to github.
+not required) for the template itself to be an sbt project. That way,
+an sbt plugin can be employed to locally test templates before pushing
+changes to github.
 
 The easy way to start a new template project is with a giter8 template
 made expressly for that purpose.
@@ -143,8 +143,9 @@ The "name" field, if defined, is treated specially by giter8. It is
 assumed to be the name of a project being created, so the g8 runtime
 creates a directory based off that name (with spaces and capitals
 replaced) that will contain the template output. If no name field is
-specified in the template, g8 will output to the user's current
-working directory.
+specified in the template, g8's output goes to the user's current
+working directory. In both cases, directories nested under the
+template's source directory are reproduced in its output.
 
 If you enter sbt's interactive mode in the base directory of a
 template project, the action "sbt-test" will apply the template in the
@@ -165,7 +166,7 @@ directory.
 As soon as you push your template to github (be sure to name the
 project with a ".g8" extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
-[the wiki][wiki] so other giter8 users can find it!
+[the wiki][wiki] so other giter8 users can find it.
 
 Question(s) that will probably be frequent
 ----------------------------------
