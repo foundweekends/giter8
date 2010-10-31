@@ -71,11 +71,14 @@ to adjust the version number in `.giter8.launcher`.
 Usage
 -----
 
-Template repositories must reside on github and be named with the 
-suffix ".g8". For example, the repo [softprops/unfiltered.g8][uft] is
-a giter8 template. You can apply it from the command line like so:
+Template repositories must reside on github and be named with the
+suffix ".g8". We're keeping a [list of them on the wiki][wiki] (but a
+template doesn't have to be listed there in order to work). So for
+example, the repo [softprops/unfiltered.g8][uft] is a giter8
+template. You can apply it from the command line like so:
 
 [uft]: http://github.com/softprops/unfiltered.g8
+[wiki]: http://github.com/n8han/giter8/wiki/giter8-templates
 
     $ g8 softprops/unfiltered.g8
 
@@ -107,7 +110,64 @@ them on the command line and skip the interaction:
 Any parameters that are not supplied will be assigned their default
 values.
 
-Questions that will probably be frequent
+Making your own templates
+-------------------------
+
+The g8 runtime looks for templates in the `src/main/g8` directory of a
+given github project. This structure is used so that it is easy (but
+not required) for the template itself to be an sbt project. Then, a
+plugin ("giter8-plugin" to be specific) can be use to locally test
+templates before pushing changes to github.
+
+The easy way to start a new template project is with a giter8 template
+made expressly for that purpose.
+
+    $ g8 n8han/giter8
+
+This will create an sbt project with stub template sources nested
+under `src/main/g8`. The file `default.properties` defines template
+fields and their default values using the Java properties file format.
+Every other file in that directory and below it is a template source.
+
+[StringTemplate][st], wrapped by [Scalasti][scalasti], is the engine
+for giter8 templates, so template fields in source files are bracketed
+with the `$` character. For example, a "classname" field might be
+referenced in the source as:
+
+    class $classname$ {
+
+[scalasti]: http://bmc.github.com/scalasti/
+[st]: http://www.stringtemplate.org/
+
+The "name" field, if defined, is treated specially by giter8. It is
+assumed to be the name of a project being created, so the g8 runtime
+creates a directory based off that name (with spaces and capitals
+replaced) that will contain the template output. If no name field is
+specified in the template, g8 will output to the user's current
+working directory.
+
+If you enter sbt's interactive mode in the base directory of a
+template project, the action "sbt-test" will apply the template in the
+default output directory (under `target/scala_2.7.7/g8`) and run `sbt
+update compile` for *that* project in a forked process. This is a good
+sanity check for templates that are supposed to produce sbt projects.
+
+But what if your template is not for an sbt project? Such as:
+
+    src/main/g8/default.properties
+    src/main/g8/TodaysMenu.html
+
+You can still use sbt's interactive mode to test the template. The
+lower level `write-templates` action will apply default field values
+to the teplate and write it to the same `target/scala_2.7.7/g8`
+directory.
+
+As soon as you push your template to github (be sure to name the
+project with a ".g8" extension) you can test it with the actual g8
+runtime. When you're ready, add your template project to the
+[the wiki][wiki] so other giter8 users can find it!
+
+Question(s) that will probably be frequent
 ----------------------------------
 
 ### Isn't this like Lifty?
@@ -122,18 +182,4 @@ that are not sbt projects at all.
 [Lifty]: http://lifty.github.com/
 [processor]: http://code.google.com/p/simple-build-tool/wiki/Processors
 
-### Neat, how can I make my own templates?
 
-Use the template-template:
-
-    $ g8 n8han/giter8
-
-This will create an sbt project with the template sources nested under
-`src/main/g8`. It's an sbt project so that you can use sbt to apply
-and test your template locally, before pushing it to github. This
-process needs docs, but if you are good with sbt you can probably
-figure it out. [StringTemplate][st], wrapped by [Scalasti][scalasti], is
-the engine for giter8 templates. Good luck.
-
-[scalasti]: http://bmc.github.com/scalasti/
-[st]: http://www.stringtemplate.org/
