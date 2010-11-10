@@ -19,10 +19,10 @@ class Giter8 extends xsbti.AppMain {
       case _ => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
-      new Exit(0)
+      new Exit(1)
     }, { message =>
       println("\n%s\n" format message)
-      new Exit(1)
+      new Exit(0)
     })
 
   def inspect(repo: String, params: Iterable[String]) =
