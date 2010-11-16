@@ -11,7 +11,7 @@ class Giter8 extends xsbti.AppMain {
   val Param = """^--(\S+)=(.+)$""".r
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   
-  val RemoteTemplates = """^-l(ist)?(.+)?$""".r
+  val RemoteTemplates = """^-l(ist)?$""".r
   val RepoNamed = """(\S+)\.g8""".r
   
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
@@ -19,10 +19,8 @@ class Giter8 extends xsbti.AppMain {
   def run(config: xsbti.AppConfiguration) =
     (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
-      case (params, Array(RemoteTemplates(_, rest))) => discover(rest match {
-        case null => None
-        case name => Some(name.trim)
-      })
+      case (_, Array(RemoteTemplates(_), query)) => discover(Some(query))
+      case (_, Array(RemoteTemplates(_))) => discover(None)
       case p => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
