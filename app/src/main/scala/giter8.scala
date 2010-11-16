@@ -21,7 +21,7 @@ class Giter8 extends xsbti.AppMain {
       case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
       case (_, Array(RemoteTemplates(_), query)) => discover(Some(query))
       case (_, Array(RemoteTemplates(_))) => discover(None)
-      case p => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
+      case _ => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
       new Exit(0)
