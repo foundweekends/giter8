@@ -30,25 +30,25 @@ class Giter8 extends xsbti.AppMain {
       new Exit(1)
     })
   
-  def discover(name: Option[String]) =
-    remote_templates(name).right.flatMap { templates =>
+  def discover(query: Option[String]) =
+    remote_templates(query).right.flatMap { templates =>
       templates match {
-        case Nil => Right("No templates matching %s" format name.get)
+        case Nil => Right("No templates matching %s" format query.get)
         case _ => Right(templates map { t =>
           "%s/%s %s" format(t.user, t.name, t.desc)
         } mkString("\n"))
       }
     }
   
-  def remote_templates(name: Option[String]) = try { Right(for {
-    repos <- http(repoSearch(name) ># ('repositories ? ary))
-    JObject(objs) <- repos
-    JField("name", JString(repo)) <- objs
-    JField("username", JString(user_name)) <- objs
-    JField("description", JString(desc)) <- objs
+  def remote_templates(query: Option[String]) = try { Right(for {
+    repos <- http(repoSearch(query) ># ('repositories ? ary))
+    JObject(fields) <- repos
+    JField("name", JString(repo)) <- fields
+    JField("username", JString(user_name)) <- fields
+    JField("description", JString(desc)) <- fields
     repo_name <- RepoNamed.findFirstMatchIn(repo)
   } yield Template(user_name, repo_name.group(1), desc)) } catch {
-    case StatusCode(404, _) => Left("Unable to find github repositories named: %s" format name)
+    case StatusCode(404, _) => Left("Unable to find github repositories like : %s" format query.get)
   }
 
   def inspect(repo: String, params: Iterable[String]) =
@@ -147,7 +147,7 @@ class Giter8 extends xsbti.AppMain {
   }
   val gh = :/("github.com") / "api" / "v2" / "json"
   def show(repo: String, hash: String) = gh / "blob" / "show" / repo / hash
-  def repoSearch(name: Option[String]) = gh / "repos" / "search" / (name match {
+  def repoSearch(query: Option[String]) = gh / "repos" / "search" / (query match {
     case Some(n) => n
     case _ => "g8"
   })
