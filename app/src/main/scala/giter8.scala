@@ -11,11 +11,16 @@ class Giter8 extends xsbti.AppMain {
   val Param = """^--(\S+)=(.+)$""".r
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   
+  val RemoteTemplates = """^-l(ist)?$""".r
+  val RepoNamed = """(\S+)\.g8""".r
+  
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
   
   def run(config: xsbti.AppConfiguration) =
     (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
+      case (_, Array(RemoteTemplates(_), query)) => discover(Some(query))
+      case (_, Array(RemoteTemplates(_))) => discover(None)
       case _ => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
@@ -24,6 +29,27 @@ class Giter8 extends xsbti.AppMain {
       println("\n%s\n" format message)
       new Exit(0)
     })
+  
+  def discover(query: Option[String]) =
+    remote_templates(query).right.flatMap { templates =>
+      templates match {
+        case Nil => Right("No templates matching %s" format query.get)
+        case _ => Right(templates map { t =>
+          "%s/%s %s" format(t.user, t.name, t.desc)
+        } mkString("\n"))
+      }
+    }
+  
+  def remote_templates(query: Option[String]) = try { Right(for {
+    repos <- http(repoSearch(query) ># ('repositories ? ary))
+    JObject(fields) <- repos
+    JField("name", JString(repo)) <- fields
+    JField("username", JString(user_name)) <- fields
+    JField("description", JString(desc)) <- fields
+    repo_name <- RepoNamed.findFirstMatchIn(repo)
+  } yield Template(user_name, repo_name.group(1), desc)) } catch {
+    case StatusCode(404, _) => Left("Unable to find github repositories like : %s" format query.get)
+  }
 
   def inspect(repo: String, params: Iterable[String]) =
     repo_files(repo).right.flatMap { repo_files =>
@@ -108,6 +134,9 @@ class Giter8 extends xsbti.AppMain {
   }
 
   class Exit(val code: Int) extends xsbti.Exit
+  
+  case class Template(user: String, name: String, desc: String)
+  
   def http = new Http {
     override lazy val log = new dispatch.Logger {
       val jdklog = java.util.logging.Logger.getLogger("dispatch")
@@ -118,5 +147,9 @@ class Giter8 extends xsbti.AppMain {
   }
   val gh = :/("github.com") / "api" / "v2" / "json"
   def show(repo: String, hash: String) = gh / "blob" / "show" / repo / hash
+  def repoSearch(query: Option[String]) = gh / "repos" / "search" / (query match {
+    case Some(n) => n
+    case _ => "g8"
+  })
   def normalize(s: String) = s.toLowerCase.replaceAll("""\s+""", "-")
 }
