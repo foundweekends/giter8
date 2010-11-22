@@ -10,8 +10,8 @@ trait Discover { self: Giter8 =>
     remote_templates(query).right.flatMap { templates =>
       templates match {
         case Nil => Right("No templates matching %s" format query.get)
-        case _ => Right(templates map { t =>
-          "%s/%s %s" format(t.user, t.name, t.desc)
+        case _ => Right(templates.sortBy { _.name } map { t =>
+          "%-40s%s" format(t.user + "/" + t.name, t.desc)
         } mkString("\n"))
       }
     }
