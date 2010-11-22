@@ -33,5 +33,4 @@ trait Discover { self: Giter8 =>
     case Some(n) => n
     case _ => "g8"
   })
-  def http: dispatch.Http
 }
