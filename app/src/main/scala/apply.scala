@@ -77,7 +77,7 @@ trait Apply { self: Giter8 =>
   def write(repo: String, templates: Iterable[(String, String)], parameters: Map[String,String], base: File) = {
     templates foreach { case (name, hash) =>
       import org.clapper.scalasti.StringTemplate
-      val f = new File(base, name)
+      val f = new File(base, new StringTemplate(name).setAttributes(parameters).toString)
       if (f.exists)
         println("Skipping existing file: " + f.toString)
       else {

@@ -30,7 +30,7 @@ trait Template extends DefaultProject {
       case (props, inputs) =>
         val params = props.map(readProps).find(_ => true).getOrElse(new java.util.HashMap)
         ((None: Option[String]) /: inputs) { (c, in) =>
-          c orElse writeTemplate(in, Path.fromString(templateOutput, in.relativePath), params)
+          c orElse writeTemplate(in, expandPath(in, params), params)
         } orElse FileUtilities.touch(templateOutput, log)
     }
   } describedAs "Apply default parameters to input templates and write out to %s".format(templateOutput)
@@ -42,6 +42,12 @@ trait Template extends DefaultProject {
       None
     }
     p
+  }
+
+  private def expandPath(p: Path, params: java.util.Map[_,_]) = {
+    val out = new StringTemplate(p.relativePath)
+    out.setAttributes(params)
+    Path.fromString(templateOutput, out.toString)
   }
 
   def writeTemplate(in: Path, out: Path, params: java.util.Map[_,_]) =
