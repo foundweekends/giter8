@@ -4,7 +4,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
   import dispatch._
 
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
-  val RemoteTemplates = """^-l(ist)?$""".r
+  val RemoteTemplates = """^-(l|-list)$""".r
   
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
   
@@ -13,7 +13,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
       case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
       case (_, Array(RemoteTemplates(_), query)) => discover(Some(query))
       case (_, Array(RemoteTemplates(_))) => discover(None)
-      case _ => Left("Usage: g8 <gituser/project.g8> [--param=value ...]")
+      case _ => Left(usage)
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
       new Exit(1)
@@ -34,4 +34,22 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
       }
     }
   }
+  def usage = """Usage: g8 [TEMPLATE] [OPTION]...
+                |Apply specified template or list available templates.
+                |
+                |OPTIONS
+                |    -l, --list
+                |        List current giter8 templates on github.
+                |
+                |    --paramname=paramvalue
+                |        Set given parameter value and bypass interaction.
+                |
+                |Apply template and interactively fulfill parameters.
+                |    g8 n8han/giter8
+                |
+                |Apply given name parameter and use defaults for all others.
+                |    g8 n8han/giter8 --name=template-test
+                |
+                |List available templates.
+                |    g8 --list""".stripMargin
 }
