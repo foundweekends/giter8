@@ -43,7 +43,7 @@ giter8.  You can paste it into a file `~/.giter8.launchconfig`
       name: giter8
       class: giter8.Giter8
     [scala]
-      version: 2.8.0
+      version: 2.8.1
     [repositories]
       local
       maven-local
@@ -109,6 +109,18 @@ them on the command line and skip the interaction:
 
 Any parameters that are not supplied will be assigned their default
 values.
+
+You can discover available repositories right from the command line using the command line
+flags `-l` or `--list`.
+
+For a full template listing, don't supply any arguments to this flag
+
+    g8 -l
+    
+For a filtered query supply your query as one or more terms concatenated with a `+` character like so:
+
+    g8 -l android+sbt
+
 
 Making your own templates
 -------------------------

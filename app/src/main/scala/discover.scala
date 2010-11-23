@@ -30,7 +30,8 @@ trait Discover { self: Giter8 =>
   case class Template(user: String, name: String, desc: String)
   
   def repoSearch(query: Option[String]) = gh / "repos" / "search" / (query match {
-    case Some(n) => n
+    case Some(n) =>
+      "%s+g8".format(n).replace("+", "%20")
     case _ => "g8"
   })
 }

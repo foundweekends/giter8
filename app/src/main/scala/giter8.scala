@@ -50,6 +50,10 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
                 |Apply given name parameter and use defaults for all others.
                 |    g8 n8han/giter8 --name=template-test
                 |
-                |List available templates.
-                |    g8 --list""".stripMargin
+                |List all available templates.
+                |    g8 -l
+                |
+                |List templates with query. For multiple terms, concatenate with a `+` character
+                |    g8 -l android+sbt
+                |""".stripMargin
 }
