@@ -18,22 +18,27 @@ trait Template extends DefaultProject {
 
   lazy val sbtTest = task {
     import Process._
-    (new java.lang.ProcessBuilder("sbt", "update", "compile") directory templateOutput.asFile) ! match {
+    (new java.lang.ProcessBuilder("sbt", "update", "compile") directory 
+        templateOutput.asFile)! match {
       case 0 => None
-      case code => Some("failed to run `sbt update compile` in %s with code %d" format (templateOutput, code))
+      case code => Some("failed to run `sbt update compile` in %s with code %d" format 
+                        (templateOutput, code))
     }
   } dependsOn writeTemplates describedAs 
     "Run `sbt update compile` in %s to smoke-test the templates".format(templateOutput)
 
   lazy val writeTemplates = fileTask(templateOutput from templateSources) {
-    templateSources.get.filter(!_.isDirectory).partition { _ == defaultProperties } match {
+    templateSources.get.filter(!_.isDirectory).partition { 
+      _ == defaultProperties
+    } match {
       case (props, inputs) =>
         val params = props.map(readProps).find(_ => true).getOrElse(new java.util.HashMap)
         ((None: Option[String]) /: inputs) { (c, in) =>
           c orElse writeTemplate(in, expandPath(in, params), params)
         } orElse FileUtilities.touch(templateOutput, log)
     }
-  } describedAs "Apply default parameters to input templates and write out to %s".format(templateOutput)
+  } describedAs "Apply default parameters to input templates and write out to " + 
+    templateOutput
 
   private def readProps(f: Path) = {
     val p = new java.util.Properties
