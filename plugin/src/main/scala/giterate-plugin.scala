@@ -16,14 +16,14 @@ trait Template extends DefaultProject with Library {
 
   lazy val sbtTest = task {
     import Process._
-    (new java.lang.ProcessBuilder("sbt", "update", "compile") directory 
+    (new java.lang.ProcessBuilder("sbt", "update", "test") directory 
         templateOutput.asFile)! match {
       case 0 => None
-      case code => Some("failed to run `sbt update compile` in %s with code %d" format 
+      case code => Some("failed to run `sbt update test` in %s with code %d" format 
                         (templateOutput, code))
     }
   } dependsOn writeTemplates describedAs 
-    "Run `sbt update compile` in %s to smoke-test the templates".format(templateOutput)
+    "Run `sbt update test` in %s to smoke-test the templates".format(templateOutput)
 
   lazy val writeTemplates = applyTemplates(
     templateSources,
