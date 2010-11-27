@@ -71,7 +71,7 @@ Usage
 
 Template repositories must reside on github and be named with the
 suffix ".g8". We're keeping a [list of templates on the wiki][wiki],
-and you can query github and list all templates with a ".g8" suffix
+and you can query github to list all templates with a ".g8" suffix
 from the command line:
 
     $ g8 --list
