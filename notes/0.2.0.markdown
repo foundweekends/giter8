@@ -1,4 +1,6 @@
-* Perform template expansion within file and directory names, contributed by [jberkel][jberkel]. e.g.
+New Features
+
+* Performs template expansion within file and directory names, contributed by [jberkel][jberkel]. e.g.
 
         src/main/g8/src/main/scala/$MainClass$.scala
 
@@ -8,3 +10,5 @@
 
 [jberkel]: https://github.com/jberkel
 [softprops]: https://github.com/jberkel
+
+To upgrade, set "version" to 0.2.0 in your `~/.giter8.launchconfig` .
