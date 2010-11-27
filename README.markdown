@@ -149,7 +149,7 @@ working directory. In both cases, directories nested under the
 template's source directory are reproduced in its output. File and
 directory names also participate in template expansion, e.g.
 
-    src/main/g8/src/main/scala/$MainClass$.scala
+    src/main/g8/src/main/scala/$classname$.scala
 
 If you enter sbt's interactive mode in the base directory of a
 template project, the action "sbt-test" will apply the template in the
