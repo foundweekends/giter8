@@ -38,19 +38,17 @@ Here is a launch configuration for the current version of
 giter8.  You can paste it into a file `~/.giter8.launchconfig`
 
     [app]
-      version: 0.1.1
+      version: 0.2.0
       org: net.databinder
       name: giter8
       class: giter8.Giter8
     [scala]
-      version: 2.8.0
+      version: 2.8.1
     [repositories]
       local
       maven-local
       scala-tools-releases
       maven-central
-      clapper: http://maven.clapper.org/
-      databinder: http://databinder.net/repo/
     [boot]
       directory: /path/to/home/.giter8/boot
 
@@ -72,10 +70,13 @@ Usage
 -----
 
 Template repositories must reside on github and be named with the
-suffix ".g8". We're keeping a [list of them on the wiki][wiki] (but a
-template doesn't have to be listed there in order to work). So for
-example, the repo [softprops/unfiltered.g8][uft] is a giter8
-template. You can apply it from the command line like so:
+suffix ".g8". We're keeping a [list of templates on the wiki][wiki],
+and you can query github and list all templates with a ".g8" suffix
+from the command line:
+
+    $ g8 --list
+
+To apply a template, for example, [softprops/unfiltered.g8][uft]:
 
 [uft]: http://github.com/softprops/unfiltered.g8
 [wiki]: http://github.com/n8han/giter8/wiki/giter8-templates
