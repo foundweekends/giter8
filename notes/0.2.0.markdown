@@ -1,0 +1,14 @@
+New Features
+
+* Performs template expansion within file and directory names, contributed by [jberkel][jberkel]. e.g.
+
+        src/main/g8/src/main/scala/$MainClass$.scala
+
+* Query github for available giter8 templates with `--list` or `-l`, contributed by [softprops][softprops].
+
+        g8 --list 
+
+[jberkel]: https://github.com/jberkel
+[softprops]: https://github.com/softprops
+
+To upgrade, set "version" to 0.2.0 in your `~/.giter8.launchconfig` .

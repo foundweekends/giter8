@@ -28,9 +28,6 @@ trait Discover { self: Giter8 =>
   }
 
   case class Template(user: String, name: String, desc: String)
-  
-  def repoSearch(query: Option[String]) = gh / "repos" / "search" / (query match {
-    case Some(n) => n
-    case _ => "g8"
-  })
+ 
+  def repoSearch(query: Option[String]) = gh / "repos" / "search" / query.getOrElse("g8")
 }

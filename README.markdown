@@ -38,19 +38,17 @@ Here is a launch configuration for the current version of
 giter8.  You can paste it into a file `~/.giter8.launchconfig`
 
     [app]
-      version: 0.1.1
+      version: 0.2.0
       org: net.databinder
       name: giter8
       class: giter8.Giter8
     [scala]
-      version: 2.8.0
+      version: 2.8.1
     [repositories]
       local
       maven-local
       scala-tools-releases
       maven-central
-      clapper: http://maven.clapper.org/
-      databinder: http://databinder.net/repo/
     [boot]
       directory: /path/to/home/.giter8/boot
 
@@ -72,10 +70,13 @@ Usage
 -----
 
 Template repositories must reside on github and be named with the
-suffix ".g8". We're keeping a [list of them on the wiki][wiki] (but a
-template doesn't have to be listed there in order to work). So for
-example, the repo [softprops/unfiltered.g8][uft] is a giter8
-template. You can apply it from the command line like so:
+suffix ".g8". We're keeping a [list of templates on the wiki][wiki],
+and you can query github to list all templates with a ".g8" suffix
+from the command line:
+
+    $ g8 --list
+
+To apply a template, for example, [softprops/unfiltered.g8][uft]:
 
 [uft]: http://github.com/softprops/unfiltered.g8
 [wiki]: http://github.com/n8han/giter8/wiki/giter8-templates
@@ -145,12 +146,15 @@ creates a directory based off that name (with spaces and capitals
 replaced) that will contain the template output. If no name field is
 specified in the template, g8's output goes to the user's current
 working directory. In both cases, directories nested under the
-template's source directory are reproduced in its output.
+template's source directory are reproduced in its output. File and
+directory names also participate in template expansion, e.g.
+
+    src/main/g8/src/main/scala/$classname$.scala
 
 If you enter sbt's interactive mode in the base directory of a
 template project, the action "sbt-test" will apply the template in the
 default output directory (under `target/g8`) and run `sbt update
-compile` for *that* project in a forked process. This is a good sanity
+test` for *that* project in a forked process. This is a good sanity
 check for templates that are supposed to produce sbt projects.
 
 But what if your template is not for an sbt project? Such as:
