@@ -66,6 +66,12 @@ a usage message.
 When it's time to upgrade to a new version of giter8, you'll only need
 to adjust the version number in `.giter8.launcher`.
 
+Giter8 is also installable with the OS X package manager [Homebrew][]:
+
+    $ brew update && brew install giter8
+
+[Homebrew]: http://mxcl.github.com/homebrew/
+
 Usage
 -----
 
