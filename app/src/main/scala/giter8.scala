@@ -5,9 +5,9 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
 
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   val RemoteTemplates = """^-(l|-list)$""".r
-  
+
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
-  
+
   def run(config: xsbti.AppConfiguration) =
     (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
@@ -21,14 +21,25 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
       println("\n%s\n" format message)
       new Exit(0)
     })
-  
+
   class Exit(val code: Int) extends xsbti.Exit
-  
-  lazy val gh = WithCredentials(:/("github.com") / "api" / "v2" / "json")
-  
-  private def WithCredentials(r: Request) = {
-    SavedCreds() match {
-      case Some((u,p)) => r as (u,p)
+
+  lazy val gh = wrap_creds(:/("github.com") / "api" / "v2" / "json")
+
+  def check_creds = try {
+      val fp = System.getProperty("user.home") + "/.giter8-credentials"
+      val p = new java.util.Properties()
+      p.load(new java.io.FileInputStream(fp))
+      val (t, u, ps) = (p.getProperty("token"),
+                        p.getProperty("username"),
+                        p.getProperty("password"))
+      if (t != null && ! t.isEmpty) Some(u + "/token", t)
+      else Some(u, ps)
+    } catch { case _ => None }
+
+  def wrap_creds(r: Request) = {
+    check_creds match {
+      case Some((u,p)) => r as_! (u,p)
       case None => r
     }
   }
@@ -36,8 +47,8 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
   def http = new Http {
     override def make_logger = new dispatch.Logger {
       val jdklog = java.util.logging.Logger.getLogger("dispatch")
-      def info(msg: String, items: Any*) { 
-        jdklog.info(msg.format(items: _*)) 
+      def info(msg: String, items: Any*) {
+        jdklog.info(msg.format(items: _*))
       }
     }
   }
