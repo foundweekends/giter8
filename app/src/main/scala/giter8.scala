@@ -24,7 +24,14 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
   
   class Exit(val code: Int) extends xsbti.Exit
   
-  val gh = :/("github.com") / "api" / "v2" / "json"
+  lazy val gh = WithCredentials(:/("github.com") / "api" / "v2" / "json")
+  
+  private def WithCredentials(r: Request) = {
+    SavedCreds() match {
+      case Some((u,p)) => r as (u,p)
+      case None => r
+    }
+  }
 
   def http = new Http {
     override def make_logger = new dispatch.Logger {
