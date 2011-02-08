@@ -39,7 +39,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
 
   def wrap_creds(r: Request) = {
     check_creds match {
-      case Some((u,p)) => r as_! (u,p)
+      case Some((u,p)) => (r as_! (u,p)).secure
       case None => r
     }
   }
