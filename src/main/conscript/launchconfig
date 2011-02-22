@@ -1,0 +1,12 @@
+[app]
+  version: 0.2.0
+  org: net.databinder
+  name: giter8
+  class: giter8.Giter8
+[scala]
+  version: 2.8.1
+[repositories]
+  local
+  maven-local
+  scala-tools-releases
+  maven-central
