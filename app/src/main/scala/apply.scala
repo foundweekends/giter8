@@ -39,14 +39,18 @@ trait Apply { self: Giter8 =>
 
   def defaults(repo: String, default_props: Iterable[(String, String)]) = 
     default_props.map { case (_, hash) => 
-      http(show(repo, hash) >> { stm =>
-        val p = new java.util.Properties
-        p.load(stm)
-        (Map.empty[String, String] /: p.propertyNames) { (m, k) =>
-          m + (k.toString -> p.getProperty(k.toString))
-        }
-      } )
+      http(show(repo, hash) >> readProps _ )
     }.headOption getOrElse Map.empty[String, String]
+
+  def readProps(stm: java.io.InputStream) = {
+    import scala.collection.JavaConversions._
+    val p = new java.util.Properties
+    p.load(stm)
+    stm.close()
+    (Map.empty[String, String] /: p.propertyNames) { (m, k) =>
+      m + (k.toString -> p.getProperty(k.toString))
+    }
+  }
 
   def interact(params: Map[String, String]) = {
     val (desc, others) = params partition { case (k,_) => k == "description" }

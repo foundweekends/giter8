@@ -24,23 +24,19 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
 
   class Exit(val code: Int) extends xsbti.Exit
 
-  lazy val gh = wrap_creds(:/("github.com") / "api" / "v2" / "json")
+  lazy val gh = withCredentials(:/("github.com").secure / "api" / "v2" / "json")
 
-  def check_creds = try {
-      val fp = System.getProperty("user.home") + "/.gh"
-      val p = new java.util.Properties()
-      p.load(new java.io.FileInputStream(fp))
-      val (t, u, ps) = (p.getProperty("token"),
-                        p.getProperty("username"),
-                        p.getProperty("password"))
-      if (t != null && ! t.isEmpty) Some(u + "/token", t)
-      else Some(u, ps)
-    } catch { case _ => None }
+  def withCredentials(req: Request) =
+    credentials map { case (user, pass) => req as_! (user, pass) } getOrElse req
 
-  def wrap_creds(r: Request) = {
-    check_creds match {
-      case Some((u,p)) => (r as_! (u,p)).secure
-      case None => r
+  def credentials = {
+    val props = Some(new java.io.File(System.getProperty("user.home"), ".gh")) filter {
+      _.exists
+    } map { f => readProps(new java.io.FileInputStream(f)) } getOrElse Map.empty
+    props.get("username") flatMap { user =>
+      props.get("token") map { token => (user + "/token", token) } orElse {
+        props.get("password") map { pass => (user, pass) }
+      }
     }
   }
 
