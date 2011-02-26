@@ -27,7 +27,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
   lazy val gh = wrap_creds(:/("github.com") / "api" / "v2" / "json")
 
   def check_creds = try {
-      val fp = System.getProperty("user.home") + "/.giter8-credentials"
+      val fp = System.getProperty("user.home") + "/.gh"
       val p = new java.util.Properties()
       p.load(new java.io.FileInputStream(fp))
       val (t, u, ps) = (p.getProperty("token"),
