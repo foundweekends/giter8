@@ -1,0 +1,5 @@
+Support for authorized access to private repositories, contributed by
+[KirinDave][kd] and [tlockney][tl].
+
+[kd]: https://github.com/KirinDave
+[tl]: https://github.com/tlockney

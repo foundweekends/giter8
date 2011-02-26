@@ -117,6 +117,15 @@ them on the command line and skip the interaction:
 Any parameters that are not supplied will be assigned their default
 values.
 
+Private Repositories
+--------------------
+
+Giter8 accesses GitHub anonymously by default, but for private
+templates you can supply a name and token or password in `~/.gh`:
+
+    username=yourusername
+    token=yourtoken
+
 Making your own templates
 -------------------------
 
