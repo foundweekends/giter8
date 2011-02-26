@@ -4,7 +4,7 @@ trait Credentials { self: Apply =>
   def withCredentials(req: dispatch.Request) =
     credentials map { case (user, pass) => req as_! (user, pass) } getOrElse req
 
-  def credentials = {
+  lazy val credentials = {
     val props = Some(new java.io.File(System.getProperty("user.home"), ".gh")) filter {
       _.exists
     } map { f => readProps(new java.io.FileInputStream(f)) } getOrElse Map.empty
