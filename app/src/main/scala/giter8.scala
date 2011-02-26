@@ -1,6 +1,6 @@
 package giter8
 
-class Giter8 extends xsbti.AppMain with Discover with Apply {
+class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
   import dispatch._
 
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
@@ -25,20 +25,6 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
   class Exit(val code: Int) extends xsbti.Exit
 
   lazy val gh = withCredentials(:/("github.com").secure / "api" / "v2" / "json")
-
-  def withCredentials(req: Request) =
-    credentials map { case (user, pass) => req as_! (user, pass) } getOrElse req
-
-  def credentials = {
-    val props = Some(new java.io.File(System.getProperty("user.home"), ".gh")) filter {
-      _.exists
-    } map { f => readProps(new java.io.FileInputStream(f)) } getOrElse Map.empty
-    props.get("username") flatMap { user =>
-      props.get("token") map { token => (user + "/token", token) } orElse {
-        props.get("password") map { pass => (user, pass) }
-      }
-    }
-  }
 
   def http = new Http {
     override def make_logger = new dispatch.Logger {
