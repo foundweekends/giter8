@@ -11,7 +11,7 @@ trait Apply { self: Giter8 =>
   val Param = """^--(\S+)=(.+)$""".r
 
   def inspect(repo: String, params: Iterable[String]) =
-    repo_files(repo).right.flatMap { repo_files =>
+    repoFiles(repo).right.flatMap { repo_files =>
       val (default_props, templates) = repo_files.partition { 
         case (name, _) => name == "default.properties" 
       }
@@ -29,7 +29,7 @@ trait Apply { self: Giter8 =>
       write(repo, templates, parameters, base)
     }
 
-  def repo_files(repo: String) = try { Right(for {
+  def repoFiles(repo: String) = try { Right(for {
     blobs <- http(gh / "blob" / "all" / repo / "master" ># ('blobs ? obj))
     JField(name, JString(hash)) <- blobs
     m <- Root.findFirstMatchIn(name)
