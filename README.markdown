@@ -11,60 +11,23 @@ can produce output for any purpose.
 Installation
 ---------
 
-If you haven't already setup sbt, you need to [go do that][sbt]. Then...
+You can install giter8 and other Scala command line tools with
+[conscript][cs]. This will setup conscript in `~/bin/cs`:
 
-[sbt]: http://code.google.com/p/simple-build-tool/wiki/Setup
+    curl https://github.com/n8han/conscript/raw/master/setup.sh | sh
 
-Make sure that the `sbt` is on your path. You should be able to run it
-from any directory and be prompted to create a new project (and then abort).
+If `~/bin` is on your path, you can then install (or upgrade) giter8:
 
-You need to create a new `g8` script also on your executable path. For 
-unix-like shells, it should contain:
+    cs n8han/giter8
 
-    #!/bin/sh
-    sbt @.giter8.launchconfig "$@"
-
-And it should be executable:
-
-    $ chmod a+x g8
-
-The parameter passed to sbt tells its launcher to use the given launch
-configuration instead of starting sbt itself. The launcher will look for the
-configuration in several places; one of these is your home directory, and
-giter8's launch configuration is prefixed with a dot so that you can store
-it there without it being all up in your face.
-
-Here is a launch configuration for the current version of
-giter8.  You can paste it into a file `~/.giter8.launchconfig`
-
-    [app]
-      version: 0.2.0
-      org: net.databinder
-      name: giter8
-      class: giter8.Giter8
-    [scala]
-      version: 2.8.1
-    [repositories]
-      local
-      maven-local
-      scala-tools-releases
-      maven-central
-    [boot]
-      directory: /path/to/home/.giter8/boot
-
-There is one thing you need to change in it, however! The last line
-specifies the "boot" directory, where versions of giter8 will be
-downloaded and stored. You may keep these anywhere that your user
-account is permitted to write; we recommend using `.giter8/boot`
-under your home directory. Note that *tilde (~) is not supported* by the launcher
-so you'll need to enter the full path.
+[cs]: https://github.com/n8han/conscript#readme
 
 To make sure everything is working, try running `g8` with no
-parameters. It should download giter8 and its dependencies, then print
+parameters. This should download giter8 and its dependencies, then print
 a usage message.
 
-When it's time to upgrade to a new version of giter8, you'll only need
-to adjust the version number in `.giter8.launcher`.
+When it's time to upgrade to a new version of giter8, just run the
+same `cs` command again.
 
 Giter8 is also installable with the OS X package manager [Homebrew][]:
 

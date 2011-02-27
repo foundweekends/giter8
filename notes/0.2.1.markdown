@@ -3,3 +3,9 @@ Support for authorized access to private repositories, contributed by
 
 [kd]: https://github.com/KirinDave
 [tl]: https://github.com/tlockney
+
+Note: giter8 can now be installed and upgraded with [conscript][cs]:
+
+    cs n8han/giter8
+
+[cs]: https://github.com/n8han/conscript#readme
