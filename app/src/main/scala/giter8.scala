@@ -1,13 +1,13 @@
 package giter8
 
-class Giter8 extends xsbti.AppMain with Discover with Apply {
+class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
   import dispatch._
 
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   val RemoteTemplates = """^-(l|-list)$""".r
-  
+
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
-  
+
   def run(config: xsbti.AppConfiguration) =
     (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Repo(user, proj))) => inspect("%s/%s.g8".format(user, proj), params)
@@ -21,16 +21,16 @@ class Giter8 extends xsbti.AppMain with Discover with Apply {
       println("\n%s\n" format message)
       new Exit(0)
     })
-  
+
   class Exit(val code: Int) extends xsbti.Exit
-  
-  val gh = :/("github.com") / "api" / "v2" / "json"
+
+  lazy val gh = withCredentials(:/("github.com").secure / "api" / "v2" / "json")
 
   def http = new Http {
     override def make_logger = new dispatch.Logger {
       val jdklog = java.util.logging.Logger.getLogger("dispatch")
-      def info(msg: String, items: Any*) { 
-        jdklog.info(msg.format(items: _*)) 
+      def info(msg: String, items: Any*) {
+        jdklog.info(msg.format(items: _*))
       }
     }
   }

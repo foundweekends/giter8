@@ -7,75 +7,45 @@ through the [Simple Build Tool launcher][launcher], but it
 can produce output for any purpose.
 
 [launcher]: http://code.google.com/p/simple-build-tool/wiki/GeneralizedLauncher
- 
+
 Installation
 ---------
 
-If you haven't already setup sbt, you need to [go do that][sbt]. Then...
+You can install giter8 and other Scala command line tools with
+[conscript][cs]. This will setup conscript in `~/bin/cs`:
 
-[sbt]: http://code.google.com/p/simple-build-tool/wiki/Setup
+    curl https://github.com/n8han/conscript/raw/master/setup.sh | sh
 
-Make sure that the `sbt` is on your path. You should be able to run it
-from any directory and be prompted to create a new project (and then abort).
+If `~/bin` is on your path, you can then install (or upgrade) giter8:
 
-You need to create a new `g8` script also on your executable path. For 
-unix-like shells, it should contain:
+    cs n8han/giter8
 
-    #!/bin/sh
-    sbt @.giter8.launchconfig "$@"
-
-And it should be executable:
-
-    $ chmod a+x g8
-
-The parameter passed to sbt tells its launcher to use the given launch
-configuration instead of starting sbt itself. The launcher will look for the
-configuration in several places; one of these is your home directory, and
-giter8's launch configuration is prefixed with a dot so that you can store
-it there without it being all up in your face.
-
-Here is a launch configuration for the current version of
-giter8.  You can paste it into a file `~/.giter8.launchconfig`
-
-    [app]
-      version: 0.1.1
-      org: net.databinder
-      name: giter8
-      class: giter8.Giter8
-    [scala]
-      version: 2.8.1
-    [repositories]
-      local
-      maven-local
-      scala-tools-releases
-      maven-central
-      clapper: http://maven.clapper.org/
-      databinder: http://databinder.net/repo/
-    [boot]
-      directory: /path/to/home/.giter8/boot
-
-There is one thing you need to change in it, however! The last line
-specifies the "boot" directory, where versions of giter8 will be
-downloaded and stored. You may keep these anywhere that your user
-account is permitted to write; we recommend using `.giter8/boot`
-under your home directory. Note that *tilde (~) is not supported* by the launcher
-so you'll need to enter the full path.
+[cs]: https://github.com/n8han/conscript#readme
 
 To make sure everything is working, try running `g8` with no
-parameters. It should download giter8 and its dependencies, then print
+parameters. This should download giter8 and its dependencies, then print
 a usage message.
 
-When it's time to upgrade to a new version of giter8, you'll only need
-to adjust the version number in `.giter8.launcher`.
+When it's time to upgrade to a new version of giter8, just run the
+same `cs` command again.
+
+Giter8 is also installable with the OS X package manager [Homebrew][]:
+
+    $ brew update && brew install giter8
+
+[Homebrew]: http://mxcl.github.com/homebrew/
 
 Usage
 -----
 
 Template repositories must reside on github and be named with the
-suffix ".g8". We're keeping a [list of them on the wiki][wiki] (but a
-template doesn't have to be listed there in order to work). So for
-example, the repo [softprops/unfiltered.g8][uft] is a giter8
-template. You can apply it from the command line like so:
+suffix ".g8". We're keeping a [list of templates on the wiki][wiki],
+and you can query github to list all templates with a ".g8" suffix
+from the command line:
+
+    $ g8 --list
+
+To apply a template, for example, [softprops/unfiltered.g8][uft]:
 
 [uft]: http://github.com/softprops/unfiltered.g8
 [wiki]: http://github.com/n8han/giter8/wiki/giter8-templates
@@ -91,7 +61,7 @@ repository and queries github for the project's template
 parameters. You'll be prompted for each parameter, with its default
 value in square brackets:
 
-    name [My Web Project]: 
+    name [My Web Project]:
 
 Enter your own value or press enter to accept the default. After all
 the values have been supplied, giter8 fetches the templates, applies
@@ -110,17 +80,14 @@ them on the command line and skip the interaction:
 Any parameters that are not supplied will be assigned their default
 values.
 
-You can discover available repositories right from the command line using the command line
-flags `-l` or `--list`.
+Private Repositories
+--------------------
 
-For a full template listing, don't supply any arguments to this flag
+Giter8 accesses GitHub anonymously by default, but for private
+templates you can supply a name and token or password in `~/.gh`:
 
-    g8 -l
-    
-For a filtered query supply your query as one or more terms concatenated with a `+` character like so:
-
-    g8 -l android+sbt
-
+    username=yourusername
+    token=yourtoken
 
 Making your own templates
 -------------------------
@@ -157,12 +124,15 @@ creates a directory based off that name (with spaces and capitals
 replaced) that will contain the template output. If no name field is
 specified in the template, g8's output goes to the user's current
 working directory. In both cases, directories nested under the
-template's source directory are reproduced in its output.
+template's source directory are reproduced in its output. File and
+directory names also participate in template expansion, e.g.
+
+    src/main/g8/src/main/scala/$classname$.scala
 
 If you enter sbt's interactive mode in the base directory of a
 template project, the action "sbt-test" will apply the template in the
 default output directory (under `target/g8`) and run `sbt update
-compile` for *that* project in a forked process. This is a good sanity
+test` for *that* project in a forked process. This is a good sanity
 check for templates that are supposed to produce sbt projects.
 
 But what if your template is not for an sbt project? Such as:

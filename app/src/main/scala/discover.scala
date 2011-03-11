@@ -7,7 +7,7 @@ trait Discover { self: Giter8 =>
 
   val RepoNamed = """(\S+)\.g8""".r
   def discover(query: Option[String]) =
-    remote_templates(query).right.flatMap { templates =>
+    remoteTemplates(query).right.flatMap { templates =>
       templates match {
         case Nil => Right("No templates matching %s" format query.get)
         case _ => Right(templates.sortBy { _.name } map { t =>
@@ -15,8 +15,8 @@ trait Discover { self: Giter8 =>
         } mkString("\n"))
       }
     }
-  
-  def remote_templates(query: Option[String]) = try { Right(for {
+
+  def remoteTemplates(query: Option[String]) = try { Right(for {
     repos <- http(repoSearch(query) ># ('repositories ? ary))
     JObject(fields) <- repos
     JField("name", JString(repo)) <- fields
@@ -28,10 +28,6 @@ trait Discover { self: Giter8 =>
   }
 
   case class Template(user: String, name: String, desc: String)
-  
-  def repoSearch(query: Option[String]) = gh / "repos" / "search" / (query match {
-    case Some(n) =>
-      "%s+g8".format(n).replace("+", "%20")
-    case _ => "g8"
-  })
+
+  def repoSearch(query: Option[String]) = gh / "repos" / "search" / query.getOrElse("g8")
 }
