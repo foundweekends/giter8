@@ -33,6 +33,19 @@ Giter8 is also installable with the OS X package manager [Homebrew][]:
 
     $ brew update && brew install giter8
 
+=======
+
+To make sure everything is working, try running `g8` with no
+parameters. This should download giter8 and its dependencies, then print
+a usage message.
+
+When it's time to upgrade to a new version of giter8, just run the
+same `cs` command again.
+
+Giter8 is also installable with the OS X package manager [Homebrew][]:
+
+    $ brew update && brew install giter8
+
 [Homebrew]: http://mxcl.github.com/homebrew/
 
 Usage
