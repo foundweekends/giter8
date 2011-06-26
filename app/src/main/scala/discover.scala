@@ -15,7 +15,7 @@ trait Discover { self: Giter8 =>
         } mkString("\n"))
       }
     }
-  
+
   def remoteTemplates(query: Option[String]) = try { Right(for {
     repos <- http(repoSearch(query) ># ('repositories ? ary))
     JObject(fields) <- repos
@@ -28,6 +28,6 @@ trait Discover { self: Giter8 =>
   }
 
   case class Template(user: String, name: String, desc: String)
- 
+
   def repoSearch(query: Option[String]) = gh / "repos" / "search" / query.getOrElse("g8")
 }

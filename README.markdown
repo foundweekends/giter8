@@ -7,7 +7,7 @@ through the [Simple Build Tool launcher][launcher], but it
 can produce output for any purpose.
 
 [launcher]: http://code.google.com/p/simple-build-tool/wiki/GeneralizedLauncher
- 
+
 Installation
 ---------
 
@@ -61,7 +61,7 @@ repository and queries github for the project's template
 parameters. You'll be prompted for each parameter, with its default
 value in square brackets:
 
-    name [My Web Project]: 
+    name [My Web Project]:
 
 Enter your own value or press enter to accept the default. After all
 the values have been supplied, giter8 fetches the templates, applies
