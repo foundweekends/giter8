@@ -10,35 +10,40 @@ trait Apply { self: Giter8 =>
   val Root = "^src/main/g8/(.+)$".r
   val Param = """^--(\S+)=(.+)$""".r
   val Text = """^(text|application)/.+""".r
+  val DefaultBranch = "master"
 
-  def inspect(repo: String, params: Iterable[String]) =
-    repoFiles(repo).right.flatMap { repo_files =>
-      val (default_props, templates) = repo_files.partition {
-        case (name, _, _) => name == "default.properties"
+  def inspect(repo: String, branch: Option[String], params: Iterable[String]) =
+    repoFiles(repo, branch.getOrElse(DefaultBranch)).right.flatMap { repo_files =>
+      repo_files match {
+         case Nil => Left("Unable to find github repository: %s (%s)" format(repo, branch.getOrElse(DefaultBranch)))
+         case xs =>
+           val (default_props, templates) = xs.partition {
+             case (name, _, _) => name == "default.properties"
+           }
+           val default_params = defaults(repo, default_props)
+           val parameters =
+           if (params.isEmpty) interact(default_params)
+             else (defaults(repo, default_props) /: params) {
+               case (map, Param(key, value)) if map.contains(key) =>
+                 map + (key -> value)
+               case (map, Param(key, _)) =>
+                 println("Ignoring unrecognized parameter: " + key)
+               map
+             }
+           val base = new File(parameters.get("name").map(normalize).getOrElse("."))
+           write(repo, templates, parameters, base)
       }
-      val default_params = defaults(repo, default_props)
-      val parameters =
-        if (params.isEmpty) interact(default_params)
-        else (defaults(repo, default_props) /: params) {
-          case (map, Param(key, value)) if map.contains(key) =>
-            map + (key -> value)
-          case (map, Param(key, _)) =>
-            println("Ignoring unrecognized parameter: " + key)
-            map
-        }
-      val base = new File(parameters.get("name").map(normalize).getOrElse("."))
-      write(repo, templates, parameters, base)
     }
 
-  def repoFiles(repo: String) = try { Right(for {
-    blobs <- http(gh / "blob" / "full" / repo / "master" ># ('blobs ? ary))
+  def repoFiles(repo: String, branch: String) = try { Right(for {
+    blobs <- http(gh / "blob" / "full" / repo / branch ># ('blobs ? ary))
     JObject(blob) <- blobs
     JField("name", JString(name)) <- blob
     JField("sha", JString(hash)) <- blob
     JField("mime_type", JString(mime)) <- blob
     m <- Root.findFirstMatchIn(name)
   } yield (m.group(1), hash, mime)) } catch {
-    case StatusCode(404, _) => Left("Unable to find github repository: %s" format repo)
+    case StatusCode(404, _) => Left("Unable to find github repository: %s (%s)" format(repo, branch))
   }
 
   def defaults(repo: String, default_props: Iterable[(String, String, String)]) =
