@@ -28,7 +28,7 @@ trait Apply { self: Giter8 =>
                  map + (key -> value)
                case (map, Param(key, _)) =>
                  println("Ignoring unrecognized parameter: " + key)
-               map
+                 map
              }
            val base = new File(parameters.get("name").map(normalize).getOrElse("."))
            write(repo, templates, parameters, base)
