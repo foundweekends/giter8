@@ -22,7 +22,7 @@ trait Apply { self: Giter8 =>
            }
            val default_params = defaults(repo, default_props)
            val parameters =
-           if (params.isEmpty) interact(default_params)
+             if (params.isEmpty) interact(default_params)
              else (defaults(repo, default_props) /: params) {
                case (map, Param(key, value)) if map.contains(key) =>
                  map + (key -> value)

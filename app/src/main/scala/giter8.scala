@@ -3,15 +3,18 @@ package giter8
 class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
   import dispatch._
 
-  val Repo = """^(\S+)/(\S+?)(?:\.g8)?(#\S+)?$""".r
+  val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
+  val Branch = """^-(b|-branch)$""".r
   val RemoteTemplates = """^-(l|-list)$""".r
 
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
   def run(config: xsbti.AppConfiguration) =
     (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
-      case (params, Array(Repo(user, proj, branch))) =>
-        inspect("%s/%s.g8".format(user, proj), Option(branch).map(_ drop(1)), params)
+      case (params, Array(Repo(user, proj))) =>
+        inspect("%s/%s.g8".format(user, proj), None, params)
+      case (params, Array(Repo(user, proj), Branch(_), branch)) =>
+        inspect("%s/%s.g8".format(user, proj), Some(branch), params)
       case (_, Array(RemoteTemplates(_), query)) => discover(Some(query))
       case (_, Array(RemoteTemplates(_))) => discover(None)
       case _ => Left(usage)
@@ -41,7 +44,8 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
                 |OPTIONS
                 |    -l, --list
                 |        List current giter8 templates on github.
-                |
+                |    -b, --branch
+                |        Resolves a template within a given branch
                 |    --paramname=paramvalue
                 |        Set given parameter value and bypass interaction.
                 |
@@ -49,7 +53,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
                 |    g8 n8han/giter8
                 |
                 |Apply template from a remote branch
-                |    g8 n8han/giter8#branch
+                |    g8 n8han/giter8 -b some-branch
                 |
                 |Apply given name parameter and use defaults for all others.
                 |    g8 n8han/giter8 --name=template-test

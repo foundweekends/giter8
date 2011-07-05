@@ -2,5 +2,5 @@
 
 * support for resolving templates hosted on a branch of a github repository
 
-    g8 user/repo      // will fetch from the master branch of users's repo
-    g8 user/repo#foo  // will fetch template from the `foo` branch of user's repo
+     g8 user/repo         // will fetch from the master branch of users's repo
+     g8 user/repo -b foo  // will fetch template from the `foo` branch of user's repo
