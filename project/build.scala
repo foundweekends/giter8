@@ -7,7 +7,7 @@ object Builds extends sbt.Build {
     version := "0.2.3-SNAPSHOT",
     organization := "net.databinder",
     scalaVersion := "2.9.1",
-    crossScalaVersions := Seq("2.9.1"),
+    crossScalaVersions := Seq("2.9.1", "2.8.1"),
     publishArtifact in (Compile, packageBin) := true,
     publishArtifact in (Test, packageBin) := false,
     publishArtifact in (Compile, packageDoc) := false,
@@ -22,9 +22,13 @@ object Builds extends sbt.Build {
   )
   
   // posterous title needs to be giter8, so both app and root are named giter8
-  lazy val root = Project("giter8", file("."))
-  lazy val app = Project("giter8", file("app"),
+  lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
+      name := "giter8" 
+    )) aggregate(app)
+  lazy val app = Project("app", file("app"),
+    settings = buildSettings ++ Seq(
+      name := "giter8",
       libraryDependencies ++= { 
         Seq("org.scala-tools.sbt" % "launcher-interface" % "0.7.4" % "provided",
             "net.databinder" %% "dispatch-lift-json" % "0.8.5",
