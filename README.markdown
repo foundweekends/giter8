@@ -132,9 +132,11 @@ directory names also participate in template expansion, e.g.
     src/main/g8/src/main/scala/$classname$.scala
 
 If you enter sbt's interactive mode in the base directory of a
-template project, the action "g8-sbt-test" will apply the template in the
-default output directory (under `target/g8`) and run `sbt update test` 
-for *that* project in a forked process. This is a good sanity
+template project, the action "g8-test" will apply the template in the
+default output directory (under `target/sbt-test`) and run the scripted
+test for *that* project in a forked process.
+You can supply the test scripted as `src/test/g8/test`, otherwise `>test`
+is used. This is a good sanity
 check for templates that are supposed to produce sbt projects.
 
 But what if your template is not for an sbt project?

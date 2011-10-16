@@ -38,8 +38,11 @@ object Builds extends sbt.Build {
   lazy val plugin = Project("giter8-plugin", file("plugin"),
     settings = buildSettings ++ Seq(
       sbtPlugin := true,
-      libraryDependencies <++= (sbtDependency) { sd =>
-        Seq(sd, "org.antlr" % "stringtemplate" % "3.2.1")
+      libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
+        Seq(sd,
+            "org.antlr" % "stringtemplate" % "3.2.1",
+            "org.scala-tools.sbt" %% "scripted-plugin" % sv
+            )
       }
     ))  
 }
