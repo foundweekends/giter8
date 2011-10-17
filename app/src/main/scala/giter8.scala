@@ -36,6 +36,9 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
       def info(msg: String, items: Any*) {
         jdklog.info(msg.format(items: _*))
       }
+      def warn(msg: String, items: Any*) {
+        jdklog.warning(msg.format(items: _*))
+      }
     }
   }
   def usage = """Usage: g8 [TEMPLATE] [OPTION]...
