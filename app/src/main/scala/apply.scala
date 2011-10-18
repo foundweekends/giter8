@@ -6,6 +6,7 @@ trait Apply { self: Giter8 =>
   import net.liftweb.json.JsonAST._
   import scala.collection.JavaConversions._
   import java.io.{File,FileWriter,FileOutputStream}
+  import scala.util.control.Exception.allCatch
 
   val Root = "^src/main/g8/(.+)$".r
   val Param = """^--(\S+)=(.+)$""".r
@@ -18,7 +19,7 @@ trait Apply { self: Giter8 =>
          case Nil => Left("Unable to find github repository: %s (%s)" format(repo, branch.getOrElse(DefaultBranch)))
          case xs =>
            val (default_props, templates) = xs.partition {
-             case (name, _, _) => name == "default.properties"
+             case (name, _, _, _) => name == "default.properties"
            }
            val default_params = defaults(repo, default_props)
            val parameters =
@@ -41,13 +42,14 @@ trait Apply { self: Giter8 =>
     JField("name", JString(name)) <- blob
     JField("sha", JString(hash)) <- blob
     JField("mime_type", JString(mime)) <- blob
+    JField("mode", JString(mode)) <- blob
     m <- Root.findFirstMatchIn(name)
-  } yield (m.group(1), hash, mime)) } catch {
+  } yield (m.group(1), hash, mime, mode)) } catch {
     case StatusCode(404, _) => Left("Unable to find github repository: %s (%s)" format(repo, branch))
   }
 
-  def defaults(repo: String, default_props: Iterable[(String, String, String)]) =
-    default_props.map { case (_, hash, _) =>
+  def defaults(repo: String, default_props: Iterable[(String, String, String, String)]) =
+    default_props.map { case (_, hash, _, _) =>
       http(show(repo, hash) >> readProps _ )
     }.headOption getOrElse Map.empty[String, String]
 
@@ -87,8 +89,8 @@ trait Apply { self: Giter8 =>
     }
   }
 
-  def write(repo: String, templates: Iterable[(String, String, String)], parameters: Map[String,String], base: File) = {
-    templates foreach { case (name, hash, mime) =>
+  def write(repo: String, templates: Iterable[(String, String, String, String)], parameters: Map[String,String], base: File) = {
+    templates foreach { case (name, hash, mime, mode) =>
       import org.clapper.scalasti.StringTemplate
       val f = new File(base, new StringTemplate(name).setAttributes(parameters).toString)
       if (f.exists)
@@ -97,7 +99,6 @@ trait Apply { self: Giter8 =>
         f.getParentFile.mkdirs()
         mime match {
           case Text(_) =>
-            val fw = new FileWriter(f)
             http(show(repo, hash) >- { in =>
               val fw = new FileWriter(f)
               fw.write(new StringTemplate(in).setAttributes(parameters).toString)
@@ -119,9 +120,16 @@ trait Apply { self: Giter8 =>
               }
             })
         }
+        setFileMode(f, mode)
       }
     }
     Right("Applied %s in %s" format (repo, base.toString))
+  }
+  
+  def setFileMode(f: File, mode: String) = allCatch opt {
+    if ((mode(3).toString.toInt & 0x4) > 0) {
+      f.setExecutable(true)
+    }
   }
   def normalize(s: String) = s.toLowerCase.replaceAll("""\s+""", "-")
   def show(repo: String, hash: String) = gh / "blob" / "show" / repo / hash
