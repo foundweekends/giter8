@@ -1,1 +1,10 @@
-* switched to sbt 0.11
+## new features
+* giter8-plugin for sbt 0.11 adds `g8-test` task, which runs `src/test/g8/test` using scripted framework.
+
+## bug fixes and minor updates
+* switched to sbt 0.11.
+* support for copying permission bits. [#24][24]
+* fixes charset issue. [#26][26]
+
+  [24]: https://github.com/n8han/giter8/issues/24
+  [26]: https://github.com/n8han/giter8/issues/26
