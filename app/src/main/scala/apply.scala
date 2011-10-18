@@ -92,33 +92,41 @@ trait Apply { self: Giter8 =>
   def write(repo: String, templates: Iterable[(String, String, String, String)], parameters: Map[String,String], base: File) = {
     templates foreach { case (name, hash, mime, mode) =>
       import org.clapper.scalasti.StringTemplate
+      import java.nio.charset.MalformedInputException
       val f = new File(base, new StringTemplate(name).setAttributes(parameters).toString)
       if (f.exists)
         println("Skipping existing file: %s" format f.toString)
       else {
         f.getParentFile.mkdirs()
-        mime match {
+        (mime match {
           case Text(_) =>
-            http(show(repo, hash) >- { in =>
-              val fw = new FileWriter(f)
-              fw.write(new StringTemplate(in).setAttributes(parameters).toString)
-              fw.close()
-            })
-          case binary =>
-            http(show(repo, hash) >> { is =>
-              use(is) { in =>
-                use(new FileOutputStream(f)) { out =>
-                  def consume(buf: Array[Byte]): Unit =
-                    in.read(buf) match {
-                      case -1 => ()
-                      case n =>
-                         out.write(buf, 0, n)
-                         consume(buf)
-                    }
-                  consume(new Array[Byte](1024))
+            try {
+              http(show(repo, hash) >- { in =>
+                use (new FileWriter(f)) { fw =>
+                  fw.write(new StringTemplate(in).setAttributes(parameters).toString)
+                  Some(())
                 }
+              })
+            }
+            catch {
+              case e: MalformedInputException => None
+            }
+          case binary => None
+        }) getOrElse {
+          http(show(repo, hash) >> { is =>
+            use(is) { in =>
+              use(new FileOutputStream(f)) { out =>
+                def consume(buf: Array[Byte]): Unit =
+                  in.read(buf) match {
+                    case -1 => ()
+                    case n =>
+                       out.write(buf, 0, n)
+                       consume(buf)
+                  }
+                consume(new Array[Byte](1024))
               }
-            })
+            }
+          })
         }
         setFileMode(f, mode)
       }
