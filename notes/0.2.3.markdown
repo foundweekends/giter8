@@ -5,6 +5,9 @@
 * switched to sbt 0.11.
 * support for copying permission bits. [#24][24]
 * fixes charset issue. [#26][26]
+* changes github credential storage to `git config --global` or env vars. see [local github config][1]. [#10][10]
 
+  [1]: https://github.com/blog/180-local-github-config
   [24]: https://github.com/n8han/giter8/issues/24
   [26]: https://github.com/n8han/giter8/issues/26
+  [10]: https://github.com/n8han/giter8/issues/10
