@@ -17,9 +17,11 @@ object Builds extends sbt.Build {
       if(v endsWith "-SNAPSHOT") Some("Scala Tools Nexus" at nexus + "snapshots/")
       else Some("Scala Tools Nexus" at nexus + "releases/")
     },
+    resolvers += Resolver.url("databinder repo", url("http://databinder.net/repo"))(pattern),
     credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),    
     publishMavenStyle := true
   )
+  val pattern = Patterns(false, "[organisation]/[module]/[revision]/[type]s/[module](-[classifier]).[ext]")
   
   // posterous title needs to be giter8, so both app and root are named giter8
   lazy val root = Project("root", file("."),
@@ -29,8 +31,9 @@ object Builds extends sbt.Build {
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ Seq(
       name := "giter8",
-      libraryDependencies ++= { 
-        Seq("org.scala-tools.sbt" % "launcher-interface" % "0.7.4" % "provided",
+      libraryDependencies <++= (scalaVersion) { (sv) =>  
+        Seq(if (sv == "2.8.1") "org.scala-tools.sbt" % "launcher-interface" % "0.7.4" % "provided" 
+            else "org.scala-tools.sbt" %% "launcher-interface" % "0.11.0" % "provided",
             "net.databinder" %% "dispatch-lift-json" % "0.8.5",
             "org.clapper" %% "scalasti" % "0.5.5")
       }
