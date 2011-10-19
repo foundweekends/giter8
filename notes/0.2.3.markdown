@@ -1,15 +1,17 @@
 ## new features
-* giter8-plugin for sbt 0.11 adds `g8-test` task, which runs `src/test/g8/test` using scripted framework.
-* a directory named `$package$` expands out to package dir structure (for example, `net.databinder` becomes `net/databinder`). [#19][19]
+- giter8-plugin for sbt 0.11 adds `g8-test` task, which runs `src/test/g8/test` using scripted framework.
+- a directory named `$package$` expands out to package dir structure (for example, `net.databinder` becomes `net/databinder`). [#19][19]
+- files matching the patterns listed in `verbatim` are copied without processing (for example, `verbatim: *.js` leaves js files alone). [#21][21]
 
 ## bug fixes and minor updates
-* switched to sbt 0.11.
-* support for copying permission bits. [#24][24]
-* fixes charset issue. [#26][26]
-* changes github credential storage to `git config --global` or env vars. see [local github config][1]. [#10][10]
+- switched to sbt 0.11.
+- support for copying permission bits. [#24][24]
+- fixes charset issue. [#26][26]
+- changes github credential storage to `git config --global` or env vars. see [local github config][1]. [#10][10]
 
   [1]: https://github.com/blog/180-local-github-config
+  [10]: https://github.com/n8han/giter8/issues/10
   [19]: https://github.com/n8han/giter8/issues/19
+  [21]: https://github.com/n8han/giter8/issues/21
   [24]: https://github.com/n8han/giter8/issues/24
   [26]: https://github.com/n8han/giter8/issues/26
-  [10]: https://github.com/n8han/giter8/issues/10

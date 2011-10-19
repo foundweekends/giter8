@@ -130,6 +130,15 @@ template's source directory are reproduced in its output. File and
 directory names also participate in template expansion, e.g.
 
     src/main/g8/src/main/scala/$classname$.scala
+    
+The `package` field, if defined, is assumed to be the package name
+of the user's source. A directory named `$package$` expands out to
+package directory structure. For example, `net.databinder` becomes
+`net/databinder`.
+
+The `verbatim` field, if defined, is assumed to be the space delimited
+list of file patterns such as `*.html *.js`. Files matching `verbatim`
+pattern are excluded from string template processing.
 
 If you enter sbt's interactive mode in the base directory of a
 template project, the action "g8-test" will apply the template in the

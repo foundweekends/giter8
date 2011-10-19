@@ -103,6 +103,7 @@ trait Apply { self: Giter8 =>
       else {
         f.getParentFile.mkdirs()
         (mime match {
+          case x if verbatim(f, parameters) => None
           case Text(_) =>
             try {
               http(show(repo, hash) >- { in =>
@@ -138,6 +139,16 @@ trait Apply { self: Giter8 =>
     Right("Applied %s in %s" format (repo, base.toString))
   }
   
+  def verbatim(file: File, parameters: Map[String,String]): Boolean =
+    parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
+  def globMatch(file: File, patterns: Seq[String]): Boolean =
+    patterns exists { globRegex(_).findFirstIn(file.getName).isDefined }
+  def globRegex(pattern: String) = "^%s$".format(pattern flatMap {
+    case '*' => """.*"""
+    case '?' => """."""
+    case '.' => """\."""
+    case x => x.toString
+  }).r  
   def setFileMode(f: File, mode: String) = allCatch opt {
     if ((mode(3).toString.toInt & 0x4) > 0) {
       f.setExecutable(true)
