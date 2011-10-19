@@ -93,7 +93,11 @@ trait Apply { self: Giter8 =>
     templates foreach { case (name, hash, mime, mode) =>
       import org.clapper.scalasti.StringTemplate
       import java.nio.charset.MalformedInputException
-      val f = new File(base, new StringTemplate(name).setAttributes(parameters).toString)
+      val fileParams = Map(parameters.toSeq map {
+        case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator")))
+        case x => x
+      }: _*)
+      val f = new File(base, new StringTemplate(name).setAttributes(fileParams).toString)
       if (f.exists)
         println("Skipping existing file: %s" format f.toString)
       else {

@@ -8,6 +8,8 @@ object Builds extends sbt.Build {
     organization := "net.databinder",
     scalaVersion := "2.9.1",
     crossScalaVersions := Seq("2.9.1", "2.8.1"),
+    libraryDependencies ++= Seq(
+      "org.clapper" %% "scalasti" % "0.5.5"),
     publishArtifact in (Compile, packageBin) := true,
     publishArtifact in (Test, packageBin) := false,
     publishArtifact in (Compile, packageDoc) := false,
@@ -34,8 +36,7 @@ object Builds extends sbt.Build {
       libraryDependencies <++= (scalaVersion) { (sv) =>  
         Seq(if (sv == "2.8.1") "org.scala-tools.sbt" % "launcher-interface" % "0.7.4" % "provided" 
             else "org.scala-tools.sbt" %% "launcher-interface" % "0.11.0" % "provided",
-            "net.databinder" %% "dispatch-lift-json" % "0.8.5",
-            "org.clapper" %% "scalasti" % "0.5.5")
+            "net.databinder" %% "dispatch-lift-json" % "0.8.5")
       }
     ))
   lazy val plugin = Project("giter8-plugin", file("plugin"),
@@ -43,9 +44,8 @@ object Builds extends sbt.Build {
       sbtPlugin := true,
       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
         Seq(sd,
-            "org.antlr" % "stringtemplate" % "3.2.1",
             "org.scala-tools.sbt" %% "scripted-plugin" % sv
             )
       }
-    ))  
+    ))
 }
