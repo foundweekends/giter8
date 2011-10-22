@@ -4,10 +4,9 @@ object Builds extends sbt.Build {
   import Keys._
   
   lazy val buildSettings = Defaults.defaultSettings ++ Seq(
-    version := "0.2.3-SNAPSHOT",
+    version := "0.3.0",
     organization := "net.databinder",
     scalaVersion := "2.9.1",
-    crossScalaVersions := Seq("2.9.1", "2.8.1"),
     libraryDependencies ++= Seq(
       "org.clapper" %% "scalasti" % "0.5.5"),
     publishArtifact in (Compile, packageBin) := true,
