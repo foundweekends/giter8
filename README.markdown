@@ -143,12 +143,14 @@ pattern are excluded from string template processing.
 ### Using the giter8-plugin
 
 Giter8 supplies an sbt plugin for testing templates before pushing
-them to a github branch. To add it to your template project, add
-the following to `project/plugins/build.sbt`
+them to a github branch. If you used the `n8han/giter8.g8` template
+recommended above, it should already be configured. If you need to
+upgrade an existing template project to the current plugin, it's
+loaded in `project/plugins/build.sbt`:
 
     addSbtPlugin("net.databinder" %% "giter8-plugin" % "0.3.0")
 
-And then, apply the settings in a in `build.sbt` in the project base:
+And settings must be applied in a `build.sbt` file in the project base:
 
     seq(giter8Settings :_*)    
 
