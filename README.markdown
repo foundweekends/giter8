@@ -140,12 +140,24 @@ The `verbatim` field, if defined, is assumed to be the space delimited
 list of file patterns such as `*.html *.js`. Files matching `verbatim`
 pattern are excluded from string template processing.
 
-If you enter sbt's interactive mode in the base directory of a
-template project, the action "g8-test" will apply the template in the
-default output directory (under `target/sbt-test`) and run the scripted
-test for *that* project in a forked process.
-You can supply the test scripted as `src/test/g8/test`, otherwise `>test`
-is used. This is a good sanity
+### Using the giter8-plugin
+
+Giter8 supplies an sbt plugin for testing templates before pushing
+them to a github branch. To add it to your template project, add
+the following to `project/plugins/build.sbt`
+
+    addSbtPlugin("net.databinder" %% "giter8-plugin" % "0.3.0")
+
+And then, apply the settings in a in `build.sbt` in the project base:
+
+    seq(giter8Settings :_*)    
+
+When you enter sbt's interactive mode in the base directory of a
+template project that is configured to use this plugn, the action
+`g8-test` will apply the template in the default output directory
+(under `target/sbt-test`) and run the scripted test for *that* project
+in a forked process.  You can supply the test scripted as
+`src/test/g8/test`, otherwise `>test` is used. This is a good sanity
 check for templates that are supposed to produce sbt projects.
 
 But what if your template is not for an sbt project?
@@ -154,7 +166,7 @@ But what if your template is not for an sbt project?
     src/main/g8/TodaysMenu.html
 
 You can still use sbt's interactive mode to test the template. The
-lower level `write-templates` action will apply default field values
+lower level `g8` action will apply default field values
 to the template and write it to the same `target/g8` directory.
 
 As soon as you push your template to github (remember to name the

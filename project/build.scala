@@ -28,7 +28,7 @@ object Builds extends sbt.Build {
   lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
       name := "giter8" 
-    )) aggregate(app)
+    )) aggregate(app, plugin)
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ Seq(
       name := "giter8",
