@@ -28,3 +28,15 @@ This release is brought to you [eed3si9n][eed3si9n].
   [21]: https://github.com/n8han/giter8/issues/21
   [24]: https://github.com/n8han/giter8/issues/24
   [26]: https://github.com/n8han/giter8/issues/26
+
+### How to Upgrade
+
+Giter8 is managed by Conscript.
+
+    cs n8han/giter8
+
+This updates your `g8` script to use the latest release
+version. Template authors should see the [readme][readme] for
+information on the new giter8-plugin for sbt 0.11.
+
+[readme]: https://github.com/n8han/giter8#readme
