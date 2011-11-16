@@ -42,7 +42,10 @@ object G8 {
   }).r  
   private def expandPath(relative: String, toPath: File, parameters: Map[String,String]): File = {
     val fileParams = Map(parameters.toSeq map {
-      case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator")))
+      case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
+          case """\"""  => """\\"""
+          case sep => sep
+        }))
       case x => x
     }: _*)
     

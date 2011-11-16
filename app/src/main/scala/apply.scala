@@ -94,7 +94,10 @@ trait Apply { self: Giter8 =>
       import org.clapper.scalasti.StringTemplate
       import java.nio.charset.MalformedInputException
       val fileParams = Map(parameters.toSeq map {
-        case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator")))
+        case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
+            case """\"""  => """\\"""
+            case sep => sep
+          }))
         case x => x
       }: _*)
       val f = new File(base, new StringTemplate(name).setAttributes(fileParams).toString)
