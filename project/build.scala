@@ -4,7 +4,7 @@ object Builds extends sbt.Build {
   import Keys._
   
   lazy val buildSettings = Defaults.defaultSettings ++ Seq(
-    version := "0.3.1-SNAPSHOT",
+    version := "0.3.1",
     organization := "net.databinder",
     scalaVersion := "2.9.1",
     libraryDependencies ++= Seq(

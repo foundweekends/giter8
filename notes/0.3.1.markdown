@@ -1,0 +1,3 @@
+Fixes problem with package path builder on Windows. { [eed3si9n][eed3si9n] }
+
+[eed3si9n]: https://github.com/n8han/giter8/issues/28
