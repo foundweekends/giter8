@@ -1,0 +1,1 @@
+Fixes problem with github credential storage.
