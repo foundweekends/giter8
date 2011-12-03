@@ -146,9 +146,9 @@ Giter8 supplies an sbt plugin for testing templates before pushing
 them to a github branch. If you used the `n8han/giter8.g8` template
 recommended above, it should already be configured. If you need to
 upgrade an existing template project to the current plugin, it's
-loaded in `project/plugins/build.sbt`:
+loaded in `project/build.sbt`:
 
-    addSbtPlugin("net.databinder" %% "giter8-plugin" % "0.3.0")
+    addSbtPlugin("net.databinder" %% "giter8-plugin" % "0.3.1")
 
 And settings must be applied in a `build.sbt` file in the project base:
 
