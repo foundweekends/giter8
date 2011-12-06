@@ -8,8 +8,8 @@ templates published on github. It's implemented in Scala and runs
 through the [Simple Build Tool launcher][launcher], but it
 can produce output for any purpose.
 
-[launcher]: http://code.google.com/p/simple-build-tool/wiki/GeneralizedLauncher
- 
+[launcher]: https://github.com/harrah/xsbt/wiki/
+
 Installation
 ------------
 
