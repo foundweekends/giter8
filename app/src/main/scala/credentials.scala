@@ -17,9 +17,16 @@ trait Credentials { self: Apply =>
   def gitConfig(key: String): Option[String] =
     allCatch opt {
       Option(System.getenv(key.toUpperCase.replaceAll("""\.""", "_"))) map { Some(_) } getOrElse {
-        val p = new java.lang.ProcessBuilder("git", "config", "--global", key).start()
+        val gitExec = windows map {_ => "git.exe"} getOrElse {"git"}
+        val p = new java.lang.ProcessBuilder(gitExec, "config", "--global", key).start()
         val reader = new java.io.BufferedReader(new java.io.InputStreamReader(p.getInputStream))
         Option(reader.readLine)
       }
     } getOrElse {None}
+  
+  def windows =
+    System.getProperty("os.name") match {
+      case x: String if x contains "Windows" => Some(x)
+      case _ => None
+    }
 }
