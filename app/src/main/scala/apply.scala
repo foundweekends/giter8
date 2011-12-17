@@ -13,6 +13,8 @@ trait Apply { self: Giter8 =>
   val Text = """^(text|application)/.+""".r
   val DefaultBranch = "master"
 
+  val Ls = """ls\(,\)""".r
+
   def inspect(repo: String, branch: Option[String], params: Iterable[String]) =
     repoFiles(repo, branch.getOrElse(DefaultBranch)).right.flatMap { repo_files =>
       repo_files match {
@@ -31,6 +33,13 @@ trait Apply { self: Giter8 =>
                  println("Ignoring unrecognized parameter: " + key)
                  map
              }
+           val lsParameters = parameters.flatMap {
+             case (key, Ls(library, user, repo)) =>
+               ls.DefaultClient {
+                 _.Handler.latest(library, Some(user), Some(repo))
+               }.right.toOption.map { (key, _) }
+             case (key, value) => Some(key -> value)
+           }
            val base = new File(parameters.get("name").map(normalize).getOrElse("."))
            write(repo, templates, parameters, base)
       }

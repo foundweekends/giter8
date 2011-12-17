@@ -34,7 +34,7 @@ object Builds extends sbt.Build {
       name := "giter8",
       libraryDependencies +=
         "net.databinder" %% "dispatch-lift-json" % "0.8.5"
-    ))
+    )) dependsOn lsLibrary
   lazy val plugin = Project("giter8-plugin", file("plugin"),
     settings = buildSettings ++ Seq(
       sbtPlugin := true,
@@ -44,4 +44,6 @@ object Builds extends sbt.Build {
             )
       }
     ))
+  lazy val lsLibrary =
+    ProjectRef(file("../ls"), "library")
 }
