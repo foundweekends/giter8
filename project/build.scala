@@ -30,13 +30,10 @@ object Builds extends sbt.Build {
       name := "giter8" 
     )) aggregate(app, plugin)
   lazy val app = Project("app", file("app"),
-    settings = buildSettings ++ Seq(
+    settings = buildSettings ++ conscript.Harness.conscriptSettings ++ Seq(
       name := "giter8",
-      libraryDependencies <++= (scalaVersion) { (sv) =>  
-        Seq(if (sv == "2.8.1") "org.scala-tools.sbt" % "launcher-interface" % "0.7.4" % "provided" 
-            else "org.scala-tools.sbt" %% "launcher-interface" % "0.11.0" % "provided",
-            "net.databinder" %% "dispatch-lift-json" % "0.8.5")
-      }
+      libraryDependencies +=
+        "net.databinder" %% "dispatch-lift-json" % "0.8.5"
     ))
   lazy val plugin = Project("giter8-plugin", file("plugin"),
     settings = buildSettings ++ Seq(
