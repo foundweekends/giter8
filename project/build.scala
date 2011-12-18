@@ -28,7 +28,7 @@ object Builds extends sbt.Build {
   lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
       name := "giter8" 
-    )) aggregate(app, plugin)
+    )) aggregate(app, plugin, lsLibrary)
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ Seq(
       name := "giter8",
@@ -45,5 +45,5 @@ object Builds extends sbt.Build {
       }
     ))
   lazy val lsLibrary =
-    ProjectRef(file("../ls"), "library")
+    ProjectRef(uri("git://github.com/softprops/ls.git#474d7040c6ba569ee597725a0c4ca5f3b7f5ea26"), "library")
 }
