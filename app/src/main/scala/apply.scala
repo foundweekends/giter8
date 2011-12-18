@@ -13,35 +13,53 @@ trait Apply { self: Giter8 =>
   val Text = """^(text|application)/.+""".r
   val DefaultBranch = "master"
 
-  val Ls = """ls\(,\)""".r
-
   def inspect(repo: String, branch: Option[String], params: Iterable[String]) =
     repoFiles(repo, branch.getOrElse(DefaultBranch)).right.flatMap { repo_files =>
       repo_files match {
-         case Nil => Left("Unable to find github repository: %s (%s)" format(repo, branch.getOrElse(DefaultBranch)))
-         case xs =>
-           val (default_props, templates) = xs.partition {
-             case (name, _, _, _) => name == "default.properties"
-           }
-           val default_params = defaults(repo, default_props)
-           val parameters =
-             if (params.isEmpty) interact(default_params)
-             else (default_params /: params) {
-               case (map, Param(key, value)) if map.contains(key) =>
-                 map + (key -> value)
-               case (map, Param(key, _)) =>
-                 println("Ignoring unrecognized parameter: " + key)
-                 map
-             }
-           val lsParameters = parameters.flatMap {
-             case (key, Ls(library, user, repo)) =>
-               ls.DefaultClient {
-                 _.Handler.latest(library, Some(user), Some(repo))
-               }.right.toOption.map { (key, _) }
-             case (key, value) => Some(key -> value)
-           }
-           val base = new File(parameters.get("name").map(normalize).getOrElse("."))
-           write(repo, templates, parameters, base)
+        case Nil =>
+          Left("Unable to find github repository: %s (%s)".format(
+            repo, branch.getOrElse(DefaultBranch)
+          ))
+        case xs =>
+          val (default_props, templates) = xs.partition {
+            case (name, _, _, _) => name == "default.properties"
+          }
+          val default_params = defaults(repo, default_props)
+          val parameters =
+            if (params.isEmpty) interact(default_params)
+            else (default_params /: params) {
+              case (map, Param(key, value)) if map.contains(key) =>
+                map + (key -> value)
+              case (map, Param(key, _)) =>
+                println("Ignoring unrecognized parameter: " + key)
+                map
+            }
+          val lsParameters = parameters.view.collect {
+            case (key, Ls(library, user, repo)) =>
+              ls.DefaultClient {
+                _.Handler.latest(library, user, repo)
+              }.left.map { _.getMessage }.right.flatMap {
+                _.map { key -> _ }.toRight(
+                  "Library not found in ls for key " + key
+                )
+              }
+          }
+          val initial: Either[String,Map[String,String]] = Right(parameters)
+          (initial /: lsParameters) {
+            case (accumEither, lsEither) =>
+              for {
+                cur <- accumEither.right
+                ls <- lsEither.right
+              } yield cur + ls
+          }.fold(
+            err => Left("Error retrieving latest version from ls: " + err),
+            params => {
+              val base = new File(
+                params.get("name").map(normalize).getOrElse(".")
+              )
+              write(repo, templates, params, base)
+            }
+          )
       }
     }
 

@@ -9,8 +9,13 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
 
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
-  def run(config: xsbti.AppConfiguration) =
-    (config.arguments.partition { s => Param.pattern.matcher(s).matches } match {
+  /** The launched conscript entry point */
+  def run(config: xsbti.AppConfiguration): Exit =
+    new Exit(Giter8.run(config.arguments))
+
+  /** Runner shared my main-class runner */
+  def run(args: Array[String]): Int = {
+    (args.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Repo(user, proj))) =>
         inspect("%s/%s.g8".format(user, proj), None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
@@ -20,13 +25,12 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
       case _ => Left(usage)
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
-      new Exit(1)
+      1
     }, { message =>
       println("\n%s\n" format message)
-      new Exit(0)
+      0
     })
-
-  class Exit(val code: Int) extends xsbti.Exit
+  }
 
   lazy val gh = withCredentials(:/("github.com").secure / "api" / "v2" / "json")
 
@@ -63,4 +67,14 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
                 |
                 |List available templates.
                 |    g8 --list""".stripMargin
+
+}
+
+class Exit(val code: Int) extends xsbti.Exit
+
+object Giter8 extends Giter8 {
+  /** Main-class runner just for testing from sbt*/
+  def main(args: Array[String]) {
+    System.exit(run(args))
+  }
 }
