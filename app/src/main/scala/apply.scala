@@ -24,28 +24,15 @@ trait Apply { self: Giter8 =>
           val (default_props, templates) = xs.partition {
             case (name, _, _, _) => name == "default.properties"
           }
-          val default_params = defaults(repo, default_props)
-          val parameters =
-            if (params.isEmpty) interact(default_params)
-            else (default_params /: params) {
-              case (map, Param(key, value)) if map.contains(key) =>
-                map + (key -> value)
-              case (map, Param(key, _)) =>
-                println("Ignoring unrecognized parameter: " + key)
-                map
-            }
-          val lsParameters = parameters.view.collect {
+          val rawDefaults = defaults(repo, default_props)
+          val lsDefaults = rawDefaults.view.collect {
             case (key, Ls(library, user, repo)) =>
               ls.DefaultClient {
                 _.Handler.latest(library, user, repo)
-              }.left.map { _.getMessage }.right.flatMap {
-                _.map { key -> _ }.toRight(
-                  "Library not found in ls for key " + key
-                )
-              }
+              }.right.map { key -> _ }
           }
-          val initial: Either[String,Map[String,String]] = Right(parameters)
-          (initial /: lsParameters) {
+          val initial: Either[String,Map[String,String]] = Right(rawDefaults)
+          (initial /: lsDefaults) {
             case (accumEither, lsEither) =>
               for {
                 cur <- accumEither.right
@@ -53,11 +40,20 @@ trait Apply { self: Giter8 =>
               } yield cur + ls
           }.fold(
             err => Left("Error retrieving latest version from ls: " + err),
-            params => {
+            parameters => {
+              val finalParameters = 
+                if (params.isEmpty) interact(parameters)
+                else (parameters /: params) {
+                  case (map, Param(key, value)) if map.contains(key) =>
+                    map + (key -> value)
+                  case (map, Param(key, _)) =>
+                    println("Ignoring unrecognized parameter: " + key)
+                    map
+                }
               val base = new File(
-                params.get("name").map(normalize).getOrElse(".")
+                finalParameters.get("name").map(normalize).getOrElse(".")
               )
-              write(repo, templates, params, base)
+              write(repo, templates, parameters, base)
             }
           )
       }

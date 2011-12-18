@@ -12,10 +12,12 @@ import scala.util.parsing.combinator._
  */
 object Ls extends JavaTokenParsers {
   def spec =
-    "ls" ~> "(" ~> ident ~ optElem ~ optElem <~ ")" ^^ {
+    "ls" ~> "(" ~> word ~ optElem ~ optElem <~ ")" ^^ {
       case library ~ user ~ repo => (library, user, repo)
     }
-  def optElem = opt("," ~> ident)
+  def optElem = opt("," ~> word)
+  /** Like ident but allow hyphens */
+  def word = """[\w\-]+""".r
 
   def unapply(value: String) =
     Some(parse(spec, value)).filter { _.successful }.map { _.get }
