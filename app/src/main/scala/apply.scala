@@ -1,6 +1,8 @@
 package giter8
 
-trait Apply { self: Giter8 =>
+case class FileInfo(name: String, hash: String, mime: String, mode: String)
+
+trait Apply extends Defaults { self: Giter8 =>
   import dispatch._
   import dispatch.liftjson.Js._
   import net.liftweb.json.JsonAST._
@@ -13,49 +15,35 @@ trait Apply { self: Giter8 =>
   val Text = """^(text|application)/.+""".r
   val DefaultBranch = "master"
 
-  def inspect(repo: String, branch: Option[String], params: Iterable[String]) =
-    repoFiles(repo, branch.getOrElse(DefaultBranch)).right.flatMap { repo_files =>
-      repo_files match {
-        case Nil =>
-          Left("Unable to find github repository: %s (%s)".format(
-            repo, branch.getOrElse(DefaultBranch)
-          ))
-        case xs =>
-          val (default_props, templates) = xs.partition {
-            case (name, _, _, _) => name == "default.properties"
+  def inspect(repo: String,
+              branch: Option[String],
+              arguments: Seq[String]) =
+    repoFiles(repo, branch.getOrElse(DefaultBranch)).right.filter {
+      _.nonEmpty
+    }.getOrElse {
+      Left("Unable to find github repository: %s (%s)".format(
+        repo, branch.getOrElse(DefaultBranch)
+      ))
+    }.right.flatMap { files =>
+      val (propertiesFiles, templates) = files.partition {
+        _.name == "default.properties"
+      }
+      prepareDefaults(
+        repo,propertiesFiles.headOption
+      ).right.flatMap { defaults =>
+        val parameters = arguments.headOption.map { _ =>
+          (defaults /: arguments) {
+            case (map, Param(key, value)) if map.contains(key) =>
+              map + (key -> value)
+            case (map, Param(key, _)) =>
+              println("Ignoring unrecognized parameter: " + key)
+              map
           }
-          val rawDefaults = defaults(repo, default_props)
-          val lsDefaults = rawDefaults.view.collect {
-            case (key, Ls(library, user, repo)) =>
-              ls.DefaultClient {
-                _.Handler.latest(library, user, repo)
-              }.right.map { key -> _ }
-          }
-          val initial: Either[String,Map[String,String]] = Right(rawDefaults)
-          (initial /: lsDefaults) {
-            case (accumEither, lsEither) =>
-              for {
-                cur <- accumEither.right
-                ls <- lsEither.right
-              } yield cur + ls
-          }.fold(
-            err => Left("Error retrieving latest version from ls: " + err),
-            parameters => {
-              val finalParameters = 
-                if (params.isEmpty) interact(parameters)
-                else (parameters /: params) {
-                  case (map, Param(key, value)) if map.contains(key) =>
-                    map + (key -> value)
-                  case (map, Param(key, _)) =>
-                    println("Ignoring unrecognized parameter: " + key)
-                    map
-                }
-              val base = new File(
-                finalParameters.get("name").map(normalize).getOrElse(".")
-              )
-              write(repo, templates, parameters, base)
-            }
-          )
+        }.getOrElse { interact(defaults) }
+        val base = new File(
+          parameters.get("name").map(normalize).getOrElse(".")
+        )
+        write(repo, templates, parameters, base)
       }
     }
 
@@ -67,23 +55,9 @@ trait Apply { self: Giter8 =>
     JField("mime_type", JString(mime)) <- blob
     JField("mode", JString(mode)) <- blob
     m <- Root.findFirstMatchIn(name)
-  } yield (m.group(1), hash, mime, mode)) } catch {
-    case StatusCode(404, _) => Left("Unable to find github repository: %s (%s)" format(repo, branch))
-  }
-
-  def defaults(repo: String, default_props: Iterable[(String, String, String, String)]) =
-    default_props.map { case (_, hash, _, _) =>
-      http(show(repo, hash) >> readProps _ )
-    }.headOption getOrElse Map.empty[String, String]
-
-  def readProps(stm: java.io.InputStream) = {
-    import scala.collection.JavaConversions._
-    val p = new java.util.Properties
-    p.load(stm)
-    stm.close()
-    (Map.empty[String, String] /: p.propertyNames) { (m, k) =>
-      m + (k.toString -> p.getProperty(k.toString))
-    }
+  } yield FileInfo(m.group(1), hash, mime, mode)) } catch {
+    case StatusCode(404, _) =>
+      Left("Unable to find github repository: %s (%s)" format(repo, branch))
   }
 
   def interact(params: Map[String, String]) = {
@@ -112,8 +86,11 @@ trait Apply { self: Giter8 =>
     }
   }
 
-  def write(repo: String, templates: Iterable[(String, String, String, String)], parameters: Map[String,String], base: File) = {
-    templates foreach { case (name, hash, mime, mode) =>
+  def write(repo: String,
+            templates: Iterable[FileInfo],
+            parameters: Map[String,String],
+            base: File) = {
+    templates.foreach { case FileInfo(name, hash, mime, mode) =>
       import org.clapper.scalasti.StringTemplate
       import java.nio.charset.MalformedInputException
       val fileParams = Map(parameters.toSeq map {
