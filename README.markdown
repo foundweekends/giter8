@@ -108,12 +108,31 @@ made expressly for that purpose:
 This will create an sbt project with stub template sources nested
 under `src/main/g8`. The file `default.properties` defines template
 fields and their default values using the Java properties file format.
-Every other file in that directory and below it is a template source.
+
+Properties can be simple keys and values that replace them, but **ls
+properties** tell giter8 to query the [ls.implicit.ly][ls] web
+API. Instead of supplying a particular version (and having to update
+the template with every release), specify a library and giter8 will
+set the value to the latest version according to ls.
+
+[ls]: http://ls.implicit.ly/
+
+The property value format is `ls(library, user, repo)`. The second two
+parameters are optional, but it is a good idea to specify the github
+at least the user or organization that is bound to the library, in
+case someone else ever publishing a library module with the same name.
+
+The n8han/giter8.g8 template itself uses this feature to refer
+to the latest version of the giter8 sbt plugin.
+
+    name = My Template Project
+    description = Creates a giter8 project template.
+    giter8_version = ls(giter8-plugin, n8han)
 
 [StringTemplate][st], wrapped by [Scalasti][scalasti], is the engine
-for giter8 templates, so template fields in source files are bracketed
-with the `$` character. For example, a "classname" field might be
-referenced in the source as:
+that applies giter8 templates, so template fields in source files are
+bracketed with the `$` character. For example, a "classname" field
+might be referenced in the source as:
 
     class $classname$ {
 
@@ -175,20 +194,4 @@ As soon as you push your template to github (remember to name the
 project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
-
-Question(s) that will probably be frequent
-----------------------------------
-
-### Isn't this like Lifty?
-
-Nope. [Lifty] is an [sbt processor][processor], meaning it runs inside
-of sbt itself. You can't run sbt or any processor until you have a
-project to run it in. Giter8 addresses step 1 of sbt project
-creation. You could use giter8 create a Lift project, then run Lifty
-inside it for fine tuning. You can also use giter8 to produce things
-that are not sbt projects at all.
-
-[Lifty]: http://lifty.github.com/
-[processor]: http://code.google.com/p/simple-build-tool/wiki/Processors
-
 
