@@ -4,7 +4,7 @@ object Builds extends sbt.Build {
   import Keys._
   
   lazy val buildSettings = Defaults.defaultSettings ++ Seq(
-    version := "0.3.2-SNAPSHOT",
+    version := "0.3.2",
     organization := "net.databinder",
     scalaVersion := "2.9.1",
     libraryDependencies ++= Seq(
@@ -45,5 +45,5 @@ object Builds extends sbt.Build {
       }
     ))
   lazy val lsLibrary =
-    ProjectRef(uri("git://github.com/softprops/ls.git#474d7040c6ba569ee597725a0c4ca5f3b7f5ea26"), "library")
+    ProjectRef(uri("git://github.com/softprops/ls.git#29d66c5"), "library")
 }

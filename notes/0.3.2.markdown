@@ -1,1 +1,31 @@
-Fixes problem with github credential storage.
+### Integration with ls.implicit.ly
+
+Giter8 templates can now use *ls* to resolve the latest published
+version of a library. Just specify the library name and authoritative
+github account as a property value. For example:
+
+    name = My Template Project
+    giter8_version = ls(giter8-plugin, n8han)
+    description = Creates a giter8 project template.
+
+This template ([n8han/giter8.g8][gg8]) assigns the latest version of
+giter8-plugin to the property `giter8_version`, which you can then
+refer from other files like any other template value.
+
+[gg8]: https://github.com/n8han/giter8.g8
+
+Templates that use this feature will not be compatible with other
+versions of giter8, so users are encouraged to upgrade right away. You
+can upgrade (or install) giter8 with one [conscript][cs] command:
+
+[cs]: https://github.com/n8han/conscript
+
+    cs n8han/giter8
+
+### Fixes
+
+* Problem with github credential storage. { [eed3si9n][ee] }
+* [Invoking git executable on Windows][30] { [eed3si9n][ee] }
+
+[30]: https://github.com/n8han/giter8/issues/30
+[ee]: https://github.com/eed3si9n
