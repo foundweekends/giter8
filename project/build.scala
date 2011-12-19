@@ -28,7 +28,7 @@ object Builds extends sbt.Build {
   // posterous title needs to be giter8, so both app and root are named giter8
   lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
-      name := "giter88",
+      name := "giter8",
       LsKeys.skipWrite := true
     )) aggregate(app, plugin, lsLibrary)
   lazy val app = Project("app", file("app"),
@@ -51,5 +51,5 @@ object Builds extends sbt.Build {
       }
     ))
   lazy val lsLibrary =
-    ProjectRef(uri("git://github.com/softprops/ls.git#29d66c5"), "library")
+    ProjectRef(file("git://github.com/softprops/ls.git#f6adc57"), "library")
 }
