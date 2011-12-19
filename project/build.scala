@@ -51,5 +51,5 @@ object Builds extends sbt.Build {
       }
     ))
   lazy val lsLibrary =
-    ProjectRef(file("git://github.com/softprops/ls.git#f6adc57"), "library")
+    ProjectRef(uri("git://github.com/softprops/ls.git#f6adc57"), "library")
 }
