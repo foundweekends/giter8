@@ -2,8 +2,9 @@ import sbt._
 
 object Builds extends sbt.Build {
   import Keys._
-  
-  lazy val buildSettings = Defaults.defaultSettings ++ Seq(
+  import ls.Plugin.{lsSettings,LsKeys}
+
+  lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     version := "0.3.2",
     organization := "net.databinder",
     scalaVersion := "2.9.1",
@@ -27,16 +28,21 @@ object Builds extends sbt.Build {
   // posterous title needs to be giter8, so both app and root are named giter8
   lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
-      name := "giter8" 
+      name := "giter88",
+      LsKeys.skipWrite := true
     )) aggregate(app, plugin, lsLibrary)
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ Seq(
+      description :=
+        "Command line tool to apply templates defined on github",
       name := "giter8",
       libraryDependencies +=
         "net.databinder" %% "dispatch-lift-json" % "0.8.5"
     )) dependsOn lsLibrary
   lazy val plugin = Project("giter8-plugin", file("plugin"),
     settings = buildSettings ++ Seq(
+      description :=
+        "sbt 0.11 plugin for testing giter8 templates",
       sbtPlugin := true,
       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
         Seq(sd,
