@@ -75,6 +75,7 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
     case "camel"    | "lower-camel"  => lowerCamel(value)
     case "hyphen"   | "hyphenate"    => hyphenate(value)
     case "norm"     | "normalize"    => normalize(value)
+    case "snake"    | "snake-case"   => snakeCase(value)
     case "packaged" | "package-dir"  => packageDir(value)
     case _                           => value
   }
@@ -86,5 +87,6 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
   def lowerCamel(s: String) = decapitalize(upperCamel(s))
   def hyphenate(s: String) = s.replaceAll("""\s+""", "-")
   def normalize(s: String) = hyphenate(s.toLowerCase)
+  def snakeCase(s: String) = s.replaceAll("""\s+""", "_")
   def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
 }
