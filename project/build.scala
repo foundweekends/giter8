@@ -7,9 +7,7 @@ object Builds extends sbt.Build {
   val g8version = "0.4.0"
 
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
-    organization := "net.databinder",
-    publishTo := Some("Scala Tools Nexus" at 
-      "http://nexus.scala-tools.org/content/repositories/releases/"),
+    organization := "net.databinder.giter8",
     version := g8version,
     scalaVersion := "2.9.1",
     libraryDependencies ++= Seq(
@@ -18,7 +16,26 @@ object Builds extends sbt.Build {
     publishArtifact in (Test, packageBin) := false,
     publishArtifact in (Compile, packageDoc) := false,
     publishArtifact in (Compile, packageSrc) := false,
-    credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+    homepage :=
+      Some(new java.net.URL("https://github.com/n8han/giter8")),
+    publishMavenStyle := true,
+    publishTo :=
+      Some("releases" at
+           "https://oss.sonatype.org/service/local/staging/deploy/maven2"),
+    publishArtifact in Test := false,
+    licenses := Seq("LGPL v3" -> url("http://www.gnu.org/licenses/lgpl.txt")),
+    pomExtra := (
+      <scm>
+        <url>git@github.com:n8han/giter8.git</url>
+        <connection>scm:git:git@github.com:n8han/giter8.git</connection>
+      </scm>
+      <developers>
+        <developer>
+          <id>n8han</id>
+          <name>Nathan Hamblen</name>
+          <url>http://twitter.com/n8han</url>
+        </developer>
+      </developers>)
   )
   
   // posterous title needs to be giter8, so both app and root are named giter8
