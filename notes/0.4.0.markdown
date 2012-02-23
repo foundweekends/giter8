@@ -1,0 +1,11 @@
+This release includes template formatting options
+[contributed by pvlugter][pvlugter], which allow templates to specify
+transformations of property strings. For example, the same property
+value could be leveraged in templates for a camel-cased classname and
+for a normalized sbt project id (lowercase with hyphens).
+
+See "Formatting template fields" in the [readme][readme] for usage
+instructions.
+
+[pvlugter]: https://github.com/n8han/giter8/pull/33
+[readme]: https://github.com/n8han/giter8#readme

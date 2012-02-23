@@ -4,7 +4,7 @@ object Builds extends sbt.Build {
   import Keys._
   import ls.Plugin.{lsSettings,LsKeys}
 
-  val g8version = "0.3.2"
+  val g8version = "0.4.0"
 
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder",
