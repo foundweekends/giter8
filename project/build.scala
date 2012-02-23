@@ -49,6 +49,7 @@ object Builds extends sbt.Build {
       version in lsLibrary <<= version,
       organization in lsLibrary := "net.databinder.giter8",
       publishTo in lsLibrary <<= publishTo,
+      publishMavenStyle in lsLibrary := true,
       name := "giter8",
       libraryDependencies +=
         "net.databinder" %% "dispatch-lift-json" % "0.8.5"
@@ -66,5 +67,5 @@ object Builds extends sbt.Build {
       }
     ))
   lazy val lsLibrary =
-    ProjectRef(uri("git://github.com/softprops/ls.git#b6ae81e"), "library")
+    ProjectRef(uri("git://github.com/softprops/ls.git#d32a4d7"), "library")
 }
