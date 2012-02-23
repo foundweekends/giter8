@@ -7,5 +7,10 @@ for a normalized sbt project id (lowercase with hyphens).
 See "Formatting template fields" in the [readme][readme] for usage
 instructions.
 
+As usual, run this [conscript][cs] command to upgrade or install giter8:
+
+    cs n8han/giter8
+
 [pvlugter]: https://github.com/n8han/giter8/pull/33
 [readme]: https://github.com/n8han/giter8#readme
+[cs]: https://github.com/n8han/conscript
