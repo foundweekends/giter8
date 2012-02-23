@@ -13,11 +13,8 @@ object Builds extends sbt.Build {
     libraryDependencies ++= Seq(
       "org.clapper" %% "scalasti" % "0.5.5"),
     publishArtifact in (Compile, packageBin) := true,
-    publishArtifact in (Test, packageBin) := false,
-    publishArtifact in (Compile, packageDoc) := false,
-    publishArtifact in (Compile, packageSrc) := false,
     homepage :=
-      Some(new java.net.URL("https://github.com/n8han/giter8")),
+      Some(url("https://github.com/n8han/giter8")),
     publishMavenStyle := true,
     publishTo :=
       Some("releases" at
@@ -69,5 +66,5 @@ object Builds extends sbt.Build {
       }
     ))
   lazy val lsLibrary =
-    ProjectRef(uri("git://github.com/softprops/ls.git#cd84ac3"), "library")
+    ProjectRef(uri("git://github.com/softprops/ls.git#b6ae81e"), "library")
 }
