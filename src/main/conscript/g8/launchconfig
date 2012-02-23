@@ -1,6 +1,6 @@
 [app]
-  version: 0.3.2
-  org: net.databinder
+  version: 0.4.0
+  org: net.databinder.giter8
   name: giter8
   class: giter8.Giter8
 [scala]
