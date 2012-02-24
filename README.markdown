@@ -86,10 +86,12 @@ Private Repositories
 --------------------
 
 Giter8 accesses GitHub anonymously by default, but for private
-templates you can supply a name and token or password in `~/.gh`:
+templates you can provide your GitHub [credentials][info]: –username and token– in `~/.gitconfig`:
 
-    username=yourusername
-    token=yourtoken
+    $ git config --global github.user username
+    $ git config --global github.token 0123456789yourf0123456789token
+
+[info]: http://help.github.com/set-your-user-name-email-and-github-token/
 
 Making your own templates
 -------------------------
