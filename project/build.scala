@@ -3,8 +3,9 @@ import sbt._
 object Builds extends sbt.Build {
   import Keys._
   import ls.Plugin.{lsSettings,LsKeys}
+  import sbtbuildinfo.Plugin._
 
-  val g8version = "0.4.0"
+  val g8version = "0.4.1-SNAPSHOT"
 
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder.giter8",
@@ -43,7 +44,7 @@ object Builds extends sbt.Build {
     )) aggregate(plugin, app, lsLibrary)
 
   lazy val app = Project("app", file("app"),
-    settings = buildSettings ++ conscript.Harness.conscriptSettings ++ Seq(
+    settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
       description :=
         "Command line tool to apply templates defined on github",
       version in lsLibrary <<= version,
@@ -52,7 +53,10 @@ object Builds extends sbt.Build {
       publishMavenStyle in lsLibrary := true,
       name := "giter8",
       libraryDependencies +=
-        "net.databinder" %% "dispatch-lift-json" % "0.8.5"
+        "net.databinder" %% "dispatch-lift-json" % "0.8.5",
+      sourceGenerators in Compile <+= buildInfo,
+      buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),
+      buildInfoPackage := "giter8"
     )) dependsOn (lsLibrary)
 
   lazy val plugin = Project("giter8-plugin", file("plugin"),

@@ -45,7 +45,8 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
       }
     }
   }
-  def usage = """Usage: g8 [TEMPLATE] [OPTION]...
+  def usage = """giter8 %s
+                |Usage: g8 [TEMPLATE] [OPTION]...
                 |Apply specified template or list available templates.
                 |
                 |OPTIONS
@@ -66,7 +67,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
                 |    g8 n8han/giter8 --name=template-test
                 |
                 |List available templates.
-                |    g8 --list""".stripMargin
+                |    g8 --list""".stripMargin format (BuildInfo.version)
 
 }
 
