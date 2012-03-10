@@ -24,7 +24,7 @@ object Plugin extends sbt.Plugin {
         sources in g8, outputPath in g8,
         properties in g8, streams) map { (base, srcs, out, props, s) =>
       IO.delete(out)
-      G8(srcs x relativeTo(base), out, props, s.log) },
+      G8(srcs x relativeTo(base), out, props) },
     unmanagedSourceDirectories in g8 <<= (sourceDirectory) { dir => (dir / "g8").get },
     sources in g8 <<= (unmanagedSourceDirectories in g8, propertiesFile in g8) map { (dirs, pf) =>
       ((dirs ** (-DirectoryFilter)) --- pf).get },
@@ -45,7 +45,7 @@ object Plugin extends sbt.Plugin {
         sources in g8 in Compile, outputPath in g8 in Test,
         properties in g8 in Test, testScript in Test, streams) map { (base, srcs, out, props, ts, s) =>
       IO.delete(out)
-      val retval = G8(srcs x relativeTo(base), out, props, s.log)
+      val retval = G8(srcs x relativeTo(base), out, props)
       
       // copy test script or generate one
       val script = new File(out, "test")
