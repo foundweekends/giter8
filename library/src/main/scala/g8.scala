@@ -1,6 +1,6 @@
 package giter8
 
-import sbt._
+import java.io.File
 
 object G8 {
   import scala.util.control.Exception.allCatch
@@ -8,23 +8,27 @@ object G8 {
 
   private val renderer = new StringRenderer
 
-  def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String], log: Logger): Seq[File] =
+  def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String]): Seq[File] =
     fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
-      apply(in, expandPath(relative, toPath, parameters), parameters, log)
+      apply(in, expandPath(relative, toPath, parameters), parameters)
     }  
-  def apply(in: File, out: File, parameters: Map[String,String], log: Logger): Seq[File] = {
-    log.debug("Applying " + in)
+  def apply(in: File, out: File, parameters: Map[String,String]): Seq[File] = {
+    println("Applying " + in)
     import java.nio.charset.{MalformedInputException, Charset}
     
     allCatch opt {
-      if (verbatim(in, parameters)) IO.copyFile(in, out) 
+      if (verbatim(in, parameters)) GIO.copyFile(in, out) 
       else {
-        val template = IO.read(in, Charset forName "UTF-8")
-        IO.write(out, new StringTemplate(template).setAttributes(parameters).registerRenderer(renderer).toString)
+        val template = GIO.read(in, "UTF-8")
+        GIO.write(out,
+                 new StringTemplate(template)
+                 .setAttributes(parameters)
+                 .registerRenderer(renderer).toString,
+                 "UTF-8")
       }
     } getOrElse {
-      log.info("Unable to parse template %s, copying unmodified" format in)
-      IO.copyFile(in, out)      
+      println("Unable to parse template %s, copying unmodified" format in)
+      GIO.copyFile(in, out)      
     }
     allCatch opt {
       if (in.canExecute) out.setExecutable(true)
