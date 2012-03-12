@@ -11,7 +11,10 @@ trait Discover { self: Giter8 =>
       templates match {
         case Nil => Right("No templates matching %s" format query.get)
         case _ => Right(templates.sortBy { _.name } map { t =>
-          "%-40s%s" format(t.user + "/" + t.name, t.desc)
+          val padding =
+            if (t.name.length < 20 || t.desc == "") ""
+            else "\n                                         "
+          "%20s/%-20s%s%s" format(t.user, t.name, padding, t.desc)
         } mkString("\n"))
       }
     }
