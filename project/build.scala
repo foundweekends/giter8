@@ -57,7 +57,7 @@ object Builds extends sbt.Build {
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),
       buildInfoPackage := "giter8"
-    )) dependsOn (lsLibrary, lib)
+    )) dependsOn (lib)
 
   lazy val plugin = Project("giter8-plugin", file("plugin"),
     settings = buildSettings ++ Seq(
@@ -75,7 +75,7 @@ object Builds extends sbt.Build {
     settings = buildSettings ++ Seq(
       description :=
         "shared library for app and plugin"
-    ))
+    )) dependsOn (lsLibrary)
 
   lazy val lsLibrary =
     ProjectRef(uri("git://github.com/softprops/ls.git#d32a4d7"), "library")

@@ -21,4 +21,21 @@ object Ls extends JavaTokenParsers {
 
   def unapply(value: String) =
     Some(parse(spec, value)).filter { _.successful }.map { _.get }
+
+  def lookup(rawDefaults: Map[String,String])
+  : Either[String, Map[String,String]] = {
+    val lsDefaults = rawDefaults.view.collect {
+      case (key, Ls(library, user, repo)) =>
+        ls.DefaultClient {
+          _.Handler.latest(library, user, repo)
+        }.right.map { key -> _ }
+    }
+    val initial: Either[String,Map[String,String]] = Right(rawDefaults)
+    (initial /: lsDefaults) { (accumEither, lsEither) =>
+      for {
+        cur <- accumEither.right
+        ls <- lsEither.right
+      } yield cur + ls
+    }.left.map { "Error retrieving ls version info: " + _ }
+  }
 }

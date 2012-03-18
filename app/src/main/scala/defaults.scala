@@ -4,22 +4,7 @@ trait Defaults { self: Giter8 =>
   def prepareDefaults(
     repo: String,
     properties: Option[FileInfo]
-  ) = {
-    val rawDefaults = fetchDefaults(repo, properties)
-    val lsDefaults = rawDefaults.view.collect {
-      case (key, Ls(library, user, repo)) =>
-        ls.DefaultClient {
-          _.Handler.latest(library, user, repo)
-        }.right.map { key -> _ }
-    }
-    val initial: Either[String,Map[String,String]] = Right(rawDefaults)
-    (initial /: lsDefaults) { (accumEither, lsEither) =>
-      for {
-        cur <- accumEither.right
-        ls <- lsEither.right
-      } yield cur + ls
-    }.left.map { "Error retrieving ls version info: " + _ }
-  }
+  ) = Ls.lookup(fetchDefaults(repo, properties))
 
   def fetchDefaults(repo: String, properties: Option[FileInfo]) =
     properties.map { fileinfo =>
