@@ -17,13 +17,13 @@ object GIO {
   }
 
   @annotation.tailrec
-  def transfer(fis: IS, fos: OS, buf: Array[Byte]): Unit = {
+  def transfer(fis: IS, fos: OS, buf: Array[Byte]) {
     fis.read(buf, 0, buf.length) match {
       case -1 =>
         fos.flush()
       case read =>
-         fos.write(buf, 0, read)
-         transfer(fis, fos, buf)
+        fos.write(buf, 0, read)
+        transfer(fis, fos, buf)
     }
   }
 
@@ -36,7 +36,7 @@ object GIO {
     }
     bos.toString(charset)
   }    
-  def copyFile(from: File, to: File) = {
+  def copyFile(from: File, to: File) {
     to.getParentFile().mkdirs()
     use(new FIS(from)) { in =>
       use(new FOS(to)) { out =>
@@ -44,7 +44,8 @@ object GIO {
       }
     }
   }
-  def write(to: File, from: String, charset: String) = {
+  def write(to: File, from: String, charset: String) {
+    to.getParentFile().mkdirs()
     use(new BIS(from.getBytes(charset))) { in =>
       use(new FOS(to)) { out =>
         transfer(in, out, new Array[Byte](1024*16))

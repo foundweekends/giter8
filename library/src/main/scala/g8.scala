@@ -31,11 +31,11 @@ object G8 {
   }
 
   def write(out: File, template: String, parameters: Map[String, String]) {
-    GIO.write(out,
-              new StringTemplate(template)
-              .setAttributes(parameters)
-              .registerRenderer(renderer).toString,
-              "UTF-8")
+    val applied = new StringTemplate(template)
+      .setAttributes(parameters)
+      .registerRenderer(renderer)
+      .toString
+    GIO.write(out, applied, "UTF-8")
   }
   
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
