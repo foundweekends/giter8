@@ -132,7 +132,7 @@ trait Apply extends Defaults { self: Giter8 =>
   }
   
   def setFileMode(f: File, mode: String) = allCatch opt {
-    if ((mode(3).toString.toInt & 0x4) > 0) {
+    if ((mode(3).toString.toInt & 0x1) > 0) {
       f.setExecutable(true)
     }
   }
