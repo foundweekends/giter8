@@ -16,13 +16,16 @@ object G8 {
   def apply(in: File, out: File, parameters: Map[String,String]) = {
     println("Applying " + in)
     
-    allCatch opt {
+    try {
       if (verbatim(in, parameters)) GIO.copyFile(in, out) 
       else {
         write(out, GIO.read(in, "UTF-8"), parameters)
       }
-    } getOrElse {
-      GIO.copyFile(in, out)      
+    }
+    catch {
+      case e: Exception =>
+        println("Falling back to file copy for %s: %s" format(in.toString, e.getMessage))
+        GIO.copyFile(in, out)
     }
     allCatch opt {
       if (in.canExecute) out.setExecutable(true)
