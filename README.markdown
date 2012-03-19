@@ -206,10 +206,17 @@ will create the file `AwesomeProject.scala`.
 Giter8 supplies an sbt plugin for testing templates before pushing
 them to a github branch. If you used the `n8han/giter8.g8` template
 recommended above, it should already be configured. If you need to
-upgrade an existing template project to the current plugin, it's
-loaded in `project/build.sbt`:
+upgrade an existing template project to the current plugin, you can
+add it as a source dependency in `project/project/plugins.scala`:
 
-    addSbtPlugin("net.databinder" %% "giter8-plugin" % "0.3.1")
+```scala
+import sbt._
+object PluginDef extends Build {
+  lazy val root = Project("plugins", file(".")) dependsOn( g8plugin )
+  lazy val g8plugin =
+    ProjectRef(uri("git://github.com/n8han/giter8#5568ecb"), "giter8-plugin")
+}
+```
 
 And settings must be applied in a `build.sbt` file in the project base:
 

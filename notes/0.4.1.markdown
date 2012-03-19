@@ -1,0 +1,26 @@
+### Improved template listing
+
+By lining up the sorted elements visually, order is injected into the
+chaos. Also break lines if the project name is too long. *Contributed
+by [rkuhn][rkuhn].*
+
+[rkuhn]: https://github.com/rkuhn
+
+Example:
+
+    $ g8 -l
+              tjweir/LiftProject         giter8 template for a Lift 2.2 application
+         typesafehub/akka-first-tutorial-java
+                                         giter8 template for first Akka 2.0 tu
+    [...]
+    
+### giter8-plugin improvements
+
+The plugin now [supports ls properties][lsp], like the main g8 app.
+
+[lsp]: https://github.com/n8han/giter8/issues/40
+
+Instructions for using the plugin as a source dependency are in the
+[README][readme].
+
+[readme]: https://github.com/n8han/giter8#readme
