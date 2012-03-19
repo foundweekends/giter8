@@ -12,22 +12,16 @@ object G8 {
     fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
       apply(in, expandPath(relative, toPath, parameters), parameters)
     }  
-  def apply(in: File, out: File, parameters: Map[String,String]): Seq[File] = {
+
+  def apply(in: File, out: File, parameters: Map[String,String]) = {
     println("Applying " + in)
-    import java.nio.charset.{MalformedInputException, Charset}
     
     allCatch opt {
       if (verbatim(in, parameters)) GIO.copyFile(in, out) 
       else {
-        val template = GIO.read(in, "UTF-8")
-        GIO.write(out,
-                 new StringTemplate(template)
-                 .setAttributes(parameters)
-                 .registerRenderer(renderer).toString,
-                 "UTF-8")
+        write(out, GIO.read(in, "UTF-8"), parameters)
       }
     } getOrElse {
-      println("Unable to parse template %s, copying unmodified" format in)
       GIO.copyFile(in, out)      
     }
     allCatch opt {
@@ -35,8 +29,16 @@ object G8 {
     }
     Seq(out)
   }
+
+  def write(out: File, template: String, parameters: Map[String, String]) {
+    GIO.write(out,
+              new StringTemplate(template)
+              .setAttributes(parameters)
+              .registerRenderer(renderer).toString,
+              "UTF-8")
+  }
   
-  private def verbatim(file: File, parameters: Map[String,String]): Boolean =
+  def verbatim(file: File, parameters: Map[String,String]): Boolean =
     parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
   private def globMatch(file: File, patterns: Seq[String]): Boolean =
     patterns exists { globRegex(_).findFirstIn(file.getName).isDefined }
@@ -46,10 +48,10 @@ object G8 {
     case '.' => """\."""
     case x => x.toString
   }).r  
-  private def expandPath(relative: String, toPath: File, parameters: Map[String,String]): File = {
+  def expandPath(relative: String, toPath: File, parameters: Map[String,String]): File = {
     val fileParams = Map(parameters.toSeq map {
       case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
-          case """\"""  => """\\"""
+          case "\\"  => "\\\\"
           case sep => sep
         }))
       case x => x
@@ -58,9 +60,20 @@ object G8 {
     new File(toPath, new StringTemplate(formatize(relative)).setAttributes(fileParams).registerRenderer(renderer).toString)
   }
   private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
+
+  def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
+  def startCase(s: String) = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
+  def wordOnly(s: String) = s.replaceAll("""\W""", "")
+  def upperCamel(s: String) = wordOnly(startCase(s))
+  def lowerCamel(s: String) = decapitalize(upperCamel(s))
+  def hyphenate(s: String) = s.replaceAll("""\s+""", "-")
+  def normalize(s: String) = hyphenate(s.toLowerCase)
+  def snakeCase(s: String) = s.replaceAll("""\s+""", "_")
+  def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
 }
 
 class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
+  import G8._
   def toString(value: String): String = value
 
   override def toString(value: String, formatName: String): String = {
@@ -83,14 +96,4 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
     case "packaged" | "package-dir"  => packageDir(value)
     case _                           => value
   }
-
-  def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
-  def startCase(s: String) = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
-  def wordOnly(s: String) = s.replaceAll("""\W""", "")
-  def upperCamel(s: String) = wordOnly(startCase(s))
-  def lowerCamel(s: String) = decapitalize(upperCamel(s))
-  def hyphenate(s: String) = s.replaceAll("""\s+""", "-")
-  def normalize(s: String) = hyphenate(s.toLowerCase)
-  def snakeCase(s: String) = s.replaceAll("""\s+""", "_")
-  def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
 }

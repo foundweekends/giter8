@@ -41,7 +41,7 @@ trait Apply extends Defaults { self: Giter8 =>
           }
         }.getOrElse { interact(defaults) }
         val base = new File(
-          parameters.get("name").map(normalize).getOrElse(".")
+          parameters.get("name").map(G8.normalize).getOrElse(".")
         )
         write(repo, templates, parameters, base)
       }
@@ -92,33 +92,21 @@ trait Apply extends Defaults { self: Giter8 =>
             base: File) = {
     val renderer = new StringRenderer
     templates.foreach { case FileInfo(name, hash, mime, mode) =>
-      import org.clapper.scalasti.StringTemplate
-      import java.nio.charset.MalformedInputException
-      val fileParams = Map(parameters.toSeq map {
-        case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
-            case """\"""  => """\\"""
-            case sep => sep
-          }))
-        case x => x
-      }: _*)
-      val f = new File(base, new StringTemplate(formatize(name)).setAttributes(fileParams).registerRenderer(renderer).toString)
+      val f = G8.expandPath(name, base, parameters)
       if (f.exists)
         println("Skipping existing file: %s" format f.toString)
       else {
         f.getParentFile.mkdirs()
         (mime match {
-          case x if verbatim(f, parameters) => None
+          case x if G8.verbatim(f, parameters) => None
           case Text(_) =>
             try {
               http(show(repo, hash) >- { in =>
-                use (new FileWriter(f)) { fw =>
-                  fw.write(new StringTemplate(in).setAttributes(parameters).registerRenderer(renderer).toString)
-                  Some(())
-                }
+                Some(G8.write(f, in, parameters))
               })
             }
             catch {
-              case e: MalformedInputException => None
+              case e: java.nio.charset.MalformedInputException => None
             }
           case binary => None
         }) getOrElse {
@@ -143,59 +131,13 @@ trait Apply extends Defaults { self: Giter8 =>
     Right("Applied %s in %s" format (repo, base.toString))
   }
   
-  def verbatim(file: File, parameters: Map[String,String]): Boolean =
-    parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
-  def globMatch(file: File, patterns: Seq[String]): Boolean =
-    patterns exists { globRegex(_).findFirstIn(file.getName).isDefined }
-  def globRegex(pattern: String) = "^%s$".format(pattern flatMap {
-    case '*' => """.*"""
-    case '?' => """."""
-    case '.' => """\."""
-    case x => x.toString
-  }).r  
   def setFileMode(f: File, mode: String) = allCatch opt {
     if ((mode(3).toString.toInt & 0x4) > 0) {
       f.setExecutable(true)
     }
   }
-  def normalize(s: String) = s.toLowerCase.replaceAll("""\s+""", "-")
-  def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
   def show(repo: String, hash: String) = gh / "blob" / "show" / repo / hash
   private def use[C <: { def close(): Unit }, T](c: C)(f: C => T): T =
     try { f(c) } finally { c.close() }
 }
 
-class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
-  def toString(value: String): String = value
-
-  override def toString(value: String, formatName: String): String = {
-    val formats = formatName.split(",").map(_.trim)
-    formats.foldLeft(value)(format)
-  }
-
-  def format(value: String, formatName: String): String = formatName match {
-    case "upper"    | "uppercase"    => value.toUpperCase
-    case "lower"    | "lowercase"    => value.toLowerCase
-    case "cap"      | "capitalize"   => value.capitalize
-    case "decap"    | "decapitalize" => decapitalize(value)
-    case "start"    | "start-case"   => startCase(value)
-    case "word"     | "word-only"    => wordOnly(value)
-    case "Camel"    | "upper-camel"  => upperCamel(value)
-    case "camel"    | "lower-camel"  => lowerCamel(value)
-    case "hyphen"   | "hyphenate"    => hyphenate(value)
-    case "norm"     | "normalize"    => normalize(value)
-    case "snake"    | "snake-case"   => snakeCase(value)
-    case "packaged" | "package-dir"  => packageDir(value)
-    case _                           => value
-  }
-
-  def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
-  def startCase(s: String) = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
-  def wordOnly(s: String) = s.replaceAll("""\W""", "")
-  def upperCamel(s: String) = wordOnly(startCase(s))
-  def lowerCamel(s: String) = decapitalize(upperCamel(s))
-  def hyphenate(s: String) = s.replaceAll("""\s+""", "-")
-  def normalize(s: String) = hyphenate(s.toLowerCase)
-  def snakeCase(s: String) = s.replaceAll("""\s+""", "_")
-  def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
-}
