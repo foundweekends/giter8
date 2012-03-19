@@ -31,10 +31,10 @@ object Plugin extends sbt.Plugin {
     outputPath in g8 <<= (target) { dir => dir / "g8" },
     propertiesFile in g8 <<= (unmanagedSourceDirectories in g8) { dirs => (dirs / "default.properties").get.head },
     properties in g8 <<= (propertiesFile in g8) { f =>
-      import scala.collection.JavaConversions._
-      val p = new java.util.Properties
-      p.load(new java.io.ByteArrayInputStream(IO.readBytes(f)))
-      Map((for { k <- p.propertyNames } yield (k.toString, p.getProperty(k.toString))).toSeq:_*)    
+      Ls.lookup(GIO.readProps(new java.io.FileInputStream(f))).fold(
+        err => sys.error(err),
+        identity
+      )
     }
   )
   
