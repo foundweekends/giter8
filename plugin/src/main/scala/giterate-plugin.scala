@@ -11,7 +11,7 @@ object Plugin extends sbt.Plugin {
     lazy val g8                = TaskKey[Seq[File]]("g8", "Apply default parameters to input templates and write to output.")
     lazy val outputPath        = SettingKey[File]("g8-output-path")
     lazy val propertiesFile    = SettingKey[File]("g8-properties-file")
-    lazy val properties        = SettingKey[Map[String, String]]("g8-properties")
+    lazy val properties        = TaskKey[Map[String, String]]("g8-properties")
     lazy val testScript        = SettingKey[File]("g8-test-script")
     lazy val g8Test            = InputKey[Unit]("g8-test", "Run `sbt test` in output to smoke-test the templates")
     lazy val g8TestBufferLog   = SettingKey[Boolean]("g8-test-buffer-log")
@@ -30,7 +30,7 @@ object Plugin extends sbt.Plugin {
       ((dirs ** (-DirectoryFilter)) --- pf).get },
     outputPath in g8 <<= (target) { dir => dir / "g8" },
     propertiesFile in g8 <<= (unmanagedSourceDirectories in g8) { dirs => (dirs / "default.properties").get.head },
-    properties in g8 <<= (propertiesFile in g8) { f =>
+    properties in g8 <<= (propertiesFile in g8) map { f =>
       Ls.lookup(GIO.readProps(new java.io.FileInputStream(f))).fold(
         err => sys.error(err),
         identity
