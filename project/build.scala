@@ -41,7 +41,7 @@ object Builds extends sbt.Build {
     settings = buildSettings ++ Seq(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(plugin, app, lsLibrary)
+    )) aggregate(plugin, app, lib, lsLibrary)
 
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
@@ -71,6 +71,7 @@ object Builds extends sbt.Build {
             )
       }
     )) dependsOn (lib)
+
   lazy val lib = Project("giter8-lib", file("library"),
     settings = buildSettings ++ Seq(
       description :=
