@@ -1,0 +1,30 @@
+
+{
+ "organization":"net.databinder.giter8",
+ "name":"giter8",
+ "version":"0.4.1",
+ "description":"Command line tool to apply templates defined on github",
+ "site":"https://github.com/n8han/giter8",
+ "tags":[],
+ "docs":"",
+ "licenses": [{
+   "name": "LGPL v3",
+   "url": "http://www.gnu.org/licenses/lgpl.txt"
+  }],
+ "resolvers": ["http://scala-tools.org/repo-releases"],
+ "dependencies": [{
+   "organization":"org.clapper",
+   "name": "scalasti",
+   "version": "0.5.5"
+  },{
+   "organization":"org.scala-tools.sbt",
+   "name": "launcher-interface_2.9.1",
+   "version": "0.11.2"
+  },{
+   "organization":"net.databinder",
+   "name": "dispatch-lift-json",
+   "version": "0.8.5"
+  }],
+ "scalas": ["2.9.1"],
+ "sbt": false
+}
