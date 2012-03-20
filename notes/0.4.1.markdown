@@ -13,6 +13,13 @@ Example:
          typesafehub/akka-first-tutorial-java
                                          giter8 template for first Akka 2.0 tu
     [...]
+
+### Bug Fixes
+
+[Issue 41][41] Don't always set x bit on text files { [eed3si9n][eed3si9n] }
+
+[41]: https://github.com/n8han/giter8/issues/41
+[eed3si9n]: https://github.com/eed3si9n
     
 ### giter8-plugin improvements
 
