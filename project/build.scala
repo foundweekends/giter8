@@ -41,16 +41,12 @@ object Builds extends sbt.Build {
     settings = buildSettings ++ Seq(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(plugin, app, lib, lsLibrary)
+    )) aggregate(plugin, app, lib)
 
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
       description :=
         "Command line tool to apply templates defined on github",
-      version in lsLibrary <<= version,
-      organization in lsLibrary := "net.databinder.giter8",
-      publishTo in lsLibrary <<= publishTo,
-      publishMavenStyle in lsLibrary := true,
       name := "giter8",
       libraryDependencies +=
         "net.databinder" %% "dispatch-lift-json" % "0.8.5",
@@ -75,9 +71,9 @@ object Builds extends sbt.Build {
   lazy val lib = Project("giter8-lib", file("library"),
     settings = buildSettings ++ Seq(
       description :=
-        "shared library for app and plugin"
-    )) dependsOn (lsLibrary)
-
-  lazy val lsLibrary =
-    ProjectRef(uri("git://github.com/softprops/ls.git#d32a4d7"), "library")
+        "shared library for app and plugin",
+      libraryDependencies ++= Seq(
+        "me.lessis" %% "ls" % "0.1.2-RC2"
+      )
+    ))
 }
