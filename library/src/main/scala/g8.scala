@@ -73,6 +73,8 @@ object G8 {
   def normalize(s: String) = hyphenate(s.toLowerCase)
   def snakeCase(s: String) = s.replaceAll("""\s+""", "_")
   def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
+  def addRandomId(s: String) = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
+
 }
 
 class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
@@ -97,6 +99,7 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
     case "norm"     | "normalize"    => normalize(value)
     case "snake"    | "snake-case"   => snakeCase(value)
     case "packaged" | "package-dir"  => packageDir(value)
+    case "random"   | "generate-random" => addRandomId(value)
     case _                           => value
   }
 }
