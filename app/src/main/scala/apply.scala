@@ -18,19 +18,8 @@ trait Apply extends Defaults { self: Giter8 =>
   def inspect(repo: String,
               branch: Option[String],
               arguments: Seq[String]) =
-    repoFiles(repo, branch.getOrElse(DefaultBranch)).right.filter {
-      _.nonEmpty
-    }.getOrElse {
-      Left("Unable to find github repository: %s (%s)".format(
-        repo, branch.getOrElse(DefaultBranch)
-      ))
-    }.right.flatMap { files =>
-      val (propertiesFiles, templates) = files.partition {
-        _.name == "default.properties"
-      }
-      prepareDefaults(
-        repo,propertiesFiles.headOption
-      ).right.flatMap { defaults =>
+    fetchInfo(repo, branch).right.flatMap {
+      case (defaults, templates) =>
         val parameters = arguments.headOption.map { _ =>
           (defaults /: arguments) {
             case (map, Param(key, value)) if map.contains(key) =>
@@ -44,8 +33,24 @@ trait Apply extends Defaults { self: Giter8 =>
           parameters.get("name").map(G8.normalize).getOrElse(".")
         )
         write(repo, templates, parameters, base)
+    }
+
+  def fetchInfo(repo: String, branch: Option[String]) = {
+    repoFiles(repo, branch.getOrElse(DefaultBranch)).right.filter {
+      _.nonEmpty
+    }.getOrElse {
+      Left("Unable to find github repository: %s (%s)".format(
+        repo, branch.getOrElse(DefaultBranch)
+      ))
+    }.right.flatMap { files =>
+      val (propertiesFiles, templates) = files.partition {
+        _.name == "default.properties"
+      }
+      prepareDefaults(repo, propertiesFiles.headOption).right.map {
+        defaults => (defaults, templates)
       }
     }
+  }
 
   def repoFiles(repo: String, branch: String) = try { Right(for {
     blobs <- http(gh / "blob" / "full" / repo / branch ># ('blobs ? ary))
