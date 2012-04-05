@@ -32,7 +32,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
     })
   }
 
-  lazy val gh = withCredentials(:/("github.com").secure / "api" / "v2" / "json")
+  lazy val gh = withCredentials(:/("api.github.com").secure) / "repos"
 
   def http = new Http {
     override def make_logger = new dispatch.Logger {

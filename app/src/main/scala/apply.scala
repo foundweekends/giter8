@@ -36,13 +36,7 @@ trait Apply extends Defaults { self: Giter8 =>
     }
 
   def fetchInfo(repo: String, branch: Option[String]) = {
-    repoFiles(repo, branch.getOrElse(DefaultBranch)).right.filter {
-      _.nonEmpty
-    }.getOrElse {
-      Left("Unable to find github repository: %s (%s)".format(
-        repo, branch.getOrElse(DefaultBranch)
-      ))
-    }.right.flatMap { files =>
+    repoFiles(repo, branch.getOrElse(DefaultBranch)).right.flatMap { files =>
       val (propertiesFiles, templates) = files.partition {
         _.name == "default.properties"
       }
@@ -52,18 +46,39 @@ trait Apply extends Defaults { self: Giter8 =>
     }
   }
 
-  def repoFiles(repo: String, branch: String) = try { Right(for {
-    blobs <- http(gh / "blob" / "full" / repo / branch ># ('blobs ? ary))
-    JObject(blob) <- blobs
-    JField("name", JString(name)) <- blob
-    JField("sha", JString(hash)) <- blob
-    JField("mime_type", JString(mime)) <- blob
-    JField("mode", JString(mode)) <- blob
-    m <- Root.findFirstMatchIn(name)
-  } yield FileInfo(m.group(1), hash, mime, mode)) } catch {
-    case StatusCode(404, _) =>
-      Left("Unable to find github repository: %s (%s)" format(repo, branch))
-  }
+  def repoFiles(repo: String, branch: String): Either[String,Seq[FileInfo]] =
+    allCatch.either {
+      val shas = 
+        http(gh / repo / "git" / "refs" / "heads" / branch ># { js =>
+          for {
+            JField("object", JObject(obj)) <- js
+            JField("sha", JString(sha)) <- obj
+          } yield sha
+        })
+      shas.flatMap { sha =>
+        http(gh / repo / "git" / "trees" / sha <<? Map(
+          "recursive" -> "1"
+        ) ># { js =>
+          for {
+            JField("tree", JArray(tree)) <- js
+            JObject(blob) <- tree
+            JField("type", JString("blob")) <- blob
+            JField("path", JString(name)) <- blob
+            JField("sha", JString(hash)) <- blob
+            JField("mode", JString(mode)) <- blob
+            m <- Root.findFirstMatchIn(name)
+          } yield FileInfo(m.group(1), hash, "text/plain", mode)
+        })
+      }
+    }.left.flatMap {
+      case StatusCode(404, _) => Right(Seq.empty)
+      case e => Left("Exception fetching from github " + e.getMessage)
+    }.right.flatMap { seq =>
+      if (seq.isEmpty)
+        Left("Unable to find github repository: %s (%s)".format(repo, branch))
+      else
+        Right(seq)
+    }
 
   def interact(params: Map[String, String]) = {
     val (desc, others) = params partition { case (k,_) => k == "description" }
@@ -141,7 +156,10 @@ trait Apply extends Defaults { self: Giter8 =>
       f.setExecutable(true)
     }
   }
-  def show(repo: String, hash: String) = gh / "blob" / "show" / repo / hash
+  def show(repo: String, hash: String) =
+    gh / repo / "git" / "blobs" / hash <:< Map(
+      "Accept" -> "application/vnd.github.raw"
+    )
   private def use[C <: { def close(): Unit }, T](c: C)(f: C => T): T =
     try { f(c) } finally { c.close() }
 }
