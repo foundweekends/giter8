@@ -1,6 +1,6 @@
 package giter8
 
-case class FileInfo(name: String, hash: String, mime: String, mode: String)
+case class FileInfo(name: String, hash: String, mode: String)
 
 trait Apply extends Defaults { self: Giter8 =>
   import dispatch._
@@ -8,7 +8,7 @@ trait Apply extends Defaults { self: Giter8 =>
   import net.liftweb.json.JsonAST._
   import scala.collection.JavaConversions._
   import java.io.{File,FileWriter,FileOutputStream}
-  import scala.util.control.Exception.allCatch
+  import scala.util.control.Exception.{allCatch,catching}
 
   val Root = "^src/main/g8/(.+)$".r
   val Param = """^--(\S+)=(.+)$""".r
@@ -67,7 +67,7 @@ trait Apply extends Defaults { self: Giter8 =>
             JField("sha", JString(hash)) <- blob
             JField("mode", JString(mode)) <- blob
             m <- Root.findFirstMatchIn(name)
-          } yield FileInfo(m.group(1), hash, "text/plain", mode)
+          } yield FileInfo(m.group(1), hash, mode)
         })
       }
     }.left.flatMap {
@@ -110,25 +110,19 @@ trait Apply extends Defaults { self: Giter8 =>
             templates: Iterable[FileInfo],
             parameters: Map[String,String],
             base: File) = {
+    import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
-    templates.foreach { case FileInfo(name, hash, mime, mode) =>
+    templates.foreach { case FileInfo(name, hash, mode) =>
       val f = G8.expandPath(name, base, parameters)
       if (f.exists)
         println("Skipping existing file: %s" format f.toString)
       else {
         f.getParentFile.mkdirs()
-        (mime match {
-          case x if G8.verbatim(f, parameters) => None
-          case Text(_) =>
-            try {
-              http(show(repo, hash) >- { in =>
-                Some(G8.write(f, in, parameters))
-              })
-            }
-            catch {
-              case e: java.nio.charset.MalformedInputException => None
-            }
-          case binary => None
+        (if (G8.verbatim(f, parameters)) None
+        else catching(classOf[MalformedInputException]).opt {
+          http(show(repo, hash) >- { in =>
+            Some(G8.write(f, in, parameters))
+          })
         }) getOrElse {
           http(show(repo, hash) >> { is =>
             use(is) { in =>
