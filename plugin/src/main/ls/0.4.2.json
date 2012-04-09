@@ -1,0 +1,30 @@
+
+{
+ "organization":"net.databinder.giter8",
+ "name":"giter8-plugin",
+ "version":"0.4.2",
+ "description":"sbt 0.11 plugin for testing giter8 templates",
+ "site":"https://github.com/n8han/giter8",
+ "tags":[],
+ "docs":"",
+ "licenses": [{
+   "name": "LGPL v3",
+   "url": "http://www.gnu.org/licenses/lgpl.txt"
+  }],
+ "resolvers": ["http://scala-tools.org/repo-releases"],
+ "dependencies": [{
+   "organization":"org.clapper",
+   "name": "scalasti",
+   "version": "0.5.5"
+  },{
+   "organization":"org.scala-tools.sbt",
+   "name": "sbt_2.9.1",
+   "version": "0.11.2"
+  },{
+   "organization":"org.scala-tools.sbt",
+   "name": "scripted-plugin",
+   "version": "0.11.2"
+  }],
+ "scalas": ["2.9.1"],
+ "sbt": true
+}
