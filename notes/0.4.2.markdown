@@ -1,8 +1,12 @@
 ### Obligatory Upgrade
 
-Beacuse github is [terminating its v2 APIs][gh] on May 1, 2012 and
-these are used by all earlier virsions of giter8, you must upgrade in
+Because github is [terminating its v2 APIs][gh] on May 1, 2012 and
+these are used by all earlier versions of giter8, you must upgrade in
 order to continue using the software.
+
+If you installed with Conscript, you can upgrade immediately:
+
+    cs n8han/giter8
 
 [gh]: https://github.com/blog/1090-github-api-moving-on
 
