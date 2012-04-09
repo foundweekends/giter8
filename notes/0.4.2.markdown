@@ -1,0 +1,16 @@
+### Obligatory Upgrade
+
+Beacuse github is [terminating its v2 APIs][gh] on May 1, 2012 and
+these are used by all earlier virsions of giter8, you must upgrade in
+order to continue using the software.
+
+[gh]: https://github.com/blog/1090-github-api-moving-on
+
+### Improvements
+
+* `random` formatter for template properties, appends random characters
+  to the given string { [pk11][pk] }
+* Refactor to allow easier external use of giter8 templating { [n8han][rf] }
+
+[pk]: https://github.com/n8han/giter8/pull/46
+[rf]: https://github.com/n8han/giter8/issues/44
