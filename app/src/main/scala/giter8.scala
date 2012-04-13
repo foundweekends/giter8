@@ -1,11 +1,13 @@
 package giter8
 
-class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
+class Giter8 extends xsbti.AppMain
+  with Discover with Apply with Authorize with Credentials {
   import dispatch._
 
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   val Branch = """^-(b|-branch)$""".r
   val RemoteTemplates = """^-(l|-list)$""".r
+  val Auth = """^-(a|-auth)$""".r
 
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
@@ -20,6 +22,8 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
         inspect("%s/%s.g8".format(user, proj), None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
         inspect("%s/%s.g8".format(user, proj), Some(branch), params)
+      case (params, Array(Auth(_), user, pass)) =>
+        auth(user, pass)
       case _ => Left(usage)
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
@@ -68,6 +72,11 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
 class Exit(val code: Int) extends xsbti.Exit
 
 object Giter8 extends Giter8 {
+  import java.io.File
+  val home = Option(System.getProperty("G8_HOME")).map(new File(_)).getOrElse(
+    new File(System.getProperty("user.home"), ".g8")
+  )
+
   /** Main-class runner just for testing from sbt*/
   def main(args: Array[String]) {
     System.exit(run(args))
