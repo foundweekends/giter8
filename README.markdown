@@ -42,11 +42,7 @@ Usage
 -----
 
 Template repositories must reside on github and be named with the
-suffix `.g8`. We're keeping a [list of templates on the wiki][wiki],
-and you can query github to list all templates with a `.g8` suffix
-from the command line:
-
-    $ g8 --list
+suffix `.g8`. We're keeping a [list of templates on the wiki][wiki].
 
 To apply a template, for example, [softprops/unfiltered.g8][uft]:
 
@@ -86,10 +82,15 @@ Private Repositories
 --------------------
 
 Giter8 accesses GitHub anonymously by default, but for private
-templates you can provide your GitHub [credentials][info]: –username and token– in `~/.gitconfig`:
+templates you can provide your GitHub [credentials][info]: –username
+and password– in `~/.gitconfig`:
 
-    $ git config --global github.user username
-    $ git config --global github.token 0123456789yourf0123456789token
+    $ git config --global github.user your-username
+    $ git config --global github.password your-password
+
+Note: This stores your password in the clear. We were using github's
+token authentication, which they have now abandoned. At some point
+we'll upgrade to their OAuth2 flow.
 
 [info]: http://help.github.com/set-your-user-name-email-and-github-token/
 
