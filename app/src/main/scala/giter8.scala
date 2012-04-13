@@ -20,8 +20,6 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
         inspect("%s/%s.g8".format(user, proj), None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
         inspect("%s/%s.g8".format(user, proj), Some(branch), params)
-      case (_, Array(RemoteTemplates(_), query)) => discover(Some(query))
-      case (_, Array(RemoteTemplates(_))) => discover(None)
       case _ => Left(usage)
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
@@ -47,11 +45,9 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
   }
   def usage = """giter8 %s
                 |Usage: g8 [TEMPLATE] [OPTION]...
-                |Apply specified template or list available templates.
+                |Apply specified template.
                 |
                 |OPTIONS
-                |    -l, --list
-                |        List current giter8 templates on github.
                 |    -b, --branch
                 |        Resolves a template within a given branch
                 |    --paramname=paramvalue
@@ -65,9 +61,7 @@ class Giter8 extends xsbti.AppMain with Discover with Apply with Credentials {
                 |
                 |Apply given name parameter and use defaults for all others.
                 |    g8 n8han/giter8 --name=template-test
-                |
-                |List available templates.
-                |    g8 --list""".stripMargin format (BuildInfo.version)
+                |""".stripMargin format (BuildInfo.version)
 
 }
 
