@@ -1,0 +1,7 @@
+### (O)Authentication
+
+Provides an implementation for Github's client-side [oauth][oauth] support as an alternative to .gitconfig storage of private credentials
+
+    g8 --auth login password
+
+[oauth]: http://developer.github.com/v3/oauth/
