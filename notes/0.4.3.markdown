@@ -9,7 +9,9 @@ your github password:
     git config --global github.user your-user-name
     git config --global github.password your-password
 
-Contributions to upgrade to the [v3 OAuth flow][oauth] are welcome.
+Later, you can delete your password from `~/.gitconfig` where it has
+been stored in the clear. Contributions to upgrade to the
+[v3 OAuth flow][oauth] are welcome.
 
 [oauth]: http://developer.github.com/v3/oauth/
 
