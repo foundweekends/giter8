@@ -1,0 +1,24 @@
+### Authentication
+
+This release reverts to name and password authentication, because
+github's v3 API does support the token authentication previously
+relied upon by giter8.  If you require access to templates in private
+repositories, configure your github user name (as before) as well as
+your github password:
+
+    git config --global github.user your-user-name
+    git config --global github.password your-password
+
+Contributions to upgrade to the [v3 OAuth flow][oauth] are welcome.
+
+[oauth]: http://developer.github.com/v3/oauth/
+
+### Template Listing
+
+We have regretfully disabled template listing (`-l` and `--list`)
+because search is no longer supported in the github API.
+
+Later we hope to integrate with [ls.implicit.ly][ls] as a stable
+listing service.
+
+[ls]: http://ls.implicit.ly/
