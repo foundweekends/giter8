@@ -10,9 +10,12 @@ object Config {
     Option(properties {
       _.getProperty(name)
     })
-  
+
   def properties[A](f: Properties => A): A = {
-    if (!file.exists()) file.getParentFile().mkdirs()
+    if (!file.exists()) {
+      file.getParentFile().mkdirs()
+      file.createNewFile()
+    }
     val p = new Properties()
     GIO.use(new FileInputStream(file)) { in =>
       p.load(in)
