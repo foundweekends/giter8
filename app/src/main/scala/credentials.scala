@@ -8,8 +8,8 @@ trait Credentials { self: Apply =>
   
   lazy val credentials: Option[(String, String)] =
     gitConfig("github.user") flatMap { user =>
-      gitConfig("github.token") map { token =>
-        (user + "/token", token)
+      gitConfig("github.password") map { password =>
+        (user, password)
       }    
     }
   
