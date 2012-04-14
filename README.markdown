@@ -94,7 +94,8 @@ invocations. The token can be revoked at any time in your
 [settings]: https://github.com/settings/applications
 
 If you wish to use basic authentication instead, you can specify a
-`github.user` and `github.password` in your global git properties.
+`github.user` and `github.password` in your global git properties. The
+OAuth token is preferred and will be used when both are present.
 
 Making your own templates
 -------------------------
