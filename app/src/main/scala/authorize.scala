@@ -15,7 +15,8 @@ trait Authorize { self: Giter8 =>
   def auth(user: String, pass: String): Either[String, String] =
     http x (authorizations.POST.as_!(user, pass) << compact(render(
           ("note" -> "Giter8") ~
-          ("note_url" -> "https://github.com/n8han/giter8")
+          ("note_url" -> "https://github.com/n8han/giter8") ~
+          ("scopes" -> ("repo" :: Nil))
     )) ># { _ \ "token" match {
       case JString(tok) => Some(tok)
       case _ => None
