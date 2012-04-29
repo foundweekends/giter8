@@ -9,7 +9,7 @@ trait Credentials { self: Apply =>
       credentials map { case (user, pass) => req as_! (user, pass) }) getOrElse req
   
   def oauth: Option[String] =
-    Config.get("gh.oauth")
+    Config.get("gh.access")
 
   lazy val credentials: Option[(String, String)] =
     gitConfig("github.user") flatMap { user =>
