@@ -84,7 +84,7 @@ Private Repositories
 Giter8 accesses GitHub anonymously by default, but for private
 templates you can authenticate.
 
-    $ g8 --auth your-username -your-password
+    $ g8 --auth yourname:yourpass
 
 This stores a [github OAuth](http://develop.github.com/p/oauth.html)
 token in `~/.g8/config` which is then used for future `g8`
