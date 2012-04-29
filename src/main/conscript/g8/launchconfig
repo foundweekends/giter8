@@ -8,3 +8,4 @@
 [repositories]
   local
   maven-central
+  sonatype-releases: https://oss.sonatype.org/service/local/repositories/releases/content/
