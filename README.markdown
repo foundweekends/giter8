@@ -38,6 +38,12 @@ Giter8 is also installable with the OS X package manager [Homebrew][]:
 
 [Homebrew]: http://mxcl.github.com/homebrew/
 
+Giter8 is also installable with the OS X package manager [Homebrew][]:
+
+    $ brew update && brew install giter8
+
+[Homebrew]: http://mxcl.github.com/homebrew/
+
 Usage
 -----
 
