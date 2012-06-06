@@ -63,7 +63,7 @@ object Builds extends sbt.Build {
       resolvers += Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
         Seq(sd,
-            "org.scala-tools.sbt" %% "scripted-plugin" % sv
+            "org.scala-sbt" %% "scripted-plugin" % sv
             )
       }
     )) dependsOn (lib)
