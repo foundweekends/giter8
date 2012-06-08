@@ -6,6 +6,9 @@ object Builds extends sbt.Build {
   import sbtbuildinfo.Plugin._
 
   val g8version = "0.4.5"
+  
+  val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
+  val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
 
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder.giter8",
@@ -48,12 +51,14 @@ object Builds extends sbt.Build {
       description :=
         "Command line tool to apply templates defined on github",
       name := "giter8",
-      libraryDependencies +=
+      libraryDependencies ++= Seq(
         "net.databinder" %% "dispatch-lift-json" % "0.8.5",
+        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
+      ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),
       buildInfoPackage := "giter8",
-      resolvers += "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
+      resolvers += typesafeRepo
     )) dependsOn (lib)
 
   lazy val plugin = Project("giter8-plugin", file("plugin"),
@@ -63,7 +68,7 @@ object Builds extends sbt.Build {
       sbtPlugin := true,
       resolvers ++= Seq(
         Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
-        "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
+        typesafeRepo
       ),
       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
         Seq(sd,
