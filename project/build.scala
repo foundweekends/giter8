@@ -52,7 +52,8 @@ object Builds extends sbt.Build {
         "net.databinder" %% "dispatch-lift-json" % "0.8.5",
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),
-      buildInfoPackage := "giter8"
+      buildInfoPackage := "giter8",
+      resolvers += "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
     )) dependsOn (lib)
 
   lazy val plugin = Project("giter8-plugin", file("plugin"),
@@ -60,7 +61,10 @@ object Builds extends sbt.Build {
       description :=
         "sbt 0.11 plugin for testing giter8 templates",
       sbtPlugin := true,
-      resolvers += Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
+      resolvers ++= Seq(
+        Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
+        "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
+      ),
       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
         Seq(sd,
             "org.scala-tools.sbt" %% "scripted-plugin" % sv

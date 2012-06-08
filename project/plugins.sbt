@@ -10,4 +10,4 @@ resolvers += Resolver.url("sbt-plugin-releases",
 
 addSbtPlugin("me.lessis" % "ls-sbt" % "0.1.1")
 
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.0")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.2")
