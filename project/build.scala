@@ -5,7 +5,10 @@ object Builds extends sbt.Build {
   import ls.Plugin.{lsSettings,LsKeys}
   import sbtbuildinfo.Plugin._
 
-  val g8version = "0.4.5"
+  val g8version = "0.4.6-SNAPSHOT"
+  
+  val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
+  val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
 
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder.giter8",
@@ -35,41 +38,27 @@ object Builds extends sbt.Build {
         </developer>
       </developers>)
   )
-  
+
   // posterous title needs to be giter8, so both app and root are named giter8
   lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(plugin, app, lib)
+    )) aggregate(app, lib)
 
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
       description :=
         "Command line tool to apply templates defined on github",
       name := "giter8",
-      libraryDependencies +=
+      libraryDependencies ++= Seq(
         "net.databinder" %% "dispatch-lift-json" % "0.8.5",
+        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
+      ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),
       buildInfoPackage := "giter8",
-      resolvers += "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
-    )) dependsOn (lib)
-
-  lazy val plugin = Project("giter8-plugin", file("plugin"),
-    settings = buildSettings ++ Seq(
-      description :=
-        "sbt 0.11 plugin for testing giter8 templates",
-      sbtPlugin := true,
-      resolvers ++= Seq(
-        Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
-        "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
-      ),
-      libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
-        Seq(sd,
-            "org.scala-tools.sbt" %% "scripted-plugin" % sv
-            )
-      }
+      resolvers += typesafeRepo
     )) dependsOn (lib)
 
   lazy val lib = Project("giter8-lib", file("library"),
