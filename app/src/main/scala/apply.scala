@@ -168,13 +168,25 @@ object GitRepo {
   val TMP = new File(System.getProperty("java.io.tmpdir"), java.util.UUID.randomUUID().toString)
   val TEMPLATES_FOLDER = new File(TMP,"src/main/g8")
   
+  val Param = """^--(\S+)=(.+)$""".r
+  
   def inspect(repo: String,
                branch: Option[String],
                arguments: Seq[String]) = {
     val tmpl = clone(repo, branch)
 
-    val (ps, templates) = fetchInfo(tmpl)
-    val parameters = interact(ps)
+    val (defaults, templates) = fetchInfo(tmpl)
+    
+    val parameters = arguments.headOption.map { _ =>
+      (defaults /: arguments) {
+        case (map, Param(key, value)) if map.contains(key) =>
+          map + (key -> value)
+        case (map, Param(key, _)) =>
+          println("Ignoring unrecognized parameter: " + key)
+          map
+      }
+    }.getOrElse { interact(defaults) }
+
     val base = new File(
       parameters.get("name").map(G8.normalize).getOrElse(".")
     )

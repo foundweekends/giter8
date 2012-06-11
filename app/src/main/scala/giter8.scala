@@ -21,7 +21,7 @@ class Giter8 extends xsbti.AppMain
     (args.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Git(remote))) => {
         // TODO: branch
-        GitRepo.inspect(remote, None, Nil)
+        GitRepo.inspect(remote, None, params)
       }
       case (params, Array(Repo(user, proj))) =>
         inspect("%s/%s.g8".format(user, proj), None, params)
