@@ -183,24 +183,24 @@ object GitRepo {
   }
 
   def fetchInfo(f: File) = {    
+    import java.io.FileInputStream
+
     def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
       f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
 
     def getVisibleFiles = getFiles(!_.isHidden) _
 
     val fs = getVisibleFiles(f)
-    val (propertiesFiles, templates) = fs.partition {
+    val (propertiesFiles, _) = fs.partition {
       _.getName == "default.properties"
     }
 
     val parameters = propertiesFiles.headOption.map{ f => 
-      val s = Source.fromFile(f)
-      // TODO: really read props
-      Map("name" -> "biloute")
+      GIO.readProps(new FileInputStream(f))
     }.getOrElse(Map.empty)
     
-    val g8 = getVisibleFiles(TEMPLATES_FOLDER).filter(!_.isDirectory)
-    (parameters, g8)
+    val g8templates = getVisibleFiles(TEMPLATES_FOLDER).filter(!_.isDirectory)
+    (parameters, g8templates)
 
     // TODO: LS support
     // prepareDefaults(repo, propertiesFiles.headOption).right.map {
