@@ -19,10 +19,10 @@ class Giter8 extends xsbti.AppMain
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     (args.partition { s => Param.pattern.matcher(s).matches } match {
-      case (params, Array(Git(remote))) => {
-        // TODO: branch
+      case (params, Array(Git(remote))) => 
         GitRepo.inspect(remote, None, params)
-      }
+      case (params, Array(Git(remote), Branch(_), branch)) =>
+        GitRepo.inspect(remote, Some(branch), params)
       case (params, Array(Repo(user, proj))) =>
         inspect("%s/%s.g8".format(user, proj), None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>

@@ -246,6 +246,7 @@ object GitRepo {
     }
   }
 
+  // TODO: expections handling
   def clone(repo: String, branch: Option[String]) = {
     val cmd = new CloneCommand()
     for(b <- branch)
