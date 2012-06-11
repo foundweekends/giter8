@@ -158,3 +158,121 @@ trait Apply extends Defaults { self: Giter8 =>
     try { f(c) } finally { c.close() }
 }
 
+object GitRepo {
+
+  import java.io.File
+  import org.eclipse.jgit.api._
+  import scala.io.Source
+  import scala.util.control.Exception.{allCatch,catching}
+  
+  val TMP = new File(System.getProperty("java.io.tmpdir"), java.util.UUID.randomUUID().toString)
+  val TEMPLATES_FOLDER = new File(TMP,"src/main/g8")
+  
+  def inspect(repo: String,
+               branch: Option[String],
+               arguments: Seq[String]) = {
+    val tmpl = clone(repo, branch)
+
+    val (ps, templates) = fetchInfo(tmpl)
+    val parameters = interact(ps)
+    val base = new File(
+      parameters.get("name").map(G8.normalize).getOrElse(".")
+    )
+
+    write(repo, templates, parameters, base)
+  }
+
+  def fetchInfo(f: File) = {    
+    def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
+      f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
+
+    def getVisibleFiles = getFiles(!_.isHidden) _
+
+    val fs = getVisibleFiles(f)
+    val (propertiesFiles, templates) = fs.partition {
+      _.getName == "default.properties"
+    }
+
+    val parameters = propertiesFiles.headOption.map{ f => 
+      val s = Source.fromFile(f)
+      // TODO: really read props
+      Map("name" -> "biloute")
+    }.getOrElse(Map.empty)
+    
+    val g8 = getVisibleFiles(TEMPLATES_FOLDER).filter(!_.isDirectory)
+    (parameters, g8)
+
+    // TODO: LS support
+    // prepareDefaults(repo, propertiesFiles.headOption).right.map {
+    //  defaults => (defaults, templates)
+    // }
+  }
+  
+  def interact(params: Map[String, String]) = {
+    val (desc, others) = params partition { case (k,_) => k == "description" }
+    desc.values.foreach { d =>
+      @scala.annotation.tailrec
+      def liner(cursor: Int, rem: Iterable[String]) {
+        if (!rem.isEmpty) {
+          val next = cursor + 1 + rem.head.length
+          if (next > 70) {
+            println()
+            liner(0, rem)
+          } else {
+            print(rem.head + " ")
+            liner(next, rem.tail)
+          }
+        }
+      }
+      println()
+      liner(0, d.split(" "))
+      println("\n")
+    }
+    others map { case (k,v) =>
+      val in = Console.readLine("%s [%s]: ", k,v).trim
+      (k, if (in.isEmpty) v else in)
+    }
+  }
+
+  def clone(repo: String, branch: Option[String]) = {
+    val cmd = new CloneCommand()
+    for(b <- branch)
+      cmd.setBranch(b)
+    cmd.setURI(repo)
+    cmd.setDirectory(TMP)
+    cmd.call()
+    TMP
+  }
+  
+  def write(repo: String,
+            templates: Iterable[File],
+            parameters: Map[String,String],
+            base: File) = {
+    import java.nio.charset.MalformedInputException
+    val renderer = new StringRenderer
+    
+    templates.map{ in =>
+      val relative =  TEMPLATES_FOLDER.toURI().relativize(in.toURI).getPath
+      println(relative)
+      val out = new File(base, relative)
+      (in, out)
+    }.foreach { case (in, out) =>
+      if (out.exists) {
+        println("Skipping existing file: %s" format out.toString)
+      }
+      else {
+        out.getParentFile.mkdirs()
+        if (G8.verbatim(out, parameters))
+          None
+        else {
+          catching(classOf[MalformedInputException]).opt {
+            Some(G8.write(out, Source.fromFile(in).mkString, parameters))
+          }
+        }
+      }
+    }
+
+    Right("Applied %s in %s" format (repo, base.toString))
+  }
+}
+
