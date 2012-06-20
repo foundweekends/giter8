@@ -20,13 +20,13 @@ class Giter8 extends xsbti.AppMain
   def run(args: Array[String]): Int = {
     (args.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Git(remote))) => 
-        GitRepo.inspect(remote, None, params)
+        inspect(remote, None, params)
       case (params, Array(Git(remote), Branch(_), branch)) =>
-        GitRepo.inspect(remote, Some(branch), params)
+        inspect(remote, Some(branch), params)
       case (params, Array(Repo(user, proj))) =>
-        inspect("%s/%s.g8".format(user, proj), None, params)
+        inspect("git@github.com:%s/%s.g8.git".format(user, proj), None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
-        inspect("%s/%s.g8".format(user, proj), Some(branch), params)
+        inspect("git@github.com:%s/%s.g8.git".format(user, proj), Some(branch), params)
       case (params, Array(Auth(param), userpass)) =>
         userpass.split(":", 2) match {
           case Array(user, pass) => auth(user, pass)
@@ -72,6 +72,9 @@ class Giter8 extends xsbti.AppMain
                 |
                 |Apply template and interactively fulfill parameters.
                 |    g8 n8han/giter8
+                |
+                |Or
+                |    g8 git://github.com/n8han/giter8.git
                 |
                 |Apply template from a remote branch
                 |    g8 n8han/giter8 -b some-branch
