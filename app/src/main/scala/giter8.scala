@@ -1,13 +1,11 @@
 package giter8
 
-class Giter8 extends xsbti.AppMain
-  with Discover with Apply with Authorize with Credentials {
+class Giter8 extends xsbti.AppMain with Apply {
   import dispatch._
 
   val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
   val Branch = """^-(b|-branch)$""".r
   val RemoteTemplates = """^-(l|-list)$""".r
-  val Auth = """^-(a|-auth)$""".r
   val Git = """^(.*\.g8\.git)$""".r
 
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
@@ -27,13 +25,6 @@ class Giter8 extends xsbti.AppMain
         inspect("git@github.com:%s/%s.g8.git".format(user, proj), None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
         inspect("git@github.com:%s/%s.g8.git".format(user, proj), Some(branch), params)
-      case (params, Array(Auth(param), userpass)) =>
-        userpass.split(":", 2) match {
-          case Array(user, pass) => auth(user, pass)
-          case _ =>
-            Left("-%s requires username and password separated by `:`".format(
-              param))
-        }
       case _ => Left(usage)
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
@@ -43,8 +34,6 @@ class Giter8 extends xsbti.AppMain
       0
     })
   }
-
-  def gh = withCredentials(:/("api.github.com").secure) / "repos"
 
   def http = new Http {
     override def make_logger = new dispatch.Logger {
@@ -62,8 +51,6 @@ class Giter8 extends xsbti.AppMain
                 |Apply specified template.
                 |
                 |OPTIONS
-                |    -a, --auth <login>:<password>
-                |        Authorizes oauth access to Github
                 |    -b, --branch
                 |        Resolves a template within a given branch
                 |    --paramname=paramvalue
@@ -82,8 +69,6 @@ class Giter8 extends xsbti.AppMain
                 |Apply given name parameter and use defaults for all others.
                 |    g8 n8han/giter8 --name=template-test
                 |
-                |Acquire Github authorization
-                |    g8 -a login:password
                 |""".stripMargin format (BuildInfo.version)
 
 }

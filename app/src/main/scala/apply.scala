@@ -2,7 +2,7 @@ package giter8
 
 case class FileInfo(name: String, hash: String, mode: String)
 
-trait Apply extends Defaults with GitRepo { self: Giter8 =>
+trait Apply extends GitRepo { self: Giter8 =>
   import dispatch._
   import dispatch.liftjson.Js._
   import net.liftweb.json.JsonAST._
@@ -20,15 +20,12 @@ trait Apply extends Defaults with GitRepo { self: Giter8 =>
       f.setExecutable(true)
     }
   }
-  def show(repo: String, hash: String) =
-    gh / repo / "git" / "blobs" / hash <:< Map(
-      "Accept" -> "application/vnd.github.raw"
-    )
+
   private def use[C <: { def close(): Unit }, T](c: C)(f: C => T): T =
     try { f(c) } finally { c.close() }
 }
 
-trait GitRepo extends Defaults { self: Giter8 =>
+trait GitRepo { self: Giter8 =>
 
   import java.io.File
   import org.eclipse.jgit.api._
@@ -110,7 +107,7 @@ trait GitRepo extends Defaults { self: Giter8 =>
     }
   }
 
-  // TODO: expections handling
+  // TODO: exeptions handling
   def clone(repo: String, branch: Option[String]) = {
     val cmd = new CloneCommand()
     for(b <- branch)
