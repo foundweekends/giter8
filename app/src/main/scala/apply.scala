@@ -68,7 +68,7 @@ trait GitRepo { self: Giter8 =>
     def getVisibleFiles = getFiles(!_.isHidden) _
 
     val fs = getVisibleFiles(f)
-    val (propertiesFiles, _) = fs.partition {
+    val (propertiesFiles, tmpls) = fs.partition {
       _.getName == "default.properties"
     }
 
@@ -77,7 +77,7 @@ trait GitRepo { self: Giter8 =>
       Ls.lookup(props).right.toOption.getOrElse(props)
     }.getOrElse(Map.empty)
     
-    val g8templates = getVisibleFiles(TEMPLATES_FOLDER).filter(!_.isDirectory)
+    val g8templates = tmpls.filter(!_.isDirectory)
     (parameters, g8templates)
   }
   
@@ -127,8 +127,8 @@ trait GitRepo { self: Giter8 =>
     val renderer = new StringRenderer
     
     templates.map{ in =>
-      val relative =  TEMPLATES_FOLDER.toURI().relativize(in.toURI).getPath
-      val out = new File(base, relative)
+      val name =  TEMPLATES_FOLDER.toURI().relativize(in.toURI).getPath
+      val out = G8.expandPath(name, base, parameters)
       (in, out)
     }.foreach { case (in, out) =>
       if (out.exists) {
