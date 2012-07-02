@@ -137,7 +137,7 @@ trait GitRepo { self: Giter8 =>
       else {
         out.getParentFile.mkdirs()
         if (G8.verbatim(out, parameters))
-          None
+          GIO.copyFile(in, out)
         else {
           catching(classOf[MalformedInputException]).opt {
             Some(G8.write(out, Source.fromFile(in).mkString, parameters))
