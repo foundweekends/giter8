@@ -57,7 +57,12 @@ The `.g8` suffix is assumed:
 
 Either way, giter8 resolves this to the `softprops/unfiltered.g8`
 repository and queries github for the project's template
-parameters. You'll be prompted for each parameter, with its default
+parameters. 
+Alternatively, you can also use a git repository full name>
+
+	$ g8 https://github.com/softprops/unfiltered.g8.git
+
+You'll be prompted for each parameter, with its default
 value in square brackets:
 
     name [My Web Project]: 
