@@ -76,16 +76,12 @@ trait GitRepo extends Defaults { self: Giter8 =>
     }
 
     val parameters = propertiesFiles.headOption.map{ f => 
-      GIO.readProps(new FileInputStream(f))
+      val props = GIO.readProps(new FileInputStream(f))
+      Ls.lookup(props).right.toOption.getOrElse(props)
     }.getOrElse(Map.empty)
     
     val g8templates = getVisibleFiles(TEMPLATES_FOLDER).filter(!_.isDirectory)
     (parameters, g8templates)
-
-    // TODO: LS support
-    // prepareDefaults(repo, propertiesFiles.headOption).right.map {
-    //  defaults => (defaults, templates)
-    // }
   }
   
   def interact(params: Map[String, String]) = {
@@ -146,7 +142,7 @@ trait GitRepo extends Defaults { self: Giter8 =>
         if (G8.verbatim(out, parameters))
           None
         else {
-          catching(classOf[Exception]).opt {
+          catching(classOf[MalformedInputException]).opt {
             Some(G8.write(out, Source.fromFile(in).mkString, parameters))
           }.getOrElse {
             GIO.copyFile(in, out)
