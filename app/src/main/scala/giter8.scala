@@ -7,6 +7,7 @@ class Giter8 extends xsbti.AppMain with Apply {
   val Branch = """^-(b|-branch)$""".r
   val RemoteTemplates = """^-(l|-list)$""".r
   val Git = """^(.*\.g8\.git)$""".r
+  val Local = """^file://(\S+)$""".r
 
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
@@ -17,6 +18,8 @@ class Giter8 extends xsbti.AppMain with Apply {
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     (args.partition { s => Param.pattern.matcher(s).matches } match {
+      case (params, Array(Local(repo))) => 
+        println(repo);inspect(repo, None, params)
       case (params, Array(Git(remote))) => 
         inspect(remote, None, params)
       case (params, Array(Git(remote), Branch(_), branch)) =>

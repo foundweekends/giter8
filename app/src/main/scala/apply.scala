@@ -40,7 +40,7 @@ trait GitRepo { self: Giter8 =>
                arguments: Seq[String]) = {
     val tmpl = clone(repo, branch)
 
-    val (defaults, templates) = fetchInfo(tmpl)
+    val (defaults, templates, scaffolds) = fetchInfo(tmpl)
     
     val parameters = arguments.headOption.map { _ =>
       (defaults /: arguments) {
@@ -56,18 +56,24 @@ trait GitRepo { self: Giter8 =>
       parameters.get("name").map(G8.normalize).getOrElse(".")
     )
 
-    write(repo, templates, parameters, base)
+    write(repo, templates, parameters, base, scaffolds)
   }
+
+
+  def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
+    f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
+  def getVisibleFiles = getFiles(!_.isHidden) _
+
 
   def fetchInfo(f: File) = {    
     import java.io.FileInputStream
 
-    def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
-      f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
+    val fs = getVisibleFiles(new File(f, "src/main/g8"))
 
-    def getVisibleFiles = getFiles(!_.isHidden) _
+    val sf = new File(f, "src/main/scaffolds")
+    println("scaffolds? " + sf)
+    val scaffolds = if(sf.exists) Some(getVisibleFiles(sf)) else None
 
-    val fs = getVisibleFiles(f)
     val (propertiesFiles, tmpls) = fs.partition {
       _.getName == "default.properties"
     }
@@ -78,7 +84,7 @@ trait GitRepo { self: Giter8 =>
     }.getOrElse(Map.empty)
     
     val g8templates = tmpls.filter(!_.isDirectory)
-    (parameters, g8templates)
+    (parameters, g8templates, scaffolds)
   }
   
   def interact(params: Map[String, String]) = {
@@ -122,12 +128,15 @@ trait GitRepo { self: Giter8 =>
   def write(repo: String,
             templates: Iterable[File],
             parameters: Map[String,String],
-            base: File) = {
+            base: File,
+            scaffolds: Option[Iterable[File]]) = {
     import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
-    
+
+    def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
+
     templates.map{ in =>
-      val name =  TEMPLATES_FOLDER.toURI().relativize(in.toURI).getPath
+      val name =  relativize(in, TEMPLATES_FOLDER)
       val out = G8.expandPath(name, base, parameters)
       (in, out)
     }.foreach { case (in, out) =>
@@ -146,6 +155,24 @@ trait GitRepo { self: Giter8 =>
           }
         }
       }
+    }
+
+    // Copy scaffolding recipes
+    val realProjectRoot = getVisibleFiles(base)
+      .filter(_.isDirectory)
+      .filter(_.getName == "project")
+      .map(_.getParentFile)
+      .headOption
+      .getOrElse(base)
+
+    val hidden = new File(realProjectRoot, ".g8")
+    for(
+      fs <- scaffolds;
+      f <- fs if !f.isDirectory
+    ) {
+      val name = relativize(f, TMP)
+      val out = new File(hidden, name)
+      GIO.copyFile(f, out)
     }
 
     Right("Applied %s in %s" format (repo, base.toString))
