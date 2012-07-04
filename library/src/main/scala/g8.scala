@@ -14,8 +14,7 @@ object G8 {
     }  
 
   def apply(in: File, out: File, parameters: Map[String,String]) = {
-    println("Applying " + in)
-    
+
     try {
       if (verbatim(in, parameters)) GIO.copyFile(in, out) 
       else {
@@ -74,6 +73,155 @@ object G8 {
   def snakeCase(s: String) = s.replaceAll("""\s+""", "_")
   def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
   def addRandomId(s: String) = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
+
+}
+
+object G8Helpers {
+  import scala.util.control.Exception.catching
+  import scala.io.Source
+
+  object Regs {
+    val Param = """^--(\S+)=(.+)$""".r
+    val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
+    val Branch = """^-(b|-branch)$""".r
+    val RemoteTemplates = """^-(l|-list)$""".r
+    val Git = """^(.*\.g8\.git)$""".r
+    val Local = """^file://(\S+)$""".r
+  }
+  
+  import Regs._
+
+  def applyTemplate(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
+    val (defaults, templates, templatesRoot, scaffoldsRoot) = fetchInfo(tmpl)
+    
+    val parameters = arguments.headOption.map { _ =>
+      (defaults /: arguments) {
+        case (map, Param(key, value)) if map.contains(key) =>
+          map + (key -> value)
+        case (map, Param(key, _)) =>
+          println("Ignoring unrecognized parameter: " + key)
+          map
+      }
+    }.getOrElse { interact(defaults) }
+    
+    val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
+
+    val r = write(templatesRoot, templates, parameters, base)
+    r.right.foreach(_ => copyScaffolds(scaffoldsRoot, base))
+    r
+  }
+
+  private def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
+    f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
+
+  private def getVisibleFiles = getFiles(!_.isHidden) _
+
+  /**
+  * Extract params, template files, and scaffolding folder based on the conventionnal project structure
+  */
+  def fetchInfo(f: File) = {    
+    import java.io.FileInputStream
+
+    val templatesRoot = new File(f, "src/main/g8")
+    val fs = getVisibleFiles(templatesRoot)
+    val scaffoldsRoot = new File(f, "src/main/scaffolds")
+
+    val (propertiesFiles, tmpls) = fs.partition {
+      _.getName == "default.properties"
+    }
+
+    val parameters = propertiesFiles.headOption.map{ f => 
+      val props = GIO.readProps(new FileInputStream(f))
+      Ls.lookup(props).right.toOption.getOrElse(props)
+    }.getOrElse(Map.empty)
+    
+    val g8templates = tmpls.filter(!_.isDirectory)
+    (parameters, g8templates, templatesRoot, scaffoldsRoot)
+  }
+  
+  def interact(params: Map[String, String]) = {
+    val (desc, others) = params partition { case (k,_) => k == "description" }
+    desc.values.foreach { d =>
+      @scala.annotation.tailrec
+      def liner(cursor: Int, rem: Iterable[String]) {
+        if (!rem.isEmpty) {
+          val next = cursor + 1 + rem.head.length
+          if (next > 70) {
+            println()
+            liner(0, rem)
+          } else {
+            print(rem.head + " ")
+            liner(next, rem.tail)
+          }
+        }
+      }
+      println()
+      liner(0, d.split(" "))
+      println("\n")
+    }
+    others map { case (k,v) =>
+      val in = Console.readLine("%s [%s]: ", k,v).trim
+      (k, if (in.isEmpty) v else in)
+    }
+  }
+  
+  private def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
+  
+  def write(tmpl: File,
+            templates: Iterable[File],
+            parameters: Map[String,String],
+            base: File) = {
+
+    import java.nio.charset.MalformedInputException
+    val renderer = new StringRenderer
+
+    templates.map{ in =>
+      val name =  relativize(in, tmpl)
+      val out = G8.expandPath(name, base, parameters)
+      (in, out)
+    }.foreach { case (in, out) =>
+      if (out.exists) {
+        println("Skipping existing file: %s" format out.toString)
+      }
+      else {
+        out.getParentFile.mkdirs()
+        if (G8.verbatim(out, parameters))
+          GIO.copyFile(in, out)
+        else {
+          catching(classOf[MalformedInputException]).opt {
+            Some(G8.write(out, Source.fromFile(in).mkString, parameters))
+          }.getOrElse {
+            GIO.copyFile(in, out)
+          }
+        }
+      }
+    }
+
+    Right("Template applied in %s" format (base.toString))
+  }
+  
+  def copyScaffolds(sf: File, output: File) {
+
+    val scaffolds = if(sf.exists) Some(getVisibleFiles(sf)) else None
+
+    for(
+      fs <- scaffolds;
+      f <- fs if !f.isDirectory
+    ) {
+      // Copy scaffolding recipes
+      val realProjectRoot = getVisibleFiles(output)
+        .filter(_.isDirectory)
+        .filter(_.getName == "project")
+        .map(_.getParentFile)
+        .headOption
+        .getOrElse(output)
+
+      val hidden = new File(realProjectRoot, ".g8")
+      val name = relativize(f, sf)
+      val out = new File(hidden, name)
+      GIO.copyFile(f, out)
+    }
+  }
 
 }
 

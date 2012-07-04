@@ -8,12 +8,7 @@ trait Apply extends GitRepo { self: Giter8 =>
   import net.liftweb.json.JsonAST._
   import scala.collection.JavaConversions._
   import java.io.{File,FileWriter,FileOutputStream}
-  import scala.util.control.Exception.{allCatch,catching}
-
-  val Root = "^src/main/g8/(.+)$".r
-  val Param = """^--(\S+)=(.+)$""".r
-  val Text = """^(text|application)/.+""".r
-  val DefaultBranch = "master"
+  import scala.util.control.Exception.allCatch
 
   def setFileMode(f: File, mode: String) = allCatch opt {
     if ((mode(3).toString.toInt & 0x1) > 0) {
@@ -29,88 +24,15 @@ trait GitRepo { self: Giter8 =>
 
   import java.io.File
   import org.eclipse.jgit.api._
-  import scala.io.Source
   import scala.util.control.Exception.{allCatch,catching}
   
   val TMP = new File(System.getProperty("java.io.tmpdir"), java.util.UUID.randomUUID().toString)
-  val TEMPLATES_FOLDER = new File(TMP,"src/main/g8")
 
   def inspect(repo: String,
                branch: Option[String],
                arguments: Seq[String]) = {
     val tmpl = clone(repo, branch)
-
-    val (defaults, templates, scaffolds) = fetchInfo(tmpl)
-    
-    val parameters = arguments.headOption.map { _ =>
-      (defaults /: arguments) {
-        case (map, Param(key, value)) if map.contains(key) =>
-          map + (key -> value)
-        case (map, Param(key, _)) =>
-          println("Ignoring unrecognized parameter: " + key)
-          map
-      }
-    }.getOrElse { interact(defaults) }
-
-    val base = new File(
-      parameters.get("name").map(G8.normalize).getOrElse(".")
-    )
-
-    write(repo, templates, parameters, base, scaffolds)
-  }
-
-
-  def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
-    f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
-  def getVisibleFiles = getFiles(!_.isHidden) _
-
-
-  def fetchInfo(f: File) = {    
-    import java.io.FileInputStream
-
-    val fs = getVisibleFiles(new File(f, "src/main/g8"))
-
-    val sf = new File(f, "src/main/scaffolds")
-    println("scaffolds? " + sf)
-    val scaffolds = if(sf.exists) Some(getVisibleFiles(sf)) else None
-
-    val (propertiesFiles, tmpls) = fs.partition {
-      _.getName == "default.properties"
-    }
-
-    val parameters = propertiesFiles.headOption.map{ f => 
-      val props = GIO.readProps(new FileInputStream(f))
-      Ls.lookup(props).right.toOption.getOrElse(props)
-    }.getOrElse(Map.empty)
-    
-    val g8templates = tmpls.filter(!_.isDirectory)
-    (parameters, g8templates, scaffolds)
-  }
-  
-  def interact(params: Map[String, String]) = {
-    val (desc, others) = params partition { case (k,_) => k == "description" }
-    desc.values.foreach { d =>
-      @scala.annotation.tailrec
-      def liner(cursor: Int, rem: Iterable[String]) {
-        if (!rem.isEmpty) {
-          val next = cursor + 1 + rem.head.length
-          if (next > 70) {
-            println()
-            liner(0, rem)
-          } else {
-            print(rem.head + " ")
-            liner(next, rem.tail)
-          }
-        }
-      }
-      println()
-      liner(0, d.split(" "))
-      println("\n")
-    }
-    others map { case (k,v) =>
-      val in = Console.readLine("%s [%s]: ", k,v).trim
-      (k, if (in.isEmpty) v else in)
-    }
+    G8Helpers.applyTemplate(tmpl, new File("."), arguments)
   }
 
   // TODO: exeptions handling
@@ -123,59 +45,6 @@ trait GitRepo { self: Giter8 =>
     cmd.call()
     TMP.deleteOnExit()
     TMP
-  }
-  
-  def write(repo: String,
-            templates: Iterable[File],
-            parameters: Map[String,String],
-            base: File,
-            scaffolds: Option[Iterable[File]]) = {
-    import java.nio.charset.MalformedInputException
-    val renderer = new StringRenderer
-
-    def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
-
-    templates.map{ in =>
-      val name =  relativize(in, TEMPLATES_FOLDER)
-      val out = G8.expandPath(name, base, parameters)
-      (in, out)
-    }.foreach { case (in, out) =>
-      if (out.exists) {
-        println("Skipping existing file: %s" format out.toString)
-      }
-      else {
-        out.getParentFile.mkdirs()
-        if (G8.verbatim(out, parameters))
-          GIO.copyFile(in, out)
-        else {
-          catching(classOf[MalformedInputException]).opt {
-            Some(G8.write(out, Source.fromFile(in).mkString, parameters))
-          }.getOrElse {
-            GIO.copyFile(in, out)
-          }
-        }
-      }
-    }
-
-    // Copy scaffolding recipes
-    val realProjectRoot = getVisibleFiles(base)
-      .filter(_.isDirectory)
-      .filter(_.getName == "project")
-      .map(_.getParentFile)
-      .headOption
-      .getOrElse(base)
-
-    val hidden = new File(realProjectRoot, ".g8")
-    for(
-      fs <- scaffolds;
-      f <- fs if !f.isDirectory
-    ) {
-      val name = relativize(f, TMP)
-      val out = new File(hidden, name)
-      GIO.copyFile(f, out)
-    }
-
-    Right("Applied %s in %s" format (repo, base.toString))
   }
 }
 

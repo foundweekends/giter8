@@ -3,11 +3,7 @@ package giter8
 class Giter8 extends xsbti.AppMain with Apply {
   import dispatch._
 
-  val Repo = """^(\S+)/(\S+?)(?:\.g8)?$""".r
-  val Branch = """^-(b|-branch)$""".r
-  val RemoteTemplates = """^-(l|-list)$""".r
-  val Git = """^(.*\.g8\.git)$""".r
-  val Local = """^file://(\S+)$""".r
+  import G8Helpers.Regs._
 
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
