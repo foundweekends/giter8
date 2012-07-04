@@ -5,7 +5,7 @@ object Builds extends sbt.Build {
   import ls.Plugin.{lsSettings,LsKeys}
   import sbtbuildinfo.Plugin._
 
-  val g8version = "0.4.5"
+  val g8version = "0.4.6-SNAPSHOT"
   
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
   val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
@@ -38,13 +38,13 @@ object Builds extends sbt.Build {
         </developer>
       </developers>)
   )
-  
+
   // posterous title needs to be giter8, so both app and root are named giter8
   lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(plugin, app, lib)
+    )) aggregate(app, lib, scaffold)
 
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
@@ -61,20 +61,17 @@ object Builds extends sbt.Build {
       resolvers += typesafeRepo
     )) dependsOn (lib)
 
-  lazy val plugin = Project("giter8-plugin", file("plugin"),
+  lazy val scaffold = Project("giter8-scaffold", file("scaffold"),
     settings = buildSettings ++ Seq(
-      description :=
-        "sbt 0.11 plugin for testing giter8 templates",
-      sbtPlugin := true,
-      resolvers ++= Seq(
-        Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
-        typesafeRepo
-      ),
-      libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
-        Seq(sd,
-            "org.scala-tools.sbt" %% "scripted-plugin" % sv
-            )
-      }
+      description := "sbt 0.11 plugin for scaffolding giter8 templates",
+      sbtPlugin := true//,
+      // resolvers ++= Seq(
+      //         Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
+      //         typesafeRepo
+      //       ),
+      //       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
+      //         Seq(sd)
+      //       }
     )) dependsOn (lib)
 
   lazy val lib = Project("giter8-lib", file("library"),
