@@ -91,8 +91,8 @@ object G8Helpers {
   
   import Regs._
 
-  def applyTemplate(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
-    val (defaults, templates, templatesRoot, scaffoldsRoot) = fetchInfo(tmpl)
+  private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]))(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
+    val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
     
     val parameters = arguments.headOption.map { _ =>
       (defaults /: arguments) {
@@ -107,9 +107,17 @@ object G8Helpers {
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
     val r = write(templatesRoot, templates, parameters, base)
-    r.right.foreach(_ => copyScaffolds(scaffoldsRoot, base))
+    for(
+      _ <- r.right;
+      root <- scaffoldsRoot
+    ) copyScaffolds(root, base)
     r
   }
+
+  private def fetchProjectTemplateinfo = fetchInfo(_: File, Some("src/main/g8"), Some("src/main/scaffolds"))
+  private def fetchRawTemplateinfo = fetchInfo(_: File, None, None)
+  def applyTemplate = applyT(fetchProjectTemplateinfo) _
+  def applyRaw = applyT(fetchRawTemplateinfo) _
 
   private def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
     f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
@@ -119,12 +127,12 @@ object G8Helpers {
   /**
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
   */
-  def fetchInfo(f: File) = {    
+  def fetchInfo(f: File, tmplFolder: Option[String], scaffoldFolder: Option[String]) = {    
     import java.io.FileInputStream
 
-    val templatesRoot = new File(f, "src/main/g8")
+    val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
     val fs = getVisibleFiles(templatesRoot)
-    val scaffoldsRoot = new File(f, "src/main/scaffolds")
+    val scaffoldsRoot = scaffoldFolder.map(new File(f, _))
 
     val (propertiesFiles, tmpls) = fs.partition {
       _.getName == "default.properties"
