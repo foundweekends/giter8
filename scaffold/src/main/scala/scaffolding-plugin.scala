@@ -13,7 +13,6 @@ object ScaffoldPlugin extends sbt.Plugin {
 
   import ScaffoldingKeys._
 
-
   import complete._
   import complete.DefaultParsers._
 
