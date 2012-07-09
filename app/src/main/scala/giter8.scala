@@ -56,7 +56,7 @@ class Giter8 extends xsbti.AppMain with Apply {
                 |        Resolves a template within a given branch
                 |    --paramname=paramvalue
                 |        Set given parameter value and bypass interaction.
-                |    
+                |
                 |
                 |Apply template and interactively fulfill parameters.
                 |    g8 n8han/giter8
