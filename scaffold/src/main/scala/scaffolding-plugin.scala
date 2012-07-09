@@ -23,25 +23,45 @@ object ScaffoldPlugin extends sbt.Plugin {
       (state: State) =>
         val folder = b / t
 
-        val templatesParsers = folder.listFiles
-          .filter(f => f.isDirectory && !f.isHidden)
+        val folders = folder.listFiles.filter(f => f.isDirectory && !f.isHidden)
+        val templatesParsers = folders
           .map(_.getName: Parser[String])
           .reduceLeft(_ | _)
 
-        val eq: Parser[String] = "="
 
+        val ex = for(
+          f <- folders;
+          k <- GIO.readProps(new FileInputStream(f / "default.properties")).keys.toList
+        ) yield (k)
+
+        val eq: Parser[String] = "="
+        
         Space ~> templatesParsers.map(folder / _).flatMap { root =>
 
-          val validParam = GIO.readProps(new FileInputStream(root / "default.properties"))
+          val params = GIO.readProps(new FileInputStream(root / "default.properties"))
+          val validParam = params
             .keys
             .map(x => x: Parser[String])
             .reduceLeft(_ | _)
 
           val p = ((validParam <~ eq): Parser[String]) ~ NotSpace
 
-          Space ~> (p?) map { param => 
-            (root, param.map(Map(_)).getOrElse(Map.empty))
-          }
+          def filtered(consumed: List[String]): Parser[Map[String, String]] = (Space ~> p).map(Map(_))
+            .filter( 
+              parsed => !consumed.contains(parsed.head._1),
+              c => "PAF" // ?? 
+            ).flatMap { case parsed =>
+              (filtered(consumed :+ parsed.head._1) ?).map{
+                case Some(m) => m ++ parsed
+                case None => parsed
+              }
+            }
+
+          filtered(Nil).map{ (root, _) }.examples(ex:_*)
+
+          // Space ~> (p?) map { param => 
+          //  (root, param.map(Map(_)).getOrElse(Map.empty))
+          // }
         }
     }
 

@@ -11,19 +11,34 @@ trait Apply { self: Giter8 =>
                branch: Option[String],
                arguments: Seq[String]) = {
     val tmpl = clone(repo, branch)
-    G8Helpers.applyTemplate(tmpl, new File("."), arguments)
+    tmpl.right.map(G8Helpers.applyTemplate(_, new File("."), arguments))
   }
 
   // TODO: exeptions handling
   def clone(repo: String, branch: Option[String]) = {
-    val cmd = new CloneCommand()
-    for(b <- branch)
+    import org.eclipse.jgit.api.ListBranchCommand.ListMode
+    import org.eclipse.jgit.lib._
+
+    import scala.collection.JavaConverters._
+
+    val cmd = Git.cloneRepository()
+      .setURI("file://" + repo)
+      .setDirectory(TMP)
+
+    val branchName = branch.map("refs/heads/" + _)
+    for(b <- branchName)
       cmd.setBranch(b)
-    cmd.setURI(repo)
-    cmd.setDirectory(TMP)
-    cmd.call()
+
+    val g = cmd.call()
+
     TMP.deleteOnExit()
-    TMP
+
+    branchName.map { b =>
+      if(g.branchList().call().asScala.map(_.getName).contains(b))
+        Right(TMP)
+      else
+        Left("Branch not found: " + b)
+    } getOrElse(Right(TMP))
   }
 }
 

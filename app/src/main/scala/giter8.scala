@@ -15,7 +15,9 @@ class Giter8 extends xsbti.AppMain with Apply {
   def run(args: Array[String]): Int = {
     (args.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, Array(Local(repo))) => 
-        println(repo);inspect(repo, None, params)
+        inspect(repo, None, params)
+      case (params, Array(Local(repo), Branch(_), branch)) => 
+        inspect(repo, Some(branch), params)
       case (params, Array(Git(remote))) => 
         inspect(remote, None, params)
       case (params, Array(Git(remote), Branch(_), branch)) =>
