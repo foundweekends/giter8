@@ -57,7 +57,12 @@ The `.g8` suffix is assumed:
 
 Either way, giter8 resolves this to the `softprops/unfiltered.g8`
 repository and queries github for the project's template
-parameters. You'll be prompted for each parameter, with its default
+parameters. 
+Alternatively, you can also use a git repository full name>
+
+	$ g8 https://github.com/softprops/unfiltered.g8.git
+
+You'll be prompted for each parameter, with its default
 value in square brackets:
 
     name [My Web Project]: 
@@ -81,21 +86,7 @@ Any unsupplied parameters are assigned their default values.
 Private Repositories
 --------------------
 
-Giter8 accesses GitHub anonymously by default, but for private
-templates you can authenticate.
-
-    $ g8 --auth yourname:yourpass
-
-This stores a [github OAuth](http://develop.github.com/p/oauth.html)
-token in `~/.g8/config` which is then used for future `g8`
-invocations. The token can be revoked at any time in your
-[github settings][settings].
-
-[settings]: https://github.com/settings/applications
-
-If you wish to use basic authentication instead, you can specify a
-`github.user` and `github.password` in your global git properties. The
-OAuth token is preferred and will be used when both are present.
+Giter8 will use your ssh key to access private repositories, just like git does.
 
 Making your own templates
 -------------------------
@@ -225,7 +216,7 @@ object PluginDef extends Build {
 
 And settings must be applied in a `build.sbt` file in the project base:
 
-    seq(giter8Settings :_*)    
+    seq(giter8Settings :_*)
 
 When you enter sbt's interactive mode in the base directory of a
 template project that is configured to use this plugin, the action
