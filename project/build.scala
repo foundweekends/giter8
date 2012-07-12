@@ -61,6 +61,19 @@ object Builds extends sbt.Build {
       resolvers += typesafeRepo
     )) dependsOn (lib)
 
+  lazy val plugin = Project("giter8-plugin", file("plugin"),
+    settings = buildSettings ++ Seq(
+      description :=
+        "sbt 0.11 plugin for testing giter8 templates",
+      sbtPlugin := true,
+      resolvers += Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
+      libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
+        Seq(sd,
+            "org.scala-sbt" %% "scripted-plugin" % sv
+            )
+      }
+    )) dependsOn (lib)
+
   lazy val lib = Project("giter8-lib", file("library"),
     settings = buildSettings ++ Seq(
       description :=

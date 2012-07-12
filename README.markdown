@@ -185,7 +185,7 @@ A `name` field with a value of `My Project` could be rendered in several ways:
     $name$ -> "My Project"
     $name;format="camel"$ -> "myProject"
     $name;format="Camel"$ -> "MyProject"
-    $name;format="normalized"$ -> "my-project"
+    $name;format="normalize"$ -> "my-project"
     $name;format="lower,hyphen"$ -> "my-project"
 
 Note that multiple format options can be specified (comma-separated) which will

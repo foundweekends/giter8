@@ -1,4 +1,4 @@
-addSbtPlugin("net.databinder" % "conscript-plugin" % "0.3.3")
+addSbtPlugin("net.databinder" % "conscript-plugin" % "0.3.4")
 
 resolvers ++= Seq(
   "less is" at "http://repo.lessis.me",
@@ -11,3 +11,4 @@ resolvers += Resolver.url("sbt-plugin-releases",
 addSbtPlugin("me.lessis" % "ls-sbt" % "0.1.1")
 
 addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.1.2")
+
