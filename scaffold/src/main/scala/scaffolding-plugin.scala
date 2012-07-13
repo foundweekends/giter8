@@ -23,7 +23,7 @@ object ScaffoldPlugin extends sbt.Plugin {
         .filter(f => f.isDirectory && !f.isHidden)
         .map(_.getName: Parser[String])
 
-      Space ~> templates.reduceLeft(_ | _)
+      (Space+) ~> templates.reduceLeft(_ | _)
     }
 
   val scafffoldTask = scaffold <<= InputTask(parser){ (argTask: TaskKey[String]) =>
