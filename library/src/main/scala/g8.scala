@@ -171,8 +171,10 @@ object G8Helpers {
 
     val reader = new jline.ConsoleReader
     others map { case (k,v) =>
-      //val in = reader.readLine("%s [%s]: ".format(k,v)).trim
-      val in = sbt.SimpleReader.readLine("%s [%s]: ".format(k,v)).map(_.trim)
+      val in = sbt.SimpleReader.readLine("%s [%s]: ".format(k,v)).map{ r =>
+        val x = r.trim
+        if(x.isEmpty) v else x
+      }
       (k, in.getOrElse(v))
     }
   }
