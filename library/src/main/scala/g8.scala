@@ -149,6 +149,7 @@ object G8Helpers {
   
   def interact(params: Map[String, String]) = {
     val (desc, others) = params partition { case (k,_) => k == "description" }
+
     desc.values.foreach { d =>
       @scala.annotation.tailrec
       def liner(cursor: Int, rem: Iterable[String]) {
@@ -167,9 +168,12 @@ object G8Helpers {
       liner(0, d.split(" "))
       println("\n")
     }
+
+    val reader = new jline.ConsoleReader
     others map { case (k,v) =>
-      val in = Console.readLine("%s [%s]: ", k,v).trim
-      (k, if (in.isEmpty) v else in)
+      //val in = reader.readLine("%s [%s]: ".format(k,v)).trim
+      val in = sbt.SimpleReader.readLine("%s [%s]: ".format(k,v)).map(_.trim)
+      (k, in.getOrElse(v))
     }
   }
   

@@ -71,8 +71,8 @@ object Builds extends sbt.Build {
     settings = buildSettings ++ Seq(
       description :=
         "shared library for app and plugin",
-      libraryDependencies ++= Seq(
-        "me.lessis" %% "ls" % "0.1.2-RC2"
-      )
+      libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
+        Seq(sd, "me.lessis" %% "ls" % "0.1.2-RC2")
+      }
     ))
 }
