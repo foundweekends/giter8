@@ -64,14 +64,7 @@ object Builds extends sbt.Build {
   lazy val scaffold = Project("giter8-scaffold", file("scaffold"),
     settings = buildSettings ++ Seq(
       description := "sbt 0.11 plugin for scaffolding giter8 templates",
-      sbtPlugin := true//,
-      // resolvers ++= Seq(
-      //         Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
-      //         typesafeRepo
-      //       ),
-      //       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
-      //         Seq(sd)
-      //       }
+      sbtPlugin := true
     )) dependsOn (lib)
 
   lazy val lib = Project("giter8-lib", file("library"),

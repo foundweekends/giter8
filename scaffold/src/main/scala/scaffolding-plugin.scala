@@ -15,13 +15,13 @@ object ScaffoldPlugin extends sbt.Plugin {
   import complete._
   import complete.DefaultParsers._
 
-  val parser: sbt.Project.Initialize[State => Parser[String]] = 
+  val parser: sbt.Project.Initialize[State => Parser[String]] =
     (baseDirectory, templatesPath) { (b, t) =>
       (state: State) =>
       val folder = b / t
       val templates = folder.listFiles
-      .filter(f => f.isDirectory && !f.isHidden)
-      .map(_.getName: Parser[String])
+        .filter(f => f.isDirectory && !f.isHidden)
+        .map(_.getName: Parser[String])
 
       Space ~> templates.reduceLeft(_ | _)
     }
