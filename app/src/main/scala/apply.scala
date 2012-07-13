@@ -22,7 +22,7 @@ trait Apply { self: Giter8 =>
     import scala.collection.JavaConverters._
 
     val cmd = Git.cloneRepository()
-      .setURI("file://" + repo)
+      .setURI(repo)
       .setDirectory(TMP)
 
     val branchName = branch.map("refs/heads/" + _)
