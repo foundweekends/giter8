@@ -123,10 +123,11 @@ object G8Helpers {
     import java.io.FileInputStream
 
     val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
+    val propertiesLoc = new File(templatesRoot, "default.properties")
     val fs = getVisibleFiles(templatesRoot)
 
     val (propertiesFiles, tmpls) = fs.partition {
-      _.getName == "default.properties"
+      _ == propertiesLoc
     }
 
     val parameters = propertiesFiles.headOption.map{ f => 
