@@ -23,9 +23,9 @@ class Giter8 extends xsbti.AppMain with Apply {
       case (params, Array(Git(remote), Branch(_), branch)) =>
         inspect(remote, Some(branch), params)
       case (params, Array(Repo(user, proj))) =>
-        inspect("git@github.com:%s/%s.g8.git".format(user, proj), None, params)
+        inspect("git://github.com/%s/%s.g8.git".format(user, proj), None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
-        inspect("git@github.com:%s/%s.g8.git".format(user, proj), Some(branch), params)
+        inspect("git://github.com/%s/%s.g8.git".format(user, proj), Some(branch), params)
       case _ => Left(usage)
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
