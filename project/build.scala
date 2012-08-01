@@ -52,7 +52,6 @@ object Builds extends sbt.Build {
         "Command line tool to apply templates defined on github",
       name := "giter8",
       libraryDependencies ++= Seq(
-        "net.databinder" %% "dispatch-lift-json" % "0.8.5",
         "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
       ),
       sourceGenerators in Compile <+= buildInfo,

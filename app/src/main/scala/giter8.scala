@@ -23,9 +23,9 @@ class Giter8 extends xsbti.AppMain with Apply {
       case (params, Array(Git(remote), Branch(_), branch)) =>
         inspect(remote, Some(branch), params)
       case (params, Array(Repo(user, proj))) =>
-        inspect("git://github.com/%s/%s.g8.git".format(user, proj), None, params)
+        ghInspect(user, proj, None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
-        inspect("git://github.com/%s/%s.g8.git".format(user, proj), Some(branch), params)
+        ghInspect(user, proj, Some(branch), params)
       case _ => Left(usage)
     }) fold ({ error =>
       System.err.println("\n%s\n" format error)
@@ -36,17 +36,22 @@ class Giter8 extends xsbti.AppMain with Apply {
     })
   }
 
-  def http = new Http {
-    override def make_logger = new dispatch.Logger {
-      val jdklog = java.util.logging.Logger.getLogger("dispatch")
-      def info(msg: String, items: Any*) {
-        jdklog.info(msg.format(items: _*))
-      }
-      def warn(msg: String, items: Any*) {
-        jdklog.warning(msg.format(items: _*))
-      }
+  def ghInspect(user: String,
+                proj: String,
+                branch: Option[String],
+                params: Seq[String]) = {
+    try {
+        inspect("git://github.com/%s/%s.g8.git".format(user, proj),
+                branch,
+                params)
+    } catch {
+      case _: org.eclipse.jgit.api.errors.JGitInternalException =>
+        inspect("git@github.com:%s/%s.g8.git".format(user, proj),
+                branch,
+                params)
     }
   }
+
   def usage = """giter8 %s
                 |Usage: g8 [TEMPLATE] [OPTION]...
                 |Apply specified template.
