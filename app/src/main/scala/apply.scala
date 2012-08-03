@@ -2,14 +2,16 @@ package giter8
 
 trait Apply { self: Giter8 =>
   import java.io.File
+  import scalax.file.Path
+  import scalax.file.ImplicitConversions.defaultPath2jfile
   import org.eclipse.jgit.api._
   import scala.util.control.Exception.{allCatch,catching}
   
-  val TMP = new File(System.getProperty("java.io.tmpdir"), java.util.UUID.randomUUID().toString)
+  val tempdir = Path.createTempDirectory(deleteOnExit = true)
 
   def inspect(repo: String,
-               branch: Option[String],
-               arguments: Seq[String]) = {
+              branch: Option[String],
+              arguments: Seq[String]) = {
     val tmpl = clone(repo, branch)
     tmpl.right.map(G8Helpers.applyTemplate(_, new File("."), arguments))
   }
@@ -21,7 +23,7 @@ trait Apply { self: Giter8 =>
 
     val cmd = Git.cloneRepository()
       .setURI(repo)
-      .setDirectory(TMP)
+      .setDirectory(tempdir)
 
     val branchName = branch.map("refs/heads/" + _)
     for(b <- branchName)
@@ -29,14 +31,12 @@ trait Apply { self: Giter8 =>
 
     val g = cmd.call()
 
-    TMP.deleteOnExit()
-
     branchName.map { b =>
       if(g.branchList().call().asScala.map(_.getName).contains(b))
-        Right(TMP)
+        Right(tempdir)
       else
         Left("Branch not found: " + b)
-    } getOrElse(Right(TMP))
+    } getOrElse(Right(tempdir))
   }
 }
 

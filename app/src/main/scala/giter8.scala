@@ -46,6 +46,7 @@ class Giter8 extends xsbti.AppMain with Apply {
                 params)
     } catch {
       case _: org.eclipse.jgit.api.errors.JGitInternalException =>
+        tempdir.deleteRecursively()
         inspect("git@github.com:%s/%s.g8.git".format(user, proj),
                 branch,
                 params)
