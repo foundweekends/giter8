@@ -14,11 +14,11 @@ class Giter8 extends xsbti.AppMain with Apply {
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     (args.partition { s => Param.pattern.matcher(s).matches } match {
-      case (params, Array(Local(repo))) => 
+      case (params, Array(Local(repo))) =>
         inspect(repo, None, params)
-      case (params, Array(Local(repo), Branch(_), branch)) => 
+      case (params, Array(Local(repo), Branch(_), branch)) =>
         inspect(repo, Some(branch), params)
-      case (params, Array(Git(remote))) => 
+      case (params, Array(Git(remote))) =>
         inspect(remote, None, params)
       case (params, Array(Git(remote), Branch(_), branch)) =>
         inspect(remote, Some(branch), params)
@@ -27,11 +27,11 @@ class Giter8 extends xsbti.AppMain with Apply {
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
         ghInspect(user, proj, Some(branch), params)
       case _ => Left(usage)
-    }) fold ({ error =>
+    }) fold ({ (error: String) =>
       System.err.println("\n%s\n" format error)
       1
-    }, { message =>
-      println("\n%s\n" format message)
+    }, { (message: String) =>
+      println("\n%s\n" format message )
       0
     })
   }

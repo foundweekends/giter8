@@ -6,14 +6,14 @@ trait Apply { self: Giter8 =>
   import scalax.file.ImplicitConversions.defaultPath2jfile
   import org.eclipse.jgit.api._
   import scala.util.control.Exception.{allCatch,catching}
-  
+
   val tempdir = Path.createTempDirectory(deleteOnExit = true)
 
   def inspect(repo: String,
               branch: Option[String],
-              arguments: Seq[String]) = {
+              arguments: Seq[String]): Either[String, String] = {
     val tmpl = clone(repo, branch)
-    tmpl.right.map(G8Helpers.applyTemplate(_, new File("."), arguments))
+    tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
   }
 
   def clone(repo: String, branch: Option[String]) = {
@@ -39,4 +39,3 @@ trait Apply { self: Giter8 =>
     } getOrElse(Right(tempdir))
   }
 }
-
