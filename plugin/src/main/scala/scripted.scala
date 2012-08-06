@@ -49,9 +49,10 @@ object Scripted {
   
   lazy val scriptedSettings: Seq[sbt.Project.Setting[_]] = Seq(
     ivyConfigurations += scriptedConf,
+    resolvers += Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
     scriptedSbt <<= (appConfiguration)(_.provider.id.version),
     scriptedScalas <<= (scalaVersion) { (scala) => ScriptedScalas(scala, scala) },
-    libraryDependencies <<= (libraryDependencies, scriptedScalas, scriptedSbt) {(deps, scalas, version) => deps :+ "org.scala-tools.sbt" % ("scripted-sbt_" + scalas.build) % version % scriptedConf.toString },
+    libraryDependencies <<= (libraryDependencies, scriptedScalas, scriptedSbt) {(deps, scalas, version) => deps :+ "org.scala-sbt" % ("scripted-sbt_" + scalas.build) % version % scriptedConf.toString },
     sbtLauncher <<= (appConfiguration)(app => IO.classLocationFile(app.provider.scalaProvider.launcher.getClass)),
     sbtTestDirectory <<= sourceDirectory / "sbt-test",
     scriptedBufferLog := true,

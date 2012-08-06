@@ -5,7 +5,7 @@ object Builds extends sbt.Build {
   import ls.Plugin.{lsSettings,LsKeys}
   import sbtbuildinfo.Plugin._
 
-  val g8version = "0.4.5"
+  val g8version = "0.5.0-RC1"
   
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
   val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
@@ -38,13 +38,13 @@ object Builds extends sbt.Build {
         </developer>
       </developers>)
   )
-  
+
   // posterous title needs to be giter8, so both app and root are named giter8
   lazy val root = Project("root", file("."),
     settings = buildSettings ++ Seq(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(plugin, app, lib)
+    )) aggregate(app, lib)
 
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
@@ -52,8 +52,8 @@ object Builds extends sbt.Build {
         "Command line tool to apply templates defined on github",
       name := "giter8",
       libraryDependencies ++= Seq(
-        "net.databinder" %% "dispatch-lift-json" % "0.8.5",
-        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
+        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r",
+        "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.0-seq"
       ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),
@@ -66,13 +66,10 @@ object Builds extends sbt.Build {
       description :=
         "sbt 0.11 plugin for testing giter8 templates",
       sbtPlugin := true,
-      resolvers ++= Seq(
-        Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
-        typesafeRepo
-      ),
+      resolvers += Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
       libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
         Seq(sd,
-            "org.scala-tools.sbt" %% "scripted-plugin" % sv
+            "org.scala-sbt" %% "scripted-plugin" % sv
             )
       }
     )) dependsOn (lib)
