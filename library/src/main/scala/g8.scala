@@ -159,9 +159,15 @@ object G8Helpers {
       liner(0, d.split(" "))
       println("\n")
     }
+    // parameters we don't expect the user to need to change
+    val fixed = Set("verbatim")
     others map { case (k,v) =>
-      val in = Console.readLine("%s [%s]: ", k,v).trim
-      (k, if (in.isEmpty) v else in)
+      if (fixed.contains(k))
+        (k, v)
+      else {
+        val in = Console.readLine("%s [%s]: ", k,v).trim
+        (k, if (in.isEmpty) v else in)
+      }
     }
   }
   
