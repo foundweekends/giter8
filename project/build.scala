@@ -5,7 +5,7 @@ object Builds extends sbt.Build {
   import ls.Plugin.{lsSettings,LsKeys}
   import sbtbuildinfo.Plugin._
 
-  val g8version = "0.4.6-SNAPSHOT"
+  val g8version = "0.5.0-RC1"
   
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
   val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
@@ -52,8 +52,8 @@ object Builds extends sbt.Build {
         "Command line tool to apply templates defined on github",
       name := "giter8",
       libraryDependencies ++= Seq(
-        "net.databinder" %% "dispatch-lift-json" % "0.8.5",
-        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
+        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r",
+        "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.0-seq"
       ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),

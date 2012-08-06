@@ -185,7 +185,7 @@ A `name` field with a value of `My Project` could be rendered in several ways:
     $name$ -> "My Project"
     $name;format="camel"$ -> "myProject"
     $name;format="Camel"$ -> "MyProject"
-    $name;format="normalized"$ -> "my-project"
+    $name;format="normalize"$ -> "my-project"
     $name;format="lower,hyphen"$ -> "my-project"
 
 Note that multiple format options can be specified (comma-separated) which will
@@ -216,7 +216,7 @@ object PluginDef extends Build {
 
 And settings must be applied in a `build.sbt` file in the project base:
 
-    seq(giter8Settings :_*)    
+    seq(giter8Settings :_*)
 
 When you enter sbt's interactive mode in the base directory of a
 template project that is configured to use this plugin, the action

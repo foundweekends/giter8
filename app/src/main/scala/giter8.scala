@@ -14,39 +14,45 @@ class Giter8 extends xsbti.AppMain with Apply {
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     (args.partition { s => Param.pattern.matcher(s).matches } match {
-      case (params, Array(Local(repo))) => 
+      case (params, Array(Local(repo))) =>
         inspect(repo, None, params)
-      case (params, Array(Local(repo), Branch(_), branch)) => 
+      case (params, Array(Local(repo), Branch(_), branch)) =>
         inspect(repo, Some(branch), params)
-      case (params, Array(Git(remote))) => 
+      case (params, Array(Git(remote))) =>
         inspect(remote, None, params)
       case (params, Array(Git(remote), Branch(_), branch)) =>
         inspect(remote, Some(branch), params)
       case (params, Array(Repo(user, proj))) =>
-        inspect("git@github.com:%s/%s.g8.git".format(user, proj), None, params)
+        ghInspect(user, proj, None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
-        inspect("git@github.com:%s/%s.g8.git".format(user, proj), Some(branch), params)
+        ghInspect(user, proj, Some(branch), params)
       case _ => Left(usage)
-    }) fold ({ error =>
+    }) fold ({ (error: String) =>
       System.err.println("\n%s\n" format error)
       1
-    }, { message =>
-      println("\n%s\n" format message)
+    }, { (message: String) =>
+      println("\n%s\n" format message )
       0
     })
   }
 
-  def http = new Http {
-    override def make_logger = new dispatch.Logger {
-      val jdklog = java.util.logging.Logger.getLogger("dispatch")
-      def info(msg: String, items: Any*) {
-        jdklog.info(msg.format(items: _*))
-      }
-      def warn(msg: String, items: Any*) {
-        jdklog.warning(msg.format(items: _*))
-      }
+  def ghInspect(user: String,
+                proj: String,
+                branch: Option[String],
+                params: Seq[String]) = {
+    try {
+        inspect("git://github.com/%s/%s.g8.git".format(user, proj),
+                branch,
+                params)
+    } catch {
+      case _: org.eclipse.jgit.api.errors.JGitInternalException =>
+        tempdir.deleteRecursively()
+        inspect("git@github.com:%s/%s.g8.git".format(user, proj),
+                branch,
+                params)
     }
   }
+
   def usage = """giter8 %s
                 |Usage: g8 [TEMPLATE] [OPTION]...
                 |Apply specified template.
@@ -66,6 +72,9 @@ class Giter8 extends xsbti.AppMain with Apply {
                 |
                 |Apply template from a remote branch
                 |    g8 n8han/giter8 -b some-branch
+                |
+                |Apply template from a local repo
+                |    g8 file://path/to/the/repo
                 |
                 |Apply given name parameter and use defaults for all others.
                 |    g8 n8han/giter8 --name=template-test

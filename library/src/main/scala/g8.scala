@@ -93,7 +93,7 @@ object G8Helpers {
 
   private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]))(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
     val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
-    
+
     val parameters = arguments.headOption.map { _ =>
       (defaults /: arguments) {
         case (map, Param(key, value)) if map.contains(key) =>
@@ -116,6 +116,7 @@ object G8Helpers {
 
   private def fetchProjectTemplateinfo = fetchInfo(_: File, Some("src/main/g8"), Some("src/main/scaffolds"))
   private def fetchRawTemplateinfo = fetchInfo(_: File, None, None)
+
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
   def applyRaw = applyT(fetchRawTemplateinfo) _
 
@@ -132,10 +133,11 @@ object G8Helpers {
 
     val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
     val fs = getVisibleFiles(templatesRoot)
+    val propertiesLoc = new File(templatesRoot, "default.properties")
     val scaffoldsRoot = scaffoldFolder.map(new File(f, _))
 
     val (propertiesFiles, tmpls) = fs.partition {
-      _.getName == "default.properties"
+      _ == propertiesLoc
     }
 
     val parameters = propertiesFiles.headOption.map{ f => 
@@ -144,6 +146,7 @@ object G8Helpers {
     }.getOrElse(Map.empty)
     
     val g8templates = tmpls.filter(!_.isDirectory)
+
     (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
   
@@ -170,12 +173,17 @@ object G8Helpers {
     }
 
     val reader = new jline.ConsoleReader
+    val fixed = Set("verbatim")
     others map { case (k,v) =>
-      val in = sbt.SimpleReader.readLine("%s [%s]: ".format(k,v)).map{ r =>
-        val x = r.trim
-        if(x.isEmpty) v else x
+      if (fixed.contains(k))
+        (k, v)
+      else {
+        val in = sbt.SimpleReader.readLine("%s [%s]: ".format(k,v)).map{ r =>
+          val x = r.trim
+          if(x.isEmpty) v else x
+        }
+        (k, in.getOrElse(v))
       }
-      (k, in.getOrElse(v))
     }
   }
   
@@ -213,7 +221,7 @@ object G8Helpers {
 
     Right("Template applied in %s" format (base.toString))
   }
-  
+
   def copyScaffolds(sf: File, output: File) {
 
     val scaffolds = if(sf.exists) Some(getVisibleFiles(sf)) else None
