@@ -18,14 +18,14 @@ class Giter8 extends xsbti.AppMain with Apply {
         inspect(repo, None, params)
       case (params, Array(Local(repo), Branch(_), branch)) =>
         inspect(repo, Some(branch), params)
-      case (params, Array(Git(remote))) =>
-        inspect(remote, None, params)
-      case (params, Array(Git(remote), Branch(_), branch)) =>
-        inspect(remote, Some(branch), params)
       case (params, Array(Repo(user, proj))) =>
         ghInspect(user, proj, None, params)
       case (params, Array(Repo(user, proj), Branch(_), branch)) =>
         ghInspect(user, proj, Some(branch), params)
+      case (params, Array(Git(remote))) =>
+        inspect(remote, None, params)
+      case (params, Array(Git(remote), Branch(_), branch)) =>
+        inspect(remote, Some(branch), params)
       case _ => Left(usage)
     }) fold ({ (error: String) =>
       System.err.println("\n%s\n" format error)
