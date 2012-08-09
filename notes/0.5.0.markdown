@@ -1,0 +1,53 @@
+This release includes a [significant refactoring][pull] contributed by
+[Julien Tournay][jto]. Giter8 has until now communicated via the
+github API, being intended for projects hosted on github. This new
+version replaces the github API with the git protocol as its primary
+transport.
+
+#### Github compatibility
+
+The use of Github repository references is still fully supported and
+encouraged. For example, this command
+
+    g8 unfiltered/unfiltered
+
+will discover and apply the public template served by github at this
+address:
+
+    git://github.com/unfiltered/unfiltered.g8.git
+
+This repository is public, so the attempt to access the repository
+anonymously succeeds. If it were private the attempt would fail, in
+which case giter8 would then try an ssh endpoint:
+
+    git@github.com:unfiltered/unfiltered.g8.git
+
+For this operation any relevant ssh keys will be employed; if the keys
+are associated with a user who has read access to the repository,
+you're in business.
+
+### Generic use
+
+You can now use giter8 with any git URL.
+
+    g8 git://github.com/unfiltered/unfiltered.g8.git
+
+Or
+
+    g8 git@github.com:unfiltered/unfiltered.g8.git
+
+Giter8 also recognizes file URLs of local git repositories, so there's
+no longer a need for the giter8 sbt plugin to test templates. Just
+specify the absolute path to the directory of the project.
+
+    g8 file:///home/nathan/Programming/unfiltered.g8
+
+#### Authentication
+
+Authentication mechanisms used in past versions of giter8 are no
+longer relevant. If you can clone a repository with git, you can apply
+a giter8 template hosted there.
+
+[jto]: https://twitter.com/skaalf
+[pull]: https://github.com/n8han/giter8/pull/64
+[jgit]: http://www.eclipse.org/jgit/
