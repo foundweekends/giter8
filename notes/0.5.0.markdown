@@ -48,6 +48,12 @@ Authentication mechanisms used in past versions of giter8 are no
 longer relevant. If you can clone a repository with git, you can apply
 a giter8 template hosted there.
 
+#### Upgrade
+
+If you're using conscript:
+
+    cs n8han/giter8
+
 [jto]: https://twitter.com/skaalf
 [pull]: https://github.com/n8han/giter8/pull/64
 [jgit]: http://www.eclipse.org/jgit/
