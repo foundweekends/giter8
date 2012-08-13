@@ -240,3 +240,59 @@ project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
 
+
+## Scaffolding plugin
+
+Giter8 supplies an sbt plugin for creating and using scaffolds.
+
+## Using the scaffold plugin
+
+Add the following lines in `project/plugins.sbt`
+
+```scala
+addSbtPlugin("net.databinder.giter8" % "giter8-scaffold" % "0.4.6-SNAPSHOT")
+```
+
+You also want to add `giter8.ScaffoldPlugin.scaffoldSettings` to you project.
+
+```scala
+lazy val project = Project("project").settings(giter8.ScaffoldPlugin.scaffoldSettings:_*)
+```
+
+Once done, the  `g8-scaffold` command can be used in the sbt console.
+Use TAB completion to discover available templates.
+
+```
+[sample] $ g8-scaffold <TAB>
+controller   global       model
+```
+
+The template plugin will prompt each property that needed to complete the scaffolding process:
+
+```
+[sample] $ g8-scaffold controller
+className [Application]:
+```
+
+
+## creating a scaffold
+
+The g8 runtime looks for scaffold in the `src/main/scaffolds`.
+Each folder inside ``src/main/scaffolds` is a different scaffold, and will be accessible in the sbt console using the folder name. 
+
+Once a template as been used, scaffolds are stored into `<project_root>/.g8`
+
+```
+➜  sample/.g8 
+total 0
+drwxr-xr-x   5 jtournay  staff   170B Aug  6 03:21 .
+drwxr-xr-x  11 jtournay  staff   374B Aug  6 05:29 ..
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 controller
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 global
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
+```
+
+It's also possible to create your own scaffold in any sbt peoject by creating or modifying the `.g8` folder.
+
+
+
