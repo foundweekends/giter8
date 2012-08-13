@@ -91,9 +91,9 @@ object G8Helpers {
   
   import Regs._
 
-  private def applyT(fetch: File => (Map[String, String], Stream[File], File))(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
-    val (defaults, templates, templatesRoot) = fetch(tmpl)
-    
+  private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]))(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
+    val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
+
     val parameters = arguments.headOption.map { _ =>
       (defaults /: arguments) {
         case (map, Param(key, value)) if map.contains(key) =>
@@ -106,11 +106,17 @@ object G8Helpers {
     
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
-    write(templatesRoot, templates, parameters, base)
+    val r = write(templatesRoot, templates, parameters, base)
+    for(
+      _ <- r.right;
+      root <- scaffoldsRoot
+    ) copyScaffolds(root, base)
+    r
   }
 
-  private def fetchProjectTemplateinfo = fetchInfo(_: File, Some("src/main/g8"))
-  private def fetchRawTemplateinfo = fetchInfo(_: File, None)
+  private def fetchProjectTemplateinfo = fetchInfo(_: File, Some("src/main/g8"), Some("src/main/scaffolds"))
+  private def fetchRawTemplateinfo = fetchInfo(_: File, None, None)
+
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
   def applyRaw = applyT(fetchRawTemplateinfo) _
 
@@ -119,12 +125,16 @@ object G8Helpers {
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
-  def fetchInfo(f: File, tmplFolder: Option[String]) = {    
+  /**
+  * Extract params, template files, and scaffolding folder based on the conventionnal project structure
+  */
+  def fetchInfo(f: File, tmplFolder: Option[String], scaffoldFolder: Option[String]) = {    
     import java.io.FileInputStream
 
     val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
-    val propertiesLoc = new File(templatesRoot, "default.properties")
     val fs = getVisibleFiles(templatesRoot)
+    val propertiesLoc = new File(templatesRoot, "default.properties")
+    val scaffoldsRoot = scaffoldFolder.map(new File(f, _))
 
     val (propertiesFiles, tmpls) = fs.partition {
       _ == propertiesLoc
@@ -136,11 +146,13 @@ object G8Helpers {
     }.getOrElse(Map.empty)
     
     val g8templates = tmpls.filter(!_.isDirectory)
-    (parameters, g8templates, templatesRoot)
+
+    (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
   
   def interact(params: Map[String, String]) = {
     val (desc, others) = params partition { case (k,_) => k == "description" }
+
     desc.values.foreach { d =>
       @scala.annotation.tailrec
       def liner(cursor: Int, rem: Iterable[String]) {
@@ -159,14 +171,18 @@ object G8Helpers {
       liner(0, d.split(" "))
       println("\n")
     }
-    // parameters we don't expect the user to need to change
+
+    val reader = new jline.ConsoleReader
     val fixed = Set("verbatim")
     others map { case (k,v) =>
       if (fixed.contains(k))
         (k, v)
       else {
-        val in = Console.readLine("%s [%s]: ", k,v).trim
-        (k, if (in.isEmpty) v else in)
+        val in = sbt.SimpleReader.readLine("%s [%s]: ".format(k,v)).map{ r =>
+          val x = r.trim
+          if(x.isEmpty) v else x
+        }
+        (k, in.getOrElse(v))
       }
     }
   }
@@ -204,6 +220,29 @@ object G8Helpers {
     }
 
     Right("Template applied in %s" format (base.toString))
+  }
+
+  def copyScaffolds(sf: File, output: File) {
+
+    val scaffolds = if(sf.exists) Some(getVisibleFiles(sf)) else None
+
+    for(
+      fs <- scaffolds;
+      f <- fs if !f.isDirectory
+    ) {
+      // Copy scaffolding recipes
+      val realProjectRoot = getVisibleFiles(output)
+        .filter(_.isDirectory)
+        .filter(_.getName == "project")
+        .map(_.getParentFile)
+        .headOption
+        .getOrElse(output)
+
+      val hidden = new File(realProjectRoot, ".g8")
+      val name = relativize(f, sf)
+      val out = new File(hidden, name)
+      GIO.copyFile(f, out)
+    }
   }
 
 }
