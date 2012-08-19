@@ -5,7 +5,7 @@ object Builds extends sbt.Build {
   import ls.Plugin.{lsSettings,LsKeys}
   import sbtbuildinfo.Plugin._
 
-  val g8version = "0.5.0"
+  val g8version = "0.5.1-SNAPSHOT"
   
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
   val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
