@@ -9,4 +9,3 @@
   local
   maven-central
   sonatype-releases: https://oss.sonatype.org/content/repositories/releases/
-  eclipse-repo: http://download.eclipse.org/jgit/maven/
