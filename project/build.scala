@@ -8,8 +8,6 @@ object Builds extends sbt.Build {
   val g8version = "0.5.0"
   
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
-  val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
-
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder.giter8",
     version := g8version,
