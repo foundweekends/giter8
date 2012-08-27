@@ -1,45 +1,32 @@
 package giter8
 
 import java.io.File
+import org.stringtemplate.v4._
 
 object G8 {
   import scala.util.control.Exception.allCatch
-  import org.clapper.scalasti.StringTemplate
 
-  private val renderer = new StringRenderer
-
-  def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String]): Seq[File] =
-    fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
-      apply(in, expandPath(relative, toPath, parameters), parameters)
-    }  
-
-  def apply(in: File, out: File, parameters: Map[String,String]) = {
-
-    try {
-      if (verbatim(in, parameters)) GIO.copyFile(in, out) 
-      else {
-        write(out, GIO.read(in, "UTF-8"), parameters)
-      }
+  def render(template: String, parameters: Map[String, String]) = {
+    val g = new STGroup('$', '$')
+    g.registerRenderer(classOf[String], new StringRenderer())
+    g.setListener(new STErrorListener(){
+      import org.stringtemplate.v4.misc.STMessage
+      override def compileTimeError(msg: STMessage) = msg.cause
+      override def runTimeError(msg: STMessage) = msg.cause
+      override def IOError(msg: STMessage) = msg.cause
+      override def internalError(msg: STMessage) = msg.cause
+    })
+    val st = new ST(g, template)
+    parameters.foreach { case (k, v) =>
+      st.add(k, v)
     }
-    catch {
-      case e: Exception =>
-        println("Falling back to file copy for %s: %s" format(in.toString, e.getMessage))
-        GIO.copyFile(in, out)
-    }
-    allCatch opt {
-      if (in.canExecute) out.setExecutable(true)
-    }
-    Seq(out)
+    st.render
   }
 
   def write(out: File, template: String, parameters: Map[String, String]) {
-    val applied = new StringTemplate(template)
-      .setAttributes(parameters)
-      .registerRenderer(renderer)
-      .toString
-    GIO.write(out, applied, "UTF-8")
+    GIO.write(out, render(template, parameters), "UTF-8")
   }
-  
+
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
     parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
   private def globMatch(file: File, patterns: Seq[String]): Boolean =
@@ -49,7 +36,7 @@ object G8 {
     case '?' => """."""
     case '.' => """\."""
     case x => x.toString
-  }).r  
+  }).r
   def expandPath(relative: String, toPath: File, parameters: Map[String,String]): File = {
     val fileParams = Map(parameters.toSeq map {
       case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
@@ -59,7 +46,7 @@ object G8 {
       case x => x
     }: _*)
 
-    new File(toPath, new StringTemplate(formatize(relative)).setAttributes(fileParams).registerRenderer(renderer).toString)
+    new File(toPath, render(formatize(relative), fileParams))
   }
   private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
 
@@ -88,7 +75,7 @@ object G8Helpers {
     val Git = """^(.*\.g8(?:\.git)?)$""".r
     val Local = """^file://(\S+)$""".r
   }
-  
+
   import Regs._
 
   private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]))(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
@@ -103,7 +90,7 @@ object G8Helpers {
           map
       }
     }.getOrElse { interact(defaults) }
-    
+
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
     val r = write(templatesRoot, templates, parameters, base)
@@ -120,7 +107,7 @@ object G8Helpers {
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
   def applyRaw = applyT(fetchRawTemplateinfo) _
 
-  private def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
+  private def getFiles(filter: File => Boolean)(f: File): Stream[File] =
     f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
@@ -128,7 +115,7 @@ object G8Helpers {
   /**
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
   */
-  def fetchInfo(f: File, tmplFolder: Option[String], scaffoldFolder: Option[String]) = {    
+  def fetchInfo(f: File, tmplFolder: Option[String], scaffoldFolder: Option[String]) = {
     import java.io.FileInputStream
 
     val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
@@ -140,16 +127,16 @@ object G8Helpers {
       _ == propertiesLoc
     }
 
-    val parameters = propertiesFiles.headOption.map{ f => 
+    val parameters = propertiesFiles.headOption.map{ f =>
       val props = GIO.readProps(new FileInputStream(f))
       Ls.lookup(props).right.toOption.getOrElse(props)
     }.getOrElse(Map.empty)
-    
+
     val g8templates = tmpls.filter(!_.isDirectory)
 
     (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
-  
+
   def interact(params: Map[String, String]) = {
     val (desc, others) = params partition { case (k,_) => k == "description" }
 
@@ -186,16 +173,15 @@ object G8Helpers {
       }
     }
   }
-  
+
   private def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
-  
+
   def write(tmpl: File,
             templates: Iterable[File],
             parameters: Map[String,String],
             base: File) = {
 
-    import java.nio.charset.MalformedInputException
-    val renderer = new StringRenderer
+    import scala.util.control.Exception.allCatch
 
     templates.map{ in =>
       val name =  relativize(in, tmpl)
@@ -210,12 +196,17 @@ object G8Helpers {
         if (G8.verbatim(out, parameters))
           GIO.copyFile(in, out)
         else {
-          catching(classOf[MalformedInputException]).opt {
+          catching(classOf[Exception]).either {
             Some(G8.write(out, Source.fromFile(in).mkString, parameters))
-          }.getOrElse {
+          }.left.map { e =>
+            println("Falling back to file copy for %s: %s" format(in.toString, e.getMessage))
             GIO.copyFile(in, out)
           }
         }
+        allCatch opt {
+          if (in.canExecute) out.setExecutable(true)
+        }
+
       }
     }
 
@@ -247,13 +238,15 @@ object G8Helpers {
 
 }
 
-class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
+class StringRenderer extends AttributeRenderer {
   import G8._
+  import java.util._
+
   def toString(value: String): String = value
 
-  override def toString(value: String, formatName: String): String = {
-    val formats = formatName.split(",").map(_.trim)
-    formats.foldLeft(value)(format)
+  override def toString(value: Any, formatName: String, locale: Locale): String = {
+    val formats = Option(formatName).getOrElse("").split(",").map(_.trim)
+    formats.foldLeft(value.toString)(format)
   }
 
   def format(value: String, formatName: String): String = formatName match {
@@ -273,3 +266,4 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
     case _                           => value
   }
 }
+
