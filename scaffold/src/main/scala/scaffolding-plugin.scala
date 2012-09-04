@@ -37,7 +37,7 @@ object ScaffoldPlugin extends sbt.Plugin {
     (baseDirectory, templatesPath) { (b, t) =>
       (state: State) =>
       val folder = b / t
-      val templates = folder.listFiles
+      val templates = Option(folder.listFiles).toList
         .filter(f => f.isDirectory && !f.isHidden)
         .map(_.getName: Parser[String])
 
