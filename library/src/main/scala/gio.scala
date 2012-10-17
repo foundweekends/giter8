@@ -36,18 +36,18 @@ object GIO {
     }
     bos.toString(charset)
   }    
-  def copyFile(from: File, to: File) {
+  def copyFile(from: File, to: File, append: Boolean = false) {
     to.getParentFile().mkdirs()
     use(new FIS(from)) { in =>
-      use(new FOS(to)) { out =>
+      use(new FOS(to, append)) { out =>
         transfer(in, out, new Array[Byte](1024*16))
       }
     }
   }
-  def write(to: File, from: String, charset: String) {
+  def write(to: File, from: String, charset: String, append: Boolean = false) {
     to.getParentFile().mkdirs()
     use(new BIS(from.getBytes(charset))) { in =>
-      use(new FOS(to)) { out =>
+      use(new FOS(to, append)) { out =>
         transfer(in, out, new Array[Byte](1024*16))
       }
     }
