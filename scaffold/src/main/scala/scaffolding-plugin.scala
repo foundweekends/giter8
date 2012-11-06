@@ -37,11 +37,11 @@ object ScaffoldPlugin extends sbt.Plugin {
     (baseDirectory, templatesPath) { (b, t) =>
       (state: State) =>
       val folder = b / t
-      val templates = Option(folder.listFiles).toList
+      val templates = Option(folder.listFiles).toList.flatten
         .filter(f => f.isDirectory && !f.isHidden)
         .map(_.getName: Parser[String])
 
-      (Space+) ~> templates.reduceLeft(_ | _)
+      (Space+) ~> templates.foldLeft("": Parser[String])(_ | _)
     }
 
   val scafffoldTask = scaffold <<= InputTask(parser){ (argTask: TaskKey[String]) =>
