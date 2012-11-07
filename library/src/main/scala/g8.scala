@@ -11,12 +11,12 @@ object G8 {
   def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String]): Seq[File] =
     fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
       apply(in, expandPath(relative, toPath, parameters), parameters)
-    }  
+    }
 
   def apply(in: File, out: File, parameters: Map[String,String]) = {
 
     try {
-      if (verbatim(in, parameters)) GIO.copyFile(in, out) 
+      if (verbatim(in, parameters)) GIO.copyFile(in, out)
       else {
         write(out, GIO.read(in, "UTF-8"), parameters)
       }
@@ -39,7 +39,7 @@ object G8 {
       .toString
     GIO.write(out, applied, "UTF-8")
   }
-  
+
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
     parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
   private def globMatch(file: File, patterns: Seq[String]): Boolean =
@@ -49,7 +49,7 @@ object G8 {
     case '?' => """."""
     case '.' => """\."""
     case x => x.toString
-  }).r  
+  }).r
   def expandPath(relative: String, toPath: File, parameters: Map[String,String]): File = {
     val fileParams = Map(parameters.toSeq map {
       case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
@@ -88,7 +88,7 @@ object G8Helpers {
     val Git = """^(.*\.g8(?:\.git)?)$""".r
     val Local = """^file://(\S+)$""".r
   }
-  
+
   import Regs._
 
   private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]))(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
@@ -103,7 +103,7 @@ object G8Helpers {
           map
       }
     }.getOrElse { interact(defaults) }
-    
+
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
     val r = write(templatesRoot, templates, parameters, base)
@@ -120,7 +120,7 @@ object G8Helpers {
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
   def applyRaw = applyT(fetchRawTemplateinfo) _
 
-  private def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
+  private def getFiles(filter: File => Boolean)(f: File): Stream[File] =
     f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
@@ -128,11 +128,11 @@ object G8Helpers {
   /**
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
   */
-  def fetchInfo(f: File, tmplFolder: Option[String], scaffoldFolder: Option[String]) = {    
+  def fetchInfo(f: File, tmplFolder: Option[String], scaffoldFolder: Option[String]) = {
     import java.io.FileInputStream
 
     val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
-    val fs = getVisibleFiles(templatesRoot)
+    val fs = getFiles(_ => true)(templatesRoot)
     val propertiesLoc = new File(templatesRoot, "default.properties")
     val scaffoldsRoot = scaffoldFolder.map(new File(f, _))
 
@@ -140,16 +140,16 @@ object G8Helpers {
       _ == propertiesLoc
     }
 
-    val parameters = propertiesFiles.headOption.map{ f => 
+    val parameters = propertiesFiles.headOption.map{ f =>
       val props = GIO.readProps(new FileInputStream(f))
       Ls.lookup(props).right.toOption.getOrElse(props)
     }.getOrElse(Map.empty)
-    
+
     val g8templates = tmpls.filter(!_.isDirectory)
 
     (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
-  
+
   def interact(params: Map[String, String]) = {
     val (desc, others) = params partition { case (k,_) => k == "description" }
 
@@ -186,9 +186,9 @@ object G8Helpers {
       }
     }
   }
-  
+
   private def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
-  
+
   def write(tmpl: File,
             templates: Iterable[File],
             parameters: Map[String,String],
@@ -224,7 +224,7 @@ object G8Helpers {
 
   def copyScaffolds(sf: File, output: File) {
 
-    val scaffolds = if(sf.exists) Some(getVisibleFiles(sf)) else None
+    val scaffolds = if(sf.exists) Some(getFiles(_ => true)(sf)) else None
 
     for(
       fs <- scaffolds;
