@@ -8,8 +8,6 @@ object Builds extends sbt.Build {
   val g8version = "0.5.1-SNAPSHOT"
   
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
-  val jgitRepo = "jGit repo" at "http://download.eclipse.org/jgit/maven/"
-
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder.giter8",
     version := g8version,
@@ -44,7 +42,7 @@ object Builds extends sbt.Build {
     settings = buildSettings ++ Seq(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(app, lib)
+    )) aggregate(app, lib, scaffold)
 
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
@@ -61,25 +59,18 @@ object Builds extends sbt.Build {
       resolvers += typesafeRepo
     )) dependsOn (lib)
 
-  lazy val plugin = Project("giter8-plugin", file("plugin"),
+  lazy val scaffold = Project("giter8-scaffold", file("scaffold"),
     settings = buildSettings ++ Seq(
-      description :=
-        "sbt 0.11 plugin for testing giter8 templates",
-      sbtPlugin := true,
-      resolvers += Resolver.url("Typesafe repository", new java.net.URL("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
-      libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
-        Seq(sd,
-            "org.scala-sbt" %% "scripted-plugin" % sv
-            )
-      }
+      description := "sbt 0.11 plugin for scaffolding giter8 templates",
+      sbtPlugin := true
     )) dependsOn (lib)
 
   lazy val lib = Project("giter8-lib", file("library"),
     settings = buildSettings ++ Seq(
       description :=
         "shared library for app and plugin",
-      libraryDependencies ++= Seq(
-        "me.lessis" %% "ls" % "0.1.2-RC2"
-      )
+      libraryDependencies <++= (sbtDependency, sbtVersion) { (sd, sv) =>
+        Seq(sd, "me.lessis" %% "ls" % "0.1.2-RC2")
+      }
     ))
 }

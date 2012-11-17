@@ -9,6 +9,7 @@ trait Apply { self: Giter8 =>
 
   val tempdir = Path.createTempDirectory(deleteOnExit = true)
 
+
   def inspect(repo: String,
               branch: Option[String],
               arguments: Seq[String]): Either[String, String] = {
