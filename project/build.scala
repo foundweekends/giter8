@@ -4,6 +4,7 @@ object Builds extends sbt.Build {
   import Keys._
   import ls.Plugin.{lsSettings,LsKeys}
   import sbtbuildinfo.Plugin._
+  import conscript.Harness.conscriptSettings
 
   val g8version = "0.5.1-SNAPSHOT"
   
@@ -45,7 +46,7 @@ object Builds extends sbt.Build {
     )) aggregate(app, lib, scaffold)
 
   lazy val app = Project("app", file("app"),
-    settings = buildSettings ++ conscript.Harness.conscriptSettings ++ buildInfoSettings ++ Seq(
+    settings = buildSettings ++ conscriptSettings ++ buildInfoSettings ++ Seq(
       description :=
         "Command line tool to apply templates defined on github",
       name := "giter8",
