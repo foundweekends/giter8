@@ -172,17 +172,13 @@ object G8Helpers {
       println("\n")
     }
 
-    val reader = new jline.ConsoleReader
     val fixed = Set("verbatim")
     others map { case (k,v) =>
       if (fixed.contains(k))
         (k, v)
       else {
-        val in = sbt.SimpleReader.readLine("%s [%s]: ".format(k,v)).map{ r =>
-          val x = r.trim
-          if(x.isEmpty) v else x
-        }
-        (k, in.getOrElse(v))
+        val in = Console.readLine("%s [%s]: ", k,v).trim
+        (k, if (in.isEmpty) v else in)
       }
     }
   }
