@@ -14,7 +14,9 @@ object Builds extends sbt.Build {
     version := g8version,
     scalaVersion := "2.9.1",
     libraryDependencies ++= Seq(
-      "org.clapper" %% "scalasti" % "0.5.8"),
+      "org.clapper" %% "scalasti" % "0.5.8",
+      ("jline" % "jline" % "1.0" force)
+    ),
     publishArtifact in (Compile, packageBin) := true,
     homepage :=
       Some(url("https://github.com/n8han/giter8")),
