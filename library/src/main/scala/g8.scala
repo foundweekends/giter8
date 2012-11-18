@@ -85,7 +85,7 @@ object G8Helpers {
     val Repo = """^([^\s/]+)/([^\s/]+?)(?:\.g8)?$""".r
     val Branch = """^-(b|-branch)$""".r
     val RemoteTemplates = """^-(l|-list)$""".r
-    val Git = """^(.*\.g8(?:\.git)?)$""".r
+    val Git = "^(git[@|://].*)$".r
     val Local = """^file://(\S+)$""".r
   }
 
