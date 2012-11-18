@@ -32,12 +32,12 @@ object G8 {
     Seq(out)
   }
 
-  def write(out: File, template: String, parameters: Map[String, String]) {
+  def write(out: File, template: String, parameters: Map[String, String], append: Boolean = false) {
     val applied = new StringTemplate(template)
       .setAttributes(parameters)
       .registerRenderer(renderer)
       .toString
-    GIO.write(out, applied, "UTF-8")
+    GIO.write(out, applied, "UTF-8", append)
   }
   
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
@@ -91,7 +91,7 @@ object G8Helpers {
   
   import Regs._
 
-  private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]))(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
+  private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
     val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
 
     val parameters = arguments.headOption.map { _ =>
@@ -106,7 +106,7 @@ object G8Helpers {
     
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
-    val r = write(templatesRoot, templates, parameters, base)
+    val r = write(templatesRoot, templates, parameters, base, isScaffolding)
     for(
       _ <- r.right;
       root <- scaffoldsRoot
@@ -118,7 +118,7 @@ object G8Helpers {
   private def fetchRawTemplateinfo = fetchInfo(_: File, None, None)
 
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
-  def applyRaw = applyT(fetchRawTemplateinfo) _
+  def applyRaw = applyT(fetchRawTemplateinfo, isScaffolding = true) _
 
   private def getFiles(filter: File => Boolean)(f: File): Stream[File] = 
     f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
@@ -192,7 +192,7 @@ object G8Helpers {
   def write(tmpl: File,
             templates: Iterable[File],
             parameters: Map[String,String],
-            base: File) = {
+            base: File, isScaffolding: Boolean) = {
 
     import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
@@ -202,18 +202,28 @@ object G8Helpers {
       val out = G8.expandPath(name, base, parameters)
       (in, out)
     }.foreach { case (in, out) =>
-      if (out.exists) {
+      val existingScaffoldingAction = if (out.exists && isScaffolding) {
+          println(out.getCanonicalPath+" already exists") 
+          print("do you want to append, override or skip existing file? [O/a/s] ")
+          Console.readLine match {
+            case a if a == "a"  => Some(true)
+            case a if a == "o" || a == ""  => Some(false)
+            case _ => None
+          }
+        } else None
+
+      if (out.exists && existingScaffoldingAction.isDefined == false) {
         println("Skipping existing file: %s" format out.toString)
       }
-      else {
+      else  {
         out.getParentFile.mkdirs()
         if (G8.verbatim(out, parameters))
           GIO.copyFile(in, out)
         else {
           catching(classOf[MalformedInputException]).opt {
-            Some(G8.write(out, Source.fromFile(in).mkString, parameters))
+            Some(G8.write(out, Source.fromFile(in).mkString, parameters, append = existingScaffoldingAction.getOrElse(false)))
           }.getOrElse {
-            GIO.copyFile(in, out)
+            GIO.copyFile(in, out, append = existingScaffoldingAction.getOrElse(false))
           }
         }
       }
