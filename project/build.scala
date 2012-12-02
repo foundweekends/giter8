@@ -53,8 +53,7 @@ object Builds extends sbt.Build {
         "Command line tool to apply templates defined on github",
       name := "giter8",
       libraryDependencies ++= Seq(
-        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r",
-        "com.github.scala-incubator.io" %% "scala-io-file" % "0.4.0-seq"
+        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
       ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),
@@ -72,7 +71,9 @@ object Builds extends sbt.Build {
     settings = buildSettings ++ Seq(
       description :=
         "shared library for app and plugin",
-      libraryDependencies +=
-        "me.lessis" %% "ls" % "0.1.2-RC2"
+      libraryDependencies ++= Seq(
+        "me.lessis" %% "ls" % "0.1.2-RC2",
+        "commons-io" % "commons-io" % "2.4"
+      )
     ))
 }

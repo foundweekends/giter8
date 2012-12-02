@@ -2,13 +2,12 @@ package giter8
 
 trait Apply { self: Giter8 =>
   import java.io.File
-  import scalax.file.Path
-  import scalax.file.ImplicitConversions.defaultPath2jfile
+  import org.apache.commons.io.FileUtils
   import org.eclipse.jgit.api._
   import scala.util.control.Exception.{allCatch,catching}
 
-  val tempdir = Path.createTempDirectory(deleteOnExit = true)
-
+  lazy val tempdir =
+    new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
   def inspect(repo: String,
               branch: Option[String],
@@ -32,11 +31,13 @@ trait Apply { self: Giter8 =>
 
     val g = cmd.call()
 
-    branchName.map { b =>
+    val result = branchName.map { b =>
       if(g.branchList().call().asScala.map(_.getName).contains(b))
         Right(tempdir)
       else
         Left("Branch not found: " + b)
     } getOrElse(Right(tempdir))
+    g.getRepository.close()
+    result
   }
 }

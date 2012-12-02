@@ -17,13 +17,14 @@ object Config {
       file.createNewFile()
     }
     val p = new Properties()
-    GIO.use(new FileInputStream(file)) { in =>
-      p.load(in)
-    }
+    val in = new FileInputStream(file)
+    p.load(in)
+    in.close()
+
     val result = f(p)
-    GIO.use(new FileOutputStream(file)) { out =>
-      p.store(out, null)
-    }
+    val out = new FileOutputStream(file)
+    p.store(out, null)
+    out.close()
     result
   }
 }

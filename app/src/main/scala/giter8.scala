@@ -13,7 +13,9 @@ class Giter8 extends xsbti.AppMain with Apply {
 
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
-    (args.partition { s => Param.pattern.matcher(s).matches } match {
+    val result = (args.partition { s =>
+      Param.pattern.matcher(s).matches
+    } match {
       case (params, Array(Local(repo))) =>
         inspect(repo, None, params)
       case (params, Array(Local(repo), Branch(_), branch)) =>
@@ -27,7 +29,9 @@ class Giter8 extends xsbti.AppMain with Apply {
       case (params, Array(Git(remote), Branch(_), branch)) =>
         inspect(remote, Some(branch), params)
       case _ => Left(usage)
-    }) fold ({ (error: String) =>
+    })
+    org.apache.commons.io.FileUtils.forceDelete(tempdir)
+    result.fold ({ (error: String) =>
       System.err.println("\n%s\n" format error)
       1
     }, { (message: String) =>
@@ -46,7 +50,6 @@ class Giter8 extends xsbti.AppMain with Apply {
                 params)
     } catch {
       case _: org.eclipse.jgit.api.errors.JGitInternalException =>
-        tempdir.deleteRecursively()
         inspect("git@github.com:%s/%s.g8.git".format(user, proj),
                 branch,
                 params)

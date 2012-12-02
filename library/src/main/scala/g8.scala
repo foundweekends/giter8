@@ -1,6 +1,8 @@
 package giter8
 
 import java.io.File
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.Charsets.UTF_8
 
 object G8 {
   import scala.util.control.Exception.allCatch
@@ -16,15 +18,15 @@ object G8 {
   def apply(in: File, out: File, parameters: Map[String,String]) = {
 
     try {
-      if (verbatim(in, parameters)) GIO.copyFile(in, out)
+      if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
       else {
-        write(out, GIO.read(in, "UTF-8"), parameters)
+        write(out, FileUtils.readFileToString(in, UTF_8), parameters)
       }
     }
     catch {
       case e: Exception =>
         println("Falling back to file copy for %s: %s" format(in.toString, e.getMessage))
-        GIO.copyFile(in, out)
+        FileUtils.copyFile(in, out)
     }
     allCatch opt {
       if (in.canExecute) out.setExecutable(true)
@@ -37,7 +39,7 @@ object G8 {
       .setAttributes(parameters)
       .registerRenderer(renderer)
       .toString
-    GIO.write(out, applied, "UTF-8", append)
+    FileUtils.writeStringToFile(out, applied, UTF_8, append)
   }
 
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
@@ -78,7 +80,6 @@ object G8 {
 
 object G8Helpers {
   import scala.util.control.Exception.catching
-  import scala.io.Source
 
   object Regs {
     val Param = """^--(\S+)=(.+)$""".r
@@ -141,7 +142,7 @@ object G8Helpers {
     }
 
     val parameters = propertiesFiles.headOption.map{ f =>
-      val props = GIO.readProps(new FileInputStream(f))
+      val props = readProps(new FileInputStream(f))
       Ls.lookup(props).right.toOption.getOrElse(props)
     }.getOrElse(Map.empty)
 
@@ -214,12 +215,17 @@ object G8Helpers {
       else  {
         out.getParentFile.mkdirs()
         if (G8.verbatim(out, parameters))
-          GIO.copyFile(in, out)
+          FileUtils.copyFile(in, out)
         else {
           catching(classOf[MalformedInputException]).opt {
-            Some(G8.write(out, Source.fromFile(in).mkString, parameters, append = existingScaffoldingAction.getOrElse(false)))
+            Some(G8.write(out, FileUtils.readFileToString(in, UTF_8), parameters, append = existingScaffoldingAction.getOrElse(false)))
           }.getOrElse {
-            GIO.copyFile(in, out, append = existingScaffoldingAction.getOrElse(false))
+            if (existingScaffoldingAction.getOrElse(false)) {
+              val existing = FileUtils.readFileToString(in, UTF_8)
+              FileUtils.write(out, existing, UTF_8, true)
+            } else {
+              FileUtils.copyFile(in, out)
+            }
           }
         }
       }
@@ -247,10 +253,20 @@ object G8Helpers {
       val hidden = new File(realProjectRoot, ".g8")
       val name = relativize(f, sf)
       val out = new File(hidden, name)
-      GIO.copyFile(f, out)
+      FileUtils.copyFile(f, out)
     }
   }
 
+
+  def readProps(stm: java.io.InputStream) = {
+    import scala.collection.JavaConversions._
+    val p = new java.util.Properties
+    p.load(stm)
+    stm.close()
+    (Map.empty[String, String] /: p.propertyNames) { (m, k) =>
+      m + (k.toString -> p.getProperty(k.toString))
+    }
+  }
 }
 
 class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
