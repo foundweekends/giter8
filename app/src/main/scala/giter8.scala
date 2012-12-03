@@ -30,7 +30,8 @@ class Giter8 extends xsbti.AppMain with Apply {
         inspect(remote, Some(branch), params)
       case _ => Left(usage)
     })
-    org.apache.commons.io.FileUtils.forceDelete(tempdir)
+    if (tempdir.exists)
+      org.apache.commons.io.FileUtils.forceDelete(tempdir)
     result.fold ({ (error: String) =>
       System.err.println("\n%s\n" format error)
       1

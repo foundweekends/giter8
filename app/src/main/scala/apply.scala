@@ -6,7 +6,7 @@ trait Apply { self: Giter8 =>
   import org.eclipse.jgit.api._
   import scala.util.control.Exception.{allCatch,catching}
 
-  lazy val tempdir =
+  val tempdir =
     new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
   def inspect(repo: String,
