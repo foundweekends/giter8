@@ -1,0 +1,13 @@
+* [Fix for a regression][79] affecting Windows users. Although templates
+  were applied correctly, an error message was printed and files were
+  left in a temporary directory.
+* Support for scaffolding, [contributed by jto][71]
+* Fix for a regression causing hidden files in templates to be
+  ignored, [issue 76][76]
+* No longer requires .g8 suffix for git repositories used as
+  templates, [pull 86][86]
+
+[79]: https://github.com/n8han/giter8/issues/79
+[71]: https://github.com/n8han/giter8/pull/71
+[76]: https://github.com/n8han/giter8/issues/76
+[86]: https://github.com/n8han/giter8/pull/86
