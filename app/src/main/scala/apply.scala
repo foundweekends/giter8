@@ -6,8 +6,14 @@ trait Apply { self: Giter8 =>
   import org.eclipse.jgit.api._
   import scala.util.control.Exception.{allCatch,catching}
 
-  val tempdir =
+  private val tempdir =
     new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
+
+  /** Clean temporary directory used for git cloning */
+  def cleanup() {
+    if (tempdir.exists)
+      FileUtils.forceDelete(tempdir)
+  }
 
   def inspect(repo: String,
               branch: Option[String],

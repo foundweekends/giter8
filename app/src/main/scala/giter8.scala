@@ -30,8 +30,7 @@ class Giter8 extends xsbti.AppMain with Apply {
         inspect(remote, Some(branch), params)
       case _ => Left(usage)
     })
-    if (tempdir.exists)
-      org.apache.commons.io.FileUtils.forceDelete(tempdir)
+    cleanup()
     result.fold ({ (error: String) =>
       System.err.println("\n%s\n" format error)
       1
@@ -51,6 +50,9 @@ class Giter8 extends xsbti.AppMain with Apply {
                 params)
     } catch {
       case _: org.eclipse.jgit.api.errors.JGitInternalException =>
+        // assume it was an access failure, try with ssh
+        // after cleaning the clone directory
+        cleanup()
         inspect("git@github.com:%s/%s.g8.git".format(user, proj),
                 branch,
                 params)
