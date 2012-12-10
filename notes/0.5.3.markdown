@@ -1,0 +1,3 @@
+Fixes a regression in 0.5.2 involving private github
+repositories. With this release giter8 will again fallback to ssh if
+its attempt to access a repository with the git protocol fails.
