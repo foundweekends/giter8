@@ -204,6 +204,9 @@ object G8Helpers {
             }
           }
         }
+        if (in.canExecute) {
+          out.setExecutable(true)
+        }
       }
     }
 
