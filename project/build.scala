@@ -14,7 +14,7 @@ object Builds extends sbt.Build {
     version := g8version,
     scalaVersion := "2.9.1",
     libraryDependencies ++= Seq(
-      "org.clapper" %% "scalasti" % "0.5.8",
+      "org.clapper" % "scalasti_2.9.1" % "0.5.8",
       ("jline" % "jline" % "1.0" force)
     ),
     publishArtifact in (Compile, packageBin) := true,
@@ -45,7 +45,7 @@ object Builds extends sbt.Build {
     settings = buildSettings ++ Seq(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(app, lib, scaffold)
+    )) aggregate(app, lib, scaffold, plugin)
 
   lazy val app = Project("app", file("app"),
     settings = buildSettings ++ conscriptSettings ++ buildInfoSettings ++ Seq(
@@ -67,12 +67,23 @@ object Builds extends sbt.Build {
       sbtPlugin := true
     )) dependsOn (lib)
 
+  lazy val plugin = Project("giter8-plugin", file("plugin"),
+    settings = buildSettings ++ Seq(
+      description := "sbt plugin for testing giter8 templates",
+      sbtPlugin := true,
+      resolvers ++= Seq(
+        Resolver.url("Typesafe repository", url("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
+        typesafeRepo
+      ),
+      libraryDependencies <+= sbtVersion("org.scala-sbt" % "scripted-plugin" % _)
+    )) dependsOn (lib)
+
   lazy val lib = Project("giter8-lib", file("library"),
     settings = buildSettings ++ Seq(
       description :=
         "shared library for app and plugin",
       libraryDependencies ++= Seq(
-        "me.lessis" %% "ls" % "0.1.2-RC2",
+        "me.lessis" % "ls_2.9.1" % "0.1.2-RC2",
         "commons-io" % "commons-io" % "2.4"
       )
     ))
