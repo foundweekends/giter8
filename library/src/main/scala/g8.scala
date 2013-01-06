@@ -10,6 +10,29 @@ object G8 {
 
   private val renderer = new StringRenderer
 
+  def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String]): Seq[File] =
+    fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
+      apply(in, expandPath(relative, toPath, parameters), parameters)
+    }
+
+  def apply(in: File, out: File, parameters: Map[String,String]) = {
+    try {
+      if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
+      else {
+        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters)
+      }
+    }
+    catch {
+      case e: Exception =>
+        println("Falling back to file copy for %s: %s" format(in.toString, e.getMessage))
+        FileUtils.copyFile(in, out)
+    }
+    allCatch opt {
+      if (in.canExecute) out.setExecutable(true)
+    }
+    Seq(out)
+  }
+
   def write(out: File, template: String, parameters: Map[String, String], append: Boolean = false) {
     val applied = new StringTemplate(template)
       .setAttributes(parameters)
