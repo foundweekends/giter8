@@ -293,7 +293,7 @@ drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 global
 drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
 ```
 
-It's also possible to create your own scaffold in any sbt peoject by creating or modifying the `.g8` folder.
+It's also possible to create your own scaffold in any sbt project by creating or modifying the `.g8` folder.
 
 
 
