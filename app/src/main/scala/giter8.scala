@@ -17,7 +17,7 @@ class Giter8 extends xsbti.AppMain with Apply {
       Param.pattern.matcher(s).matches
     } match {
       case (params, Array(Local(repo))) =>
-        inspect(repo, None, params)
+        fileInspect(repo, params)
       case (params, Array(Local(repo), Branch(_), branch)) =>
         inspect(repo, Some(branch), params)
       case (params, Array(Repo(user, proj))) =>
@@ -38,25 +38,6 @@ class Giter8 extends xsbti.AppMain with Apply {
       println("\n%s\n" format message )
       0
     })
-  }
-
-  def ghInspect(user: String,
-                proj: String,
-                branch: Option[String],
-                params: Seq[String]) = {
-    try {
-        inspect("git://github.com/%s/%s.g8.git".format(user, proj),
-                branch,
-                params)
-    } catch {
-      case _: org.eclipse.jgit.api.errors.JGitInternalException =>
-        // assume it was an access failure, try with ssh
-        // after cleaning the clone directory
-        cleanup()
-        inspect("git@github.com:%s/%s.g8.git".format(user, proj),
-                branch,
-                params)
-    }
   }
 
   def usage = """giter8 %s

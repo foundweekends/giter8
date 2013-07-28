@@ -22,6 +22,31 @@ trait Apply { self: Giter8 =>
     tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
   }
 
+  def ghInspect(user: String,
+                proj: String,
+                branch: Option[String],
+                params: Seq[String]) = {
+    try {
+        inspect("git://github.com/%s/%s.g8.git".format(user, proj),
+                branch,
+                params)
+    } catch {
+      case _: org.eclipse.jgit.api.errors.JGitInternalException =>
+        // assume it was an access failure, try with ssh
+        // after cleaning the clone directory
+        cleanup()
+        inspect("git@github.com:%s/%s.g8.git".format(user, proj),
+                branch,
+                params)
+    }
+  }
+
+  def fileInspect(repo: String, arguments: Seq[String]): Either[String, String] = {
+    val tmpl = copy(repo)
+    tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
+  }
+
+
   def clone(repo: String, branch: Option[String]) = {
     import org.eclipse.jgit.api.ListBranchCommand.ListMode
     import org.eclipse.jgit.lib._
@@ -45,5 +70,16 @@ trait Apply { self: Giter8 =>
     } getOrElse(Right(tempdir))
     g.getRepository.close()
     result
+  }
+
+  /** for file:// repositories with no named branch, just do a file copy */
+  def copy(filename: String) = {
+    val dir = new File(filename)
+    if (!dir.isDirectory)
+      Left("Not a readable directory: " + filename)
+    else {
+      FileUtils.copyDirectory(dir, tempdir)
+      Right(tempdir)
+    }
   }
 }
