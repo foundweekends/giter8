@@ -59,9 +59,7 @@ class Giter8 extends xsbti.AppMain with Apply {
       |    g8 file://path/to/the/repo
       |
       |Apply given name parameter and use defaults for all others.
-      |    g8 n8han/giter8 --name=template-test
-      |
-      |""".stripMargin)
+      |    g8 n8han/giter8 --name=template-test""".stripMargin)
   }
 }
 
