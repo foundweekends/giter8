@@ -77,27 +77,15 @@ object G8 {
 
 }
 
-sealed trait Repository
-case class GitUri(uri: String) extends Repository
-case class Local(path: String) extends Repository
-case class GitHub(user: String, project: String) extends Repository
-
 case class Config(
-  repo: Repository = Local("."),
+  repo: String = "",
   branch: Option[String] = None,
   forceOverwrite: Boolean = false
 )
 object G8Helpers {
   import scala.util.control.Exception.catching
 
-  object Regs {
-    val Param = """^--(\S+)=(.+)$""".r
-    val Repo = """^([^\s/]+)/([^\s/]+?)(?:\.g8)?$""".r
-    val Git = "^(git[@|://].*)$".r
-    val Local = """^file://(\S+)$""".r
-  }
-
-  import Regs._
+  val Param = """^--(\S+)=(.+)$""".r
 
   private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
     val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)

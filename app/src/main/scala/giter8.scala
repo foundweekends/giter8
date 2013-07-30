@@ -3,8 +3,6 @@ package giter8
 class Giter8 extends xsbti.AppMain with Apply {
   import dispatch._
 
-  import G8Helpers.Regs
-
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
   /** The launched conscript entry point */
@@ -14,7 +12,7 @@ class Giter8 extends xsbti.AppMain with Apply {
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     val result = (args.partition { s =>
-      Regs.Param.pattern.matcher(s).matches
+      G8Helpers.Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
         parser.parse(options, Config()).map { config =>
@@ -32,19 +30,10 @@ class Giter8 extends xsbti.AppMain with Apply {
     })
   }
 
-  val specToRepo: PartialFunction[String, Repository] = {
-      case Regs.Local(path) => Local(path)
-      case Regs.Git(uri) => GitUri(uri)
-      case Regs.Repo(user, project) => GitHub(user, project)
-  }
-
   val parser = new scopt.OptionParser[Config]("giter8") {
     head("g8", BuildInfo.version)
-    arg[String]("<template>") validate { spec =>
-      if (!specToRepo.isDefinedAt(spec)) failure("<template> not recognized")
-      else success
-    } action { (spec, config) =>
-      config.copy(repo = specToRepo(spec))
+    arg[String]("<template>") action { (repo, config) =>
+      config.copy(repo = repo)
     } text ("git or file URL, or github user/repo")
     opt[String]('b', "branch") action { (b, config) => 
       config.copy(branch = Some(b))

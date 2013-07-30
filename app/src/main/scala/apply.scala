@@ -15,6 +15,10 @@ trait Apply { self: Giter8 =>
       FileUtils.forceDelete(tempdir)
   }
 
+  val GitHub = """^([^\s/]+)/([^\s/]+?)(?:\.g8)?$""".r
+  val GitUrl = "^(git[@|://].*)$".r
+  val Local = """^file://(\S+)$""".r
+
   def inspect(config: Config,
               arguments: Seq[String]): Either[String, String] = {
     config.repo match {
@@ -23,13 +27,13 @@ trait Apply { self: Giter8 =>
           clone(path, config)
         }.getOrElse(copy(path))
         tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
-      case GitUri(uri) => 
+      case GitUrl(uri) => 
         val tmpl = clone(uri, config)
         tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
       case GitHub(user, proj) =>
         try {
           val publicConfig = config.copy(
-            repo = GitUri("git://github.com/%s/%s.g8.git".format(user, proj))
+            repo = "git://github.com/%s/%s.g8.git".format(user, proj)
           )
           inspect(publicConfig, arguments)
         } catch {
@@ -37,7 +41,7 @@ trait Apply { self: Giter8 =>
             // assume it was an access failure, try with ssh
             // after cleaning the clone directory
             val privateConfig = config.copy(
-              repo = GitUri("git@github.com:%s/%s.g8.git".format(user, proj))
+              repo = "git@github.com:%s/%s.g8.git".format(user, proj)
             )
             cleanup()
             inspect(privateConfig, arguments)
