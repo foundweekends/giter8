@@ -53,7 +53,8 @@ object Builds extends sbt.Build {
         "Command line tool to apply templates defined on github",
       name := "giter8",
       libraryDependencies ++= Seq(
-        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
+        "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r",
+        "com.github.scopt" %% "scopt" % "3.1.0"
       ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq[Scoped](name, version, scalaVersion, sbtVersion),

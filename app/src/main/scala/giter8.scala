@@ -3,7 +3,7 @@ package giter8
 class Giter8 extends xsbti.AppMain with Apply {
   import dispatch._
 
-  import G8Helpers.Regs._
+  import G8Helpers.Regs
 
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
@@ -14,21 +14,13 @@ class Giter8 extends xsbti.AppMain with Apply {
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     val result = (args.partition { s =>
-      Param.pattern.matcher(s).matches
+      Regs.Param.pattern.matcher(s).matches
     } match {
-      case (params, Array(Local(repo))) =>
-        fileInspect(repo, params)
-      case (params, Array(Local(repo), Branch(_), branch)) =>
-        inspect(repo, Some(branch), params)
-      case (params, Array(Repo(user, proj))) =>
-        ghInspect(user, proj, None, params)
-      case (params, Array(Repo(user, proj), Branch(_), branch)) =>
-        ghInspect(user, proj, Some(branch), params)
-      case (params, Array(Git(remote))) =>
-        inspect(remote, None, params)
-      case (params, Array(Git(remote), Branch(_), branch)) =>
-        inspect(remote, Some(branch), params)
-      case _ => Left(usage)
+      case (params, options) =>
+        parser.parse(options, Config()).map { config =>
+          inspect(config, params)
+        }.getOrElse(Left(""))
+      case _ => Left(parser.usage)
     })
     cleanup()
     result.fold ({ (error: String) =>
@@ -40,34 +32,48 @@ class Giter8 extends xsbti.AppMain with Apply {
     })
   }
 
-  def usage = """giter8 %s
-                |Usage: g8 [TEMPLATE] [OPTION]...
-                |Apply specified template.
-                |
-                |OPTIONS
-                |    -b, --branch
-                |        Resolves a template within a given branch
-                |    --paramname=paramvalue
-                |        Set given parameter value and bypass interaction.
-                |
-                |
-                |Apply template and interactively fulfill parameters.
-                |    g8 n8han/giter8
-                |
-                |Or
-                |    g8 git://github.com/n8han/giter8.git
-                |
-                |Apply template from a remote branch
-                |    g8 n8han/giter8 -b some-branch
-                |
-                |Apply template from a local repo
-                |    g8 file://path/to/the/repo
-                |
-                |Apply given name parameter and use defaults for all others.
-                |    g8 n8han/giter8 --name=template-test
-                |
-                |""".stripMargin format (BuildInfo.version)
+  val specToRepo: PartialFunction[String, Repository] = {
+      case Regs.Local(path) => Local(path)
+      case Regs.Git(uri) => GitUri(uri)
+      case Regs.Repo(user, project) => GitHub(user, project)
+  }
 
+  val parser = new scopt.OptionParser[Config]("giter8") {
+    head("g8", BuildInfo.version)
+    arg[String]("<template>") validate { spec =>
+      if (!specToRepo.isDefinedAt(spec)) failure("<template> not recognized")
+      else success
+    } action { (spec, config) =>
+      config.copy(repo = specToRepo(spec))
+    } text ("git or file URL, or github user/repo")
+    opt[String]('b', "branch") action { (b, config) => 
+      config.copy(branch = Some(b))
+    } text("Resolve a template within a given branch")
+    opt[Unit]('f', "force") action { (_, config) =>
+      config.copy(forceOverwrite = true)
+    } text("Force overwrite of any existing files in output directory")
+    note("""  --paramname=paramvalue
+      |        Set given parameter value and bypass interaction.
+      |
+      |EXAMPLES
+      |
+      |Apply a template from github
+      |    g8 n8han/giter8
+      |
+      |Apply using the git URL for the same template
+      |    g8 git://github.com/n8han/giter8.git
+      |
+      |Apply template from a remote branch
+      |    g8 n8han/giter8 -b some-branch
+      |
+      |Apply template from a local repo
+      |    g8 file://path/to/the/repo
+      |
+      |Apply given name parameter and use defaults for all others.
+      |    g8 n8han/giter8 --name=template-test
+      |
+      |""".stripMargin)
+  }
 }
 
 class Exit(val code: Int) extends xsbti.Exit

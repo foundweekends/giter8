@@ -15,39 +15,37 @@ trait Apply { self: Giter8 =>
       FileUtils.forceDelete(tempdir)
   }
 
-  def inspect(repo: String,
-              branch: Option[String],
+  def inspect(config: Config,
               arguments: Seq[String]): Either[String, String] = {
-    val tmpl = clone(repo, branch)
-    tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
-  }
-
-  def ghInspect(user: String,
-                proj: String,
-                branch: Option[String],
-                params: Seq[String]) = {
-    try {
-        inspect("git://github.com/%s/%s.g8.git".format(user, proj),
-                branch,
-                params)
-    } catch {
-      case _: org.eclipse.jgit.api.errors.JGitInternalException =>
-        // assume it was an access failure, try with ssh
-        // after cleaning the clone directory
-        cleanup()
-        inspect("git@github.com:%s/%s.g8.git".format(user, proj),
-                branch,
-                params)
+    config.repo match {
+      case Local(path) =>
+        val tmpl = config.branch.map { _ =>
+          clone(path, config)
+        }.getOrElse(copy(path))
+        tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
+      case GitUri(uri) => 
+        val tmpl = clone(uri, config)
+        tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
+      case GitHub(user, proj) =>
+        try {
+          val publicConfig = config.copy(
+            repo = GitUri("git://github.com/%s/%s.g8.git".format(user, proj))
+          )
+          inspect(publicConfig, arguments)
+        } catch {
+          case _: org.eclipse.jgit.api.errors.JGitInternalException =>
+            // assume it was an access failure, try with ssh
+            // after cleaning the clone directory
+            val privateConfig = config.copy(
+              repo = GitUri("git@github.com:%s/%s.g8.git".format(user, proj))
+            )
+            cleanup()
+            inspect(privateConfig, arguments)
+        }
     }
   }
 
-  def fileInspect(repo: String, arguments: Seq[String]): Either[String, String] = {
-    val tmpl = copy(repo)
-    tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
-  }
-
-
-  def clone(repo: String, branch: Option[String]) = {
+  def clone(repo: String, config: Config) = {
     import org.eclipse.jgit.api.ListBranchCommand.ListMode
     import org.eclipse.jgit.lib._
     import scala.collection.JavaConverters._
@@ -56,7 +54,7 @@ trait Apply { self: Giter8 =>
       .setURI(repo)
       .setDirectory(tempdir)
 
-    val branchName = branch.map("refs/heads/" + _)
+    val branchName = config.branch.map("refs/heads/" + _)
     for(b <- branchName)
       cmd.setBranch(b)
 

@@ -77,14 +77,22 @@ object G8 {
 
 }
 
+sealed trait Repository
+case class GitUri(uri: String) extends Repository
+case class Local(path: String) extends Repository
+case class GitHub(user: String, project: String) extends Repository
+
+case class Config(
+  repo: Repository = Local("."),
+  branch: Option[String] = None,
+  forceOverwrite: Boolean = false
+)
 object G8Helpers {
   import scala.util.control.Exception.catching
 
   object Regs {
     val Param = """^--(\S+)=(.+)$""".r
     val Repo = """^([^\s/]+)/([^\s/]+?)(?:\.g8)?$""".r
-    val Branch = """^-(b|-branch)$""".r
-    val RemoteTemplates = """^-(l|-list)$""".r
     val Git = "^(git[@|://].*)$".r
     val Local = """^file://(\S+)$""".r
   }
