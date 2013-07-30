@@ -26,10 +26,18 @@ trait Apply { self: Giter8 =>
         val tmpl = config.branch.map { _ =>
           clone(path, config)
         }.getOrElse(copy(path))
-        tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
+        tmpl.right.flatMap { t =>
+          G8Helpers.applyTemplate(t, new File("."), arguments, config.forceOverwrite)
+        }
       case GitUrl(uri) => 
         val tmpl = clone(uri, config)
-        tmpl.right.flatMap(G8Helpers.applyTemplate(_, new File("."), arguments))
+        tmpl.right.flatMap { t =>
+          G8Helpers.applyTemplate(t,
+            new File("."),
+            arguments,
+            config.forceOverwrite
+          )
+        }
       case GitHub(user, proj) =>
         try {
           val publicConfig = config.copy(

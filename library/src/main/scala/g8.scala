@@ -87,7 +87,7 @@ object G8Helpers {
 
   val Param = """^--(\S+)=(.+)$""".r
 
-  private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil) = {
+  private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil, forceOverwrite: Boolean = false) = {
     val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
 
     val parameters = arguments.headOption.map { _ =>
@@ -102,7 +102,7 @@ object G8Helpers {
 
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
-    val r = write(templatesRoot, templates, parameters, base, isScaffolding)
+    val r = write(templatesRoot, templates, parameters, base, isScaffolding, forceOverwrite)
     for(
       _ <- r.right;
       root <- scaffoldsRoot
@@ -184,7 +184,9 @@ object G8Helpers {
   def write(tmpl: File,
             templates: Iterable[File],
             parameters: Map[String,String],
-            base: File, isScaffolding: Boolean) = {
+            base: File,
+            isScaffolding: Boolean,
+            forceOverwrite: Boolean) = {
 
     import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
@@ -204,7 +206,9 @@ object G8Helpers {
           }
         } else None
 
-      if (out.exists && existingScaffoldingAction.isDefined == false) {
+      if (out.exists && 
+          existingScaffoldingAction.isDefined == false &&
+          forceOverwrite == false) {
         println("Skipping existing file: %s" format out.toString)
       }
       else  {

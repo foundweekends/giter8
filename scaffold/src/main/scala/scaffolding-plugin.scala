@@ -47,7 +47,7 @@ object ScaffoldPlugin extends sbt.Plugin {
   val scafffoldTask = scaffold <<= InputTask(parser){ (argTask: TaskKey[String]) =>
     (baseDirectory, templatesPath, argTask) map { (b, t, name) =>
       val folder = b / t
-      G8Helpers.applyRaw(folder / name, b, Nil).fold(
+      G8Helpers.applyRaw(folder / name, b, Nil, false).fold(
         e => sys.error(e),
         r => println("Success :)")
       )
