@@ -1,12 +1,12 @@
 package giter8
 
 import sbt._
+import ScriptedPlugin._
 
 object Plugin extends sbt.Plugin {
   import Keys._
   import scala.io.Source
-  import Scripted._
-  
+
   object G8Keys {
     lazy val g8                = TaskKey[Seq[File]]("g8", "Apply default parameters to input templates and write to output.")
     lazy val outputPath        = SettingKey[File]("g8-output-path")
@@ -19,7 +19,7 @@ object Plugin extends sbt.Plugin {
 
   import G8Keys._
   
-  lazy val baseGiter8Settings: Seq[sbt.Project.Setting[_]] = Seq(
+  lazy val baseGiter8Settings: Seq[Def.Setting[_]] = Seq(
     g8 <<= (unmanagedSourceDirectories in g8,
         sources in g8, outputPath in g8,
         properties in g8, streams) map { (base, srcs, out, props, s) =>
@@ -38,7 +38,7 @@ object Plugin extends sbt.Plugin {
     }
   )
   
-  lazy val giter8TestSettings: Seq[sbt.Project.Setting[_]] = scriptedSettings ++ Seq(
+  lazy val giter8TestSettings: Seq[Def.Setting[_]] = scriptedSettings ++ Seq(
     g8Test in Test <<= scriptedTask,
     scriptedDependencies <<= (g8 in Test) map { _ => },
     g8 in Test <<= (unmanagedSourceDirectories in g8 in Compile,
@@ -60,5 +60,5 @@ object Plugin extends sbt.Plugin {
     g8TestBufferLog := true
   )
   
-  lazy val giter8Settings: Seq[sbt.Project.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
+  lazy val giter8Settings: Seq[Def.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
 }
