@@ -1,0 +1,15 @@
+This release provides more options for developing and testing giter8
+templates.
+
+Firstly, local templates definitions referred to with a `file://` URL
+are accessed directly as files rather than git repositories. It is no
+longer necessary to stage or commit local changes before testing them
+through the `g8` executable.
+
+Secondly, a new `-f / --force` option causes `g8` to overwrite files
+in the target directory without prompting.
+
+Together, these changes make it easy to save a template file, run
+`g8`, and test changes in the project. If the template project
+produces an sbt build, for example, you can stay in its interactive
+session while coding and applying changes to the source templates.
