@@ -198,6 +198,34 @@ change `org.somewhere` to `org/somewhere` like the built-in support for
 `package`. A file named `$name__Camel$.scala` and the name `awesome project`
 will create the file `AwesomeProject.scala`.
 
+### Testing templates locally
+
+Templates may be passed to the `g8` command with a `file://` URL, and
+in this case the template is applied as it is currently saved to the
+file system (giter8 0.6.0 +). In conjunction with the `--force` option
+which overwrites output files without prompting, you can test changes
+to a template as you are making them.
+
+For example, if you have the Unfiltered template cloned locally you
+could run a command like this:
+
+    $ g8 file://unfiltered.g8/ --name=uftest --force
+
+In a separate terminal, test out the template.
+
+    $ cd uftest/
+    $ sbt
+    > ~ compile
+
+To make changes to the template, save them to its source under the
+`.g8` directory, then repeat the command to apply the template in the
+original terminal:
+
+    $ g8 file://unfiltered.g8/ --name=uftest --force
+
+Your `uftest` sbt session, waiting with the `~ compile` command, will
+detect the changes and automatically recompile.
+
 ### Using the giter8-plugin
 
 Giter8 supplies an sbt plugin for testing templates before pushing
