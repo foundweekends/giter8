@@ -13,3 +13,5 @@ Together, these changes make it easy to save a template file, run
 `g8`, and test changes in the project. If the template project
 produces an sbt build, for example, you can stay in its interactive
 session while coding and applying changes to the source templates.
+
+To upgrade via conscript, run `cs n8han/giter8`
