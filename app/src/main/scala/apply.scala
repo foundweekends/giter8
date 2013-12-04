@@ -16,8 +16,15 @@ trait Apply { self: Giter8 =>
   }
 
   val GitHub = """^([^\s/]+)/([^\s/]+?)(?:\.g8)?$""".r
-  val GitUrl = "^(git[@|://].*)$".r
   val Local = """^file://(\S+)$""".r
+
+  object GitUrl {
+    val NativeUrl = "^(git[@|://].*)$".r
+    val HttpsUrl = "^(https://.*)$".r
+    
+    def unapplySeq(s: Any): Option[List[String]] =
+      NativeUrl.unapplySeq(s) orElse HttpsUrl.unapplySeq(s)
+  }
 
   def inspect(config: Config,
               arguments: Seq[String]): Either[String, String] = {
@@ -29,7 +36,7 @@ trait Apply { self: Giter8 =>
         tmpl.right.flatMap { t =>
           G8Helpers.applyTemplate(t, new File("."), arguments, config.forceOverwrite)
         }
-      case GitUrl(uri) => 
+      case GitUrl(uri) =>
         val tmpl = clone(uri, config)
         tmpl.right.flatMap { t =>
           G8Helpers.applyTemplate(t,
