@@ -177,7 +177,7 @@ The formatting options are:
     camel    | lower-camel     : lower camel case (start-case, word-only, decapitalize)
     hyphen   | hyphenate       : replace spaces with hyphens
     norm     | normalize       : all lowercase with hyphens (lowercase, hyphenate)
-    snake    | snake-case      : replace spaces with underscores
+    snake    | snake-case      : replace spaces and dots with underscores
     packaged | package-dir     : replace dots with slashes (net.databinder -> net/databinder)
     random   | generate-random : appends random characters to the given string
 
