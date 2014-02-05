@@ -12,9 +12,8 @@ object Builds extends sbt.Build {
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder.giter8",
     version := g8version,
-    scalaVersion := "2.9.1",
+    scalaVersion := "2.10.2",
     libraryDependencies ++= Seq(
-      "org.clapper" % "scalasti_2.9.1" % "0.5.8",
       ("jline" % "jline" % "1.0" force)
     ),
     publishArtifact in (Compile, packageBin) := true,
@@ -37,8 +36,15 @@ object Builds extends sbt.Build {
           <name>Nathan Hamblen</name>
           <url>http://twitter.com/n8han</url>
         </developer>
-      </developers>)
+      </developers>),
+    scalacOptions := Seq(
+      "-feature"
+    , "-unchecked"
+    , "-language:postfixOps"
+    )
   )
+
+  lazy val scalasti = RootProject(uri("https://github.com/ohnosequences/scalasti.git"))
 
   // posterous title needs to be giter8, so both app and root are named giter8
   lazy val root = Project("root", file("."),
@@ -84,8 +90,8 @@ object Builds extends sbt.Build {
       description :=
         "shared library for app and plugin",
       libraryDependencies ++= Seq(
-        "me.lessis" % "ls_2.9.1" % "0.1.2-RC2",
+        "me.lessis" %% "ls" % "0.1.2",
         "commons-io" % "commons-io" % "2.4"
       )
-    ))
+    )) dependsOn (scalasti)
 }
