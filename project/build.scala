@@ -6,7 +6,7 @@ object Builds extends sbt.Build {
   import sbtbuildinfo.Plugin._
   import conscript.Harness.conscriptSettings
 
-  val g8version = "0.6.0"
+  val g8version = "0.6.1"
   
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
