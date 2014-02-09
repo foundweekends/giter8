@@ -4,3 +4,4 @@ project/build/target/
 target/
 src_managed/
 project/plugins/project/
+.idea/
