@@ -20,7 +20,7 @@ object G8 {
     val empty = Map.empty[String, String]
   }
 
-  /** A function which will return the resolved value of a property. */
+  /** A function which will return the resolved value of a property given the properties resolved thus far. */
   type ValueF = ResolvedProperties => String
 
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
@@ -120,16 +120,7 @@ object G8Helpers {
   private def applyT(fetch: File => (UnresolvedProperties, Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil, forceOverwrite: Boolean = false) = {
     val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
 
-    val parameters = interact(defaults)
-//      arguments.headOption.map { _ =>
-//      (defaults.toMap /: arguments) {
-//        case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
-//          map + (key -> value)
-//        case (map, Param(key, _)) =>
-//          println("Ignoring unrecognized parameter: " + key)
-//          map
-//      }
-//    }.getOrElse { interact(defaults) }
+    val parameters = consoleParams(defaults, arguments).getOrElse { interact(defaults) }
 
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
@@ -176,6 +167,24 @@ object G8Helpers {
     val g8templates = tmpls.filter(!_.isDirectory)
 
     (parameters, g8templates, templatesRoot, scaffoldsRoot)
+  }
+
+  def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {
+    arguments.headOption.map { _ =>
+      val specified = (ResolvedProperties.empty /: arguments) {
+        case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
+          map + (key -> value)
+        case (map, Param(key, _)) =>
+          println("Ignoring unrecognized parameter: " + key)
+          map
+      }
+
+      // Add anything from defaults that wasn't picked up as an argument from the console.
+      defaults.foldLeft(specified) { case (resolved, (k, f)) =>
+        if(!resolved.contains(k)) resolved + (k -> f(resolved))
+        else resolved
+      }
+    }
   }
 
   def interact(params: UnresolvedProperties):ResolvedProperties = {
