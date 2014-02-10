@@ -31,9 +31,9 @@ object Plugin extends sbt.Plugin {
     outputPath in g8 <<= (target) { dir => dir / "g8" },
     propertiesFile in g8 <<= (unmanagedSourceDirectories in g8) { dirs => (dirs / "default.properties").get.head },
     properties in g8 <<= (propertiesFile in g8) map { f =>
-      Ls.lookup(GIO.readProps(new java.io.FileInputStream(f))).fold(
+      Ls.lookup(G8Helpers.readProps(new java.io.FileInputStream(f))).fold(
         err => sys.error(err),
-        identity
+        _.toMap
       )
     }
   )
