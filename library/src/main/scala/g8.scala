@@ -14,10 +14,24 @@ object G8 {
     val empty = List.empty[(String, String)]
   }
 
-  /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input */
+  /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input, ready for insertion into template */
   type ResolvedProperties = Map[String, String]
   object ResolvedProperties {
     val empty = Map.empty[String, String]
+  }
+
+  /** A function which will return the resolved value of a property. */
+  type ValueF = ResolvedProperties => String
+
+  /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
+  case class DefaultValueF(default:String) extends ValueF {
+    override def apply(resolved:ResolvedProperties):String = default
+  }
+
+  /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
+  type UnresolvedProperties = List[(String, ValueF)]
+  object UnresolvedProperties {
+    val empty = List.empty[(String, ValueF)]
   }
 
   private val renderer = new StringRenderer
@@ -100,18 +114,19 @@ object G8Helpers {
 
   val Param = """^--(\S+)=(.+)$""".r
 
-  private def applyT(fetch: File => (OrderedProperties, Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil, forceOverwrite: Boolean = false) = {
+  private def applyT(fetch: File => (UnresolvedProperties, Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil, forceOverwrite: Boolean = false) = {
     val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
 
-    val parameters = arguments.headOption.map { _ =>
-      (defaults.toMap /: arguments) {
-        case (map, Param(key, value)) if map.contains(key) =>
-          map + (key -> value)
-        case (map, Param(key, _)) =>
-          println("Ignoring unrecognized parameter: " + key)
-          map
-      }
-    }.getOrElse { interact(defaults) }
+    val parameters = interact(defaults)
+//      arguments.headOption.map { _ =>
+//      (defaults.toMap /: arguments) {
+//        case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
+//          map + (key -> value)
+//        case (map, Param(key, _)) =>
+//          println("Ignoring unrecognized parameter: " + key)
+//          map
+//      }
+//    }.getOrElse { interact(defaults) }
 
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
@@ -151,15 +166,16 @@ object G8Helpers {
 
     val parameters = propertiesFiles.headOption.map{ f =>
       val props = readProps(new FileInputStream(f))
-      Ls.lookup(props).right.toOption.getOrElse(props)
-    }.getOrElse(OrderedProperties.empty)
+      val lookedUp = Ls.lookup(props).right.toOption.getOrElse(props)
+      lookedUp.map{ case (k, v) => (k, DefaultValueF(v)) }
+    }.getOrElse(UnresolvedProperties.empty)
 
     val g8templates = tmpls.filter(!_.isDirectory)
 
     (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
 
-  def interact(params: OrderedProperties):ResolvedProperties = {
+  def interact(params: UnresolvedProperties):ResolvedProperties = {
     val (desc, others) = params partition { case (k,_) => k == "description" }
 
     desc.foreach { d =>
@@ -177,20 +193,23 @@ object G8Helpers {
         }
       }
       println()
-      liner(0, d._2.split(" "))
+      liner(0, d._2(ResolvedProperties.empty).split(" "))
       println("\n")
     }
 
     val fixed = Set("verbatim")
-    others.map { case (k,v) =>
-      if (fixed.contains(k))
-        (k, v)
-      else {
-        printf("%s [%s]: ", k,v)
-        Console.flush() // Gotta flush for Windows console!
-        val in = Console.readLine().trim
-        (k, if (in.isEmpty) v else in)
-      }
+    others.foldLeft(ResolvedProperties.empty) { case (resolved, (k,f)) =>
+      resolved + (
+        if (fixed.contains(k))
+          k -> f(resolved)
+        else {
+          val default = f(resolved)
+          printf("%s [%s]: ", k, default)
+          Console.flush() // Gotta flush for Windows console!
+          val in = Console.readLine().trim
+          (k, if (in.isEmpty) default else in)
+        }
+      )
     }.toMap
   }
 
