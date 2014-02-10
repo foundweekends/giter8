@@ -35,7 +35,12 @@ object Ls extends JavaTokenParsers {
       for {
         cur <- accumEither.right
         ls <- lsEither.right
-      } yield cur :+ ls
+      } yield {
+        // Find the match in the accumulator and replace it with the ls'd value
+        val (inits, tail) = cur.span { case (k, _) => k != ls._1 }
+        if(!tail.isEmpty) inits ++ (ls +: (tail.tail))
+        else inits :+ ls
+      }
     }.left.map { "Error retrieving ls version info: " + _ }
   }
 }
