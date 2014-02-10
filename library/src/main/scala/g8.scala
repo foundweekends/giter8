@@ -20,7 +20,11 @@ object G8 {
     val empty = Map.empty[String, String]
   }
 
-  /** A function which will return the resolved value of a property given the properties resolved thus far. */
+  /**
+    * A function which will return the resolved value of a property given the properties resolved thus far.
+    * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
+    * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
+    */
   type ValueF = ResolvedProperties => String
 
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
