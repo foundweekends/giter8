@@ -8,10 +8,13 @@ object G8 {
   import scala.util.control.Exception.allCatch
   import org.clapper.scalasti.StringTemplate
 
+  /** Properties in the order they were created/defined */
   type OrderedProperties  = List[(String, String)]
   object OrderedProperties {
     val empty = List.empty[(String, String)]
   }
+
+  /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input */
   type ResolvedProperties = Map[String, String]
   object ResolvedProperties {
     val empty = Map.empty[String, String]
@@ -271,9 +274,7 @@ object G8Helpers {
     }
   }
 
-
   def readProps(stm: java.io.InputStream):G8.OrderedProperties = {
-    import scala.collection.JavaConversions._
     val p = new LinkedListProperties
     p.load(stm)
     stm.close()
@@ -283,6 +284,7 @@ object G8Helpers {
   }
 }
 
+/** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */
 private [giter8] class LinkedListProperties extends java.util.Properties {
   var keyList = List.empty[String]
 
