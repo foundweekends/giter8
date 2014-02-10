@@ -137,6 +137,22 @@ might be referenced in the source as:
 [scalasti]: http://bmc.github.com/scalasti/
 [st]: http://www.stringtemplate.org/
 
+The template fields themselves can be utilized to define the defaults
+of other fields.  For instance, you could build some URLs given the
+user's github id:
+
+    name = URL Builder
+    github_id=githubber
+    developer_url=https://github.com/$github_id$
+    project_url=https://github.com/$github_id$/$name;format="norm"$
+    
+This would yield the following in interactive mode:
+
+    name [URL Builder]: my-proj
+    github_id [githubber]: n8han
+    project_url [https://github.com/n8han/my-proj]:
+    developer_url [https://github.com/n8han]:
+
 The `name` field, if defined, is treated specially by giter8. It is
 assumed to be the name of a project being created, so the g8 runtime
 creates a directory based off that name (with spaces and capitals
