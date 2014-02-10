@@ -38,8 +38,7 @@ object Ls extends JavaTokenParsers {
       } yield {
         // Find the match in the accumulator and replace it with the ls'd value
         val (inits, tail) = cur.span { case (k, _) => k != ls._1 }
-        if(!tail.isEmpty) inits ++ (ls +: (tail.tail))
-        else inits :+ ls
+        inits ++ (ls +: (tail.tail))
       }
     }.left.map { "Error retrieving ls version info: " + _ }
   }
