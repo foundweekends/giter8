@@ -25,7 +25,10 @@ object G8 {
 
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
   case class DefaultValueF(default:String) extends ValueF {
-    override def apply(resolved:ResolvedProperties):String = default
+    override def apply(resolved:ResolvedProperties):String = new StringTemplate(default)
+      .setAttributes(resolved)
+      .registerRenderer(renderer)
+      .toString
   }
 
   /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
@@ -198,6 +201,8 @@ object G8Helpers {
     }
 
     val fixed = Set("verbatim")
+    val renderer = new StringRenderer
+
     others.foldLeft(ResolvedProperties.empty) { case (resolved, (k,f)) =>
       resolved + (
         if (fixed.contains(k))
