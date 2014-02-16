@@ -8,6 +8,39 @@ object G8 {
   import scala.util.control.Exception.allCatch
   import org.clapper.scalasti.StringTemplate
 
+  /** Properties in the order they were created/defined */
+  type OrderedProperties  = List[(String, String)]
+  object OrderedProperties {
+    val empty = List.empty[(String, String)]
+  }
+
+  /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input, ready for insertion into template */
+  type ResolvedProperties = Map[String, String]
+  object ResolvedProperties {
+    val empty = Map.empty[String, String]
+  }
+
+  /**
+    * A function which will return the resolved value of a property given the properties resolved thus far.
+    * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
+    * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
+    */
+  type ValueF = ResolvedProperties => String
+
+  /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
+  case class DefaultValueF(default:String) extends ValueF {
+    override def apply(resolved:ResolvedProperties):String = new StringTemplate(default)
+      .setAttributes(resolved)
+      .registerRenderer(renderer)
+      .toString
+  }
+
+  /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
+  type UnresolvedProperties = List[(String, ValueF)]
+  object UnresolvedProperties {
+    val empty = List.empty[(String, ValueF)]
+  }
+
   private val renderer = new StringRenderer
 
   def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String]): Seq[File] =
@@ -84,21 +117,14 @@ case class Config(
 )
 object G8Helpers {
   import scala.util.control.Exception.catching
+  import G8._
 
   val Param = """^--(\S+)=(.+)$""".r
 
-  private def applyT(fetch: File => (Map[String, String], Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil, forceOverwrite: Boolean = false) = {
+  private def applyT(fetch: File => (UnresolvedProperties, Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil, forceOverwrite: Boolean = false) = {
     val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
 
-    val parameters = arguments.headOption.map { _ =>
-      (defaults /: arguments) {
-        case (map, Param(key, value)) if map.contains(key) =>
-          map + (key -> value)
-        case (map, Param(key, _)) =>
-          println("Ignoring unrecognized parameter: " + key)
-          map
-      }
-    }.getOrElse { interact(defaults) }
+    val parameters = consoleParams(defaults, arguments).getOrElse { interact(defaults) }
 
     val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
 
@@ -138,18 +164,37 @@ object G8Helpers {
 
     val parameters = propertiesFiles.headOption.map{ f =>
       val props = readProps(new FileInputStream(f))
-      Ls.lookup(props).right.toOption.getOrElse(props)
-    }.getOrElse(Map.empty)
+      val lookedUp = Ls.lookup(props).right.toOption.getOrElse(props)
+      lookedUp.map{ case (k, v) => (k, DefaultValueF(v)) }
+    }.getOrElse(UnresolvedProperties.empty)
 
     val g8templates = tmpls.filter(!_.isDirectory)
 
     (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
 
-  def interact(params: Map[String, String]) = {
+  def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {
+    arguments.headOption.map { _ =>
+      val specified = (ResolvedProperties.empty /: arguments) {
+        case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
+          map + (key -> value)
+        case (map, Param(key, _)) =>
+          println("Ignoring unrecognized parameter: " + key)
+          map
+      }
+
+      // Add anything from defaults that wasn't picked up as an argument from the console.
+      defaults.foldLeft(specified) { case (resolved, (k, f)) =>
+        if(!resolved.contains(k)) resolved + (k -> f(resolved))
+        else resolved
+      }
+    }
+  }
+
+  def interact(params: UnresolvedProperties):ResolvedProperties = {
     val (desc, others) = params partition { case (k,_) => k == "description" }
 
-    desc.values.foreach { d =>
+    desc.foreach { d =>
       @scala.annotation.tailrec
       def liner(cursor: Int, rem: Iterable[String]) {
         if (!rem.isEmpty) {
@@ -164,21 +209,26 @@ object G8Helpers {
         }
       }
       println()
-      liner(0, d.split(" "))
+      liner(0, d._2(ResolvedProperties.empty).split(" "))
       println("\n")
     }
 
     val fixed = Set("verbatim")
-    others map { case (k,v) =>
-      if (fixed.contains(k))
-        (k, v)
-      else {
-        printf("%s [%s]: ", k,v)
-        Console.flush() // Gotta flush for Windows console!
-        val in = Console.readLine().trim
-        (k, if (in.isEmpty) v else in)
-      }
-    }
+    val renderer = new StringRenderer
+
+    others.foldLeft(ResolvedProperties.empty) { case (resolved, (k,f)) =>
+      resolved + (
+        if (fixed.contains(k))
+          k -> f(resolved)
+        else {
+          val default = f(resolved)
+          printf("%s [%s]: ", k, default)
+          Console.flush() // Gotta flush for Windows console!
+          val in = Console.readLine().trim
+          (k, if (in.isEmpty) default else in)
+        }
+      )
+    }.toMap
   }
 
   private def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
@@ -261,15 +311,23 @@ object G8Helpers {
     }
   }
 
-
-  def readProps(stm: java.io.InputStream) = {
-    import scala.collection.JavaConversions._
-    val p = new java.util.Properties
+  def readProps(stm: java.io.InputStream):G8.OrderedProperties = {
+    val p = new LinkedListProperties
     p.load(stm)
     stm.close()
-    (Map.empty[String, String] /: p.propertyNames) { (m, k) =>
-      m + (k.toString -> p.getProperty(k.toString))
+    (OrderedProperties.empty /: p.keyList) { (l, k) =>
+      l :+ (k, p.getProperty(k))
     }
+  }
+}
+
+/** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */
+private [giter8] class LinkedListProperties extends java.util.Properties {
+  var keyList = List.empty[String]
+
+  override def put(k:Object, v:Object) = {
+    keyList = keyList :+ k.toString
+    super.put(k, v)
   }
 }
 
