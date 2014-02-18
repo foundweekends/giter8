@@ -1,0 +1,13 @@
+Template properties may now refer to their antecedents, plus a bevy of
+fixes!
+
+* Dynamic defaults, template properties may reference other
+  properties. [126][126]
+* Fixes for use in the Windows console [124][124]
+* Snake-case formatter change, also convert "`.`" to "`_`" [118][118]
+* Fix for completion problem in scaffolding [103][103]
+
+[126]: https://github.com/n8han/giter8/pull/126
+[124]: https://github.com/n8han/giter8/pull/124
+[118]: https://github.com/n8han/giter8/issues/118
+[103]: https://github.com/n8han/giter8/issues/103
