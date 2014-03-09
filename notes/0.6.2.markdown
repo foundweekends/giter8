@@ -1,0 +1,3 @@
+[Pull request #115][115], fixes cloning over https. 
+
+[115]: https://github.com/n8han/giter8/pull/115
