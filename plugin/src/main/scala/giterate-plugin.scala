@@ -19,12 +19,12 @@ object Plugin extends sbt.Plugin {
 
   import G8Keys._
   
-  lazy val baseGiter8Settings: Seq[sbt.Project.Setting[_]] = Seq(
+  lazy val baseGiter8Settings: Seq[Def.Setting[_]] = Seq(
     g8 <<= (unmanagedSourceDirectories in g8,
         sources in g8, outputPath in g8,
         properties in g8, streams) map { (base, srcs, out, props, s) =>
       IO.delete(out)
-      G8(srcs x relativeTo(base), out, props) },
+      G8(srcs pair relativeTo(base), out, props) },
     unmanagedSourceDirectories in g8 <<= (sourceDirectory) { dir => (dir / "g8").get },
     sources in g8 <<= (unmanagedSourceDirectories in g8, propertiesFile in g8) map { (dirs, pf) =>
       ((dirs ** (-DirectoryFilter)) --- pf).get },
@@ -38,14 +38,14 @@ object Plugin extends sbt.Plugin {
     }
   )
   
-  lazy val giter8TestSettings: Seq[sbt.Project.Setting[_]] = scriptedSettings ++ Seq(
+  lazy val giter8TestSettings: Seq[Def.Setting[_]] = scriptedSettings ++ Seq(
     g8Test in Test <<= scriptedTask,
     scriptedDependencies <<= (g8 in Test) map { _ => },
     g8 in Test <<= (unmanagedSourceDirectories in g8 in Compile,
         sources in g8 in Compile, outputPath in g8 in Test,
         properties in g8 in Test, testScript in Test, streams) map { (base, srcs, out, props, ts, s) =>
       IO.delete(out)
-      val retval = G8(srcs x relativeTo(base), out, props)
+      val retval = G8(srcs pair relativeTo(base), out, props)
       
       // copy test script or generate one
       val script = new File(out, "test")
@@ -60,5 +60,5 @@ object Plugin extends sbt.Plugin {
     g8TestBufferLog := true
   )
   
-  lazy val giter8Settings: Seq[sbt.Project.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
+  lazy val giter8Settings: Seq[Def.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
 }

@@ -33,7 +33,7 @@ object ScaffoldPlugin extends sbt.Plugin {
   import complete._
   import complete.DefaultParsers._
 
-  val parser: sbt.Project.Initialize[State => Parser[String]] =
+  val parser: Def.Initialize[State => Parser[String]] =
     (baseDirectory, templatesPath) { (b, t) =>
       (state: State) =>
       val folder = b / t
@@ -44,7 +44,7 @@ object ScaffoldPlugin extends sbt.Plugin {
       (Space) ~> templates.foldLeft(" ": Parser[String])(_ | _)
     }
 
-  val scafffoldTask = scaffold <<= InputTask(parser){ (argTask: TaskKey[String]) =>
+  val scaffoldTask = scaffold <<= Def.inputTask{ (argTask: TaskKey[String]) =>
     (baseDirectory, templatesPath, argTask) map { (b, t, name) =>
       val folder = b / t
       G8Helpers.applyRaw(folder / name, b, Nil, false).fold(
@@ -55,8 +55,8 @@ object ScaffoldPlugin extends sbt.Plugin {
   }
 
 
-  lazy val scaffoldSettings: Seq[sbt.Project.Setting[_]] = Seq(
+  lazy val scaffoldSettings: Seq[Def.Setting[_]] = Seq(
     templatesPath := ".g8",
-    scafffoldTask
+    scaffoldTask
   )
 }
