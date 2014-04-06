@@ -113,7 +113,8 @@ object G8 {
 case class Config(
   repo: String = "",
   branch: Option[String] = None,
-  forceOverwrite: Boolean = false
+  forceOverwrite: Boolean = false,
+  search: Boolean = false
 )
 object G8Helpers {
   import scala.util.control.Exception.catching

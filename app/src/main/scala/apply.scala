@@ -26,6 +26,15 @@ trait Apply { self: Giter8 =>
       NativeUrl.unapplySeq(s) orElse HttpsUrl.unapplySeq(s)
   }
 
+  def search(config: Config): Either[String, String] = {
+    val prettyPrinter = (repo: GithubRepo) =>
+      "%s \n\t %s\n" format (repo.name, repo.description)
+
+    val repos = GithubRepo.search(config.repo)
+
+    Right(repos.map(prettyPrinter).mkString(""))
+  }
+
   def inspect(config: Config,
               arguments: Seq[String]): Either[String, String] = {
     config.repo match {
