@@ -1,6 +1,6 @@
 package giter8
-import dispatch._
-import dispatch.json._
+import dispatch.classic._
+import dispatch.classic.json._
 
 case class GithubRepo(name: String,
                       description: String)
@@ -25,7 +25,6 @@ object GithubRepo {
   private val searchUrl =
     "https://api.github.com/search/repositories"
 
-
   def search(pattern: String): List[GithubRepo] = {
     val query = "%s .g8" format pattern
 
@@ -43,8 +42,5 @@ object GithubRepo {
 
     Http(handler).getOrElse(Nil)
   }
-
-
-
 }
 
