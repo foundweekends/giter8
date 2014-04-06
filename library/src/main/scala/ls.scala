@@ -1,6 +1,8 @@
 package giter8
 
 import scala.util.parsing.combinator._
+import scala.concurrent._
+import scala.concurrent.duration._
 
 /**
  * Parse any ls.implcit.ly references in default properties. The latest
@@ -28,7 +30,9 @@ object Ls extends JavaTokenParsers {
       case (key, Ls(library, user, repo)) =>
         ls.DefaultClient {
           _.Handler.latest(library, user, repo)
-        }.right.map { key -> _ }
+        }.right.map { future =>
+          Await.result(future, 1.minute).right.map(key -> _)
+        }.joinRight
     }
     val initial: Either[String,G8.OrderedProperties] = Right(rawDefaults)
     (initial /: lsDefaults) { (accumEither, lsEither) =>
