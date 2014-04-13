@@ -34,7 +34,7 @@ class Giter8 extends xsbti.AppMain with Apply {
   }
 
   val parser = new scopt.OptionParser[Config]("giter8") {
-    head("g8", BuildInfo.version)
+    head("g8", giter8.BuildInfo.version)
     cmd("search") action { (_, config) =>
       config.copy(search = true)
     } text("Search for templates on github")
