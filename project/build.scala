@@ -58,7 +58,7 @@ object Builds extends sbt.Build {
         "com.github.scopt" %% "scopt" % "3.1.0",
         "net.databinder" %% "dispatch-json" % "0.8.10",
         "net.databinder" %% "dispatch-http" % "0.8.10",
-        "org.scala-sbt" % "launcher-interface" % sbtVersion.value
+        "org.scala-sbt" % "launcher-interface" % sbtVersion.value % "provided"
       ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
