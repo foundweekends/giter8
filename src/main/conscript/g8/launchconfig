@@ -1,10 +1,10 @@
 [app]
-  version: 0.6.2
+  version: 0.6.3
   org: net.databinder.giter8
   name: giter8
   class: giter8.Giter8
 [scala]
-  version: 2.9.1
+  version: 2.10.2
 [repositories]
   local
   maven-central
