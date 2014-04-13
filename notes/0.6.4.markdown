@@ -1,11 +1,12 @@
-This release upgrades giter8 itself to Scala 2.10 (of interest to
-anyone using it as a library) via [PR #111][111].
-
-It also includes a new `search` command which uses the github API to
-search for containing the given string and ending with
+This release adds a `search` command which uses the github API to
+search for repositories containing the given string, and ending with
 ".g8". Contributed by hadesgames in [PR #128][128].
 
     g8 search unfiltered
+
+It also upgrades giter8 itself to Scala 2.10 (of interest to
+anyone using it as a library) via [PR #111][111].
+
 
 [111]: https://github.com/n8han/giter8/pull/111
 [128]: https://github.com/n8han/giter8/pull/128
