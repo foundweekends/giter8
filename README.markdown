@@ -17,7 +17,7 @@ Installation
 You can install giter8 and other Scala command line tools with
 [Conscript][cs]. This will setup Conscript in `~/bin/cs`:
 
-    curl https://raw.github.com/n8han/conscript/master/setup.sh | sh
+    curl https://raw.githubusercontent.com/n8han/conscript/master/setup.sh | sh
 
 (See [Conscript's readme][cs] for a non-unixy option.) Once `cs` is
 on your path, you can install (or upgrade) giter8 with this command:
