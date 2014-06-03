@@ -84,6 +84,7 @@ object Builds extends sbt.Build {
         a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
       ),
       ScriptedPlugin.scriptedBufferLog := false,
+      ScriptedPlugin.scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
       ScriptedPlugin.scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib),
       libraryDependencies <+= sbtVersion("org.scala-sbt" % "scripted-plugin" % _)
     )) dependsOn (lib)
