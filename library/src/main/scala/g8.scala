@@ -167,6 +167,9 @@ object G8Helpers {
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
+  def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
+    Ls.lookup(props).right.flatMap(Maven.lookup)
+
   /**
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
   */
@@ -184,7 +187,7 @@ object G8Helpers {
 
     val parameters = propertiesFiles.headOption.map{ f =>
       val props = readProps(new FileInputStream(f))
-      val lookedUp = Ls.lookup(props).right.toOption.getOrElse(props)
+      val lookedUp = transformProps(props).right.getOrElse(props)
       lookedUp.map{ case (k, v) => (k, DefaultValueF(v)) }
     }.getOrElse(UnresolvedProperties.empty)
 
