@@ -1,0 +1,5 @@
+language: scala
+
+script:
+  - sbt test giter8-plugin/scripted
+
