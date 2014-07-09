@@ -3,6 +3,11 @@ package giter8
 import java.io.File
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
+import org.codehaus.plexus.logging.Logger
+import org.codehaus.plexus.logging.console.ConsoleLogger
+import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
+import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
+
 
 object G8 {
   import scala.util.control.Exception.allCatch
@@ -52,7 +57,7 @@ object G8 {
     try {
       if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
       else {
-        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters)
+        write(in, out, parameters, false)
       }
     }
     catch {
@@ -64,6 +69,12 @@ object G8 {
       if (in.canExecute) out.setExecutable(true)
     }
     Seq(out)
+  }
+
+  def write(in: File, out: File, parameters: Map[String, String], append: Boolean) {
+    val mode = PlexusIoResourceAttributeUtils.getFileAttributes(in).getOctalMode
+    write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+    ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, ""))
   }
 
   def write(out: File, template: String, parameters: Map[String, String], append: Boolean = false) {
@@ -250,7 +261,7 @@ object G8Helpers {
       (in, out)
     }.foreach { case (in, out) =>
       val existingScaffoldingAction = if (out.exists && isScaffolding) {
-          println(out.getCanonicalPath+" already exists") 
+          println(out.getCanonicalPath+" already exists")
           print("do you want to append, override or skip existing file? [O/a/s] ")
           Console.readLine match {
             case a if a == "a"  => Some(true)
@@ -259,7 +270,7 @@ object G8Helpers {
           }
         } else None
 
-      if (out.exists && 
+      if (out.exists &&
           existingScaffoldingAction.isDefined == false &&
           forceOverwrite == false) {
         println("Skipping existing file: %s" format out.toString)
@@ -270,7 +281,7 @@ object G8Helpers {
           FileUtils.copyFile(in, out)
         else {
           catching(classOf[MalformedInputException]).opt {
-            Some(G8.write(out, FileUtils.readFileToString(in, UTF_8), parameters, append = existingScaffoldingAction.getOrElse(false)))
+            Some(G8.write(in, out, parameters, append = existingScaffoldingAction.getOrElse(false)))
           }.getOrElse {
             if (existingScaffoldingAction.getOrElse(false)) {
               val existing = FileUtils.readFileToString(in, UTF_8)
