@@ -7,7 +7,7 @@ object Builds extends sbt.Build {
   import conscript.Harness.conscriptSettings
 
   val g8version = "0.6.4"
-  
+
   val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
   lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
     organization := "net.databinder.giter8",
@@ -95,7 +95,8 @@ object Builds extends sbt.Build {
         "shared library for app and plugin",
       libraryDependencies ++= Seq(
         "me.lessis" %% "ls" % "0.1.3",
-        "commons-io" % "commons-io" % "2.4"
+        "commons-io" % "commons-io" % "2.4",
+        "org.codehaus.plexus" % "plexus-archiver" % "2.2"
       )
     ))
 }

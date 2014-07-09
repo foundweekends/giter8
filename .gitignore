@@ -5,3 +5,4 @@ target/
 src_managed/
 project/plugins/project/
 .idea/
+.classpath_nb
