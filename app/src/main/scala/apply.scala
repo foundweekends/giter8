@@ -21,9 +21,12 @@ trait Apply { self: Giter8 =>
   object GitUrl {
     val NativeUrl = "^(git[@|://].*)$".r
     val HttpsUrl = "^(https://.*)$".r
-    
+    val HttpUrl = "^(http://.*)$".r
+
     def unapplySeq(s: Any): Option[List[String]] =
-      NativeUrl.unapplySeq(s) orElse HttpsUrl.unapplySeq(s)
+      NativeUrl.unapplySeq(s) orElse
+      HttpsUrl.unapplySeq(s) orElse
+      HttpUrl.unapplySeq(s)
   }
 
   def search(config: Config): Either[String, String] = {
