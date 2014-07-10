@@ -3,6 +3,7 @@ package giter8
 import java.io.File
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
+import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributes
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
@@ -72,9 +73,15 @@ object G8 {
   }
 
   def write(in: File, out: File, parameters: Map[String, String], append: Boolean) {
-    val mode = PlexusIoResourceAttributeUtils.getFileAttributes(in).getOctalMode
-    write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
-    ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, ""))
+    PlexusIoResourceAttributeUtils.getFileAttributes(in) match {
+      case attr: PlexusIoResourceAttributes => 
+        val mode = attr.getOctalMode
+        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+        ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, ""))
+      case _ =>
+        // PlexusIoResourceAttributes is not available for some OS'es such as windows
+        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+    }
   }
 
   def write(out: File, template: String, parameters: Map[String, String], append: Boolean = false) {

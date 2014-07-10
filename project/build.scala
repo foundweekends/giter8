@@ -96,7 +96,12 @@ object Builds extends sbt.Build {
       libraryDependencies ++= Seq(
         "me.lessis" %% "ls" % "0.1.3",
         "commons-io" % "commons-io" % "2.4",
-        "org.codehaus.plexus" % "plexus-archiver" % "2.2"
+        "org.codehaus.plexus" % "plexus-archiver" % "2.2" excludeAll(
+          ExclusionRule("org.apache.commons", "commons-compress"),
+          ExclusionRule("classworlds", "classworlds"),
+          ExclusionRule("org.tukaani", "xz"),
+          ExclusionRule("junit", "junit")
+        )
       )
     ))
 }
