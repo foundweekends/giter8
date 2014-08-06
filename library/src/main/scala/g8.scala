@@ -77,7 +77,7 @@ object G8 {
       case Some(attr) =>
         val mode = attr.getOctalMode
         write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
-        ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, ""))
+        util.Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
       case None =>
         // PlexusIoResourceAttributes is not available for some OS'es such as windows
         write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
