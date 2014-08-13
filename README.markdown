@@ -194,7 +194,8 @@ The formatting options are:
     hyphen   | hyphenate       : replace spaces with hyphens
     norm     | normalize       : all lowercase with hyphens (lowercase, hyphenate)
     snake    | snake-case      : replace spaces and dots with underscores
-    packaged | package-dir     : replace dots with slashes (net.databinder -> net/databinder)
+    packaged | package-dir     : replace dots, hyphens and spaces with slashes (net.databinder -> net/databinder)
+    dot      | dotted          : replace spaces and hyphens with dots, lower-cased (awesome-API -> awesome.api)
     random   | generate-random : appends random characters to the given string
 
 A `name` field with a value of `My Project` could be rendered in several ways:
