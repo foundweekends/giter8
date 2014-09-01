@@ -1,0 +1,5 @@
+* Accept `https` scheme for template base URLs. [#137][137]
+* Preserve and apply file permissions found in templates. [#139][139]
+
+[137]: https://github.com/n8han/giter8/issues/137
+[139]: https://github.com/n8han/giter8/pull/139
