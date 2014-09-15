@@ -116,14 +116,15 @@ object G8 {
   private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
 
   def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
-  def startCase(s: String) = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
+  def startCase(s: String) = s.toLowerCase.split("[ -]").map(_.capitalize).mkString(" ")
   def wordOnly(s: String) = s.replaceAll("""\W""", "")
   def upperCamel(s: String) = wordOnly(startCase(s))
   def lowerCamel(s: String) = decapitalize(upperCamel(s))
   def hyphenate(s: String) = s.replaceAll("""\s+""", "-")
   def normalize(s: String) = hyphenate(s.toLowerCase)
   def snakeCase(s: String) = s.replaceAll("""[\s\.]+""", "_")
-  def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
+  def packageDir(s: String) = s.replaceAll("""[\s\.-]+""", System.getProperty("file.separator"))
+  def dotted(s: String) = s.replaceAll("""[\s-]+""", ".").toLowerCase
   def addRandomId(s: String) = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
 
 }
@@ -372,6 +373,7 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
     case "norm"     | "normalize"    => normalize(value)
     case "snake"    | "snake-case"   => snakeCase(value)
     case "packaged" | "package-dir"  => packageDir(value)
+    case "dot"      | "dotted"       => dotted(value)
     case "random"   | "generate-random" => addRandomId(value)
     case _                           => value
   }
