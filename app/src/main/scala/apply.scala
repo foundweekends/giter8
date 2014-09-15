@@ -1,5 +1,7 @@
 package giter8
 
+import org.eclipse.jgit.transport._
+  
 trait Apply { self: Giter8 =>
   import java.io.File
   import org.apache.commons.io.FileUtils
@@ -84,6 +86,7 @@ trait Apply { self: Giter8 =>
     val cmd = Git.cloneRepository()
       .setURI(repo)
       .setDirectory(tempdir)
+      .setCredentialsProvider(ConsoleCredentialsProvider)
 
     val branchName = config.branch.map("refs/heads/" + _)
     for(b <- branchName)
@@ -109,6 +112,41 @@ trait Apply { self: Giter8 =>
     else {
       FileUtils.copyDirectory(dir, tempdir)
       Right(tempdir)
+    }
+  }
+}
+
+object ConsoleCredentialsProvider extends CredentialsProvider {
+  
+  def isInteractive = true
+  
+  def supports(items: CredentialItem*) = true
+  
+  def get(uri: URIish, items: CredentialItem*) = {
+    items foreach { 
+      case i: CredentialItem.Username =>
+        val username = System.console.readLine("%s: ", i.getPromptText)
+        i.setValue(username)
+        
+      case i: CredentialItem.Password =>
+        val password = System.console.readPassword("%s: ", i.getPromptText)
+        i.setValueNoCopy(password)
+        
+      case i: CredentialItem.InformationalMessage =>
+        System.console.printf("%s\n", i.getPromptText)
+        
+      case i: CredentialItem.YesNoType =>
+        i.setValue(askYesNo(i.getPromptText))
+    }
+    true
+  }
+  
+  @scala.annotation.tailrec
+  def askYesNo(prompt: String): Boolean = {
+    System.console.readLine("%s: ", prompt).trim.toLowerCase match {
+      case "yes" => true
+      case "no" => false
+      case _ => askYesNo(prompt)
     }
   }
 }
