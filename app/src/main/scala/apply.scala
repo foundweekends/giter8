@@ -86,17 +86,25 @@ trait Apply { self: Giter8 =>
       .setDirectory(tempdir)
 
     val branchName = config.branch.map("refs/heads/" + _)
-    for(b <- branchName)
-      cmd.setBranch(b)
+
+    branchName.foreach(cmd.setBranch)
 
     val g = cmd.call()
 
     val result = branchName.map { b =>
-      if(g.branchList().call().asScala.map(_.getName).contains(b))
+      if(g.getRepository.getFullBranch.equals(b))
         Right(tempdir)
       else
         Left("Branch not found: " + b)
+    } orElse config.tag.map{ t =>
+      if (g.getRepository.getTags.containsKey(t)) {
+        g.checkout().setName(t).call()
+        Right(tempdir)
+      } else {
+        Left(s"Tag not found: refs/tags/$t")
+      }
     } getOrElse(Right(tempdir))
+
     g.getRepository.close()
     result
   }
