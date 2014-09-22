@@ -1,0 +1,8 @@
+Two new features:
+
+* Interactively prompt for credentials if required to access the
+  template repository [141][141]
+* A `-t` option to build a tagged version of a g8 template [143][143]
+
+[141]: https://github.com/n8han/giter8/pull/141
+[143]: https://github.com/n8han/giter8/pull/143
