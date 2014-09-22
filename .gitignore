@@ -6,3 +6,7 @@ src_managed/
 project/plugins/project/
 .idea/
 .classpath_nb
+.classpath
+.project
+.settings
+*~
