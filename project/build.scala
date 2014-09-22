@@ -15,7 +15,7 @@ object Builds extends sbt.Build {
     scalaVersion := "2.10.2",
     scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint"),
     libraryDependencies ++= Seq(
-      "org.clapper" %% "scalasti" % "1.0.0",
+      "org.clapper" %% "scalasti" % "2.0.1",
       ("jline" % "jline" % "1.0" force)
     ),
     publishArtifact in (Compile, packageBin) := true,
