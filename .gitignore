@@ -10,3 +10,4 @@ project/plugins/project/
 .project
 .settings
 *~
+.cache
