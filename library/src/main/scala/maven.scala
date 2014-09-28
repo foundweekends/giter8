@@ -26,7 +26,7 @@ object Maven extends JavaTokenParsers {
     val errorMessage = s"""could not find latest version of "$org % $name" """
     allCatch.either {
       val url = dispatch.url(s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml")
-      ls.DefaultClient.http(url OK dispatch.as.xml.Elem).map { xml =>
+      G8.http(url OK dispatch.as.xml.Elem).map { xml =>
         (xml \ "versioning" \ "latest").headOption.map(_.text).toRight(errorMessage)
       }
     } match {

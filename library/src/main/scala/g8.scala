@@ -26,6 +26,10 @@ object G8 {
     val empty = Map.empty[String, String]
   }
 
+  /** dispatch http client used by the `ls` integration library, for
+    * general reuse within giter8. */
+  lazy val http = ls.DefaultClient.http
+
   /**
     * A function which will return the resolved value of a property given the properties resolved thus far.
     * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
@@ -167,6 +171,8 @@ object G8Helpers {
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
+  /** transforms any ls() and maven() property operations to the latest
+    * version number reported by that service. */
   def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
     Ls.lookup(props).right.flatMap(Maven.lookup)
 
@@ -187,8 +193,8 @@ object G8Helpers {
 
     val parameters = propertiesFiles.headOption.map{ f =>
       val props = readProps(new FileInputStream(f))
-      val lookedUp = transformProps(props).right.getOrElse(props)
-      lookedUp.map{ case (k, v) => (k, DefaultValueF(v)) }
+      val transformed = transformProps(props).right.getOrElse(props)
+      transformed.map{ case (k, v) => (k, DefaultValueF(v)) }
     }.getOrElse(UnresolvedProperties.empty)
 
     val g8templates = tmpls.filter(!_.isDirectory)
