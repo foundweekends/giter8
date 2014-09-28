@@ -21,37 +21,39 @@ object Maven extends JavaTokenParsers {
   private def unapply(value: String): Option[(String, String)] =
     Some(parse(spec, value)).filter { _.successful }.map { _.get }
 
-  private def latestVersion(org: String, name: String): Either[String, String] = {
+  private def latestVersion(
+    org: String,
+    name: String
+  ): Either[String, String] = {
     import scala.concurrent.ExecutionContext.Implicits.global
-    val errorMessage = s"""could not find latest version of "$org % $name" """
-    allCatch.either {
-      val url = dispatch.url(s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml")
-      G8.http(url OK dispatch.as.xml.Elem).map { xml =>
-        (xml \ "versioning" \ "latest").headOption.map(_.text).toRight(errorMessage)
+    val loc = s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml"
+    val fut = for (resp <- G8.http(dispatch.url(loc))) yield {
+      resp.getStatusCode match {
+        case 200 =>
+          (dispatch.as.xml.Elem(resp) \ "versioning" \ "latest").headOption.map(
+            elem => elem.text
+          ).toRight(s"Found metadata at $loc but can't extract latest version")
+        case 404 =>
+          Left(s"Maven metadata not found for `maven($org, $name)`\nTried: $loc")
+        case status =>
+          Left(s"Unexpected response status $status fetching metadata from $loc")
       }
-    } match {
-      case Right(future) =>
-        Await.result(future, 1.minute)
-      case Left(error) =>
-        error.printStackTrace()
-        Left(errorMessage + " " + error)
     }
+    Await.result(fut, 1.minute)
   }
 
   def lookup(rawDefaults: G8.OrderedProperties): Either[String, G8.OrderedProperties] = {
-    val defaults = rawDefaults.collect {
-      case (key, Maven(org, name)) =>
-        latestVersion(org, name).right.map(key -> _)
+    val defaults = rawDefaults.map {
+      case (k, Maven(org, name)) => k -> latestVersion(org, name)
+      case (k, value)            => k -> Right(value)
     }
-    val initial: Either[String, G8.OrderedProperties] = Right(rawDefaults)
-    defaults.foldLeft(initial) { (accumEither, either) =>
-      for {
-        cur <- accumEither.right
-        version <- either.right
-      } yield {
-        val (inits, tail) = cur.span { case (k, _) => k != version._1 }
-        inits ++ (version +: (tail.tail))
-      }
-    }.left.map { "Error retrieving maven-metadata.xml version info: " + _ }
+    val initial: Either[String, G8.OrderedProperties] = Right(List.empty)
+    defaults.foldLeft(initial) {
+      case (accumEither, (k, either)) =>
+        for {
+          cur   <- accumEither.right
+          value <- either.right
+        } yield (k -> value) :: cur
+    }
   }
 }

@@ -145,23 +145,41 @@ object G8Helpers {
 
   val Param = """^--(\S+)=(.+)$""".r
 
-  private def applyT(fetch: File => (UnresolvedProperties, Stream[File], File, Option[File]), isScaffolding: Boolean = false)(tmpl: File, outputFolder: File, arguments: Seq[String] = Nil, forceOverwrite: Boolean = false) = {
-    val (defaults, templates, templatesRoot, scaffoldsRoot) = fetch(tmpl)
+  private def applyT(
+    fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])],
+    isScaffolding: Boolean = false
+  )(
+    tmpl: File,
+    outputFolder: File,
+    arguments: Seq[String] = Nil,
+    forceOverwrite: Boolean = false
+  ) = {
+    fetch(tmpl).right.flatMap {
+      case (defaults, templates, templatesRoot, scaffoldsRoot) =>
+        val parameters = consoleParams(defaults, arguments).getOrElse {
+          interact(defaults)
+        }
 
-    val parameters = consoleParams(defaults, arguments).getOrElse { interact(defaults) }
+        val base = new File(
+          outputFolder,
+          parameters.get("name").map(G8.normalize).getOrElse(".")
+        )
 
-    val base = new File(outputFolder, parameters.get("name").map(G8.normalize).getOrElse("."))
-
-    val r = write(templatesRoot, templates, parameters, base, isScaffolding, forceOverwrite)
-    for(
-      _ <- r.right;
-      root <- scaffoldsRoot
-    ) copyScaffolds(root, base)
-    r
+        val r = write(templatesRoot, templates, parameters, base, isScaffolding,
+          forceOverwrite)
+        for {
+          _ <- r.right
+          root <- scaffoldsRoot
+        } copyScaffolds(root, base)
+        r
+      }
   }
 
-  private def fetchProjectTemplateinfo = fetchInfo(_: File, Some("src/main/g8"), Some("src/main/scaffolds"))
-  private def fetchRawTemplateinfo = fetchInfo(_: File, None, None)
+  private def fetchProjectTemplateinfo(file: File) =
+    fetchInfo(file: File, Some("src/main/g8"), Some("src/main/scaffolds"))
+
+  private def fetchRawTemplateinfo(file: File) =
+    fetchInfo(file, None, None)
 
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
   def applyRaw = applyT(fetchRawTemplateinfo, isScaffolding = true) _
@@ -179,7 +197,11 @@ object G8Helpers {
   /**
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
   */
-  def fetchInfo(f: File, tmplFolder: Option[String], scaffoldFolder: Option[String]) = {
+  private def fetchInfo(
+    f: File,
+    tmplFolder: Option[String],
+    scaffoldFolder: Option[String]
+  ) = {
     import java.io.FileInputStream
 
     val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
@@ -191,15 +213,16 @@ object G8Helpers {
       _ == propertiesLoc
     }
 
-    val parameters = propertiesFiles.headOption.map{ f =>
+    val parametersEither = propertiesFiles.headOption.map{ f =>
       val props = readProps(new FileInputStream(f))
-      val transformed = transformProps(props).right.getOrElse(props)
-      transformed.map{ case (k, v) => (k, DefaultValueF(v)) }
-    }.getOrElse(UnresolvedProperties.empty)
+      val transformed = transformProps(props)
+      transformed.right.map { _.map { case (k, v) => (k, DefaultValueF(v)) } }
+    }.getOrElse(Right(UnresolvedProperties.empty))
 
     val g8templates = tmpls.filter(!_.isDirectory)
 
-    (parameters, g8templates, templatesRoot, scaffoldsRoot)
+    for (parameters <- parametersEither.right) yield
+      (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
 
   def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {

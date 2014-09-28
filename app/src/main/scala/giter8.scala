@@ -25,7 +25,7 @@ class Giter8 extends xsbti.AppMain with Apply {
     })
     cleanup()
     result.fold ({ (error: String) =>
-      System.err.println("\n%s\n" format error)
+      System.err.println(s"\n$error\n")
       1
     }, { (message: String) =>
       println("\n%s\n" format message )
