@@ -12,7 +12,7 @@ import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUti
 
 object G8 {
   import scala.util.control.Exception.allCatch
-  import org.clapper.scalasti.StringTemplate
+  import org.clapper.scalasti.{ST, STGroup, STHelper}
 
   /** Properties in the order they were created/defined */
   type OrderedProperties  = List[(String, String)]
@@ -36,13 +36,18 @@ object G8 {
     * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
     */
   type ValueF = ResolvedProperties => String
+  
+  def applyTemplate(default: String, resolved: ResolvedProperties): String = {
+      val group = STGroup('$', '$')
+      group.registerRenderer(renderer)
+      STHelper(group, default)
+      .setAttributes(resolved)
+      .render()
+  }
 
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
   case class DefaultValueF(default:String) extends ValueF {
-    override def apply(resolved:ResolvedProperties):String = new StringTemplate(default)
-      .setAttributes(resolved)
-      .registerRenderer(renderer)
-      .toString
+    override def apply(resolved:ResolvedProperties):String = applyTemplate(default, resolved)
   }
 
   /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
@@ -89,11 +94,7 @@ object G8 {
   }
 
   def write(out: File, template: String, parameters: Map[String, String], append: Boolean = false) {
-    val applied = new StringTemplate(template)
-      .setAttributes(parameters)
-      .registerRenderer(renderer)
-      .toString
-    FileUtils.writeStringToFile(out, applied, UTF_8, append)
+    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8, append)
   }
 
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
@@ -115,7 +116,7 @@ object G8 {
       case x => x
     }: _*)
 
-    new File(toPath, new StringTemplate(formatize(relative)).setAttributes(fileParams).registerRenderer(renderer).toString)
+    new File(toPath, applyTemplate(formatize(relative), fileParams))
   }
   private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
 
@@ -387,11 +388,15 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
   import G8._
   def toString(value: String): String = value
 
-  override def toString(value: String, formatName: String): String = {
-    val formats = formatName.split(",").map(_.trim)
-    formats.foldLeft(value)(format)
+  override def toString(value: String, formatName: String, locale: java.util.Locale): String = {
+    if (formatName == null)
+      value
+    else {
+    	val formats = formatName.split(",").map(_.trim)
+    	formats.foldLeft(value)(format)
+   }
   }
-
+  
   def format(value: String, formatName: String): String = formatName match {
     case "upper"    | "uppercase"    => value.toUpperCase
     case "lower"    | "lowercase"    => value.toLowerCase
