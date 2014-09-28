@@ -127,6 +127,17 @@ to the latest version of the giter8 sbt plugin.
     description = Creates a giter8 project template.
     giter8_version = ls(giter8-plugin, n8han)
 
+Giter8 can also resolve the latest version of projects through the
+**Central Maven Repository**.
+
+In your `default.properties`, define a value as `maven(groupId,
+artifactId)` to have its latest version looked up from the central
+repo. Keep in mind that Scala projects are typically published with a
+Scala version identifier in the artifact id. So for the Unfiltered
+library, we could refer to the latest version as follows:
+
+    unfiltered_version = maven(net.databinder, unfiltered_2.11)
+
 [StringTemplate][st], wrapped by [Scalasti][scalasti], is the engine
 that applies giter8 templates, so template fields in source files are
 bracketed with the `$` character. For example, a "classname" field
