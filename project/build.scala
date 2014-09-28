@@ -95,6 +95,8 @@ object Builds extends sbt.Build {
         "shared library for app and plugin",
       libraryDependencies ++= Seq(
         "me.lessis" %% "ls" % "0.1.3",
+        // override ls's older version of dispatch
+        "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
         "commons-io" % "commons-io" % "2.4",
         "org.codehaus.plexus" % "plexus-archiver" % "2.2" excludeAll(
           ExclusionRule("org.apache.commons", "commons-compress"),
