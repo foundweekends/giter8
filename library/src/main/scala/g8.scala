@@ -368,7 +368,7 @@ object G8Helpers {
     p.load(stm)
     stm.close()
     (OrderedProperties.empty /: p.keyList) { (l, k) =>
-      l :+ (k, p.getProperty(k))
+      l :+ (k -> p.getProperty(k))
     }
   }
 }
