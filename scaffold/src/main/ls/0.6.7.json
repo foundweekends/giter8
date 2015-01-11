@@ -1,0 +1,25 @@
+{
+  "organization" : "net.databinder.giter8",
+  "name" : "giter8-scaffold",
+  "version" : "0.6.7",
+  "description" : "sbt plugin for scaffolding giter8 templates",
+  "site" : "https://github.com/n8han/giter8",
+  "tags" : [ ],
+  "docs" : "",
+  "resolvers" : [ "https://oss.sonatype.org/content/repositories/releases" ],
+  "dependencies" : [ {
+    "organization" : "org.clapper",
+    "name" : "scalasti",
+    "version" : "2.0.0"
+  }, {
+    "organization" : "jline",
+    "name" : "jline",
+    "version" : "1.0"
+  } ],
+  "scalas" : [ "2.10.4" ],
+  "licenses" : [ {
+    "name" : "LGPL v3",
+    "url" : "http://www.gnu.org/licenses/lgpl.txt"
+  } ],
+  "sbt" : true
+}

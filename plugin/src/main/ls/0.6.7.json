@@ -1,0 +1,37 @@
+{
+  "organization" : "net.databinder.giter8",
+  "name" : "giter8-plugin",
+  "version" : "0.6.7",
+  "description" : "sbt plugin for testing giter8 templates",
+  "site" : "https://github.com/n8han/giter8",
+  "tags" : [ ],
+  "docs" : "",
+  "resolvers" : [ "https://oss.sonatype.org/content/repositories/releases" ],
+  "dependencies" : [ {
+    "organization" : "org.clapper",
+    "name" : "scalasti",
+    "version" : "2.0.0"
+  }, {
+    "organization" : "jline",
+    "name" : "jline",
+    "version" : "1.0"
+  }, {
+    "organization" : "org.scala-sbt",
+    "name" : "scripted-sbt",
+    "version" : "0.13.5"
+  }, {
+    "organization" : "org.scala-sbt",
+    "name" : "sbt-launch",
+    "version" : "0.13.5"
+  }, {
+    "organization" : "org.scala-sbt",
+    "name" : "scripted-plugin",
+    "version" : "0.13.5"
+  } ],
+  "scalas" : [ "2.10.4" ],
+  "licenses" : [ {
+    "name" : "LGPL v3",
+    "url" : "http://www.gnu.org/licenses/lgpl.txt"
+  } ],
+  "sbt" : true
+}

@@ -1,0 +1,49 @@
+{
+  "organization" : "net.databinder.giter8",
+  "name" : "giter8",
+  "version" : "0.6.7",
+  "description" : "Command line tool to apply templates defined on github",
+  "site" : "https://github.com/n8han/giter8",
+  "tags" : [ ],
+  "docs" : "",
+  "resolvers" : [ "https://oss.sonatype.org/content/repositories/releases" ],
+  "dependencies" : [ {
+    "organization" : "org.clapper",
+    "name" : "scalasti",
+    "version" : "2.0.0"
+  }, {
+    "organization" : "jline",
+    "name" : "jline",
+    "version" : "1.0"
+  }, {
+    "organization" : "org.scala-sbt",
+    "name" : "launcher-interface",
+    "version" : "0.13.5"
+  }, {
+    "organization" : "org.eclipse.jgit",
+    "name" : "org.eclipse.jgit",
+    "version" : "1.3.0.201202151440-r"
+  }, {
+    "organization" : "com.github.scopt",
+    "name" : "scopt",
+    "version" : "3.1.0"
+  }, {
+    "organization" : "net.databinder",
+    "name" : "dispatch-json",
+    "version" : "0.8.10"
+  }, {
+    "organization" : "net.databinder",
+    "name" : "dispatch-http",
+    "version" : "0.8.10"
+  }, {
+    "organization" : "org.scala-sbt",
+    "name" : "launcher-interface",
+    "version" : "0.13.5"
+  } ],
+  "scalas" : [ "2.10.4" ],
+  "licenses" : [ {
+    "name" : "LGPL v3",
+    "url" : "http://www.gnu.org/licenses/lgpl.txt"
+  } ],
+  "sbt" : false
+}
