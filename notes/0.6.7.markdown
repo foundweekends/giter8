@@ -1,0 +1,15 @@
+This release includes two user-contributed enhancements:
+
+*  Move to latest version of Scalasti / StringTemplate V4 [#144][144]
+*  Resolve latest versions through Maven metadata [#136][136]
+
+With the second of these, giter8 templates can refer to the latest
+published version of an artifact using metadata you're already
+publishing to the central repository.
+
+> In your `default.properties`, define a value as `maven(groupId, artifactId)` to have its latest version looked up from the central repo. Keep in mind that Scala projects are typically published with a Scala version identifier in the artifact id. So for the Unfiltered library, we could refer to the latest version as follows:
+
+    unfiltered_version = maven(net.databinder, unfiltered_2.11)
+
+[144]: https://github.com/n8han/giter8/pull/144
+[136]: https://github.com/n8han/giter8/pull/136
