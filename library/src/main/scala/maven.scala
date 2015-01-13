@@ -48,7 +48,7 @@ object Maven extends JavaTokenParsers {
       case (k, value)            => k -> Right(value)
     }
     val initial: Either[String, G8.OrderedProperties] = Right(List.empty)
-    defaults.foldLeft(initial) {
+    defaults.reverseIterator.foldLeft(initial) {
       case (accumEither, (k, either)) =>
         for {
           cur   <- accumEither.right
