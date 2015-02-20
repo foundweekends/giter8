@@ -1,5 +1,7 @@
 package giter8
 
+import java.io.File
+
 import dispatch.host
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -21,12 +23,24 @@ object Maven extends JavaTokenParsers {
   private def unapply(value: String): Option[(String, String)] =
     Some(parse(spec, value)).filter { _.successful }.map { _.get }
 
+  private def mavenRepo(): Option[String] = {
+    val home = Option(System.getProperty("G8_HOME")).map(new File(_)).getOrElse(
+      new File(System.getProperty("user.home"), ".g8")
+    )
+    val mvnRepo = new File(home + "/mvnrepo")
+    if(!home.exists() || !mvnRepo.exists()) None
+    else {
+      scala.io.Source.fromFile(mvnRepo).getLines().filter(!_.trim.isEmpty).find(_=>true)
+    }
+  }
+
   private def latestVersion(
     org: String,
     name: String
   ): Either[String, String] = {
     import scala.concurrent.ExecutionContext.Implicits.global
-    val loc = s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml"
+    val mvnCentral: String = "https://repo1.maven.org/maven2"
+    val loc = mavenRepo().getOrElse(mvnCentral) + s"/${org.replace('.', '/')}/$name/maven-metadata.xml"
     val fut = for (resp <- G8.http(dispatch.url(loc))) yield {
       resp.getStatusCode match {
         case 200 =>
