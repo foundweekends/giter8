@@ -1,7 +1,7 @@
 g8-scaffold
 ======
 
-g8-scaffold add code generation abilities to giter8, after a project has been generated.
+g8-scaffold adds code generation abilities to giter8, after a project has been generated.
 
 Installation
 ------------
@@ -9,7 +9,7 @@ Installation
 You need to add the plugin to your sbt project, in `project/plugins.sbt`
 
 ```scala
-addSbtPlugin("net.databinder.giter8" % "giter8-scaffold" % "0.4.6-SNAPSHOT")
+addSbtPlugin("net.databinder.giter8" % "giter8-scaffold" % "0.6.8")
 ```
 
 Usage
@@ -25,12 +25,12 @@ Generating code
 In the sbt console type:
 
 ```scala
-	g8-scaffold <scaffold_name>
+	g8Scaffold <scaffold_name>
 ```
 
 The name of the scaffold is the name of the folder located directly under `.g8`
 
-Assuming you `.g8` folder has the following structure:
+Assuming your `.g8` folder has the following structure:
 
 ```
 	.g8
@@ -39,7 +39,7 @@ Assuming you `.g8` folder has the following structure:
 	 |_ controller
 ```
 
-You have 3 different scaffodings available.
+You have 3 different scaffoldings available.
 
-To generate a new template, just type `g8-scaffold model`. 
+To generate a new template, just type `g8Scaffold model`. 
 As usual, g8 will ask for the variable values, and generate the correct code.
