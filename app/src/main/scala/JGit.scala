@@ -2,6 +2,8 @@ package giter8
 
 import java.io.File
 
+import org.eclipse.jgit.transport.NetRCCredentialsProvider
+
 object JGit extends Git {
 
   def clone(repo: String, config: Config, targetDir: File): Either[String, File] with Product with Serializable = {
@@ -12,7 +14,8 @@ object JGit extends Git {
       val cmd = EJGit.cloneRepository()
         .setURI(repo)
         .setDirectory(targetDir)
-        .setCredentialsProvider(ConsoleCredentialsProvider)
+        .setCredentialsProvider(
+          new ChainingCredentialsProvider(new NetRCCredentialsProvider, ConsoleCredentialsProvider))
 
       val branchName = config.branch.map("refs/heads/" + _)
 
@@ -45,6 +48,9 @@ object JGit extends Git {
 
 import org.eclipse.jgit.transport._
 
+/**
+ * Use our own ConsoleCredentialsProvider in order to avoid bringing in the whol jgit pgm dependency.
+ */
 object ConsoleCredentialsProvider extends CredentialsProvider {
 
   def isInteractive = true
