@@ -36,7 +36,7 @@ object G8 {
     * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
     */
   type ValueF = ResolvedProperties => String
-  
+
   def applyTemplate(default: String, resolved: ResolvedProperties): String = {
       val group = STGroup('$', '$')
       group.registerRenderer(renderer)
@@ -76,7 +76,7 @@ object G8 {
         FileUtils.copyFile(in, out)
     }
     allCatch opt {
-      if (in.canExecute) out.setExecutable(true)
+      if (in.canExecute) out.setExecutable(true, false)
     }
     Seq(out)
   }
@@ -333,7 +333,7 @@ object G8Helpers {
           }
         }
         if (in.canExecute) {
-          out.setExecutable(true)
+          out.setExecutable(true, false)
         }
       }
     }
@@ -392,11 +392,11 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
     if (formatName == null)
       value
     else {
-    	val formats = formatName.split(",").map(_.trim)
-    	formats.foldLeft(value)(format)
+        val formats = formatName.split(",").map(_.trim)
+        formats.foldLeft(value)(format)
    }
   }
-  
+
   def format(value: String, formatName: String): String = formatName match {
     case "upper"    | "uppercase"    => value.toUpperCase
     case "lower"    | "lowercase"    => value.toLowerCase
