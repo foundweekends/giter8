@@ -1,15 +1,24 @@
 package giter8
 
+import java.io.File
+
+import com.jcraft.jsch.{JSch, Session}
+import org.eclipse.jgit.api.TransportConfigCallback
+import org.eclipse.jgit.transport.OpenSshConfig.Host
 import org.eclipse.jgit.transport._
-  
+import org.eclipse.jgit.util.FS
+
+import scala.util.{Failure, Try}
+
 trait Apply { self: Giter8 =>
   import java.io.File
+
   import org.apache.commons.io.FileUtils
   import org.eclipse.jgit.api._
-  import scala.util.control.Exception.{allCatch,catching}
 
   private val tempdir =
     new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
+
 
   /** Clean temporary directory used for git cloning */
   def cleanup() {
@@ -78,21 +87,55 @@ trait Apply { self: Giter8 =>
     }
   }
 
-  def clone(repo: String, config: Config) = {
-    import org.eclipse.jgit.api.ListBranchCommand.ListMode
-    import org.eclipse.jgit.lib._
-    import scala.collection.JavaConverters._
+  def transportIdentity(identity: Option[String]=None) = {
+    new IdentityTransportConfigCallback(new IdentitySessionFactory(identity))
+  }
 
-    val cmd = Git.cloneRepository()
-      .setURI(repo)
-      .setDirectory(tempdir)
-      .setCredentialsProvider(ConsoleCredentialsProvider)
+  def transportIdentity(password: String) = {
+    new IdentityTransportConfigCallback(new IdentityPasswordSessionFactory(None, password))
+  }
+
+  def transportIdentity(identity: Option[String], password: String) = {
+    new IdentityTransportConfigCallback(new IdentityPasswordSessionFactory(identity, password))
+  }
+
+  def clone(repo: String, config: Config) = {
 
     val branchName = config.branch.map("refs/heads/" + _)
 
-    branchName.foreach(cmd.setBranch)
+    def doCall(cmd: CloneCommand): Git = {
+      branchName.foreach(cmd.setBranch)
+      cmd.call()
+    }
 
-    val g = cmd.call()
+    val g = Try {
+      doCall(
+        Git.cloneRepository()
+          .setURI(repo)
+          .setDirectory(tempdir)
+          .setCredentialsProvider(ConsoleCredentialsProvider)
+      )
+    }.orElse( Try {
+      cleanup()
+      doCall(
+        Git.cloneRepository()
+          .setURI(repo)
+          .setDirectory(tempdir)
+          .setTransportConfigCallback(transportIdentity())
+      )
+    }).orElse( Try {
+      cleanup()
+      print("SSHCert Password: ")
+      val password = String.valueOf(System.console().readPassword())
+      doCall(
+        Git.cloneRepository()
+          .setURI(repo)
+          .setDirectory(tempdir)
+          .setTransportConfigCallback(transportIdentity(password))
+      )
+    }).get
+
+
 
     val result = branchName.map { b =>
       if(g.getRepository.getFullBranch.equals(b))
@@ -145,6 +188,8 @@ object ConsoleCredentialsProvider extends CredentialsProvider {
         
       case i: CredentialItem.YesNoType =>
         i.setValue(askYesNo(i.getPromptText))
+
+      case _ => // Ignore the rest
     }
     true
   }
@@ -155,6 +200,50 @@ object ConsoleCredentialsProvider extends CredentialsProvider {
       case "yes" => true
       case "no" => false
       case _ => askYesNo(prompt)
+    }
+  }
+}
+
+class IdentitySessionFactory(optIdentity: Option[String]=None) extends JschConfigSessionFactory {
+  override def configure(hc: Host, session: Session): Unit = ()
+
+  def getHomeIdentity(fs: FS): Option[String] = {
+    Option(fs.userHome)
+      .map(new File(_, ".ssh"))
+      .filter(_.isDirectory)
+      .map(new File(_, "id_rsa"))
+      .map(_.getAbsolutePath)
+
+  }
+
+  def addIdentity(jsch: JSch, identity: String) =
+    jsch.addIdentity(identity)
+
+  override def createDefaultJSch(fs: FS): JSch = {
+    val jsch = super.createDefaultJSch(fs)
+
+    optIdentity.orElse(getHomeIdentity(fs)) match {
+      case Some(identity) =>
+        addIdentity(jsch, identity)
+      case None =>
+    }
+
+    jsch
+  }
+}
+
+class IdentityPasswordSessionFactory(identity: Option[String], password: String) extends IdentitySessionFactory {
+  override def addIdentity(jsch: JSch, identity: String): Unit = {
+    jsch.addIdentity(identity, password)
+  }
+}
+
+class IdentityTransportConfigCallback(sessionFactory: JschConfigSessionFactory) extends TransportConfigCallback {
+  override def configure(transport: Transport): Unit = {
+    transport match {
+      case transport:SshTransport =>
+        transport.setSshSessionFactory(sessionFactory)
+      case _ =>
     }
   }
 }
