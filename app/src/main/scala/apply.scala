@@ -145,6 +145,9 @@ object ConsoleCredentialsProvider extends CredentialsProvider {
         
       case i: CredentialItem.YesNoType =>
         i.setValue(askYesNo(i.getPromptText))
+      case i: CredentialItem.StringType if uri.getScheme == "ssh" =>
+        val password = String.valueOf(System.console.readPassword("%s: ", i.getPromptText))
+        i.setValue(password)
     }
     true
   }
