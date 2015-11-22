@@ -277,8 +277,8 @@ And settings must be applied in a `build.sbt` file in the project base:
 When you enter sbt's interactive mode in the base directory of a
 template project that is configured to use this plugin, the action
 `g8-test` will apply the template in the default output directory
-(under `target/sbt-test`) and run the scripted test for *that* project
-in a forked process.  You can supply the test scripted as
+(under `target/sbt-test`) and run the scripted test (http://eed3si9n.com/testing-sbt-plugins) 
+for *that* project in a forked process.  You can supply the test scripted as
 `src/test/g8/test`, otherwise `>test` is used. This is a good sanity
 check for templates that are supposed to produce sbt projects.
 
