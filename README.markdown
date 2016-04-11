@@ -4,10 +4,10 @@ giter8
 Giter8 is a command line tool to generate files and directories from
 templates published on github or any other git repository. It's 
 implemented in Scala and runs through the 
-[Simple Build Tool launcher][launcher], but it can produce 
+[sbt launcher][launcher], but it can produce 
 output for any purpose.
 
-[launcher]: https://github.com/harrah/xsbt/wiki/
+[launcher]: http://www.scala-sbt.org/0.13/docs/Setup.html
 
 Installation
 ------------
