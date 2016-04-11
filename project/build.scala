@@ -20,7 +20,7 @@ object Builds extends sbt.Build {
     ),
     publishArtifact in (Compile, packageBin) := true,
     homepage :=
-      Some(url("https://github.com/n8han/giter8")),
+      Some(url("https://github.com/foundweekends/giter8")),
     publishMavenStyle := true,
     publishTo :=
       Some("releases" at
@@ -29,8 +29,8 @@ object Builds extends sbt.Build {
     licenses := Seq("LGPL v3" -> url("http://www.gnu.org/licenses/lgpl.txt")),
     pomExtra := (
       <scm>
-        <url>git@github.com:n8han/giter8.git</url>
-        <connection>scm:git:git@github.com:n8han/giter8.git</connection>
+        <url>git@github.com:foundweekends/giter8.git</url>
+        <connection>scm:git:git@github.com:foundweekends/giter8.git</connection>
       </scm>
       <developers>
         <developer>

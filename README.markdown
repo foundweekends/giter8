@@ -15,14 +15,14 @@ Installation
 You can install giter8 and other Scala command line tools with
 [Conscript][cs]. This will setup Conscript in `~/bin/cs`:
 
-    curl https://raw.githubusercontent.com/n8han/conscript/master/setup.sh | sh
+    curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
 
 (See [Conscript's readme][cs] for a non-unixy option.) Once `cs` is
 on your path, you can install (or upgrade) giter8 with this command:
 
-    cs n8han/giter8
+    cs foundweekends/giter8
 
-[cs]: https://github.com/n8han/conscript#readme
+[cs]: https://github.com/foundweekends/conscript#readme
 
 To make sure everything is working, try running `g8` with no
 parameters. This should download giter8 and its dependencies, then print
@@ -46,7 +46,7 @@ suffix `.g8`. We're keeping a [list of templates on the wiki][wiki].
 To apply a template, for example, [softprops/unfiltered.g8][uft]:
 
 [uft]: http://github.com/softprops/unfiltered.g8
-[wiki]: http://github.com/n8han/giter8/wiki/giter8-templates
+[wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
 
     $ g8 softprops/unfiltered.g8
 
@@ -99,7 +99,7 @@ changes to github.
 The easy way to start a new template project is with a giter8 template
 made expressly for that purpose:
 
-    $ g8 n8han/giter8
+    $ g8 foundweekends/giter8
 
 This will create an sbt project with stub template sources nested
 under `src/main/g8`. The file `default.properties` defines template
@@ -264,7 +264,7 @@ import sbt._
 object PluginDef extends Build {
   lazy val root = Project("plugins", file(".")) dependsOn( g8plugin )
   lazy val g8plugin =
-    ProjectRef(uri("git://github.com/n8han/giter8#0.4.4"), "giter8-plugin")
+    ProjectRef(uri("git://github.com/foundweekends/giter8#0.4.4"), "giter8-plugin")
 }
 ```
 
