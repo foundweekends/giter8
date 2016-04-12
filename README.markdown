@@ -306,35 +306,40 @@ Giter8 supplies an sbt plugin for creating and using scaffolds.
 Add the following lines in `project/plugins.sbt`
 
 ```scala
-addSbtPlugin("net.databinder.giter8" % "giter8-scaffold" % "0.4.6-SNAPSHOT")
+addSbtPlugin("net.databinder.giter8" % "giter8-scaffold" % "0.6.8")
 ```
 
-You also want to add `giter8.ScaffoldPlugin.scaffoldSettings` to you project.
+You also need to add `giter8.ScaffoldPlugin.scaffoldSettings` to your project:
 
 ```scala
 lazy val project = Project("project").settings(giter8.ScaffoldPlugin.scaffoldSettings:_*)
 ```
 
-Once done, the  `g8-scaffold` command can be used in the sbt console.
+Once done, the  `g8Scaffold` command can be used in the sbt console.
 Use TAB completion to discover available templates.
 
 ```
-[sample] $ g8-scaffold <TAB>
+[sample] $ g8Scaffold <TAB>
 controller   global       model
 ```
 
 The template plugin will prompt each property that needed to complete the scaffolding process:
 
 ```
-[sample] $ g8-scaffold controller
+[sample] $ g8Scaffold controller
 className [Application]:
 ```
 
 
 ## creating a scaffold
 
-The g8 runtime looks for scaffold in the `src/main/scaffolds`.
-Each folder inside ``src/main/scaffolds` is a different scaffold, and will be accessible in the sbt console using the folder name. 
+The g8 runtime looks for scaffolds in the `src/main/scaffolds`. Each
+folder inside `src/main/scaffolds` is a different scaffold, and will be
+accessible in the sbt console using the folder name. Scaffold folders
+may have a `default.properties` file to define field values, just like
+ordinary templates. `name` is again a special field name: if it exists,
+the scaffold will be generated into a top-level folder based on `name`,
+with subfolders following the layout of the source scaffold folder.
 
 Once a template as been used, scaffolds are stored into `<project_root>/.g8`
 
