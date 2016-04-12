@@ -1,6 +1,8 @@
 giter8
 ======
 
+[![Build Status](https://travis-ci.org/foundweekends/giter8.svg)](https://travis-ci.org/foundweekends/giter8)
+
 Giter8 is a command line tool to generate files and directories from
 templates published on github or any other git repository. It's 
 implemented in Scala and runs through the 
