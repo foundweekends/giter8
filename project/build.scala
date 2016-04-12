@@ -8,8 +8,7 @@ object Builds extends sbt.Build {
 
   val g8version = "0.6.9-SNAPSHOT"
 
-  val typesafeRepo = "Typesafe repo" at "http://repo.typesafe.com/typesafe/repo/"
-  lazy val buildSettings = Defaults.defaultSettings ++ lsSettings ++ Seq(
+  lazy val buildSettings = lsSettings ++ Seq(
     organization := "net.databinder.giter8",
     version := g8version,
     scalaVersion := "2.10.2",
@@ -42,14 +41,17 @@ object Builds extends sbt.Build {
   )
 
   // posterous title needs to be giter8, so both app and root are named giter8
-  lazy val root = Project("root", file("."),
-    settings = buildSettings ++ Seq(
+  lazy val root = Project("root", file(".")).
+    settings(buildSettings: _*).
+    settings(
       name := "giter8",
       LsKeys.skipWrite := true
-    )) aggregate(app, lib, scaffold, plugin)
+    ).
+    aggregate(app, lib, scaffold, plugin)
 
-  lazy val app = Project("app", file("app"),
-    settings = buildSettings ++ conscriptSettings ++ buildInfoSettings ++ Seq(
+  lazy val app = Project("app", file("app")).
+    settings(buildSettings ++ conscriptSettings ++ buildInfoSettings: _*).
+    settings(
       description :=
         "Command line tool to apply templates defined on github",
       name := "giter8",
@@ -62,24 +64,24 @@ object Builds extends sbt.Build {
       ),
       sourceGenerators in Compile <+= buildInfo,
       buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
-      buildInfoPackage := "giter8",
-      resolvers += typesafeRepo
-    )) dependsOn (lib)
+      buildInfoPackage := "giter8"
+    ).
+    dependsOn (lib)
 
-  lazy val scaffold = Project("giter8-scaffold", file("scaffold"),
-    settings = buildSettings ++ Seq(
+  lazy val scaffold = Project("giter8-scaffold", file("scaffold")).
+    settings(buildSettings: _*).
+    settings(
       description := "sbt plugin for scaffolding giter8 templates",
       sbtPlugin := true
-    )) dependsOn (lib)
+    ).
+    dependsOn (lib)
 
-  lazy val plugin: Project = Project("giter8-plugin", file("plugin"),
-    settings = buildSettings ++ ScriptedPlugin.scriptedSettings ++ Seq(
+  lazy val plugin: Project = Project("giter8-plugin", file("plugin")).
+    settings(buildSettings ++ ScriptedPlugin.scriptedSettings: _*).
+    settings(
       description := "sbt plugin for testing giter8 templates",
       sbtPlugin := true,
-      resolvers ++= Seq(
-        Resolver.url("Typesafe repository", url("http://typesafe.artifactoryonline.com/typesafe/ivy-releases/"))(Resolver.defaultIvyPatterns),
-        typesafeRepo
-      ),
+      resolvers += Resolver.typesafeIvyRepo("releases"),
       ScriptedPlugin.scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
         a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
       ),
@@ -87,10 +89,12 @@ object Builds extends sbt.Build {
       ScriptedPlugin.scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
       ScriptedPlugin.scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib),
       libraryDependencies <+= sbtVersion("org.scala-sbt" % "scripted-plugin" % _)
-    )) dependsOn (lib)
+    ).
+    dependsOn (lib)
 
-  lazy val lib = Project("giter8-lib", file("library"),
-    settings = buildSettings ++ Seq(
+  lazy val lib = Project("giter8-lib", file("library")).
+    settings(buildSettings: _*).
+    settings(
       description :=
         "shared library for app and plugin",
       libraryDependencies ++= Seq(
@@ -105,5 +109,5 @@ object Builds extends sbt.Build {
           ExclusionRule("junit", "junit")
         )
       )
-    ))
+    )
 }
