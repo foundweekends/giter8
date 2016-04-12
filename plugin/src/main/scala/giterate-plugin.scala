@@ -33,7 +33,9 @@ object Plugin extends sbt.Plugin {
     properties in g8 <<= (propertiesFile in g8) map { f =>
       G8Helpers.transformProps(G8Helpers.readProps(new java.io.FileInputStream(f))).fold(
         err => sys.error(err),
-        _.toMap
+        _.foldLeft(G8.ResolvedProperties.empty) { case (resolved, (k, v)) =>
+          resolved + (k -> G8.DefaultValueF(v)(resolved))
+        }.toMap
       )
     }
   )
