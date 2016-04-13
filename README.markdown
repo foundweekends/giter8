@@ -15,7 +15,7 @@ Installation
 ------------
 
 You can install giter8 and other Scala command line tools with
-[Conscript][cs]. This will setup Conscript in `~/bin/cs`:
+[Conscript][cs]. This will setup Conscript in `~/.conscript/bin/cs`:
 
     curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
 
