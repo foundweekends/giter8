@@ -31,13 +31,13 @@ lazy val root = (project in file(".")).
   )
 
 lazy val app = (project in file("app")).
+  enablePlugins(ConscriptPlugin, BuildInfoPlugin).
   dependsOn(lib).
-  settings(/* conscriptSettings ++ */ buildInfoSettings: _*).
   settings(
     description := "Command line tool to apply templates defined on github",
     name := "giter8",
-    libraryDependencies ++= Seq(jgit, scopt, dispatchJson, dispatchHttp, launcher),
-    sourceGenerators in Compile <+= buildInfo,
+    sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
+    libraryDependencies ++= Seq(jgit, scopt, dispatchJson, dispatchHttp),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
   )
