@@ -25,7 +25,6 @@ lazy val root = (project in file(".")).
       scmInfo := Some(ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
     )),
     name := "giter8",
-    LsKeys.skipWrite := true,
     publish := (),
     publishLocal := ()
   )
