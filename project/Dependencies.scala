@@ -17,4 +17,6 @@ object Dependencies {
   val scopt = "com.github.scopt" %% "scopt" % "3.1.0"
   val dispatchJson = "net.databinder" %% "dispatch-json" % "0.8.10"
   val dispatchHttp = "net.databinder" %% "dispatch-http" % "0.8.10"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.0"
+  val sbtIo = "org.scala-sbt" %% "io" % "1.0.0-M6"
 }
