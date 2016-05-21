@@ -71,6 +71,7 @@ lazy val lib = (project in file("library")).
     name := "giter8-lib",
     description := "shared library for app and plugin",
     libraryDependencies ++= Seq(
-      scalasti, jline, lsCore, dispatchCore, commonsIo, plexusArchiver
+      scalasti, jline, lsCore, dispatchCore, commonsIo, plexusArchiver,
+      scalacheck % Test, sbtIo % Test
     )
   )
