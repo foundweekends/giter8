@@ -184,11 +184,13 @@ The `verbatim` field, if defined, is assumed to be the space delimited
 list of file patterns such as `*.html *.js`. Files matching `verbatim`
 pattern are excluded from string template processing.
 
-The fieds `startDelimiter` and `stopDelimiter` may be used to change
+The fields `startDelimiter` and `stopDelimiter` may be used to change
 default variable delimiters (`$` and `$`).
 An example, using guillemets (» and «):
+
     startDelimiter=»
     stopDelimiter=«
+
 
 ### Formatting template fields
 
