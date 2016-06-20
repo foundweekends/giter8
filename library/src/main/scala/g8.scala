@@ -1,7 +1,9 @@
 package giter8
 
-import java.io.File
-import org.apache.commons.io.FileUtils
+import java.io.{File, InputStreamReader}
+import java.nio.charset.Charset
+
+import org.apache.commons.io.{Charsets, FileUtils}
 import org.apache.commons.io.Charsets.UTF_8
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributes
 import org.codehaus.plexus.logging.Logger
@@ -36,11 +38,13 @@ object G8 {
     * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
     */
   type ValueF = ResolvedProperties => String
-  
+
   def applyTemplate(default: String, resolved: ResolvedProperties): String = {
-      val group = STGroup('$', '$')
-      group.registerRenderer(renderer)
-      STHelper(group, default)
+    val start = resolved.get("startDelimiter").flatMap(_.headOption).getOrElse('$')
+    val stop = resolved.get("stopDelimiter").flatMap(_.headOption).getOrElse('$')
+    val group = STGroup(start, stop)
+    group.registerRenderer(renderer)
+    STHelper(group, default)
       .setAttributes(resolved)
       .render()
   }
@@ -99,6 +103,7 @@ object G8 {
 
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
     parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
+
   private def globMatch(file: File, patterns: Seq[String]): Boolean =
     patterns exists { globRegex(_).findFirstIn(file.getName).isDefined }
   private def globRegex(pattern: String) = "^%s$".format(pattern flatMap {
@@ -266,7 +271,7 @@ object G8Helpers {
       println("\n")
     }
 
-    val fixed = Set("verbatim")
+    val fixed = Set("verbatim", "startDelimiter", "stopDelimiter")
     val renderer = new StringRenderer
 
     others.foldLeft(ResolvedProperties.empty) { case (resolved, (k,f)) =>
@@ -366,7 +371,7 @@ object G8Helpers {
 
   def readProps(stm: java.io.InputStream):G8.OrderedProperties = {
     val p = new LinkedListProperties
-    p.load(stm)
+    p.load(new InputStreamReader(stm, Charsets.UTF_8))
     stm.close()
     (OrderedProperties.empty /: p.keyList) { (l, k) =>
       l :+ (k -> p.getProperty(k))
