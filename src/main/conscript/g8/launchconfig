@@ -1,6 +1,6 @@
 [app]
   version: 0.6.9-SNAPSHOT
-  org: net.databinder.giter8
+  org: org.foundweekends.giter8
   name: giter8
   class: giter8.Giter8
 [scala]
