@@ -271,7 +271,7 @@ object G8Helpers {
       println("\n")
     }
 
-    val fixed = Set("verbatim")
+    val fixed = Set("verbatim", "startDelimiter", "stopDelimiter")
     val renderer = new StringRenderer
 
     others.foldLeft(ResolvedProperties.empty) { case (resolved, (k,f)) =>
