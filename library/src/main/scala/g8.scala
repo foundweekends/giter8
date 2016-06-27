@@ -50,16 +50,16 @@ object G8 {
 
   class STErrorHandler extends STErrorListener {
     def compileTimeError(msg: STMessage) = {
-      throw new Exception("Template Compile Time Error")
+      throw new STException(msg.toString, null)
     }
     def runTimeError(msg: STMessage) = {
-      throw new Exception("Template Run Time Error")
+      throw new STException(msg.toString, null)
     }
     def IOError(msg: STMessage) = {
-      throw new Exception("Template IO Time Error")
+      throw new STException(msg.toString, null)
     }
     def internalError(msg: STMessage) = {
-      throw new Exception("Template Internal Error")
+      throw new STException(msg.toString, null)
     }
   }
 
@@ -107,14 +107,16 @@ object G8 {
           write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
           util.Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
         case None =>
-            // PlexusIoResourceAttributes is not available for some OS'es such as windows
-            write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+          // PlexusIoResourceAttributes is not available for some OS'es such as windows
+          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
       }
     }
     catch {
+      case e : STException =>
+        // add the current file to the exception for debugging purposes
+        throw new STException(s"File: $in, ${e.getMessage}", null)
       case t : Throwable =>
-        println("Falling back to file copy for %s: %s" format(in.toString, t.getMessage))
-        FileUtils.copyFile(in, out)
+        throw t
     }
   }
 
