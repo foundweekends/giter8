@@ -25,11 +25,13 @@ trait Apply { self: Giter8 =>
     val NativeUrl = "^(git[@|://].*)$".r
     val HttpsUrl = "^(https://.*)$".r
     val HttpUrl = "^(http://.*)$".r
+    val SshUrl = "^(ssh://.*)$".r
 
     def unapplySeq(s: Any): Option[List[String]] =
       NativeUrl.unapplySeq(s) orElse
       HttpsUrl.unapplySeq(s) orElse
-      HttpUrl.unapplySeq(s)
+      HttpUrl.unapplySeq(s) orElse
+      SshUrl.unapplySeq(s)
   }
 
   def search(config: Config): Either[String, String] = {
@@ -143,24 +145,24 @@ trait Apply { self: Giter8 =>
 }
 
 object ConsoleCredentialsProvider extends CredentialsProvider {
-  
+
   def isInteractive = true
-  
+
   def supports(items: CredentialItem*) = true
-  
+
   def get(uri: URIish, items: CredentialItem*) = {
-    items foreach { 
+    items foreach {
       case i: CredentialItem.Username =>
         val username = System.console.readLine("%s: ", i.getPromptText)
         i.setValue(username)
-        
+
       case i: CredentialItem.Password =>
         val password = System.console.readPassword("%s: ", i.getPromptText)
         i.setValueNoCopy(password)
-        
+
       case i: CredentialItem.InformationalMessage =>
         System.console.printf("%s\n", i.getPromptText)
-        
+
       case i: CredentialItem.YesNoType =>
         i.setValue(askYesNo(i.getPromptText))
       case i: CredentialItem.StringType if uri.getScheme == "ssh" =>
@@ -169,7 +171,7 @@ object ConsoleCredentialsProvider extends CredentialsProvider {
     }
     true
   }
-  
+
   @scala.annotation.tailrec
   def askYesNo(prompt: String): Boolean = {
     System.console.readLine("%s: ", prompt).trim.toLowerCase match {
