@@ -8,11 +8,13 @@ import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
+import org.stringtemplate.v4.compiler.STException
+import org.stringtemplate.v4.misc.STMessage
 
 
 object G8 {
   import scala.util.control.Exception.allCatch
-  import org.clapper.scalasti.{ST, STGroup, STHelper}
+  import org.clapper.scalasti.{ST, STGroup, STHelper, STErrorListener}
 
   /** Properties in the order they were created/defined */
   type OrderedProperties  = List[(String, String)]
@@ -36,13 +38,29 @@ object G8 {
     * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
     */
   type ValueF = ResolvedProperties => String
-  
+
   def applyTemplate(default: String, resolved: ResolvedProperties): String = {
-      val group = STGroup('$', '$')
-      group.registerRenderer(renderer)
-      STHelper(group, default)
+    val group = STGroup('$', '$')
+    group.nativeGroup.setListener(new STErrorHandler)
+    group.registerRenderer(renderer)
+    STHelper(group, default)
       .setAttributes(resolved)
       .render()
+  }
+
+  class STErrorHandler extends STErrorListener {
+    def compileTimeError(msg: STMessage) = {
+      throw new STException(msg.toString, null)
+    }
+    def runTimeError(msg: STMessage) = {
+      throw new STException(msg.toString, null)
+    }
+    def IOError(msg: STMessage) = {
+      throw new STException(msg.toString, null)
+    }
+    def internalError(msg: STMessage) = {
+      throw new STException(msg.toString, null)
+    }
   }
 
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
@@ -82,14 +100,23 @@ object G8 {
   }
 
   def write(in: File, out: File, parameters: Map[String, String], append: Boolean) {
-    Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
-      case Some(attr) =>
-        val mode = attr.getOctalMode
-        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
-        util.Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
-      case None =>
-        // PlexusIoResourceAttributes is not available for some OS'es such as windows
-        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+    try {
+      Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
+        case Some(attr) =>
+          val mode = attr.getOctalMode
+          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+          util.Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
+        case None =>
+          // PlexusIoResourceAttributes is not available for some OS'es such as windows
+          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+      }
+    }
+    catch {
+      case e : STException =>
+        // add the current file to the exception for debugging purposes
+        throw new STException(s"File: $in, ${e.getMessage}", null)
+      case t : Throwable =>
+        throw t
     }
   }
 
@@ -396,7 +423,7 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
     	formats.foldLeft(value)(format)
    }
   }
-  
+
   def format(value: String, formatName: String): String = formatName match {
     case "upper"    | "uppercase"    => value.toUpperCase
     case "lower"    | "lowercase"    => value.toLowerCase

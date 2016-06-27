@@ -1,6 +1,7 @@
 package giter8
 
 import org.eclipse.jgit.transport._
+import org.stringtemplate.v4.compiler.STException
 
 trait Apply { self: Giter8 =>
   import java.io.File
@@ -50,12 +51,12 @@ trait Apply { self: Giter8 =>
           clone(path, config)
         }.getOrElse(copy(path))
         tmpl.right.flatMap { t =>
-          G8Helpers.applyTemplate(t, new File("."), arguments, config.forceOverwrite)
+          applyTemplate(t, new File("."), arguments, config.forceOverwrite)
         }
       case GitUrl(uri) =>
         val tmpl = clone(uri, config)
         tmpl.right.flatMap { t =>
-          G8Helpers.applyTemplate(t,
+          applyTemplate(t,
             new File("."),
             arguments,
             config.forceOverwrite
@@ -77,6 +78,23 @@ trait Apply { self: Giter8 =>
             cleanup()
             inspect(privateConfig, arguments)
         }
+    }
+  }
+
+  def applyTemplate(
+    tmpl: File,
+    outputFolder: File,
+    arguments: Seq[String] = Nil,
+    forceOverwrite: Boolean = false
+  ) = {
+    try {
+      G8Helpers.applyTemplate(tmpl, outputFolder, arguments, forceOverwrite)
+    }
+    catch {
+      case e: STException =>
+        Left(s"Exiting due to error in the template\n${e.getMessage}")
+      case t : Throwable =>
+        Left("Unknown exception: " + t.getMessage)
     }
   }
 
