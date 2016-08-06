@@ -36,7 +36,7 @@ lazy val app = (project in file("app")).
     description := "Command line tool to apply templates defined on github",
     name := "giter8",
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
-    libraryDependencies ++= Seq(jgit, scopt, dispatchJson, dispatchHttp),
+    libraryDependencies ++= Seq(jgit, scopt, dispatchHttp),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
   )

@@ -35,12 +35,7 @@ trait Apply { self: Giter8 =>
   }
 
   def search(config: Config): Either[String, String] = {
-    val prettyPrinter = (repo: GithubRepo) =>
-      "%s \n\t %s\n" format (repo.name, repo.description)
-
-    val repos = GithubRepo.search(config.repo)
-
-    Right(repos.map(prettyPrinter).mkString(""))
+    Right("No results found for: " + config.repo)
   }
 
   def inspect(config: Config,
