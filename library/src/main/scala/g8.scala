@@ -85,7 +85,7 @@ object G8 {
     try {
       if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
       else {
-        write(in, out, parameters, false)
+        write(in, out, parameters/*, false*/)
       }
     }
     catch {
@@ -99,16 +99,16 @@ object G8 {
     Seq(out)
   }
 
-  def write(in: File, out: File, parameters: Map[String, String], append: Boolean) {
+  def write(in: File, out: File, parameters: Map[String, String]/*, append: Boolean*/) {
     try {
       Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
         case Some(attr) =>
           val mode = attr.getOctalMode
-          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters/*, append*/)
           util.Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
         case None =>
           // PlexusIoResourceAttributes is not available for some OS'es such as windows
-          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters, append)
+          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters/*, append*/)
       }
     }
     catch {
@@ -120,8 +120,8 @@ object G8 {
     }
   }
 
-  def write(out: File, template: String, parameters: Map[String, String], append: Boolean = false) {
-    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8, append)
+  def write(out: File, template: String, parameters: Map[String, String]/*, append: Boolean = false*/) {
+    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8/*, append*/)
   }
 
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
@@ -174,8 +174,8 @@ object G8Helpers {
   val Param = """^--(\S+)=(.+)$""".r
 
   private def applyT(
-    fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])],
-    isScaffolding: Boolean = false
+    fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])]
+    // isScaffolding: Boolean = false
   )(
     tmpl: File,
     outputFolder: File,
@@ -193,7 +193,7 @@ object G8Helpers {
           parameters.get("name").map(G8.normalize).getOrElse(".")
         )
 
-        val r = write(templatesRoot, templates, parameters, base, isScaffolding,
+        val r = write(templatesRoot, templates, parameters, base, // isScaffolding,
           forceOverwrite)
         for {
           _ <- r.right
@@ -210,7 +210,7 @@ object G8Helpers {
     fetchInfo(file, None, None)
 
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
-  def applyRaw = applyT(fetchRawTemplateinfo, isScaffolding = true) _
+  def applyRaw = applyT(fetchRawTemplateinfo) _
 
   private def getFiles(filter: File => Boolean)(f: File): Stream[File] =
     f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
@@ -317,7 +317,7 @@ object G8Helpers {
             templates: Iterable[File],
             parameters: Map[String,String],
             base: File,
-            isScaffolding: Boolean,
+            // isScaffolding: Boolean,
             forceOverwrite: Boolean) = {
 
     import java.nio.charset.MalformedInputException
@@ -328,35 +328,23 @@ object G8Helpers {
       val out = G8.expandPath(name, base, parameters)
       (in, out)
     }.foreach { case (in, out) =>
-      val existingScaffoldingAction = if (out.exists && isScaffolding) {
-          println(out.getCanonicalPath+" already exists")
-          print("do you want to append, override or skip existing file? [O/a/s] ")
-          Console.readLine match {
-            case a if a == "a"  => Some(true)
-            case a if a == "o" || a == ""  => Some(false)
-            case _ => None
-          }
-        } else None
-
-      if (out.exists &&
-          existingScaffoldingAction.isDefined == false &&
-          forceOverwrite == false) {
+      if (out.exists) {
         println("Skipping existing file: %s" format out.toString)
       }
-      else  {
+      else {
         out.getParentFile.mkdirs()
         if (G8.verbatim(out, parameters))
           FileUtils.copyFile(in, out)
         else {
           catching(classOf[MalformedInputException]).opt {
-            Some(G8.write(in, out, parameters, append = existingScaffoldingAction.getOrElse(false)))
+            Some(G8.write(in, out, parameters/*, append = existingScaffoldingAction.getOrElse(false)*/))
           }.getOrElse {
-            if (existingScaffoldingAction.getOrElse(false)) {
-              val existing = FileUtils.readFileToString(in, UTF_8)
-              FileUtils.write(out, existing, UTF_8, true)
-            } else {
+            // if (existingScaffoldingAction.getOrElse(false)) {
+            //   val existing = FileUtils.readFileToString(in, UTF_8)
+            //   FileUtils.write(out, existing, UTF_8, true)
+            // } else {
               FileUtils.copyFile(in, out)
-            }
+            // }
           }
         }
         if (in.canExecute) {
