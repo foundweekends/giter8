@@ -16,10 +16,7 @@ class Giter8 extends xsbti.AppMain with Apply {
     } match {
       case (params, options) =>
         parser.parse(options, Config()).map { config =>
-          if (config.search)
-            search(config)
-          else
-            inspect(config, params)
+          inspect(config, params)
         }.getOrElse(Left(""))
       case _ => Left(parser.usage)
     })
@@ -35,9 +32,9 @@ class Giter8 extends xsbti.AppMain with Apply {
 
   val parser = new scopt.OptionParser[Config]("giter8") {
     head("g8", giter8.BuildInfo.version)
-    cmd("search") action { (_, config) =>
-      config.copy(search = true)
-    } text("Search for templates on github")
+    // cmd("search") action { (_, config) =>
+    //   config.copy(search = true)
+    // } text("Search for templates on github")
     arg[String]("<template>") action { (repo, config) =>
       config.copy(repo = repo)
     } text ("git or file URL, or github user/repo")

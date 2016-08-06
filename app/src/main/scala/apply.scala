@@ -34,10 +34,6 @@ trait Apply { self: Giter8 =>
       SshUrl.unapplySeq(s)
   }
 
-  def search(config: Config): Either[String, String] = {
-    Right("No results found for: " + config.repo)
-  }
-
   def inspect(config: Config,
               arguments: Seq[String]): Either[String, String] = {
     config.repo match {
