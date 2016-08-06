@@ -8,25 +8,7 @@ object ScaffoldPlugin extends sbt.Plugin {
 
   object ScaffoldingKeys {
     lazy val templatesPath = SettingKey[String]("g8-templates-path")
-    lazy val scaffold    = InputKey[Unit]("g8-scaffold",
-      """g8-scaffold adds code generation abilities to giter8, after a project has been generated.
-         |
-         |Usage:
-         | g8Scaffold <scaffold_name>
-         |
-         |The name of the scaffold is the name of the folder located directly under `.g8`
-         |Assuming your `.g8` folder has the following structure:
-         |
-         |    .g8
-         |    |_ model
-         |    |_ view
-         |    |_ controller
-         |
-         |You have 3 different scaffoldings available.
-         |
-         |To generate a new template, just type `g8Scaffold model`.
-         |As usual, g8 will ask for the variable values, and generate the correct code.
-         |""".stripMargin)
+    lazy val scaffold      = InputKey[Unit]("g8-scaffold")
   }
 
   import ScaffoldingKeys._
