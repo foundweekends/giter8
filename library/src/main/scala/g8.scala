@@ -163,7 +163,7 @@ object G8 {
 case class Config(
   repo: String = "",
   branch: Option[String] = None,
-  tag: Option[String] = None,
+  // tag: Option[String] = None,
   forceOverwrite: Boolean = false
   // search: Boolean = false
 )

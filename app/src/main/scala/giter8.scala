@@ -41,13 +41,6 @@ class Giter8 extends xsbti.AppMain with Apply {
     opt[String]('b', "branch") action { (b, config) => 
       config.copy(branch = Some(b))
     } text("Resolve a template within a given branch")
-    opt[String]('t', "tag") action { (t, config) =>
-      if (config.branch.nonEmpty) {
-        System.err.println("\nDo not specify branch and tag in the meantime\n")
-        System.exit(1)
-      }
-      config.copy(tag = Some(t))
-    } text("Resolve a template within a given tag")
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
     } text("Force overwrite of any existing files in output directory")
@@ -64,9 +57,6 @@ class Giter8 extends xsbti.AppMain with Apply {
       |
       |Apply template from a remote branch
       |    g8 n8han/giter8 -b some-branch
-      |
-      |Apply template from a remote tag
-      |    g8 n8han/giter8 -t some-tag
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo
