@@ -344,7 +344,7 @@ with subfolders following the layout of the source scaffold folder.
 Once a template as been used, scaffolds are stored into `<project_root>/.g8`
 
 ```
-➜  sample/.g8 
+➜  sample/.g8
 total 0
 drwxr-xr-x   5 jtournay  staff   170B Aug  6 03:21 .
 drwxr-xr-x  11 jtournay  staff   374B Aug  6 05:29 ..
@@ -355,5 +355,10 @@ drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
 
 It's also possible to create your own scaffold in any sbt project by creating or modifying the `.g8` folder.
 
+Credits
+-------
 
+- Original implementation (C) 2010-2015 Nathan Hamblen and contributors
+- Adapted and extended in 2016 by foundweekends project
 
+Giter8 is licensed under Apache 2.0 license

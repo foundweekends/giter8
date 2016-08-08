@@ -18,7 +18,7 @@ lazy val root = (project in file(".")).
         Some("releases" at
              "https://oss.sonatype.org/service/local/staging/deploy/maven2"),
       publishArtifact in Test := false,
-      licenses := Seq("LGPL v3" -> url("http://www.gnu.org/licenses/lgpl.txt")),
+      licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
       developers := List(
         Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han"))
       ),
@@ -36,7 +36,7 @@ lazy val app = (project in file("app")).
     description := "Command line tool to apply templates defined on github",
     name := "giter8",
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
-    libraryDependencies ++= Seq(jgit, scopt, dispatchJson, dispatchHttp),
+    libraryDependencies ++= Seq(jgit, scopt, dispatchHttp),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
   )

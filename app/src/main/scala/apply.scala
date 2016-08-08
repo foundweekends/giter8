@@ -1,3 +1,20 @@
+/*
+ * Original implementation (C) 2010-2015 Nathan Hamblen and contributors
+ * Adapted and extended in 2016 by foundweekends project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package giter8
 
 import org.eclipse.jgit.transport._
@@ -32,15 +49,6 @@ trait Apply { self: Giter8 =>
       HttpsUrl.unapplySeq(s) orElse
       HttpUrl.unapplySeq(s) orElse
       SshUrl.unapplySeq(s)
-  }
-
-  def search(config: Config): Either[String, String] = {
-    val prettyPrinter = (repo: GithubRepo) =>
-      "%s \n\t %s\n" format (repo.name, repo.description)
-
-    val repos = GithubRepo.search(config.repo)
-
-    Right(repos.map(prettyPrinter).mkString(""))
   }
 
   def inspect(config: Config,
@@ -109,25 +117,17 @@ trait Apply { self: Giter8 =>
       .setCredentialsProvider(ConsoleCredentialsProvider)
 
     val branchName = config.branch.map("refs/heads/" + _)
-
-    branchName.foreach(cmd.setBranch)
+    for(b <- branchName)
+      cmd.setBranch(b)
 
     val g = cmd.call()
 
     val result = branchName.map { b =>
-      if(g.getRepository.getFullBranch.equals(b))
+      if(g.branchList().call().asScala.map(_.getName).contains(b))
         Right(tempdir)
       else
         Left("Branch not found: " + b)
-    } orElse config.tag.map{ t =>
-      if (g.getRepository.getTags.containsKey(t)) {
-        g.checkout().setName(t).call()
-        Right(tempdir)
-      } else {
-        Left(s"Tag not found: refs/tags/$t")
-      }
     } getOrElse(Right(tempdir))
-
     g.getRepository.close()
     result
   }

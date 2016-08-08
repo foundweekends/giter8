@@ -1,3 +1,20 @@
+/*
+ * Original implementation (C) 2010-2015 Nathan Hamblen and contributors
+ * Adapted and extended in 2016 by foundweekends project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package giter8
 
 class Giter8 extends xsbti.AppMain with Apply {
@@ -16,10 +33,7 @@ class Giter8 extends xsbti.AppMain with Apply {
     } match {
       case (params, options) =>
         parser.parse(options, Config()).map { config =>
-          if (config.search)
-            search(config)
-          else
-            inspect(config, params)
+          inspect(config, params)
         }.getOrElse(Left(""))
       case _ => Left(parser.usage)
     })
@@ -35,22 +49,15 @@ class Giter8 extends xsbti.AppMain with Apply {
 
   val parser = new scopt.OptionParser[Config]("giter8") {
     head("g8", giter8.BuildInfo.version)
-    cmd("search") action { (_, config) =>
-      config.copy(search = true)
-    } text("Search for templates on github")
+    // cmd("search") action { (_, config) =>
+    //   config.copy(search = true)
+    // } text("Search for templates on github")
     arg[String]("<template>") action { (repo, config) =>
       config.copy(repo = repo)
     } text ("git or file URL, or github user/repo")
     opt[String]('b', "branch") action { (b, config) => 
       config.copy(branch = Some(b))
     } text("Resolve a template within a given branch")
-    opt[String]('t', "tag") action { (t, config) =>
-      if (config.branch.nonEmpty) {
-        System.err.println("\nDo not specify branch and tag in the meantime\n")
-        System.exit(1)
-      }
-      config.copy(tag = Some(t))
-    } text("Resolve a template within a given tag")
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
     } text("Force overwrite of any existing files in output directory")
@@ -67,9 +74,6 @@ class Giter8 extends xsbti.AppMain with Apply {
       |
       |Apply template from a remote branch
       |    g8 n8han/giter8 -b some-branch
-      |
-      |Apply template from a remote tag
-      |    g8 n8han/giter8 -t some-tag
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo
