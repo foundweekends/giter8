@@ -67,19 +67,19 @@ class Giter8 extends xsbti.AppMain with Apply {
       |EXAMPLES
       |
       |Apply a template from github
-      |    g8 n8han/giter8
+      |    g8 foundweekends/giter8
       |
       |Apply using the git URL for the same template
-      |    g8 git://github.com/n8han/giter8.git
+      |    g8 git://github.com/foundweekends/giter8.git
       |
       |Apply template from a remote branch
-      |    g8 n8han/giter8 -b some-branch
+      |    g8 foundweekends/giter8 -b some-branch
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo
       |
       |Apply given name parameter and use defaults for all others.
-      |    g8 n8han/giter8 --name=template-test""".stripMargin)
+      |    g8 foundweekends/giter8 --name=template-test""".stripMargin)
   }
 }
 
