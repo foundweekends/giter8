@@ -18,8 +18,6 @@
 package giter8
 
 class Giter8 extends xsbti.AppMain with Apply {
-  import dispatch._
-
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
   /** The launched conscript entry point */

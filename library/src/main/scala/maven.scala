@@ -17,11 +17,11 @@
 
 package giter8
 
-import dispatch.host
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.control.Exception.allCatch
 import scala.util.parsing.combinator._
+import gigahorse.{ Gigahorse, StatusError }
 
 /**
  * Parse `maven-metadata.xml`
@@ -42,21 +42,24 @@ object Maven extends JavaTokenParsers {
     org: String,
     name: String
   ): Either[String, String] = {
+    import scala.xml._
     import scala.concurrent.ExecutionContext.Implicits.global
     val loc = s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml"
-    val fut = for (resp <- G8.http(dispatch.url(loc))) yield {
-      resp.getStatusCode match {
-        case 200 =>
-          (dispatch.as.xml.Elem(resp) \ "versioning" \ "latest").headOption.map(
-            elem => elem.text
+    Gigahorse.withHttp(Gigahorse.config) { http =>
+      val r = Gigahorse.url(loc)
+      val fut = http.run(r, Gigahorse.asEither) map {
+        case Right(resp) =>
+          val elem = XML.loadString(resp.body)
+          (elem \ "versioning" \ "latest").headOption.map(
+              elem => elem.text
           ).toRight(s"Found metadata at $loc but can't extract latest version")
-        case 404 =>
+        case Left(x: StatusError) if x.status == 404 =>
           Left(s"Maven metadata not found for `maven($org, $name)`\nTried: $loc")
-        case status =>
-          Left(s"Unexpected response status $status fetching metadata from $loc")
+        case Left(x) =>
+          Left(s"Unexpected response $x fetching metadata from $loc")
       }
+      Await.result(fut, 1.minute)
     }
-    Await.result(fut, 1.minute)
   }
 
   def lookup(rawDefaults: G8.OrderedProperties): Either[String, G8.OrderedProperties] = {
