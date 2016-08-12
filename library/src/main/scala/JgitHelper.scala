@@ -85,6 +85,14 @@ object JgitHelper {
             )
             cleanup()
             run(privateConfig, arguments)
+          // The following code can fallback to non-g8 repo, but because
+          // of the stringtemplate's $, it's not like you can just point at any repo.
+          // case _: org.eclipse.jgit.api.errors.TransportException =>
+          //   val nonG8Config = config.copy(
+          //     repo = "git://github.com/%s/%s.git".format(user, proj)
+          //   )
+          //   cleanup()
+          //   run(nonG8Config, arguments)
         }
     }
   }

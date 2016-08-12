@@ -180,11 +180,21 @@ case class Config(
   forceOverwrite: Boolean = false
   // search: Boolean = false
 )
+case class Path(paths: List[String]) {
+  def /(child: String): Path = copy(paths = paths ::: List(child))
+}
+
 object G8Helpers {
   import scala.util.control.Exception.catching
   import G8._
 
   val Param = """^--(\S+)=(.+)$""".r
+  implicit class RichFile(file: File) {
+    def /(child: String): File = new File(file, child)
+    def /(path: Path): File = (file /: path.paths) { _ / _ }
+  }
+  def file(path: String): File = new File(path)
+  def path(path: String): Path = Path(List(path))
 
   private def applyT(
     fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])]
@@ -202,11 +212,7 @@ object G8Helpers {
             interact(defaults)
           }
 
-          val base = new File(
-            outputFolder,
-            parameters.get("name").map(G8.normalize).getOrElse(".")
-          )
-
+          val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse(".")
           val r = write(templatesRoot, templates, parameters, base, // isScaffolding,
             forceOverwrite)
           for {
@@ -224,10 +230,12 @@ object G8Helpers {
     }
 
   private def fetchProjectTemplateinfo(file: File) =
-    fetchInfo(file: File, Some("src/main/g8"), Some("src/main/scaffolds"))
+    fetchInfo(file: File, List(path("src") / "main" / "g8", Path(Nil)),
+      List(path("src") / "main" / "scaffolds",
+        path("project") / "src" / "main" / "scaffolds"))
 
   private def fetchRawTemplateinfo(file: File) =
-    fetchInfo(file, None, None)
+    fetchInfo(file, List(Path(Nil)), Nil)
 
   def applyTemplate = applyT(fetchProjectTemplateinfo) _
   def applyRaw = applyT(fetchRawTemplateinfo) _
@@ -246,19 +254,38 @@ object G8Helpers {
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
   */
   private def fetchInfo(
-    f: File,
-    tmplFolder: Option[String],
-    scaffoldFolder: Option[String]
+    baseDirectory: File,
+    templatePaths: List[Path],
+    scaffoldPaths: List[Path]
   ) = {
     import java.io.FileInputStream
+    // Go through the list of dirs and pick the first one.
+    val templatesRoot =
+      (templatePaths map {
+        case Path(Nil) => baseDirectory
+        case p         => baseDirectory / p
+      }).find(_.exists).getOrElse(baseDirectory)
 
-    val templatesRoot = tmplFolder.map(new File(f, _)).getOrElse(f)
-    val fs = getFiles(_ => true)(templatesRoot)
-    val propertiesLoc = new File(templatesRoot, "default.properties")
-    val scaffoldsRoot = scaffoldFolder.map(new File(f, _))
-
+    val gitFiles = getFiles(_ => true)(baseDirectory / ".git").toSet
+    val metaDir = baseDirectory / "project"
+    def baseAndMeta(xs: String*): Set[File] =
+      xs.toSet flatMap { x: String => Set( baseDirectory / x, metaDir / x ) }
+    val pluginFiles = baseAndMeta("giter8.sbt", "g8.sbt")
+    val metadata = baseAndMeta("activator.properties", "template.properties")
+    val testFiles = baseAndMeta("test", "giter8.test", "g8.test")
+    // .git and other files
+    val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
+    val fs = getFiles(!skipFiles(_))(templatesRoot)
+    val propertiesLoc0 = templatesRoot / "default.properties"
+    val propertiesLoc1 = metaDir / "default.properties"
+    val propertiesLocs = Set(propertiesLoc0, propertiesLoc1)
+    val scaffoldsRoot =
+      (scaffoldPaths map {
+        case Path(Nil) => baseDirectory
+        case p         => baseDirectory / p
+      }).find(_.exists)
     val (propertiesFiles, tmpls) = fs.partition {
-      _ == propertiesLoc
+      propertiesLocs(_)
     }
 
     val parametersEither = propertiesFiles.headOption.map{ f =>
