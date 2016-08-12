@@ -17,11 +17,13 @@
 
 package giter8
 
-import dispatch.host
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.control.Exception.allCatch
 import scala.util.parsing.combinator._
+import scala.xml.XML
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.client.methods.{ HttpGet, CloseableHttpResponse }
 
 /**
  * Parse `maven-metadata.xml`
@@ -44,10 +46,12 @@ object Maven extends JavaTokenParsers {
   ): Either[String, String] = {
     import scala.concurrent.ExecutionContext.Implicits.global
     val loc = s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml"
-    val fut = for (resp <- G8.http(dispatch.url(loc))) yield {
-      resp.getStatusCode match {
+    withHttp(loc) { response =>
+      val status = response.getStatusLine
+      status.getStatusCode match {
         case 200 =>
-          (dispatch.as.xml.Elem(resp) \ "versioning" \ "latest").headOption.map(
+          val elem = XML.load(response.getEntity.getContent)
+          (elem \ "versioning" \ "latest").headOption.map(
             elem => elem.text
           ).toRight(s"Found metadata at $loc but can't extract latest version")
         case 404 =>
@@ -56,8 +60,24 @@ object Maven extends JavaTokenParsers {
           Left(s"Unexpected response status $status fetching metadata from $loc")
       }
     }
-    Await.result(fut, 1.minute)
   }
+
+  def withHttp[A](url: String)(f: CloseableHttpResponse => A): A =
+    {
+      val httpClient = HttpClients.createDefault
+      try {
+        val r = new HttpGet(url)
+        val response = httpClient.execute(r)
+        try {
+          f(response)
+        } finally {
+          response.close()
+        }
+      } finally {
+        httpClient.close()
+      }
+    }
+
 
   def lookup(rawDefaults: G8.OrderedProperties): Either[String, G8.OrderedProperties] = {
     val defaults = rawDefaults.map {

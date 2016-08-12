@@ -47,7 +47,7 @@ object FormatSpecification extends Properties("Format") {
   lazy val asciiString: Gen[String] = Gen.sized { size =>
     Gen.listOfN(size, asciiChar).map(_.mkString)
   } filter {_.nonEmpty}
-  def conversion(inContent: String, ps: Map[String,String]): String = {
+  def conversion(inContent: String, ps: Map[String,String]): String = synchronized {
     IO.withTemporaryDirectory { tempDir =>
       val in = tempDir / "in.txt"
       val out = tempDir / "out.txt"

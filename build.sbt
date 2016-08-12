@@ -36,7 +36,7 @@ lazy val app = (project in file("app")).
     description := "Command line tool to apply templates defined on github",
     name := "giter8",
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
-    libraryDependencies ++= Seq(jgit, scopt, dispatchHttp),
+    libraryDependencies ++= Seq(jgit, scopt),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
   )
@@ -71,7 +71,7 @@ lazy val lib = (project in file("library")).
     name := "giter8-lib",
     description := "shared library for app and plugin",
     libraryDependencies ++= Seq(
-      scalasti, jline, lsCore, dispatchCore, commonsIo, plexusArchiver,
+      scalasti, jline, httpClient, commonsIo, plexusArchiver,
       scalacheck % Test, sbtIo % Test
     )
   )
