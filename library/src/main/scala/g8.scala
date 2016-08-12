@@ -194,27 +194,34 @@ object G8Helpers {
     outputFolder: File,
     arguments: Seq[String] = Nil,
     forceOverwrite: Boolean = false
-  ) = {
-    fetch(tmpl).right.flatMap {
-      case (defaults, templates, templatesRoot, scaffoldsRoot) =>
-        val parameters = consoleParams(defaults, arguments).getOrElse {
-          interact(defaults)
+  ): Either[String, String] =
+    try {
+      fetch(tmpl).right.flatMap {
+        case (defaults, templates, templatesRoot, scaffoldsRoot) =>
+          val parameters = consoleParams(defaults, arguments).getOrElse {
+            interact(defaults)
+          }
+
+          val base = new File(
+            outputFolder,
+            parameters.get("name").map(G8.normalize).getOrElse(".")
+          )
+
+          val r = write(templatesRoot, templates, parameters, base, // isScaffolding,
+            forceOverwrite)
+          for {
+            _ <- r.right
+            root <- scaffoldsRoot
+          } copyScaffolds(root, base)
+          r
         }
-
-        val base = new File(
-          outputFolder,
-          parameters.get("name").map(G8.normalize).getOrElse(".")
-        )
-
-        val r = write(templatesRoot, templates, parameters, base, // isScaffolding,
-          forceOverwrite)
-        for {
-          _ <- r.right
-          root <- scaffoldsRoot
-        } copyScaffolds(root, base)
-        r
-      }
-  }
+    }
+    catch {
+      case e: STException =>
+        Left(s"Exiting due to error in the template\n${e.getMessage}")
+      case t : Throwable =>
+        Left("Unknown exception: " + t.getMessage)
+    }
 
   private def fetchProjectTemplateinfo(file: File) =
     fetchInfo(file: File, Some("src/main/g8"), Some("src/main/scaffolds"))
