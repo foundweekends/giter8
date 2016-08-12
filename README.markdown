@@ -107,35 +107,19 @@ This will create an sbt project with stub template sources nested
 under `src/main/g8`. The file `default.properties` defines template
 fields and their default values using the Java properties file format.
 
-Properties can be simple keys and values that replace them, but **ls
-properties** tell giter8 to query the [ls.implicit.ly][ls] web
-API. Instead of supplying a particular version (and having to update
+Properties can be simple keys and values that replace them, but **maven
+properties** tell giter8 to query the **Central Maven Repository**.
+Instead of supplying a particular version (and having to update
 the template with every release), specify a library and giter8 will
-set the value to the latest version according to ls.
+set the value to the latest version according to Maven Central.
 
-[ls]: http://ls.implicit.ly/
-
-The property value format is `ls(library, user, repo)`. The second two
-parameters are optional, but it is a good idea to specify the github
-at least the user or organization that is bound to the library, in
-case someone else ever publishing a library module with the same name.
-
-The n8han/giter8.g8 template itself uses this feature to refer
-to the latest version of the giter8 sbt plugin.
-
-    name = My Template Project
-    description = Creates a giter8 project template.
-    giter8_version = ls(giter8-plugin, n8han)
-
-Giter8 can also resolve the latest version of projects through the
-**Central Maven Repository**.
-
-In your `default.properties`, define a value as `maven(groupId,
-artifactId)` to have its latest version looked up from the central
-repo. Keep in mind that Scala projects are typically published with a
+The property value format is `maven(groupId, artifactId)`.
+Keep in mind that Scala projects are typically published with a
 Scala version identifier in the artifact id. So for the Unfiltered
 library, we could refer to the latest version as follows:
 
+    name = My Template Project
+    description = Creates a giter8 project template.
     unfiltered_version = maven(net.databinder, unfiltered_2.11)
 
 [StringTemplate][st], wrapped by [Scalasti][scalasti], is the engine
@@ -156,7 +140,7 @@ user's github id:
     github_id=githubber
     developer_url=https://github.com/$github_id$
     project_url=https://github.com/$github_id$/$name;format="norm"$
-    
+
 This would yield the following in interactive mode:
 
     name [URL Builder]: my-proj
@@ -174,7 +158,7 @@ template's source directory are reproduced in its output. File and
 directory names also participate in template expansion, e.g.
 
     src/main/g8/src/main/scala/$classname$.scala
-    
+
 The `package` field, if defined, is assumed to be the package name
 of the user's source. A directory named `$package$` expands out to
 package directory structure. For example, `net.databinder` becomes
