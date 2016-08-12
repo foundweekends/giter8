@@ -13,9 +13,9 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "1.3.0.201202151440-r"
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "4.4.1.201607150455-r"
   val scopt = "com.github.scopt" %% "scopt" % "3.1.0"
-  val dispatchHttp = "net.databinder" %% "dispatch-http" % "0.8.10"
+  val httpClient = "org.apache.httpcomponents" % "httpclient" % "4.3.6"
   val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.0"
   val sbtIo = "org.scala-sbt" %% "io" % "1.0.0-M6"
 }

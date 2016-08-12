@@ -45,10 +45,6 @@ object G8 {
     val empty = Map.empty[String, String]
   }
 
-  /** dispatch http client used by the `ls` integration library, for
-    * general reuse within giter8. */
-  lazy val http = ls.DefaultClient.http
-
   /**
     * A function which will return the resolved value of a property given the properties resolved thus far.
     * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
@@ -237,7 +233,7 @@ object G8Helpers {
   /** transforms any ls() and maven() property operations to the latest
     * version number reported by that service. */
   def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
-    Ls.lookup(props).right.flatMap(Maven.lookup)
+    Maven.lookup(props)
 
   /**
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
