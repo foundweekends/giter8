@@ -220,10 +220,6 @@ object G8 {
   def templateFiles(root: File, baseDirectory: File): Stream[File] =
     {
       val gitFiles = getFiles(_ => true)(baseDirectory / ".git").toSet
-      val targetFiles =
-        getFiles(_ => true)(baseDirectory / "target").toSet ++
-        getFiles(_ => true)(baseDirectory / "project" / "target").toSet ++
-        getFiles(_ => true)(baseDirectory / "project" / "project" / "target").toSet
       val metaDir = baseDirectory / "project"
       def baseAndMeta(xs: String*): Set[File] =
         xs.toSet flatMap { x: String => Set( baseDirectory / x, metaDir / x ) }
@@ -231,8 +227,12 @@ object G8 {
       val metadata = baseAndMeta("activator.properties", "template.properties")
       val testFiles = baseAndMeta("test", "giter8.test", "g8.test")
       // .git and other files
-      val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles ++ targetFiles
-      getFiles(!skipFiles(_))(root)
+      val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
+      val xs = getFiles(x => {
+        val p = x.toURI.toASCIIString
+        !skipFiles(x) && !p.contains("/target/")
+      })(root)
+      xs
     }
 
   private[giter8] def applyT(
@@ -366,7 +366,7 @@ object G8 {
     }.toMap
   }
 
-  private def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
+  private def relativize(in: File, from: File): String = from.toURI().relativize(in.toURI).getPath
 
   def writeTemplates(tmpl: File,
        templates: Iterable[File],
