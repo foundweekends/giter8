@@ -13,7 +13,7 @@ before_script:
 
 after_success:
 - eval "$(ssh-agent -s)" #start the ssh agent
-- openssl aes-256-cbc -K $encrypted_e5f9765ae931_key -iv $encrypted_e5f9765ae931_iv -in deploy_rsa.enc -out deploy_rsa.enc -d
+- openssl aes-256-cbc -K $encrypted_e5f9765ae931_key -iv $encrypted_e5f9765ae931_iv -in deploy_rsa.enc -out deploy_rsa -d
 - chmod 600 deploy_rsa
 - ssh-add deploy_rsa
 - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "0.7.x" && sbt pushSiteIfChanged

@@ -46,7 +46,9 @@ object TravisSitePlugin extends sbt.AutoPlugin {
     // 1. generate a new SSH key: `ssh-keygen -t rsa -b 4096 -C "foo@example.com"` and
     //    name it ~/.ssh/yourprojectname_deploy_rsa
     // 2. add the public key ~/.ssh/yourprojectname_deploy_rsa.pub to github: https://github.com/foo/bar/settings/keys
-    // 3. encrypt the token: `travis encrypt-file ~/.ssh/yourprojectname_deploy_rsa`
+    // 3. copy the private key ~/.ssh/yourprojectname_deploy_rsa to ./deploy_rsa
+    // 4. encrypt the token: `travis encrypt-file deploy_rsa`
+    // 5. remove the private key ./deploy_rsa
     // 4. rename it to deploy_rsa.enc
     pushSiteIfChanged := (Def.taskDyn {
       val repo = baseDirectory.value
