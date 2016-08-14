@@ -69,7 +69,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
       if (f.exists) {
         val in = new java.io.FileInputStream(f)
         try {
-          G8Helpers.transformProps(G8Helpers.readProps(in)).fold(
+          G8.transformProps(G8.readProps(in)).fold(
             err => sys.error(err),
             _.foldLeft(G8.ResolvedProperties.empty) { case (resolved, (k, v)) =>
               resolved + (k -> G8.DefaultValueF(v)(resolved))

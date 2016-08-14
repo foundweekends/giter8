@@ -27,10 +27,9 @@ import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
 import org.stringtemplate.v4.misc.STMessage
-
+import scala.util.control.Exception.{ catching, allCatch }
 
 object G8 {
-  import scala.util.control.Exception.allCatch
   import org.clapper.scalasti.{ST, STGroup, STHelper, STErrorListener}
 
   /** Properties in the order they were created/defined */
@@ -55,11 +54,18 @@ object G8 {
   // Called from JgitHelper
   def fromDirectory(baseDirectory: File, outputDirectory: File,
     arguments: Seq[String], forceOverwrite: Boolean): Either[String, String] =
-    G8Helpers.applyT((file: File) =>
-      G8Helpers.fetchInfo(file: File,
+    applyT((file: File) =>
+      fetchInfo(file: File,
         defaultTemplatePaths,
         List(path("src") / "main" / "scaffolds",
           path("project") / "src" / "main" / "scaffolds"))
+    )(baseDirectory, outputDirectory, arguments, forceOverwrite)
+
+  // Called from ScaffoldPlugin
+  def fromDirectoryRaw(baseDirectory: File, outputDirectory: File,
+    arguments: Seq[String], forceOverwrite: Boolean): Either[String, String] =
+    applyT((file: File) =>
+      fetchInfo(file, List(Path(Nil)), Nil)
     )(baseDirectory, outputDirectory, arguments, forceOverwrite)
 
   val defaultTemplatePaths: List[Path] = List(path("src") / "main" / "g8", Path(Nil))
@@ -124,7 +130,7 @@ object G8 {
 
   private val renderer = new StringRenderer
 
-  def write(in: File, out: File, parameters: Map[String, String]/*, append: Boolean*/) {
+  def write(in: File, out: File, parameters: Map[String, String]/*, append: Boolean*/): Unit =
     try {
       Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
         case Some(attr) =>
@@ -143,11 +149,9 @@ object G8 {
       case t : Throwable =>
         throw t
     }
-  }
 
-  def write(out: File, template: String, parameters: Map[String, String]/*, append: Boolean = false*/) {
+  def write(out: File, template: String, parameters: Map[String, String]/*, append: Boolean = false*/): Unit =
     FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8/*, append*/)
-  }
 
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
     parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
@@ -230,22 +234,6 @@ object G8 {
       val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles ++ targetFiles
       getFiles(!skipFiles(_))(root)
     }
-}
-
-case class Config(
-  repo: String = "",
-  branch: Option[String] = None,
-  // tag: Option[String] = None,
-  forceOverwrite: Boolean = false
-  // search: Boolean = false
-)
-case class Path(paths: List[String]) {
-  def /(child: String): Path = copy(paths = paths ::: List(child))
-}
-
-object G8Helpers {
-  import scala.util.control.Exception.catching
-  import G8._
 
   private[giter8] def applyT(
     fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])]
@@ -264,7 +252,7 @@ object G8Helpers {
           }
 
           val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse(".")
-          val r = write(templatesRoot, templates, parameters, base, // isScaffolding,
+          val r = writeTemplates(templatesRoot, templates, parameters, base, // isScaffolding,
             forceOverwrite)
           for {
             _ <- r.right
@@ -279,11 +267,6 @@ object G8Helpers {
       case t : Throwable =>
         Left("Unknown exception: " + t.getMessage)
     }
-
-  private def fetchRawTemplateinfo(file: File) =
-    fetchInfo(file, List(Path(Nil)), Nil)
-
-  def applyRaw = applyT(fetchRawTemplateinfo) _
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
@@ -385,12 +368,12 @@ object G8Helpers {
 
   private def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
 
-  def write(tmpl: File,
-            templates: Iterable[File],
-            parameters: Map[String,String],
-            base: File,
-            // isScaffolding: Boolean,
-            forceOverwrite: Boolean) = {
+  def writeTemplates(tmpl: File,
+       templates: Iterable[File],
+       parameters: Map[String,String],
+       base: File,
+       // isScaffolding: Boolean,
+       forceOverwrite: Boolean): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
@@ -459,6 +442,17 @@ object G8Helpers {
       l :+ (k -> p.getProperty(k))
     }
   }
+}
+
+case class Config(
+  repo: String = "",
+  branch: Option[String] = None,
+  // tag: Option[String] = None,
+  forceOverwrite: Boolean = false
+  // search: Boolean = false
+)
+case class Path(paths: List[String]) {
+  def /(child: String): Path = copy(paths = paths ::: List(child))
 }
 
 /** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */
