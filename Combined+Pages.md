@@ -96,27 +96,26 @@ Giter8 will use your ssh key to access private repositories, just like git does.
 Making your own templates
 -------------------------
 
-The Giter8 runtime looks for templates in two locations in a given Github project:
+The g8 runtime looks for templates in two locations in a given Github project:
 
 - If the `src/main/g8` directory is present it uses `src/main/g8` (`src` layout)
-- If it does not exist, then the root directry is used (**root layout**)
+- If it does not exist, then the root directry is used root layout)
 
-### root layout
+### src layout
 
-For new templates, the root layout is recommended.
+This src layout is recommended so that it is easy for the template
+itself to be an sbt project. That way,
+an sbt plugin can be employed to locally test templates before pushing
+changes to github.
+
 The easy way to start a new template project is with a giter8 template
 made expressly for that purpose:
 
     $ g8 foundweekends/giter8.g8
 
-This will create an sbt project with stub template sources.
-The file `project/default.properties` defines template
+This will create an sbt project with stub template sources nested
+under `src/main/g8`. The file `default.properties` defines template
 fields and their default values using the Java properties file format.
-
-### src layout
-
-Older templates embed a build inside the `src/main/g8` directory,
-and places `default.properties` under it too.
 
 ### default.properties
 
@@ -197,6 +196,17 @@ name = My Template Project
 description = Creates a giter8 project template.
 unfiltered_version = maven(net.databinder, unfiltered_2.11)
 ```
+
+### root layout
+
+There's an experimental layout called root layout,
+which uses the root directory of the Github project as
+the root of template.
+
+Since you can no longer include template fields in the files
+under `project` its application is very limited.
+It might be useful for templates that are not for sbt builds
+or templates without any fields.
 
 
 ### Formatting template fields
