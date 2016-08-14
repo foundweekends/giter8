@@ -4,6 +4,7 @@ val g8version = "0.6.9-SNAPSHOT"
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file(".")).
+  enablePlugins(TravisSitePlugin).
   aggregate(app, lib, scaffold, plugin).
   settings(
     inThisBuild(List(
@@ -26,6 +27,9 @@ lazy val root = (project in file(".")).
       scmInfo := Some(ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
     )),
     name := "giter8",
+    siteGithubRepo := "foundweekends/giter8",
+    siteEmail := { "eed3si9n" + "@" + "gmail.com" },
+    siteEncryptionLabel := "e5f9765ae931",
     publish := (),
     publishLocal := ()
   )
