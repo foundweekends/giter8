@@ -220,6 +220,7 @@ object G8 {
   def templateFiles(root: File, baseDirectory: File): Stream[File] =
     {
       val gitFiles = getFiles(_ => true)(baseDirectory / ".git").toSet
+      val scaffoldFiles = getFiles(_ => true)(baseDirectory / "src" / "main" / "scaffolds").toSet
       val metaDir = baseDirectory / "project"
       def baseAndMeta(xs: String*): Set[File] =
         xs.toSet flatMap { x: String => Set( baseDirectory / x, metaDir / x ) }
