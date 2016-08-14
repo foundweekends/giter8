@@ -47,7 +47,14 @@ lazy val scaffold = (project in file("scaffold")).
   settings(
     name := "giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
-    sbtPlugin := true
+    sbtPlugin := true,
+    scriptedSettings,
+    scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
+      a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
+    ),
+    scriptedBufferLog := false,
+    scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
+    scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib)
   )
 
 lazy val plugin = (project in file("plugin")).

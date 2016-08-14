@@ -27,7 +27,7 @@ class Giter8 extends xsbti.AppMain {
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     val result = (args.partition { s =>
-      G8Helpers.Param.pattern.matcher(s).matches
+      G8.Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
         parser.parse(options, Config()).map { config =>

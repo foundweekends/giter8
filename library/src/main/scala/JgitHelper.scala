@@ -59,12 +59,12 @@ object JgitHelper {
           clone(path, config)
         }.getOrElse(copy(path))
         tmpl.right.flatMap { t =>
-          G8Helpers.applyTemplate(t, new File("."), arguments, config.forceOverwrite)
+          G8.fromDirectory(t, new File("."), arguments, config.forceOverwrite)
         }
       case GitUrl(uri) =>
         val tmpl = clone(uri, config)
         tmpl.right.flatMap { t =>
-          G8Helpers.applyTemplate(t,
+          G8.fromDirectory(t,
             new File("."),
             arguments,
             config.forceOverwrite

@@ -27,10 +27,9 @@ import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
 import org.stringtemplate.v4.misc.STMessage
-
+import scala.util.control.Exception.{ catching, allCatch }
 
 object G8 {
-  import scala.util.control.Exception.allCatch
   import org.clapper.scalasti.{ST, STGroup, STHelper, STErrorListener}
 
   /** Properties in the order they were created/defined */
@@ -51,6 +50,48 @@ object G8 {
     * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
     */
   type ValueF = ResolvedProperties => String
+
+  // Called from JgitHelper
+  def fromDirectory(baseDirectory: File, outputDirectory: File,
+    arguments: Seq[String], forceOverwrite: Boolean): Either[String, String] =
+    applyT((file: File) =>
+      fetchInfo(file: File,
+        defaultTemplatePaths,
+        List(path("src") / "main" / "scaffolds",
+          path("project") / "src" / "main" / "scaffolds"))
+    )(baseDirectory, outputDirectory, arguments, forceOverwrite)
+
+  // Called from ScaffoldPlugin
+  def fromDirectoryRaw(baseDirectory: File, outputDirectory: File,
+    arguments: Seq[String], forceOverwrite: Boolean): Either[String, String] =
+    applyT((file: File) =>
+      fetchInfo(file, List(Path(Nil)), Nil)
+    )(baseDirectory, outputDirectory, arguments, forceOverwrite)
+
+  val defaultTemplatePaths: List[Path] = List(path("src") / "main" / "g8", Path(Nil))
+
+  def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String]): Seq[File] =
+    fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
+      apply(in, expandPath(relative, toPath, parameters), parameters)
+    }
+
+  def apply(in: File, out: File, parameters: Map[String,String]) = {
+    try {
+      if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
+      else {
+        write(in, out, parameters/*, false*/)
+      }
+    }
+    catch {
+      case e: Exception =>
+        println("Falling back to file copy for %s: %s" format(in.toString, e.getMessage))
+        FileUtils.copyFile(in, out)
+    }
+    allCatch opt {
+      if (in.canExecute) out.setExecutable(true)
+    }
+    Seq(out)
+  }
 
   def applyTemplate(default: String, resolved: ResolvedProperties): String = {
     val group = STGroup('$', '$')
@@ -89,30 +130,7 @@ object G8 {
 
   private val renderer = new StringRenderer
 
-  def apply(fromMapping: Seq[(File,String)], toPath: File, parameters: Map[String,String]): Seq[File] =
-    fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
-      apply(in, expandPath(relative, toPath, parameters), parameters)
-    }
-
-  def apply(in: File, out: File, parameters: Map[String,String]) = {
-    try {
-      if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
-      else {
-        write(in, out, parameters/*, false*/)
-      }
-    }
-    catch {
-      case e: Exception =>
-        println("Falling back to file copy for %s: %s" format(in.toString, e.getMessage))
-        FileUtils.copyFile(in, out)
-    }
-    allCatch opt {
-      if (in.canExecute) out.setExecutable(true)
-    }
-    Seq(out)
-  }
-
-  def write(in: File, out: File, parameters: Map[String, String]/*, append: Boolean*/) {
+  def write(in: File, out: File, parameters: Map[String, String]/*, append: Boolean*/): Unit =
     try {
       Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
         case Some(attr) =>
@@ -131,11 +149,9 @@ object G8 {
       case t : Throwable =>
         throw t
     }
-  }
 
-  def write(out: File, template: String, parameters: Map[String, String]/*, append: Boolean = false*/) {
+  def write(out: File, template: String, parameters: Map[String, String]/*, append: Boolean = false*/): Unit =
     FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8/*, append*/)
-  }
 
   def verbatim(file: File, parameters: Map[String,String]): Boolean =
     parameters.get("verbatim") map { s => globMatch(file, s.split(' ').toSeq) } getOrElse {false}
@@ -147,17 +163,26 @@ object G8 {
     case '.' => """\."""
     case x => x.toString
   }).r
-  def expandPath(relative: String, toPath: File, parameters: Map[String,String]): File = {
-    val fileParams = Map(parameters.toSeq map {
-      case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
-          case "\\"  => "\\\\"
-          case sep => sep
-        }))
-      case x => x
-    }: _*)
+  def expandPath(relative: String, toPath: File, parameters: Map[String,String]): File =
+    try {
+      val fileParams = Map(parameters.toSeq map {
+        case (k, v) if k == "package" => (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
+            case "\\"  => "\\\\"
+            case sep => sep
+          }))
+        case x => x
+      }: _*)
 
-    new File(toPath, applyTemplate(formatize(relative), fileParams))
-  }
+      new File(toPath, applyTemplate(formatize(relative), fileParams))
+    }
+    catch {
+      case e : STException =>
+        // add the current relative path to the exception for debugging purposes
+        throw new STException(s"relative: $relative, toPath: $toPath, ${e.getMessage}", null)
+      case t : Throwable =>
+        throw t
+    }
+
   private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
 
   def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
@@ -171,23 +196,6 @@ object G8 {
   def packageDir(s: String) = s.replace(".", System.getProperty("file.separator"))
   def addRandomId(s: String) = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
 
-}
-
-case class Config(
-  repo: String = "",
-  branch: Option[String] = None,
-  // tag: Option[String] = None,
-  forceOverwrite: Boolean = false
-  // search: Boolean = false
-)
-case class Path(paths: List[String]) {
-  def /(child: String): Path = copy(paths = paths ::: List(child))
-}
-
-object G8Helpers {
-  import scala.util.control.Exception.catching
-  import G8._
-
   val Param = """^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
     def /(child: String): File = new File(file, child)
@@ -196,7 +204,38 @@ object G8Helpers {
   def file(path: String): File = new File(path)
   def path(path: String): Path = Path(List(path))
 
-  private def applyT(
+  private[giter8] def getFiles(filter: File => Boolean)(f: File): Stream[File] =
+    if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter))
+    else if (filter(f)) Stream(f)
+    else Stream()
+  /** Select the root template directory from the given relative paths. */
+  def templateRoot(baseDirectory: File, templatePaths: List[Path]): File =
+    // Go through the list of dirs and pick the first one.
+    (templatePaths map {
+      case Path(Nil) => baseDirectory
+      case p         => baseDirectory / p
+    }).find(_.exists).getOrElse(baseDirectory)
+
+  /** Extract template files under the first matching relative templatePaths under the baseDirectory. */
+  def templateFiles(root: File, baseDirectory: File): Stream[File] =
+    {
+      val gitFiles = getFiles(_ => true)(baseDirectory / ".git").toSet
+      val metaDir = baseDirectory / "project"
+      def baseAndMeta(xs: String*): Set[File] =
+        xs.toSet flatMap { x: String => Set( baseDirectory / x, metaDir / x ) }
+      val pluginFiles = baseAndMeta("giter8.sbt", "g8.sbt")
+      val metadata = baseAndMeta("activator.properties", "template.properties")
+      val testFiles = baseAndMeta("test", "giter8.test", "g8.test")
+      // .git and other files
+      val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
+      val xs = getFiles(x => {
+        val p = x.toURI.toASCIIString
+        !skipFiles(x) && !p.contains("/target/")
+      })(root)
+      xs
+    }
+
+  private[giter8] def applyT(
     fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])]
     // isScaffolding: Boolean = false
   )(
@@ -213,7 +252,7 @@ object G8Helpers {
           }
 
           val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse(".")
-          val r = write(templatesRoot, templates, parameters, base, // isScaffolding,
+          val r = writeTemplates(templatesRoot, templates, parameters, base, // isScaffolding,
             forceOverwrite)
           for {
             _ <- r.right
@@ -229,20 +268,6 @@ object G8Helpers {
         Left("Unknown exception: " + t.getMessage)
     }
 
-  private def fetchProjectTemplateinfo(file: File) =
-    fetchInfo(file: File, List(path("src") / "main" / "g8", Path(Nil)),
-      List(path("src") / "main" / "scaffolds",
-        path("project") / "src" / "main" / "scaffolds"))
-
-  private def fetchRawTemplateinfo(file: File) =
-    fetchInfo(file, List(Path(Nil)), Nil)
-
-  def applyTemplate = applyT(fetchProjectTemplateinfo) _
-  def applyRaw = applyT(fetchRawTemplateinfo) _
-
-  private def getFiles(filter: File => Boolean)(f: File): Stream[File] =
-    f #:: (if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter)) else Stream.empty)
-
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
   /** transforms any ls() and maven() property operations to the latest
@@ -253,29 +278,12 @@ object G8Helpers {
   /**
   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
   */
-  private def fetchInfo(
-    baseDirectory: File,
-    templatePaths: List[Path],
-    scaffoldPaths: List[Path]
-  ) = {
+  private[giter8] def fetchInfo(baseDirectory: File,
+    templatePaths: List[Path], scaffoldPaths: List[Path]): Either[String, (UnresolvedProperties, Stream[File], File, Option[File])] = {
     import java.io.FileInputStream
-    // Go through the list of dirs and pick the first one.
-    val templatesRoot =
-      (templatePaths map {
-        case Path(Nil) => baseDirectory
-        case p         => baseDirectory / p
-      }).find(_.exists).getOrElse(baseDirectory)
-
-    val gitFiles = getFiles(_ => true)(baseDirectory / ".git").toSet
+    val templatesRoot = templateRoot(baseDirectory, templatePaths)
+    val fs = templateFiles(templatesRoot, baseDirectory)
     val metaDir = baseDirectory / "project"
-    def baseAndMeta(xs: String*): Set[File] =
-      xs.toSet flatMap { x: String => Set( baseDirectory / x, metaDir / x ) }
-    val pluginFiles = baseAndMeta("giter8.sbt", "g8.sbt")
-    val metadata = baseAndMeta("activator.properties", "template.properties")
-    val testFiles = baseAndMeta("test", "giter8.test", "g8.test")
-    // .git and other files
-    val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
-    val fs = getFiles(!skipFiles(_))(templatesRoot)
     val propertiesLoc0 = templatesRoot / "default.properties"
     val propertiesLoc1 = metaDir / "default.properties"
     val propertiesLocs = Set(propertiesLoc0, propertiesLoc1)
@@ -358,14 +366,14 @@ object G8Helpers {
     }.toMap
   }
 
-  private def relativize(in: File, from: File) = from.toURI().relativize(in.toURI).getPath
+  private def relativize(in: File, from: File): String = from.toURI().relativize(in.toURI).getPath
 
-  def write(tmpl: File,
-            templates: Iterable[File],
-            parameters: Map[String,String],
-            base: File,
-            // isScaffolding: Boolean,
-            forceOverwrite: Boolean) = {
+  def writeTemplates(tmpl: File,
+       templates: Iterable[File],
+       parameters: Map[String,String],
+       base: File,
+       // isScaffolding: Boolean,
+       forceOverwrite: Boolean): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
@@ -434,6 +442,17 @@ object G8Helpers {
       l :+ (k -> p.getProperty(k))
     }
   }
+}
+
+case class Config(
+  repo: String = "",
+  branch: Option[String] = None,
+  // tag: Option[String] = None,
+  forceOverwrite: Boolean = false
+  // search: Boolean = false
+)
+case class Path(paths: List[String]) {
+  def /(child: String): Path = copy(paths = paths ::: List(child))
 }
 
 /** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */
