@@ -1,0 +1,95 @@
+@charset "utf-8";
+
+body {
+    font-size: 100%;
+    font-family: Georgia, serif;
+    padding: 0 1em;
+}
+h1,h2,h3,h4,h5, .title {
+    text-rendering: optimizeLegibility;
+}
+pre, code, tt {
+    font-family: monospace
+}
+div.nav {
+    border-bottom: black solid 1px;
+}
+div.top.nav div.title {
+    text-align: center;
+    font-size: 1.2em;
+}
+div.top.nav div.title span, .generated.nav {
+    font-style: italic;
+}
+div.top.nav div.outline {
+    display: none;
+}
+div.top.nav div.outline ol {
+    margin-bottom: 1em;
+}
+div.bottom.nav {
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+}
+div.bottom.nav.end {
+    padding-bottom: 0;
+}
+div.bottom.nav span.arrow {
+    margin: 0 .5em;
+}
+div.footer div.nav {
+    border-bottom: none;
+    border-top: black solid 1px;
+}
+div.header {
+    position: fixed;
+    display: none;
+}
+div.footer {
+    position: fixed;
+    display: none;
+}
+div.container {
+    position: relative;
+    height: 100%;
+}
+div.contents {
+    padding-top: 1.5em;
+}
+.current {
+    font-weight: bold;
+}
+ol.toc ol.toc {
+    list-style-type: lower-alpha;
+}
+ol.toc ol.toc ol.toc {
+    list-style-type: lower-roman;
+}
+ol.toc li.generated {
+    list-style-type: circle;
+    font-style: italic;
+}
+ul.outline {
+    font-style: italic;
+    list-style-type: circle;
+}
+a.page {
+    display: none;
+}
+a.fork {
+    display: none;
+}
+a.header-link {
+    color: inherit;
+    text-decoration: none;
+    margin-left: 0.1em;
+}
+ul.language-bar {
+    display: none;
+}
+div.highlight-outer {
+    display: none;
+}
+div.highlight-memu {
+    display: none;
+}

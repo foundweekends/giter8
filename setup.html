@@ -3,7 +3,7 @@
       <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Giter8 — Giter8</title>
+        <title>Giter8 — Setup</title>
         
         <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
@@ -30,31 +30,39 @@
         
       </head>
       <body class="color_scheme-github">
-        <a class="page next nav" href="setup.html">
+        <a class="page prev nav" href="index.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="usage.html">
             <span class="space">&nbsp;</span>
             <span class="arrow">❧</span>
           </a>
         <div class="container contentswrapper">
           <div class="span-16 prepend-1 append-1 contents">
-            <h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 is a command line tool to generate files and directories from
-templates published on Github or any other git repository.
-It’s implemented in Scala and runs through the 
-<a href="http://www.scala-sbt.org/0.13/docs/Setup.html">sbt launcher</a>, but it can produce 
-output for any purpose.
-</p><h3 id="Credits">Credits<a href="#Credits" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Original implementation (C) 2010-2015 Nathan Hamblen and contributors
-</li><li>Adapted and extended in 2016 by foundweekends project
-</li></ul><p>Giter8 is licensed under Apache 2.0 license
-</p><div class="bottom nav span-16">
+            <h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can install Giter8 and other Scala command line tools with
+<a href="http://www.foundweekends.org/conscript/setup.html">Conscript</a>. This will setup Conscript in <code>~/.conscript/bin/cs</code>:
+</p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
+</code></pre><p>(See <a href="http://www.foundweekends.org/conscript/setup.html">Conscript's readme</a> for a non-unixy option.) Once <code>cs</code> is
+on your path, you can install (or upgrade) giter8 with this command:
+</p><pre><code>cs foundweekends/giter8
+</code></pre><p>To make sure everything is working, try running <code>g8</code> with no
+parameters. This should download giter8 and its dependencies, then print
+a usage message.
+</p><p>When it’s time to upgrade to a new version of giter8, just run the
+same <code>cs</code> command again.
+</p><p>Giter8 is also installable with the OS X package manager <a href="http://mxcl.github.com/homebrew/">Homebrew</a>:
+</p><pre><code>$ brew update &amp;&amp; brew install giter8
+</code></pre><div class="bottom nav span-16">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
-                        <a href="setup.html"> Setup </a>                        
+                        <a href="usage.html"> Usage </a>                        
                         
                       </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div class="current">Giter8</div><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div></li><li><div><a href="template.html">Making your own templates</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div class="current">Setup</div></li><li><div><a href="usage.html">Usage</a></div></li><li><div><a href="template.html">Making your own templates</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <div class="header">
@@ -62,7 +70,7 @@ output for any purpose.
         <div class="span-16 prepend-1 append-1">
           <div class="span-16 top nav">
             <div class="span-16 title">
-              <span>Giter8</span> 
+              <span>Giter8</span> — Setup
             </div>
           </div>
         </div>

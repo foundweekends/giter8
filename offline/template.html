@@ -1,0 +1,128 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html manifest="pamflet.manifest">
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — Making your own templates</title>
+        
+        <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'en';
+        </script>
+        
+        <link rel="stylesheet" href="css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="usage.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="Contents+in+Depth.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>The Giter8 runtime looks for templates in two locations in a given Github project:
+</p><ul><li>If the <code>src/main/g8</code> directory is present it uses <code>src/main/g8</code> (<code>src</code> layout)
+</li><li>If it does not exist, then the root directry is used (<strong>root layout</strong>)
+</li></ul><h3 id="root+layout">root layout<a href="#root+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>For new templates, the root layout is recommended.
+The easy way to start a new template project is with a giter8 template
+made expressly for that purpose:
+</p><pre><code>$ g8 foundweekends/giter8.g8
+</code></pre><p>This will create an sbt project with stub template sources.
+The file <code>project/default.properties</code> defines template
+fields and their default values using the Java properties file format.
+</p><h3 id="src+layout">src layout<a href="#src+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Older templates embed a build inside the <code>src/main/g8</code> directory,
+and places <code>default.properties</code> under it too.
+</p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>default.properties</code> file may be placed in <code>project/</code> directory,
+or directly under the root of the tempalate.
+Properties are simple keys and values that replace them.
+</p><p><a href="http://www.stringtemplate.org/">StringTemplate</a>, wrapped by <a href="http://bmc.github.com/scalasti/">Scalasti</a>, is the engine
+that applies Giter8 templates, so template fields in source files are
+bracketed with the <code>$</code> character. For example, a “classname” field
+might be referenced in the source as:
+</p><pre><code>class $classname$ {
+</code></pre><p>The template fields themselves can be utilized to define the defaults
+of other fields.  For instance, you could build some URLs given the
+user’s Github id:
+</p><pre><code class="">name = URL Builder
+github_id=githubber
+developer_url=https://github.com/$github_id$
+project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
+</code></pre><p>This would yield the following in interactive mode:
+</p><pre><code class="">name [URL Builder]: my-proj
+github_id [githubber]: n8han
+project_url [https://github.com/n8han/my-proj]:
+developer_url [https://github.com/n8han]:
+</code></pre><h3 id="name+field">name field<a href="#name+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>name</code> field, if defined, is treated specially by Giter8. It is
+assumed to be the name of a project being created, so the g8 runtime
+creates a directory based off that name (with spaces and capitals
+replaced) that will contain the template output. If no name field is
+specified in the template, <code>g8</code>’s output goes to the user’s current
+working directory. In both cases, directories nested under the
+template’s source directory are reproduced in its output. File and
+directory names also participate in template expansion, e.g.
+</p><pre><code>src/main/g8/src/main/scala/$classname$.scala
+</code></pre><h3 id="package+field">package field<a href="#package+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>package</code> field, if defined, is assumed to be the package name
+of the user’s source. A directory named <code>$package$</code> expands out to
+package directory structure. For example, <code>net.databinder</code> becomes
+<code>net/databinder</code>.
+</p><h3 id="verbatim+field">verbatim field<a href="#verbatim+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>verbatim</code> field, if defined, is assumed to be the space delimited
+list of file patterns such as <code>*.html *.js</code>. Files matching <code>verbatim</code>
+pattern are excluded from string template processing.
+</p><h3 id="Maven+properties">Maven properties<a href="#Maven+properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><em>maven properties</em> tell Giter8 to query the Central Maven Repository.
+Instead of supplying a particular version (and having to update
+the template with every release), specify a library and giter8 will
+set the value to the latest version according to Maven Central.
+</p><p>The property value format is <code>maven(groupId, artifactId)</code>.
+Keep in mind that Scala projects are typically published with a
+Scala version identifier in the artifact id. So for the Unfiltered
+library, we could refer to the latest version as follows:
+</p><pre><code class="">name = My Template Project
+description = Creates a giter8 project template.
+unfiltered_version = maven(net.databinder, unfiltered_2.11)
+</code></pre><div class="bottom nav end span-16">
+                        
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div></li><li><div class="current">Making your own templates</div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — Making your own templates
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

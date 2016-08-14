@@ -1,0 +1,107 @@
+body.color_scheme-github pre,
+body.color_scheme-github code,
+body.color_scheme-github tt {
+    font-family: Consolas, 'Liberation Mono', Courier, monospace;
+}
+body.color_scheme-github pre {
+    font-size: 80%
+}
+body.color_scheme-github {
+    color: black;
+    background: white;
+}
+body.color_scheme-github h1,
+body.color_scheme-github h2,
+body.color_scheme-github h3,
+body.color_scheme-github h4,
+body.color_scheme-github h5,
+body.color_scheme-github h6 {
+    color: black
+}
+body.color_scheme-github blockquote {
+  color:#666;
+}
+body.color_scheme-github div.nav {
+    border-bottom-color: black
+}
+body.color_scheme-github div.footer div.nav {
+    border-top-color: black;
+}
+body.color_scheme-github div.top.nav {
+    background: white;
+}
+body.color_scheme-github div.contents {
+    color: black;
+    background: white;
+}
+body.color_scheme-github div.container {
+    background: white;
+}
+body.color_scheme-github pre {
+    padding: 0.5em;
+    border: solid 1px #CCCCCC;
+}
+body.color_scheme-github a:hover {
+    color: #06c
+}
+body.color_scheme-github a.page {
+    color: black;
+}
+body.color_scheme-github a.page:hover {
+    color: #06c;
+    background: #efefef;
+}
+body.color_scheme-github a.tochead {
+    color: black;
+}
+body.color_scheme-github .collap a.tochead:hover {
+    color: #06c;
+    background: #efefef;
+}
+body.color_scheme-github a.header-link:hover {
+    color: #06c;
+    background: #efefef;
+}
+body.color_scheme-github code.prettyprint span.str {
+  color: #dd1144
+}
+body.color_scheme-github code.prettyprint span.kwd {
+  color: #000000;
+  font-weight: bold;
+}
+body.color_scheme-github code.prettyprint span.com {
+  color: #999988;
+  font-style: italic;
+}
+body.color_scheme-github code.prettyprint span.typ {
+  color: #445588;
+  font-weight: bold;
+}
+body.color_scheme-github code.prettyprint span.lit {
+  color: #009999
+}
+body.color_scheme-github code.prettyprint span.pun {
+  color: #000000;
+  font-weight: bold;
+}
+body.color_scheme-github code.prettyprint span.pln {
+  color: #000000
+}
+body.color_scheme-github code.prettyprint span.tag {
+  color: navy
+}
+body.color_scheme-github code.prettyprint span.atn {
+  color: teal
+}
+body.color_scheme-github code.prettyprint span.atv {
+  color: #dd1144
+}
+body.color_scheme-github code.prettyprint span.dec {
+  color: #990000
+}
+body.color_scheme-github code.prettyprint span.var {
+  color: #000000
+}
+body.color_scheme-github code.prettyprint span.fun {
+  color: #990000
+}

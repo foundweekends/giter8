@@ -3,7 +3,7 @@
       <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>Giter8 — Giter8</title>
+        <title>Giter8 — Usage</title>
         
         <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
@@ -30,31 +30,50 @@
         
       </head>
       <body class="color_scheme-github">
-        <a class="page next nav" href="setup.html">
+        <a class="page prev nav" href="setup.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="template.html">
             <span class="space">&nbsp;</span>
             <span class="arrow">❧</span>
           </a>
         <div class="container contentswrapper">
           <div class="span-16 prepend-1 append-1 contents">
-            <h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 is a command line tool to generate files and directories from
-templates published on Github or any other git repository.
-It’s implemented in Scala and runs through the 
-<a href="http://www.scala-sbt.org/0.13/docs/Setup.html">sbt launcher</a>, but it can produce 
-output for any purpose.
-</p><h3 id="Credits">Credits<a href="#Credits" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Original implementation (C) 2010-2015 Nathan Hamblen and contributors
-</li><li>Adapted and extended in 2016 by foundweekends project
-</li></ul><p>Giter8 is licensed under Apache 2.0 license
+            <h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on github and be named with the
+suffix <code>.g8</code>. We’re keeping a <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
+</p><p>To apply a template, for example, <a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a>:
+</p><pre><code>$ g8 softprops/unfiltered.g8
+</code></pre><p>Giter8 resolves this to the <code>softprops/unfiltered.g8</code>
+repository and queries Github for the project’s template
+parameters.
+Alternatively, you can also use a git repository full name
+</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</code></pre><p>You’ll be prompted for each parameter, with its default
+value in square brackets:
+</p><pre><code>name [My Web Project]: 
+</code></pre><p>Enter your own value or press enter to accept the default. After all
+values have been supplied, giter8 fetches the templates, applies
+the parameters, and writes them to your filesystem. 
+</p><p>If the template has a <code>name</code> parameter, it will be used to create base 
+directory in the current directory (typical for a new project). 
+Otherwise, giter8 will output its files and directories into 
+the current directory, skipping over any files that already exist.
+</p><p>Once you become familiar with a template’s parameters, you can enter
+them on the command line and skip the interaction:
+</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</code></pre><p>Any unsupplied parameters are assigned their default values.
+</p><h3 id="Private+Repositories">Private Repositories<a href="#Private+Repositories" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 will use your ssh key to access private repositories, just like git does.
 </p><div class="bottom nav span-16">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
-                        <a href="setup.html"> Setup </a>                        
+                        <a href="template.html"> Making your own templates </a>                        
                         
                       </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div class="current">Giter8</div><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div></li><li><div><a href="template.html">Making your own templates</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div class="current">Usage</div></li><li><div><a href="template.html">Making your own templates</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <div class="header">
@@ -62,7 +81,7 @@ output for any purpose.
         <div class="span-16 prepend-1 append-1">
           <div class="span-16 top nav">
             <div class="span-16 title">
-              <span>Giter8</span> 
+              <span>Giter8</span> — Usage
             </div>
           </div>
         </div>

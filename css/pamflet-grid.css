@@ -1,0 +1,151 @@
+@charset "utf-8";
+
+body {
+    overflow-y: scroll;
+    padding: 0;
+    font-family: "Warnock Pro", "Goudy Old Style", "Palatino", "Book Antiqua", Georgia, serif;
+}
+pre, code, tt {
+    font-family: 'andale mono', 'lucida console', monospace
+}
+div.top.nav {
+    z-index: 1;
+}
+p {
+    width: 32em;
+}
+a.page {
+    position: fixed;
+    width: 50%;
+    top: 2em;
+    bottom: 2em;
+    text-align: right;
+    text-decoration: none;
+    display: block;
+    padding: 0 1.5em;
+}
+div.header {
+    top: 0;
+    position: fixed;
+    display: block;
+    height: 2em;
+    width: 100%;
+}
+div.footer {
+    bottom: 0;
+    position: fixed;
+    display: block;
+    width: 100%;
+    height: 2em;
+}
+div.contentswrapper {
+    padding-top: 2em;       /* height of header */
+    padding-bottom: 2em;    /* height of footer */
+}
+div.contents {
+    padding-top: 1.5em;
+}
+a.page.next {
+    right: 0;
+}
+a.page span.space {
+    display: block;
+    height: 45%;
+}
+a.page span.arrow {
+    font-size: 2em;
+}
+span.flip {
+    display: block;
+    -moz-transform: rotate(180deg);  
+    -o-transform: rotate(180deg);  
+    -webkit-transform: rotate(180deg);  
+    -ms-transform: rotate(180deg);  
+    transform: rotate(180deg);  
+    zoom: 1;
+}
+
+a.fork {
+    display: inline;
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+}
+a.tochead {
+    width: 100%;
+    font-size: 1.5em;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    padding: 1.5em 0em 0em;
+}
+.collap a.tochead:hover {
+    color: #06c;
+    background: #efefef;
+}
+a.header-link:hover {
+    color: #06c;
+    background: #efefef;
+}
+h1:hover span.header-link-content:before,
+h2:hover span.header-link-content:before,
+h3:hover span.header-link-content:before,
+h4:hover span.header-link-content:before,
+h5:hover span.header-link-content:before {
+    content: '§';
+    width: 2em;
+    font-size: 0.75em;
+    vertical-align: top;
+}
+ul.language-bar {
+    display: inline;
+    float: right;
+    list-style: none;
+    margin: 0.0em 0.5em 0.0em 0.5em;
+}
+ul.language-bar li {
+    display: inline;
+    margin-left: 1em;
+}
+div.highlight-outer {
+    display: block;
+    position: absolute;
+}
+div.highlight-menu {
+    display: none;
+    width: 2.5em;
+    height: 2.5em;
+    border-top-left-radius: 0.2em;
+    border-top-right-radius: 0.2em;
+    border-bottom-left-radius: 0.2em;
+    border-bottom-right-radius: 0.2em;
+    border: solid 1px rgba(80, 80, 80, 0.9);
+    background-color: rgba(50, 50, 50, 0.9);
+}
+div.highlight-menu ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+div.highlight-menu ul li {
+    margin: 0;
+    padding: 0;
+}
+div.highlight-menu button {
+    font: inherit;
+    color: #FFFFFF;
+    width: 2.5em;
+    height: 2.5em;
+    background-color: transparent;
+    padding: 0;
+    border: 0;
+}
+div.highlight-menu button img {
+    font: inherit;
+    width: 2em;
+    height: 2em;
+    margin: 0.25em;
+    padding: 0;
+    cursor: pointer;
+}

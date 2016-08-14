@@ -1,0 +1,168 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html manifest="pamflet.manifest">
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — Combined Pages</title>
+        
+        <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'en';
+        </script>
+        
+        <link rel="stylesheet" href="css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="Contents+in+Depth.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="#Giter8">Giter8</a></div><ol class="toc"> <li><div><a href="#Setup">Setup</a></div></li><li><div><a href="#Usage">Usage</a></div></li><li><div><a href="#Making+your+own+templates">Making your own templates</a></div></li> </ol></div></div><h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 is a command line tool to generate files and directories from
+templates published on Github or any other git repository.
+It’s implemented in Scala and runs through the 
+<a href="http://www.scala-sbt.org/0.13/docs/Setup.html">sbt launcher</a>, but it can produce 
+output for any purpose.
+</p><h3 id="Credits">Credits<a href="#Credits" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Original implementation (C) 2010-2015 Nathan Hamblen and contributors
+</li><li>Adapted and extended in 2016 by foundweekends project
+</li></ul><p>Giter8 is licensed under Apache 2.0 license
+</p><h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can install Giter8 and other Scala command line tools with
+<a href="http://www.foundweekends.org/conscript/setup.html">Conscript</a>. This will setup Conscript in <code>~/.conscript/bin/cs</code>:
+</p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
+</code></pre><p>(See <a href="http://www.foundweekends.org/conscript/setup.html">Conscript's readme</a> for a non-unixy option.) Once <code>cs</code> is
+on your path, you can install (or upgrade) giter8 with this command:
+</p><pre><code>cs foundweekends/giter8
+</code></pre><p>To make sure everything is working, try running <code>g8</code> with no
+parameters. This should download giter8 and its dependencies, then print
+a usage message.
+</p><p>When it’s time to upgrade to a new version of giter8, just run the
+same <code>cs</code> command again.
+</p><p>Giter8 is also installable with the OS X package manager <a href="http://mxcl.github.com/homebrew/">Homebrew</a>:
+</p><pre><code>$ brew update &amp;&amp; brew install giter8
+</code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on github and be named with the
+suffix <code>.g8</code>. We’re keeping a <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
+</p><p>To apply a template, for example, <a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a>:
+</p><pre><code>$ g8 softprops/unfiltered.g8
+</code></pre><p>Giter8 resolves this to the <code>softprops/unfiltered.g8</code>
+repository and queries Github for the project’s template
+parameters.
+Alternatively, you can also use a git repository full name
+</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</code></pre><p>You’ll be prompted for each parameter, with its default
+value in square brackets:
+</p><pre><code>name [My Web Project]: 
+</code></pre><p>Enter your own value or press enter to accept the default. After all
+values have been supplied, giter8 fetches the templates, applies
+the parameters, and writes them to your filesystem. 
+</p><p>If the template has a <code>name</code> parameter, it will be used to create base 
+directory in the current directory (typical for a new project). 
+Otherwise, giter8 will output its files and directories into 
+the current directory, skipping over any files that already exist.
+</p><p>Once you become familiar with a template’s parameters, you can enter
+them on the command line and skip the interaction:
+</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</code></pre><p>Any unsupplied parameters are assigned their default values.
+</p><h3 id="Private+Repositories">Private Repositories<a href="#Private+Repositories" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 will use your ssh key to access private repositories, just like git does.
+</p><h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>The Giter8 runtime looks for templates in two locations in a given Github project:
+</p><ul><li>If the <code>src/main/g8</code> directory is present it uses <code>src/main/g8</code> (<code>src</code> layout)
+</li><li>If it does not exist, then the root directry is used (<strong>root layout</strong>)
+</li></ul><h3 id="root+layout">root layout<a href="#root+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>For new templates, the root layout is recommended.
+The easy way to start a new template project is with a giter8 template
+made expressly for that purpose:
+</p><pre><code>$ g8 foundweekends/giter8.g8
+</code></pre><p>This will create an sbt project with stub template sources.
+The file <code>project/default.properties</code> defines template
+fields and their default values using the Java properties file format.
+</p><h3 id="src+layout">src layout<a href="#src+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Older templates embed a build inside the <code>src/main/g8</code> directory,
+and places <code>default.properties</code> under it too.
+</p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>default.properties</code> file may be placed in <code>project/</code> directory,
+or directly under the root of the tempalate.
+Properties are simple keys and values that replace them.
+</p><p><a href="http://www.stringtemplate.org/">StringTemplate</a>, wrapped by <a href="http://bmc.github.com/scalasti/">Scalasti</a>, is the engine
+that applies Giter8 templates, so template fields in source files are
+bracketed with the <code>$</code> character. For example, a “classname” field
+might be referenced in the source as:
+</p><pre><code>class $classname$ {
+</code></pre><p>The template fields themselves can be utilized to define the defaults
+of other fields.  For instance, you could build some URLs given the
+user’s Github id:
+</p><pre><code class="">name = URL Builder
+github_id=githubber
+developer_url=https://github.com/$github_id$
+project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
+</code></pre><p>This would yield the following in interactive mode:
+</p><pre><code class="">name [URL Builder]: my-proj
+github_id [githubber]: n8han
+project_url [https://github.com/n8han/my-proj]:
+developer_url [https://github.com/n8han]:
+</code></pre><h3 id="name+field">name field<a href="#name+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>name</code> field, if defined, is treated specially by Giter8. It is
+assumed to be the name of a project being created, so the g8 runtime
+creates a directory based off that name (with spaces and capitals
+replaced) that will contain the template output. If no name field is
+specified in the template, <code>g8</code>’s output goes to the user’s current
+working directory. In both cases, directories nested under the
+template’s source directory are reproduced in its output. File and
+directory names also participate in template expansion, e.g.
+</p><pre><code>src/main/g8/src/main/scala/$classname$.scala
+</code></pre><h3 id="package+field">package field<a href="#package+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>package</code> field, if defined, is assumed to be the package name
+of the user’s source. A directory named <code>$package$</code> expands out to
+package directory structure. For example, <code>net.databinder</code> becomes
+<code>net/databinder</code>.
+</p><h3 id="verbatim+field">verbatim field<a href="#verbatim+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>verbatim</code> field, if defined, is assumed to be the space delimited
+list of file patterns such as <code>*.html *.js</code>. Files matching <code>verbatim</code>
+pattern are excluded from string template processing.
+</p><h3 id="Maven+properties">Maven properties<a href="#Maven+properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><em>maven properties</em> tell Giter8 to query the Central Maven Repository.
+Instead of supplying a particular version (and having to update
+the template with every release), specify a library and giter8 will
+set the value to the latest version according to Maven Central.
+</p><p>The property value format is <code>maven(groupId, artifactId)</code>.
+Keep in mind that Scala projects are typically published with a
+Scala version identifier in the artifact id. So for the Unfiltered
+library, we could refer to the latest version as follows:
+</p><pre><code class="">name = My Template Project
+description = Creates a giter8 project template.
+unfiltered_version = maven(net.databinder, unfiltered_2.11)
+</code></pre>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — Combined Pages
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>
