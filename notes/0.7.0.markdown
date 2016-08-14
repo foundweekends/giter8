@@ -1,10 +1,40 @@
+### new management and Apache v2
+
+This is the first release since the development is passed on to
+[foundweekends][fw] project.
+
+- We've relicensed Giter8 under Apache v2 license after contacting
+  previous contributors and getting their approvals. [#194][194]
+- Organization name is changed to `org.foundweekends.giter8`.
+- The sbt plugin was renamed to `sbt-giter8` and `sbt-giter8-scaffold`.
+- Created Pamflet [documentation][docs].
+
+### bug fixes and improvements
+
+- Better error handling when templates do not compile. [#193][193] by [@njlg][@njlg]
+- Support git URLs that start with `ssh://`. [#192][192] by [@njlg][@njlg]
+- Fixes sbt-giter8 not expanding dynamic default properties. [#165][165] by [@sattvik][@sattvik]
+- `ls(..)` properties is dropped. [#201][201] by [@eed3si9n][@eed3si9n]
+
 ### root layout
 
-giter8 0.7.0 introduces an experimental layout called *root layout*.
-When giter8 does not find `src/main/g8`, it will simply use the root directory
+Giter8 0.7.0 introduces an experimental layout called *root layout*.
+When Giter8 does not find `src/main/g8`, it will simply use the root directory
 of the specified Git repository as the template directory.
 
 The `default.properties` file can be placed either at the root directory
 or in `project` directory.
 Since you can no longer include template fields in the files
-under `project` its application is very limited.
+under `project` its application is very limited. [#202][202] by [@eed3si9n][@eed3si9n]
+
+  [fw]: http://www.foundweekends.org/
+  [docs]: http://www.foundweekends.org/giter8/
+  [165]: https://github.com/foundweekends/giter8/pull/165
+  [192]: https://github.com/foundweekends/giter8/pull/192
+  [193]: https://github.com/foundweekends/giter8/pull/193
+  [201]: https://github.com/foundweekends/giter8/pull/201
+  [202]: https://github.com/foundweekends/giter8/pull/202
+  [194]: https://github.com/foundweekends/giter8/issues/194
+  [@njlg]: https://github.com/njlg
+  [@eed3si9n]: https://github.com/eed3si9n
+  [@sattvik]: https://github.com/sattvik
