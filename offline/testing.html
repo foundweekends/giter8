@@ -1,0 +1,115 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html manifest="pamflet.manifest">
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — Testing templates locally</title>
+        
+        <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'en';
+        </script>
+        <script type="text/javascript" src="js/prettify/prettify.js"></script><script type="text/javascript" src="js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="css/prettify.css"/><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
+        <link rel="stylesheet" href="css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="formatting.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="scaffolding.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h3 id="Testing+templates+locally">Testing templates locally<a href="#Testing+templates+locally" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Templates may be passed to the <code>g8</code> command with a <code>file://</code> URL, and
+in this case the template is applied as it is currently saved to the
+file system. In conjunction with the <code>--force</code> option
+which overwrites output files without prompting, you can test changes
+to a template as you are making them.
+</p><p>For example, if you have the Unfiltered template cloned locally you
+could run a command like this:
+</p><pre><code>$ g8 file://unfiltered.g8/ --name=uftest --force
+</code></pre><p>In a separate terminal, test out the template.
+</p><pre><code>$ cd uftest/
+$ sbt
+&gt; ~ compile
+</code></pre><p>To make changes to the template, save them to its source under the
+<code>.g8</code> directory, then repeat the command to apply the template in the
+original terminal:
+</p><pre><code>$ g8 file://unfiltered.g8/ --name=uftest --force
+</code></pre><p>Your <code>uftest</code> sbt session, waiting with the <code>~ compile</code> command, will
+detect the changes and automatically recompile.
+</p><h3 id="Using+the+Giter8Plugin">Using the Giter8Plugin<a href="#Using+the+Giter8Plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 supplies an sbt plugin for testing templates before pushing
+them to a Github branch. If you used the <code>n8han/giter8.g8</code> template
+recommended above, it should already be configured.
+</p><p>If you need to upgrade an existing template project to the current plugin, you can
+add it as a source dependency in <code>project/giter8.sbt</code>:
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-plugin&quot; % 0.7.0)
+</code></pre><p>When you enter sbt’s interactive mode in the base directory of a
+template project that is configured to use this plugin, the action
+<code>g8-test</code> will apply the template in the default output directory
+(under <code>target/sbt-test</code>) and run the <a href="http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html">scripted test</a>
+for <em>that</em> project in a forked process.  You can supply the test scripted as
+<code>project/giter8.test</code> or <code>src/test/g8/test</code>, otherwise <code>&gt;test</code> is used.
+This is a good sanity check for templates that are supposed to produce sbt projects.
+</p><p>But what if your template is not for an sbt project?
+</p><pre><code>project/default.properties
+TodaysMenu.html
+</code></pre><p>You can still use sbt’s interactive mode to test the template. The
+lower level <code>g8</code> action will apply default field values
+to the template and write it to the same <code>target/g8</code> directory.
+</p><p>As soon as you push your template to Github (remember to name the
+project with a <code>.g8</code> extension) you can test it with the actual g8
+runtime. When you’re ready, add your template project to the
+<a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">the wiki</a> so other giter8 users can find it.
+</p><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="scaffolding.html"> Scaffolding plugin </a>                        
+                        
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div></li><li><div><a href="template.html">Making your own templates</a></div><ol class="toc"> <li><div><a href="formatting.html">Formatting template fields</a></div></li><li><div class="current">Testing templates locally</div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding plugin</a></div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — Testing templates locally
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

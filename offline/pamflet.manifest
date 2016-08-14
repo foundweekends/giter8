@@ -1,10 +1,13 @@
 CACHE MANIFEST
-# Sun Aug 14 10:30:11 UTC 2016
+# Sun Aug 14 11:06:01 UTC 2016
 css/custom.css
 index.html
 setup.html
 usage.html
 template.html
+formatting.html
+testing.html
+scaffolding.html
 Contents+in+Depth.html
 Combined+Pages.html
 img/fork.png
@@ -24,3 +27,4 @@ js/jquery.collapse.js
 js/pamflet.js
 css/prettify.css
 js/prettify/prettify.js
+js/prettify/lang-scala.js
