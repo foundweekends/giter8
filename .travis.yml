@@ -12,4 +12,4 @@ before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -XX:MaxPermSize=256m -Xss2m -Dfile.encoding=UTF-8"
 
 after_success:
-- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && sbt pushSiteIfChanged
+- test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "0.7.x" && sbt pushSiteIfChanged
