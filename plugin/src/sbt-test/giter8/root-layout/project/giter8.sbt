@@ -14,4 +14,4 @@
  * limitations under the License.
  */
 
-addSbtPlugin("org.foundweekends.giter8" % "giter8-plugin" % System.getProperty("plugin.version"))
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % System.getProperty("plugin.version"))

@@ -4,7 +4,7 @@ val g8version = "0.6.9-SNAPSHOT"
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file(".")).
-  enablePlugins(TravisSitePlugin).
+  enablePlugins(TravisSitePlugin, NoPublish).
   aggregate(app, lib, scaffold, plugin).
   settings(
     inThisBuild(List(
@@ -28,13 +28,11 @@ lazy val root = (project in file(".")).
     )),
     name := "giter8",
     siteGithubRepo := "foundweekends/giter8",
-    siteEmail := { "eed3si9n" + "@" + "gmail.com" },
-    publish := (),
-    publishLocal := ()
+    siteEmail := { "eed3si9n" + "@" + "gmail.com" }
   )
 
 lazy val app = (project in file("app")).
-  enablePlugins(ConscriptPlugin, BuildInfoPlugin).
+  enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish).
   dependsOn(lib).
   settings(
     description := "Command line tool to apply templates defined on github",
@@ -46,9 +44,10 @@ lazy val app = (project in file("app")).
   )
 
 lazy val scaffold = (project in file("scaffold")).
+  enablePlugins(BintrayPublish).
   dependsOn(lib).
   settings(
-    name := "giter8-scaffold",
+    name := "sbt-giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
     scriptedSettings,
@@ -61,9 +60,10 @@ lazy val scaffold = (project in file("scaffold")).
   )
 
 lazy val plugin = (project in file("plugin")).
+  enablePlugins(BintrayPublish).
   dependsOn(lib).
   settings(
-    name := "giter8-plugin",
+    name := "sbt-giter8",
     scriptedSettings,
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
@@ -78,6 +78,7 @@ lazy val plugin = (project in file("plugin")).
   )
 
 lazy val lib = (project in file("library")).
+  enablePlugins(SonatypePublish).
   settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",

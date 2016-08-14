@@ -1,1 +1,1 @@
-addSbtPlugin("org.foundweekends.giter8" % "giter8-scaffold" % System.getProperty("plugin.version"))
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % System.getProperty("plugin.version"))
