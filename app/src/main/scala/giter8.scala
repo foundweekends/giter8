@@ -59,8 +59,8 @@ class Giter8 extends xsbti.AppMain {
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
     } text("Force overwrite of any existing files in output directory")
-    note("""  --paramname=paramvalue
-      |        Set given parameter value and bypass interaction.
+    version("version").text("Display version number")
+    note("""  --paramname=paramval  Set given parameter value and bypass interaction
       |
       |EXAMPLES
       |
