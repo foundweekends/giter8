@@ -1,0 +1,8 @@
+### root layout
+
+giter8 0.7.0 introduces a new template layout called *root layout*.
+When giter8 does not find `src/main/g8`, it will simply use the root directory
+of the specified Git repository as the template directory.
+
+The `default.properties` file can be placed either at the root directory
+or in `project` directory.

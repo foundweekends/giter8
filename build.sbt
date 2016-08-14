@@ -20,7 +20,8 @@ lazy val root = (project in file(".")).
       publishArtifact in Test := false,
       licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
       developers := List(
-        Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han"))
+        Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han")),
+        Developer("eed3si9n", "Eugene Yokota", "@eed3si9n", url("https://github.com/eed3si9n"))
       ),
       scmInfo := Some(ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
     )),
@@ -36,7 +37,7 @@ lazy val app = (project in file("app")).
     description := "Command line tool to apply templates defined on github",
     name := "giter8",
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
-    libraryDependencies ++= Seq(jgit, scopt),
+    libraryDependencies ++= Seq(scopt),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
   )
@@ -71,7 +72,7 @@ lazy val lib = (project in file("library")).
     name := "giter8-lib",
     description := "shared library for app and plugin",
     libraryDependencies ++= Seq(
-      scalasti, jline, httpClient, commonsIo, plexusArchiver,
+      scalasti, jline, jgit, httpClient, commonsIo, plexusArchiver,
       scalacheck % Test, sbtIo % Test
     )
   )

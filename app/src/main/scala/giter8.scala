@@ -17,7 +17,7 @@
 
 package giter8
 
-class Giter8 extends xsbti.AppMain with Apply {
+class Giter8 extends xsbti.AppMain {
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
   /** The launched conscript entry point */
@@ -31,11 +31,11 @@ class Giter8 extends xsbti.AppMain with Apply {
     } match {
       case (params, options) =>
         parser.parse(options, Config()).map { config =>
-          inspect(config, params)
+          JgitHelper.run(config, params)
         }.getOrElse(Left(""))
       case _ => Left(parser.usage)
     })
-    cleanup()
+    JgitHelper.cleanup()
     result.fold ({ (error: String) =>
       System.err.println(s"\n$error\n")
       1

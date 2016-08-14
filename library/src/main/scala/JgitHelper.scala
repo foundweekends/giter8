@@ -20,7 +20,7 @@ package giter8
 import org.eclipse.jgit.transport._
 import org.stringtemplate.v4.compiler.STException
 
-trait Apply { self: Giter8 =>
+object JgitHelper {
   import java.io.File
   import org.apache.commons.io.FileUtils
   import org.eclipse.jgit.api._
@@ -51,7 +51,7 @@ trait Apply { self: Giter8 =>
       SshUrl.unapplySeq(s)
   }
 
-  def inspect(config: Config,
+  def run(config: Config,
               arguments: Seq[String]): Either[String, String] = {
     config.repo match {
       case Local(path) =>
@@ -59,12 +59,12 @@ trait Apply { self: Giter8 =>
           clone(path, config)
         }.getOrElse(copy(path))
         tmpl.right.flatMap { t =>
-          applyTemplate(t, new File("."), arguments, config.forceOverwrite)
+          G8Helpers.applyTemplate(t, new File("."), arguments, config.forceOverwrite)
         }
       case GitUrl(uri) =>
         val tmpl = clone(uri, config)
         tmpl.right.flatMap { t =>
-          applyTemplate(t,
+          G8Helpers.applyTemplate(t,
             new File("."),
             arguments,
             config.forceOverwrite
@@ -75,7 +75,7 @@ trait Apply { self: Giter8 =>
           val publicConfig = config.copy(
             repo = "git://github.com/%s/%s.g8.git".format(user, proj)
           )
-          inspect(publicConfig, arguments)
+          run(publicConfig, arguments)
         } catch {
           case _: org.eclipse.jgit.api.errors.JGitInternalException =>
             // assume it was an access failure, try with ssh
@@ -84,25 +84,16 @@ trait Apply { self: Giter8 =>
               repo = "git@github.com:%s/%s.g8.git".format(user, proj)
             )
             cleanup()
-            inspect(privateConfig, arguments)
+            run(privateConfig, arguments)
+          // The following code can fallback to non-g8 repo, but because
+          // of the stringtemplate's $, it's not like you can just point at any repo.
+          // case _: org.eclipse.jgit.api.errors.TransportException =>
+          //   val nonG8Config = config.copy(
+          //     repo = "git://github.com/%s/%s.git".format(user, proj)
+          //   )
+          //   cleanup()
+          //   run(nonG8Config, arguments)
         }
-    }
-  }
-
-  def applyTemplate(
-    tmpl: File,
-    outputFolder: File,
-    arguments: Seq[String] = Nil,
-    forceOverwrite: Boolean = false
-  ) = {
-    try {
-      G8Helpers.applyTemplate(tmpl, outputFolder, arguments, forceOverwrite)
-    }
-    catch {
-      case e: STException =>
-        Left(s"Exiting due to error in the template\n${e.getMessage}")
-      case t : Throwable =>
-        Left("Unknown exception: " + t.getMessage)
     }
   }
 
