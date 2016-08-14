@@ -16,7 +16,6 @@ object TravisSitePlugin extends sbt.AutoPlugin {
     lazy val pushSiteIfChanged = taskKey[Unit]("push the site if changed")
     lazy val siteGithubRepo = settingKey[String]("")
     lazy val siteEmail = settingKey[String]("")
-    lazy val siteEncryptionLabel = settingKey[String]("")
   }
 
   import autoImport._
@@ -57,21 +56,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       if (changed) ghkeys.pushSite
       else Def.task {}
     }).value,
-    git.remoteRepo := {
-      val repo = siteGithubRepo.value
-      sys.env.get("CI") match {
-        case Some(_) =>
-          val label = siteEncryptionLabel.value
-          val key = sys.env.get("encrypted_" + label + "_key").get
-          val iv  = sys.env.get("encrypted_" + label + "_iv").get
-          Process("openssl", "aes-256-cbc" :: "-K" :: key :: "-iv" :: iv ::
-            "-in" :: "deploy_rsa.enc" :: "-out" :: "deploy_rsa" :: "-d" :: Nil).!!
-          Process("chmod", "600" :: "deploy_rsa" :: Nil).!!
-          Process("ssh-add", "deploy_rsa" :: Nil).!!
-        case _ =>
-      }
-      s"git@github.com:${repo}.git"
-    }
+    git.remoteRepo := s"git@github.com:${siteGithubRepo.value}.git"
   )
 
 def gitRemoveFiles(dir: File, files: List[File], git: GitRunner, s: TaskStreams): Unit = {

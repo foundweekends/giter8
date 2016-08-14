@@ -29,7 +29,6 @@ lazy val root = (project in file(".")).
     name := "giter8",
     siteGithubRepo := "foundweekends/giter8",
     siteEmail := { "eed3si9n" + "@" + "gmail.com" },
-    siteEncryptionLabel := "e5f9765ae931",
     publish := (),
     publishLocal := ()
   )
