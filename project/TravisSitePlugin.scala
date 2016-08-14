@@ -64,9 +64,9 @@ object TravisSitePlugin extends sbt.AutoPlugin {
           val label = siteEncryptionLabel.value
           val key = sys.env.get("encrypted_" + label + "_key").get
           val iv  = sys.env.get("encrypted_" + label + "_iv").get
-          Process("openssl", s"aes-256-cbc -K $key -iv $iv -in deploy_rsa.enc -out deploy_rsa -d").!!
-          Process("chmod", "600 deploy_rsa").!!
-          Process("ssh-add", "deploy_rsa").!!
+          Process("openssl", Seq(s"aes-256-cbc -K $key -iv $iv -in deploy_rsa.enc -out deploy_rsa -d")).!!
+          Process("chmod", Seq("600 deploy_rsa")).!!
+          Process("ssh-add", Seq("deploy_rsa")).!!
         case _ =>
       }
       s"git@github.com:${repo}.git"
