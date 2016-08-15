@@ -27,6 +27,12 @@ or in `project` directory.
 Since you can no longer include template fields in the files
 under `project` its application is very limited. [#202][202] by [@eed3si9n][@eed3si9n]
 
+#### upgrade
+
+If you're using conscript:
+
+    cs foundweekends/giter8
+
   [fw]: http://www.foundweekends.org/
   [docs]: http://www.foundweekends.org/giter8/
   [165]: https://github.com/foundweekends/giter8/pull/165
