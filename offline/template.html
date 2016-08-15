@@ -33,24 +33,25 @@
         <a class="page prev nav" href="usage.html">
             <span class="space">&nbsp;</span>
             <span class="flip arrow">❧</span>
-          </a><a class="page next nav" href="Contents+in+Depth.html">
+          </a><a class="page next nav" href="formatting.html">
             <span class="space">&nbsp;</span>
             <span class="arrow">❧</span>
           </a>
         <div class="container contentswrapper">
           <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>The Giter8 runtime looks for templates in two locations in a given Github project:
+            <h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>The g8 runtime looks for templates in two locations in a given Github project:
 </p><ul><li>If the <code>src/main/g8</code> directory is present it uses <code>src/main/g8</code> (<code>src</code> layout)
-</li><li>If it does not exist, then the root directry is used (<strong>root layout</strong>)
-</li></ul><h3 id="root+layout">root layout<a href="#root+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>For new templates, the root layout is recommended.
-The easy way to start a new template project is with a giter8 template
+</li><li>If it does not exist, then the root directry is used root layout)
+</li></ul><h3 id="src+layout">src layout<a href="#src+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>This src layout is recommended so that it is easy for the template
+itself to be an sbt project. That way,
+an sbt plugin can be employed to locally test templates before pushing
+changes to github.
+</p><p>The easy way to start a new template project is with a Giter8 template
 made expressly for that purpose:
 </p><pre><code>$ g8 foundweekends/giter8.g8
-</code></pre><p>This will create an sbt project with stub template sources.
-The file <code>project/default.properties</code> defines template
+</code></pre><p>This will create an sbt project with stub template sources nested
+under <code>src/main/g8</code>. The file <code>default.properties</code> defines template
 fields and their default values using the Java properties file format.
-</p><h3 id="src+layout">src layout<a href="#src+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Older templates embed a build inside the <code>src/main/g8</code> directory,
-and places <code>default.properties</code> under it too.
 </p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>default.properties</code> file may be placed in <code>project/</code> directory,
 or directly under the root of the tempalate.
 Properties are simple keys and values that replace them.
@@ -98,14 +99,24 @@ library, we could refer to the latest version as follows:
 </p><pre><code class="">name = My Template Project
 description = Creates a giter8 project template.
 unfiltered_version = maven(net.databinder, unfiltered_2.11)
-</code></pre><div class="bottom nav end span-16">
+</code></pre><h3 id="root+layout">root layout<a href="#root+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There’s an experimental layout called root layout,
+which uses the root directory of the Github project as
+the root of template.
+</p><p>Since you can no longer include template fields in the files
+under <code>project</code> its application is very limited.
+It might be useful for templates that are not for sbt builds
+or templates without any fields.
+</p><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="formatting.html"> Formatting template fields </a>                        
                         
                       </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div></li><li><div class="current">Making your own templates</div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div></li><li><div class="current">Making your own templates</div><ol class="toc"> <li><div><a href="formatting.html">Formatting template fields</a></div></li><li><div><a href="testing.html">Testing templates locally</a></div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding plugin</a></div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <div class="header">
