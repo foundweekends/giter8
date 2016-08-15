@@ -41,7 +41,7 @@ If you need to upgrade an existing template project to the current plugin, you c
 add it as a source dependency in `project/giter8.sbt`:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "giter8-plugin" % $version$)
+addSbtPlugin("org.foundweekends.giter8" % "giter8-plugin" % "$version$")
 ```
 
 When you enter sbt's interactive mode in the base directory of a
