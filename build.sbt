@@ -11,9 +11,11 @@ lazy val root = (project in file(".")).
       organization := "org.foundweekends.giter8",
       version := g8version,
       scalaVersion := "2.10.6",
+      organizationName := "foundweekends",
+      organizationHomepage := Some(url("http://foundweekends.org/")),
       scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint"),
       publishArtifact in (Compile, packageBin) := true,
-      homepage := Some(url("https://github.com/foundweekends/giter8")),
+      homepage := Some(url("http://www.foundweekends.org/giter8/")),
       publishMavenStyle := true,
       publishTo :=
         Some("releases" at
@@ -83,7 +85,7 @@ lazy val lib = (project in file("library")).
     name := "giter8-lib",
     description := "shared library for app and plugin",
     libraryDependencies ++= Seq(
-      scalasti, jline, jgit, httpClient, commonsIo, plexusArchiver,
+      scalasti, jline, jgit, commonsIo, plexusArchiver,
       scalacheck % Test, sbtIo % Test
     )
   )

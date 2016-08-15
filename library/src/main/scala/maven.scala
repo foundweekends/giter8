@@ -22,8 +22,12 @@ import scala.concurrent.duration._
 import scala.util.control.Exception.allCatch
 import scala.util.parsing.combinator._
 import scala.xml.XML
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.client.methods.{ HttpGet, CloseableHttpResponse }
+import org.apache.http.HttpResponse
+import org.apache.http.client.HttpClient
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.DefaultHttpClient
+
+// http://hc.apache.org/httpcomponents-client-4.2.x/httpclient/apidocs/
 
 /**
  * Parse `maven-metadata.xml`
@@ -62,19 +66,17 @@ object Maven extends JavaTokenParsers {
     }
   }
 
-  def withHttp[A](url: String)(f: CloseableHttpResponse => A): A =
+  def withHttp[A](url: String)(f: HttpResponse => A): A =
     {
-      val httpClient = HttpClients.createDefault
+      val httpClient = new DefaultHttpClient
       try {
         val r = new HttpGet(url)
         val response = httpClient.execute(r)
         try {
           f(response)
         } finally {
-          response.close()
         }
       } finally {
-        httpClient.close()
       }
     }
 
