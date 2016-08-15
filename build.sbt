@@ -34,6 +34,7 @@ lazy val root = (project in file(".")).
   )
 
 lazy val app = (project in file("app")).
+  disablePlugins(BintrayPlugin).
   enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish).
   dependsOn(lib).
   settings(
@@ -80,6 +81,7 @@ lazy val plugin = (project in file("plugin")).
   )
 
 lazy val lib = (project in file("library")).
+  disablePlugins(BintrayPlugin).
   enablePlugins(SonatypePublish).
   settings(
     name := "giter8-lib",

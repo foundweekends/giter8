@@ -18,12 +18,12 @@ import sbt._
 import sbt.Keys._
 import bintray.{ BintrayKeys, BintrayPlugin }
 import com.typesafe.sbt.JavaVersionCheckPlugin
+import JavaVersionCheckPlugin.autoImport._
 
 /**
  * Publish to private bintray repository.
  */
 object BintrayPublish extends AutoPlugin {
-  import JavaVersionCheckPlugin.autoImport._
   override def trigger = allRequirements
   override def requires = plugins.JvmPlugin && BintrayPlugin && JavaVersionCheckPlugin
 
@@ -44,14 +44,15 @@ object BintrayPublish extends AutoPlugin {
  * Publish to private bintray repository.
  */
 object SonatypePublish extends AutoPlugin {
-  override def requires = plugins.JvmPlugin
+  override def requires = plugins.JvmPlugin && JavaVersionCheckPlugin
 
   override def projectSettings = Seq(
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
       else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    }
+    },
+    javaVersionPrefix in javaVersionCheck := Some("1.6")
   )
 }
 
