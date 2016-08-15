@@ -17,13 +17,15 @@
 import sbt._
 import sbt.Keys._
 import bintray.{ BintrayKeys, BintrayPlugin }
+import com.typesafe.sbt.JavaVersionCheckPlugin
 
 /**
  * Publish to private bintray repository.
  */
 object BintrayPublish extends AutoPlugin {
+  import JavaVersionCheckPlugin.autoImport._
   override def trigger = allRequirements
-  override def requires = plugins.JvmPlugin && BintrayPlugin
+  override def requires = plugins.JvmPlugin && BintrayPlugin && JavaVersionCheckPlugin
 
   override def buildSettings = Seq(
     BintrayKeys.bintrayOrganization := Some("sbt"),
@@ -33,7 +35,8 @@ object BintrayPublish extends AutoPlugin {
   override def projectSettings = Seq(
     BintrayKeys.bintrayRepository := "sbt-plugin-releases",
     BintrayKeys.bintrayPackage := "sbt-giter8",
-    pomIncludeRepository := { _ => false }
+    pomIncludeRepository := { _ => false },
+    javaVersionPrefix in javaVersionCheck := Some("1.6")
   )
 }
 

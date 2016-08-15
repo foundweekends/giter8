@@ -6,7 +6,7 @@ script:
   - sbt test plugin/scripted
 
 jdk:
-  - oraclejdk7
+  - openjdk6
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -XX:MaxPermSize=256m -Xss2m -Dfile.encoding=UTF-8"
