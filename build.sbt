@@ -29,6 +29,7 @@ lazy val root = (project in file(".")).
       scmInfo := Some(ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
     )),
     name := "giter8",
+    crossScalaVersions := List(scala210, scala211),
     siteGithubRepo := "foundweekends/giter8",
     siteEmail := { "eed3si9n" + "@" + "gmail.com" }
   )
@@ -40,6 +41,7 @@ lazy val app = (project in file("app")).
   settings(
     description := "Command line tool to apply templates defined on github",
     name := "giter8",
+    crossScalaVersions := List(scala210, scala211),
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
     libraryDependencies ++= Seq(scopt),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
@@ -53,13 +55,17 @@ lazy val scaffold = (project in file("scaffold")).
     name := "sbt-giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
+    crossScalaVersions := List(scala210),
     scriptedSettings,
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
     ),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib)
+    scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib),
+    test in Test := {
+      scripted.toTask("").value
+    }
   )
 
 lazy val plugin = (project in file("plugin")).
@@ -70,6 +76,7 @@ lazy val plugin = (project in file("plugin")).
     scriptedSettings,
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
+    crossScalaVersions := List(scala210),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
@@ -77,7 +84,10 @@ lazy val plugin = (project in file("plugin")).
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib),
-    libraryDependencies <+= sbtVersion("org.scala-sbt" % "scripted-plugin" % _)
+    libraryDependencies <+= sbtVersion("org.scala-sbt" % "scripted-plugin" % _),
+    test in Test := {
+      scripted.toTask("").value
+    }
   )
 
 lazy val lib = (project in file("library")).
@@ -86,8 +96,14 @@ lazy val lib = (project in file("library")).
   settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",
+    crossScalaVersions := List(scala210, scala211),
     libraryDependencies ++= Seq(
       scalasti, jline, jgit, commonsIo, plexusArchiver,
       scalacheck % Test, sbtIo % Test
-    )
+    ) ++
+    (CrossVersion.partialVersion(scalaVersion.value) match {
+      case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+        Seq(scalaXml, parserCombinator)
+      case _ => Nil
+    })
   )
