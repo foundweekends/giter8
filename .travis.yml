@@ -3,7 +3,7 @@ language: scala
 sudo: false
 
 script:
-  - sbt so test
+  - sbt "so test"
 
 jdk:
   - openjdk6
