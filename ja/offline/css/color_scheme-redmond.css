@@ -1,0 +1,86 @@
+body {
+    color: black;
+    background: white;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: black
+}
+blockquote {
+  color:#666;
+}
+div.nav {
+    border-bottom-color: black
+}
+div.footer div.nav {
+    border-top-color: black;
+}
+div.top.nav {
+    background: white;
+}
+div.contents {
+    color: black;
+    background: white;
+}
+div.container {
+    background: white;
+}
+a:hover {
+    color: #06c
+}
+a.page {
+    color: black;
+}
+a.page:hover {
+    color: #06c;
+    background: #efefef;
+}
+a.tochead {
+    color: black;
+}
+.collap a.tochead:hover {
+    color: #06c;
+    background: #efefef;
+}
+a.header-link:hover {
+    color: #06c;
+    background: #efefef;
+}
+code.prettyprint span.str {
+  color:#080
+}
+code.prettyprint span.kwd {
+  color:#008;
+}
+code.prettyprint span.com {
+  color:#800
+}
+code.prettyprint span.typ {
+  color:#606;
+}
+code.prettyprint span.lit {
+  color:#066
+}
+code.prettyprint span.pun {
+  color:#660;
+}
+code.prettyprint span.pln {
+  color:#000
+}
+code.prettyprint span.tag {
+  color:#008
+}
+code.prettyprint span.atn {
+  color:#606
+}
+code.prettyprint span.atv {
+  color:#080
+}
+code.prettyprint span.dec {
+  color:#606
+}
+code.prettyprint span.var {
+  color: #000
+}
+code.prettyprint span.fun {
+  color: #606
+}

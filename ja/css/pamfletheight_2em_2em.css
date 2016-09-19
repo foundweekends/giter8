@@ -1,0 +1,15 @@
+@charset "utf-8";
+a.page {
+  top: 2em;
+  bottom: 2em;
+}
+div.header {
+  height: 2em;
+}
+div.footer {
+  height: 2em
+}
+div.contentswrapper {
+  padding-top: 2em;
+  padding-bottom: 2em;
+}

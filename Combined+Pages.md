@@ -293,9 +293,9 @@ add it as a source dependency in `project/giter8.sbt`:
 addSbtPlugin("org.foundweekends.giter8" % "giter8-plugin" % "0.7.0")
 ```
 
-When you enter sbt's interactive mode in the base directory of a
+When you enter sbt's shell in the base directory of a
 template project that is configured to use this plugin, the action
-`g8-test` will apply the template in the default output directory
+`g8Test` will apply the template in the default output directory
 (under `target/sbt-test`) and run the [scripted test][scripted]
 for *that* project in a forked process.  You can supply the test scripted as
 `project/giter8.test` or `src/test/g8/test`, otherwise `>test` is used.
@@ -306,7 +306,7 @@ But what if your template is not for an sbt project?
     project/default.properties
     TodaysMenu.html
 
-You can still use sbt's interactive mode to test the template. The
+You can still use sbt's shell to test the template. The
 lower level `g8` action will apply default field values
 to the template and write it to the same `target/g8` directory.
 
@@ -332,7 +332,7 @@ Add the following lines in `project/scaffold.sbt`
 addSbtPlugin("org.foundweekends.giter8" % "giter8-scaffold" % "0.7.0")
 ```
 
-Once done, the  `g8Scaffold` command can be used in the sbt console.
+Once done, the  `g8Scaffold` command can be used in the sbt shell.
 Use TAB completion to discover available templates.
 
 ```
@@ -351,17 +351,17 @@ className [Application]:
 ### Creating a scaffold
 
 The g8 runtime looks for scaffolds in the `src/main/scaffolds` in the given Github project.
-Each folder inside `src/main/scaffolds` is a different scaffold, and will be
-accessible in the sbt console using the folder name. Scaffold folders
+Each directory inside `src/main/scaffolds` is a different scaffold, and will be
+accessible in the sbt shell using the directory name. Scaffold directories
 may have a `default.properties` file to define field values, just like
 ordinary templates. `name` is again a special field name: if it exists,
-the scaffold will be generated into a top-level folder based on `name`,
-with subfolders following the layout of the source scaffold folder.
+the scaffold will be generated into a directory based on `name`,
+with subdirectories following the layout of the source scaffold directory.
 
 Once a template as been used, scaffolds are stored into `<project_root>/.g8`
 
 ```
->  sample/.g8
+$ ls sample/.g8
 total 0
 drwxr-xr-x   5 jtournay  staff   170B Aug  6 03:21 .
 drwxr-xr-x  11 jtournay  staff   374B Aug  6 05:29 ..
@@ -370,4 +370,4 @@ drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 global
 drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
 ```
 
-It's also possible to create your own scaffold in any sbt project by creating or modifying the `.g8` folder.
+It's also possible to create your own scaffold in any sbt project by creating the `.g8` directory.

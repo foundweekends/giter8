@@ -1,0 +1,125 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — テンプレートの作り方</title>
+        
+        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'ja';
+        </script>
+        
+        <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="usage.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="formatting.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h2 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
+</p><ul><li>もし <code>src/main/g8</code> ディレクトリがあれば、<code>src/main/g8</code> を使う (<code>src</code> レイアウト)
+</li><li>もし無ければ、トップディレクトリがそのまま使われる (root レイアウト)
+</li></ul><h3 id="src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">src レイアウト<a href="#src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>テンプレートそのものが sbt プロジェクトであることが簡単なので、基本的には src レイアウトが推奨される。
+この方法を使うと sbt プラグインを使ってローカル環境でテンプレートをテストしてから Github に push
+することが可能になる。
+</p><p>新しいテンプレートプロジェクトを始める簡単な方法はそれ専用の Giter8 テンプレートを使うことだ:
+</p><pre><code>$ g8 foundweekends/giter8.g8
+</code></pre><p>これは <code>src/main/g8</code> 内に仮のソースが入った sbt プロジェクトが作られる。
+<code>default.properties</code> という Java プロパティファイルがテンプレートのフィールドとそのデフォルト値を定義する。
+</p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>この <code>default.properties</code> は <code>project/</code> ディレクトリ下、もしくはテンプレートのルートにに置くことが可能だ。
+プロパティは簡単なキーとそれを置換する値のペアから成り立っている。
+</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="http://bmc.github.com/scalasti/">Scalasti</a> でラッピングされた <a href="http://www.stringtemplate.org/">StringTemplate</a> で、
+ソースファイル内のテンプレートフィールドは <code>$</code> で囲んで書かれる。具体例で説明すると、<code>classname</code> というフィールドはソース内では
+</p><pre><code>class $classname$ {
+</code></pre><p>といったふうに表記される。
+</p><p>このテンプレートフィールドは他のフィールドのデフォルト値を定義するのにも使うことができる。
+例えば、ユーザの Github id を使って URL を作ることが可能だ:
+</p><pre><code class="">name = URL Builder
+github_id=githubber
+developer_url=https://github.com/$github_id$
+project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
+</code></pre><p>インタラクティブモードでは以下のようなプロンプトになる:
+</p><pre><code class="">name [URL Builder]: my-proj
+github_id [githubber]: n8han
+project_url [https://github.com/n8han/my-proj]:
+developer_url [https://github.com/n8han]:
+</code></pre><h3 id="name+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">name フィールド<a href="#name+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>もし定義されていれば、<code>name</code> フィールドは Giter8 に特殊扱いされるフィールドだ。
+これはプロジェクト名に使われることが決められていて、g8
+ランタイムはこの名前を用いてテンプレートがアウトプットされるディレクトリを作成する (ただし、空白文字と大文字は置換される)。
+<code>name</code> フィールドがテンプレートに指定されなければ、g8 はユーザのカレントディレクトリにアウトプットする。
+いずれの場合もテンプレートのソースディレクトリ内に入れ子のディレクトリはアウトプットディレクトリ内にも複製される。
+また、ファイル名やディレクトリ名もテンプレート展開の対象となる。例えば:
+</p><pre><code>src/main/g8/src/main/scala/$classname$.scala
+</code></pre><h3 id="package+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">package フィールド<a href="#package+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>package</code> フィールドは、もし定義されていれば、ユーザのソースのパッケージ名となることが決められている。
+<code>$package$</code> と名前のついたディレクトリはパッケージディレクトリ構造に展開される。
+例えば、<code>net.databinder</code> は <code>net/databinder</code> となる。
+</p><h3 id="verbatim+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">verbatim フィールド<a href="#verbatim+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>verbatim</code> フィールドは、もし定義されていれば、空文字で区切られたファイルパターンのリスト (例えば <code>*.html *.js</code>) だと決定されている。
+<code>verbatim</code> パターンにマッチするファイルは String Template 処理から除外される。
+</p><h3 id="Maven+%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3">Maven プロパティ<a href="#Maven+%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><strong>Maven プロパティ</strong> を使って Central Maven Repository をクエリすることができる。
+特定のバージョンを書く (そしてリリース毎にテンプレートを更新する) 代わりにライブラリ名だけを書いて Giter8
+が最新のバージョンを Maven Central から探して設定するという方法がある。
+</p><p>このプロパティの記法は <code>maven(groupId, artifactId)</code> だ。
+ここで注意するべきなのは Scala プロジェクトは多くの場合 Scala バージョンが artifact id に入る形で公開されていることだ。
+そのため、例えば最新の Unfiltered ライブラリを指定するには以下のように書く必要がある:
+</p><pre><code class="">name = My Template Project
+description = Creates a giter8 project template.
+unfiltered_version = maven(net.databinder, unfiltered_2.11)
+</code></pre><h3 id="root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">root レイアウト<a href="#root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>実験的レイアウトとして root レイアウトというのがあって、これは Github プロジェクトのルートディレクトリをテンプレートのルートとして用いる。
+</p><p>ただし、この方法だと <code>project</code> 内にテンプレートフィールドを使うことができなくなるので適用範囲は非常に限られている。
+sbt ビルドでは無いテンプレートやフィールドを一切持たないテンプレートには有用かもしれない。
+</p><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="formatting.html"> テンプレートフィールドのフォーマット </a>                        
+                        <ul class="language-bar">
+        <li><a href="../template.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ja/template.html"><span class="lang-item lang-ja">日本語</span></a></li>
+      </ul>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">セットアップ</a></div></li><li><div><a href="usage.html">使用方法</a></div></li><li><div class="current">テンプレートの作り方</div><ol class="toc"> <li><div><a href="formatting.html">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="testing.html">ローカル環境でのテンプレートのテスト</a></div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding プラグイン</a></div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — テンプレートの作り方
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — Combined Pages</title>
+        
+        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'ja';
+        </script>
+        <script type="text/javascript" src="../js/prettify/prettify.js"></script><script type="text/javascript" src="../js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="../css/prettify.css"/><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
+        <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="Contents+in+Depth.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="#Giter8">Giter8</a></div><ol class="toc"> <li><div><a href="#%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">セットアップ</a></div></li><li><div><a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法</a></div></li><li><div><a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方</a></div><ol class="toc"> <li><div><a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89%E3%81%AE%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="#%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E7%92%B0%E5%A2%83%E3%81%A7%E3%81%AE%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88">ローカル環境でのテンプレートのテスト</a></div></li> </ol></li><li><div><a href="#Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3">Scaffolding プラグイン</a></div><ol class="toc">  </ol></li> </ol></div></div><h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 (読み「ギタレート」「ぎられぃ」) は、Github をはじめとする git レポジトリ上に公開されたテンプレート使ってファイルやディレクトリを生成するためのコマンドラインツールだ。
+Scala を使って実装されていて [sbt launcher] を使って実行されるが、そのアウトプットとしてはどの用途にも使うことができる。
+</p><h3 id="%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88">クレジット<a href="#%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>元の実装は (C) 2010-2015 Nathan Hamblen さんおよびコントリビューターの皆さん。
+</li><li>2016年以降は foundweekends プロジェクトが拡張を加えている。
+</li></ul><p>Giter8 は Apache 2.0 license によって示される条件下において公開される。
+</p><h2 id="%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">セットアップ<a href="#%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 や他の Scala コマンドラインツールは <a href="http://www.foundweekends.org/conscript/ja/setup.html">Conscript</a>
+を使ってインストールすることができる。以下の方法で Conscript を <code>~/.conscript/bin/cs</code> としてインストールする:
+</p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
+</code></pre><p>(他のインストール方法もあるので <a href="http://www.foundweekends.org/conscript/ja/setup.html">Conscript のインストール方法</a>参照。)
+<code>cs</code> にパスが通った所で、以下の方法で Giter8 をインストール (もしくはアップグレード) できる:
+</p><pre><code>cs foundweekends/giter8
+</code></pre><p>動作を確認するには <code>g8</code> をパラメータなしで実行する。
+Giter8 とその依存ライブラリがダウンロードされて使用方法が表示されるはずだ。
+</p><p>アップグレードするときも同じ <code>cs</code> コマンドを実行すればいい。
+</p><p>Giter8 は OS X のパッケージマネジャーである <a href="http://mxcl.github.com/homebrew/">Homebrew</a> からもインストール可能だ:
+</p><pre><code>$ brew update &amp;&amp; brew install giter8
+</code></pre><h2 id="%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法<a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>テンプレートのレポジトリは Github 上では <code>.g8</code> で終わる名前を使う規約を勝手に作った。
+<a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">Wiki にテンプレートのリスト</a>があるので見てほしい。
+</p><p>例えば、<a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
+</p><pre><code>$ g8 softprops/unfiltered.g8
+</code></pre><p>Giter8 はこれを Github 上の <code>softprops/unfiltered.g8</code>
+というレポジトリだと解決してプロジェクトのテンプレートやパラメータを問い合わせる。
+他に、git レポジトリをフルネームで指定することも可能だ。
+</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</code></pre><p>テンプレートを実行すると、各パラメータへのプロンプトが表示される。
+このときデフォルト値は角括弧で表示される:
+</p><pre><code>name [My Web Project]: 
+</code></pre><p>何らかの値を書き込むか、エンターキーを押してデフォルト値をそのまま使う。
+全ての値が渡されると Giter8 はテンプレートを読み込んで、パラメータを適用して、
+ファイルシステムに書き込みを行う。
+</p><p>テンプレートに <code>name</code> というパラメータがあると、それはカレントディレクトリ以下のベースディレクトリ名として使われる
+(新プロジェクトを生成するときには通常この方法を使う)。
+<code>name</code> が無ければ、Giter8 はカレントディレクトリにファイルやディレクトリの書き込みを行うが、既存のファイルがある場合はスキップされる。
+</p><p>テンプレートのパラメータに慣れてくるとコマンドライン上から直接指定してプロンプトを回避することも可能だ:
+</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</code></pre><p>このとき未指定のパラメータはデフォルト値が代入されるので注意。
+</p><h3 id="%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA">プライベートリポジトリ<a href="#%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、git 同様に ssh キーを使ってプライベートリポジトリにアクセスすることができる。
+</p><h2 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
+</p><ul><li>もし <code>src/main/g8</code> ディレクトリがあれば、<code>src/main/g8</code> を使う (<code>src</code> レイアウト)
+</li><li>もし無ければ、トップディレクトリがそのまま使われる (root レイアウト)
+</li></ul><h3 id="src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">src レイアウト<a href="#src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>テンプレートそのものが sbt プロジェクトであることが簡単なので、基本的には src レイアウトが推奨される。
+この方法を使うと sbt プラグインを使ってローカル環境でテンプレートをテストしてから Github に push
+することが可能になる。
+</p><p>新しいテンプレートプロジェクトを始める簡単な方法はそれ専用の Giter8 テンプレートを使うことだ:
+</p><pre><code>$ g8 foundweekends/giter8.g8
+</code></pre><p>これは <code>src/main/g8</code> 内に仮のソースが入った sbt プロジェクトが作られる。
+<code>default.properties</code> という Java プロパティファイルがテンプレートのフィールドとそのデフォルト値を定義する。
+</p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>この <code>default.properties</code> は <code>project/</code> ディレクトリ下、もしくはテンプレートのルートにに置くことが可能だ。
+プロパティは簡単なキーとそれを置換する値のペアから成り立っている。
+</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="http://bmc.github.com/scalasti/">Scalasti</a> でラッピングされた <a href="http://www.stringtemplate.org/">StringTemplate</a> で、
+ソースファイル内のテンプレートフィールドは <code>$</code> で囲んで書かれる。具体例で説明すると、<code>classname</code> というフィールドはソース内では
+</p><pre><code>class $classname$ {
+</code></pre><p>といったふうに表記される。
+</p><p>このテンプレートフィールドは他のフィールドのデフォルト値を定義するのにも使うことができる。
+例えば、ユーザの Github id を使って URL を作ることが可能だ:
+</p><pre><code class="">name = URL Builder
+github_id=githubber
+developer_url=https://github.com/$github_id$
+project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
+</code></pre><p>インタラクティブモードでは以下のようなプロンプトになる:
+</p><pre><code class="">name [URL Builder]: my-proj
+github_id [githubber]: n8han
+project_url [https://github.com/n8han/my-proj]:
+developer_url [https://github.com/n8han]:
+</code></pre><h3 id="name+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">name フィールド<a href="#name+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>もし定義されていれば、<code>name</code> フィールドは Giter8 に特殊扱いされるフィールドだ。
+これはプロジェクト名に使われることが決められていて、g8
+ランタイムはこの名前を用いてテンプレートがアウトプットされるディレクトリを作成する (ただし、空白文字と大文字は置換される)。
+<code>name</code> フィールドがテンプレートに指定されなければ、g8 はユーザのカレントディレクトリにアウトプットする。
+いずれの場合もテンプレートのソースディレクトリ内に入れ子のディレクトリはアウトプットディレクトリ内にも複製される。
+また、ファイル名やディレクトリ名もテンプレート展開の対象となる。例えば:
+</p><pre><code>src/main/g8/src/main/scala/$classname$.scala
+</code></pre><h3 id="package+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">package フィールド<a href="#package+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>package</code> フィールドは、もし定義されていれば、ユーザのソースのパッケージ名となることが決められている。
+<code>$package$</code> と名前のついたディレクトリはパッケージディレクトリ構造に展開される。
+例えば、<code>net.databinder</code> は <code>net/databinder</code> となる。
+</p><h3 id="verbatim+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">verbatim フィールド<a href="#verbatim+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>verbatim</code> フィールドは、もし定義されていれば、空文字で区切られたファイルパターンのリスト (例えば <code>*.html *.js</code>) だと決定されている。
+<code>verbatim</code> パターンにマッチするファイルは String Template 処理から除外される。
+</p><h3 id="Maven+%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3">Maven プロパティ<a href="#Maven+%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><strong>Maven プロパティ</strong> を使って Central Maven Repository をクエリすることができる。
+特定のバージョンを書く (そしてリリース毎にテンプレートを更新する) 代わりにライブラリ名だけを書いて Giter8
+が最新のバージョンを Maven Central から探して設定するという方法がある。
+</p><p>このプロパティの記法は <code>maven(groupId, artifactId)</code> だ。
+ここで注意するべきなのは Scala プロジェクトは多くの場合 Scala バージョンが artifact id に入る形で公開されていることだ。
+そのため、例えば最新の Unfiltered ライブラリを指定するには以下のように書く必要がある:
+</p><pre><code class="">name = My Template Project
+description = Creates a giter8 project template.
+unfiltered_version = maven(net.databinder, unfiltered_2.11)
+</code></pre><h3 id="root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">root レイアウト<a href="#root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>実験的レイアウトとして root レイアウトというのがあって、これは Github プロジェクトのルートディレクトリをテンプレートのルートとして用いる。
+</p><p>ただし、この方法だと <code>project</code> 内にテンプレートフィールドを使うことができなくなるので適用範囲は非常に限られている。
+sbt ビルドでは無いテンプレートやフィールドを一切持たないテンプレートには有用かもしれない。
+</p><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89%E3%81%AE%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88">テンプレートフィールドのフォーマット<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89%E3%81%AE%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、テンプレートフィールドをフォーマットする方法をいくつか用意してある。
+フォーマットのオプションはフィールドを参照するときに指定可能だ。例えば、<code>name</code>
+フィールドを upper camel case でフォーマットするには:
+</p><pre><code>$name;format=&quot;Camel&quot;$
+</code></pre><p>フォーマットは以下のオプションがある:
+</p><pre><code>upper    | uppercase       : 全部大文字
+lower    | lowercase       : 全部小文字
+cap      | capitalize      : 最初の文字を大文字化
+decap    | decapitalize    : 最初の文字を小文字化
+start    | start-case      : 各ワードの最初の文字を大文字化
+word     | word-only       : 非ワード文字の除去 (a-zA-Z0-9_ のみ)
+Camel    | upper-camel     : 大文字キャメルケース (start-case, word-only)
+camel    | lower-camel     : 小文字キャメルケース (start-case, word-only, decapitalize)
+hyphen   | hyphenate       : 空文字のハイフン化
+norm     | normalize       : 全てを小文字化、空文字はハイフン化 (lowercase, hyphenate)
+snake    | snake-case      : 空文字とドットのアンダースコア化
+packaged | package-dir     : ドットのスラッシュ化 (net.databinder -&gt; net/databinder)
+random   | generate-random : ランダム文字列の追加
+</code></pre><p><code>name</code> フィールドに <code>My Project</code> という値が指定されたときにどうフォーマットされるのかをみてみよう:
+</p><pre><code>$name$ -&gt; &quot;My Project&quot;
+$name;format=&quot;camel&quot;$ -&gt; &quot;myProject&quot;
+$name;format=&quot;Camel&quot;$ -&gt; &quot;MyProject&quot;
+$name;format=&quot;normalize&quot;$ -&gt; &quot;my-project&quot;
+$name;format=&quot;lower,hyphen&quot;$ -&gt; &quot;my-project&quot;
+</code></pre><p>コンマ区切り複数のフォーマットを指定可能なことにも注目してほしい。その場合は、与えられた順序で評価される。
+</p><p>ファイルやディレクトリ名にフォーマットオプションを渡すにはアンダースコアを 2つつなげたものを使う。
+例えば、<code>$organization__packaged$</code> という名前のついたディレクトリは、組み込みの <code>package</code> フィールド同様に
+<code>org.somewhere</code> を <code>org/somewher</code> に変換する。
+<code>$name__Camel$.scala</code> という名前のついたファイルは、<code>name</code> が <code>awesome project</code> であるとき、
+<code>AwesomeProject.scala</code> というファイルを生成する。
+</p><h3 id="%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E7%92%B0%E5%A2%83%E3%81%A7%E3%81%AE%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88">ローカル環境でのテンプレートのテスト<a href="#%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E7%92%B0%E5%A2%83%E3%81%A7%E3%81%AE%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>g8</code> コマンドに対して <code>file://</code> URL を使ってテンプレートを渡すことが可能なので、
+テンプレートをローカルのファイルシステム上に置くことができる。
+これと、既存のファイルがあってもプロンプトせずに上書きする <code>--force</code> オプションを併用することでテンプレートを変更しながらテストすることができる。
+</p><p>例えば、Unfiltered テンプレートをローカルに clone してあるとして、以下のようなコマンドを実行できる:
+</p><pre><code>$ g8 file://unfiltered.g8/ --name=uftest --force
+</code></pre><p>ターミナルの別窓で、このようにテンプレートをテストする。
+</p><pre><code>$ cd uftest/
+$ sbt
+&gt; ~ compile
+</code></pre><p>テンプレートを変更するには <code>.g8</code> ディレクトリ以下にファイルを保存して、最初のターミナルで先程のコマンドを再実行すればいい:
+</p><pre><code>$ g8 file://unfiltered.g8/ --name=uftest --force
+</code></pre><p><code>uftest</code> にある sbt セッションは <code>~ compile</code> コマンドで待機しているので、変更を検知して自動的に再コンパイルされる。
+</p><h3 id="Giter8Plugin+%E3%82%92%E4%BD%BF%E3%81%86">Giter8Plugin を使う<a href="#Giter8Plugin+%E3%82%92%E4%BD%BF%E3%81%86" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、テンプレートのテストをするための sbt プラグインを用意していて、これを使えば
+Github ブランチにテンプレートをプッシュする前にちゃんとテストをすることが可能となる。
+上で推奨される手順にしたがって <code>foundweekends/giter8.g8</code> テンプレートを使っていれば既に設定済みのはずだ。
+</p><p>既にあるテンプレートを現行プラグインにアップグレードさせるためには以下を
+<code>project/giter8.sbt</code> に書き込む:
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-plugin&quot; % &quot;0.7.0&quot;)
+</code></pre><p>このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
+<code>g8Test</code> というアクションでデフォルトのアウトプットディレクトリ (<code>target/sbt-test</code>)
+内にテンプレートが適用されて、そのプロジェクトに対して<a href="http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html">scriptted test</a> がフォークプロセスで実行される。
+テストスクリプトは <code>project/giter8.test</code> もしくは <code>src/test/g8/test</code> として提供できる。
+もし無ければ <code>&gt;test</code> が使用される。
+特に sbt プロジェクトを生成するテンプレートはこの方法でテストできるはずだ。
+</p><p>sbt プロジェクト以外のテンプレートはどう対応するべきだろうか?
+</p><pre><code>project/default.properties
+TodaysMenu.html
+</code></pre><p>それでも sbt のシェルを使ってテンプレートをテストすることは可能だ。
+<code>g8</code> というアクションを使えばデフォルトのフィールド値をテンプレートに適用して
+<code>target/g8</code> ディレクトリ内にファイルを生成する。
+</p><p>Github にテンプレートをプッシュすれば即座に実際の g8 ランタイムを使ってテストをすることが可能だ。
+(プロジェクト名に <code>.g8</code> 拡張子を付けるのを忘れないように)
+完成したらテンプレートプロジェクトを <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">wiki</a> に追加して他の Giter8 ユーザが見つけれるようにしよう。
+</p><h2 id="Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3">Scaffolding プラグイン<a href="#Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 は scaffolding 用の sbt プラグインも提供している。
+</p><h3 id="scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8">scaffold プラグインの使用<a href="#scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>以下を <code>project/scaffold.sbt</code> に書く:
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-scaffold&quot; % &quot;0.7.0&quot;)
+</code></pre><p>これで sbt シェルから <code>g8Scaffold</code> コマンドを使えるようになる。
+タブ補完を使って使用可能なテンプレートを発見できる。
+</p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;
+controller   global       model
+</code></pre><p>テンプレート同様に scaffold 処理に必要なフィールドは逐次プロンプトされる:
+</p><pre><code class="">&gt; g8Scaffold controller
+className [Application]:
+</code></pre><h3 id="scaffold+%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">scaffold の作り方<a href="#scaffold+%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>g8 ランタイムは、Github プロジェクトがあるとき、<code>src/main/scaffolds</code> 以下に scaffold を探しに行く。
+<code>src/main/scaffolds</code>内の各ディレクトリは別々の scaffold で、そのディレクトリ名に応じて
+sbt シェルからアクセスできる。通常のテンプレート同様に、scaffold のディレクトリ内には <code>default.properties</code>
+を置いてフィールド値を定義することができる。ここでも <code>name</code> は特殊なフィールド名で、
+もし <code>name</code> フィールドがあれば scaffold は <code>name</code> に基いたディレクトリ内に生成され、
+その下に scaffold のソースディレクトリを複製する形でサブディレクトリ構造が形成される。
+</p><p>テンプレートとして使用された scaffold は <code>&lt;project_root&gt;/.g8</code> に保存される。
+</p><pre><code class="">$ ls sample/.g8
+total 0
+drwxr-xr-x   5 jtournay  staff   170B Aug  6 03:21 .
+drwxr-xr-x  11 jtournay  staff   374B Aug  6 05:29 ..
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 controller
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 global
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
+</code></pre><p>これを利用して、任意の sbt プロジェクトがあるとき <code>.g8</code> ディレクトリを作ることで独自の scaffold を作ることも可能だ。
+</p>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — Combined Pages
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

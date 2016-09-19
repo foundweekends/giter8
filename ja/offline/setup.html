@@ -1,0 +1,85 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html manifest="pamflet.manifest">
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — セットアップ</title>
+        
+        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'ja';
+        </script>
+        
+        <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="index.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="usage.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h2 id="%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">セットアップ<a href="#%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 や他の Scala コマンドラインツールは <a href="http://www.foundweekends.org/conscript/ja/setup.html">Conscript</a>
+を使ってインストールすることができる。以下の方法で Conscript を <code>~/.conscript/bin/cs</code> としてインストールする:
+</p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
+</code></pre><p>(他のインストール方法もあるので <a href="http://www.foundweekends.org/conscript/ja/setup.html">Conscript のインストール方法</a>参照。)
+<code>cs</code> にパスが通った所で、以下の方法で Giter8 をインストール (もしくはアップグレード) できる:
+</p><pre><code>cs foundweekends/giter8
+</code></pre><p>動作を確認するには <code>g8</code> をパラメータなしで実行する。
+Giter8 とその依存ライブラリがダウンロードされて使用方法が表示されるはずだ。
+</p><p>アップグレードするときも同じ <code>cs</code> コマンドを実行すればいい。
+</p><p>Giter8 は OS X のパッケージマネジャーである <a href="http://mxcl.github.com/homebrew/">Homebrew</a> からもインストール可能だ:
+</p><pre><code>$ brew update &amp;&amp; brew install giter8
+</code></pre><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="usage.html"> 使用方法 </a>                        
+                        <ul class="language-bar">
+        <li><a href="../setup.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ja/setup.html"><span class="lang-item lang-ja">日本語</span></a></li>
+      </ul>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div class="current">セットアップ</div></li><li><div><a href="usage.html">使用方法</a></div></li><li><div><a href="template.html">テンプレートの作り方</a></div><ol class="toc"> <li><div><a href="formatting.html">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="testing.html">ローカル環境でのテンプレートのテスト</a></div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding プラグイン</a></div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — セットアップ
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

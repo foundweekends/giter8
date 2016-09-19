@@ -1,0 +1,109 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — ローカル環境でのテンプレートのテスト</title>
+        
+        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'ja';
+        </script>
+        <script type="text/javascript" src="../js/prettify/prettify.js"></script><script type="text/javascript" src="../js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="../css/prettify.css"/><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
+        <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="formatting.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="scaffolding.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h3 id="%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E7%92%B0%E5%A2%83%E3%81%A7%E3%81%AE%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88">ローカル環境でのテンプレートのテスト<a href="#%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E7%92%B0%E5%A2%83%E3%81%A7%E3%81%AE%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>g8</code> コマンドに対して <code>file://</code> URL を使ってテンプレートを渡すことが可能なので、
+テンプレートをローカルのファイルシステム上に置くことができる。
+これと、既存のファイルがあってもプロンプトせずに上書きする <code>--force</code> オプションを併用することでテンプレートを変更しながらテストすることができる。
+</p><p>例えば、Unfiltered テンプレートをローカルに clone してあるとして、以下のようなコマンドを実行できる:
+</p><pre><code>$ g8 file://unfiltered.g8/ --name=uftest --force
+</code></pre><p>ターミナルの別窓で、このようにテンプレートをテストする。
+</p><pre><code>$ cd uftest/
+$ sbt
+&gt; ~ compile
+</code></pre><p>テンプレートを変更するには <code>.g8</code> ディレクトリ以下にファイルを保存して、最初のターミナルで先程のコマンドを再実行すればいい:
+</p><pre><code>$ g8 file://unfiltered.g8/ --name=uftest --force
+</code></pre><p><code>uftest</code> にある sbt セッションは <code>~ compile</code> コマンドで待機しているので、変更を検知して自動的に再コンパイルされる。
+</p><h3 id="Giter8Plugin+%E3%82%92%E4%BD%BF%E3%81%86">Giter8Plugin を使う<a href="#Giter8Plugin+%E3%82%92%E4%BD%BF%E3%81%86" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、テンプレートのテストをするための sbt プラグインを用意していて、これを使えば
+Github ブランチにテンプレートをプッシュする前にちゃんとテストをすることが可能となる。
+上で推奨される手順にしたがって <code>foundweekends/giter8.g8</code> テンプレートを使っていれば既に設定済みのはずだ。
+</p><p>既にあるテンプレートを現行プラグインにアップグレードさせるためには以下を
+<code>project/giter8.sbt</code> に書き込む:
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-plugin&quot; % &quot;0.7.0&quot;)
+</code></pre><p>このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
+<code>g8Test</code> というアクションでデフォルトのアウトプットディレクトリ (<code>target/sbt-test</code>)
+内にテンプレートが適用されて、そのプロジェクトに対して<a href="http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html">scriptted test</a> がフォークプロセスで実行される。
+テストスクリプトは <code>project/giter8.test</code> もしくは <code>src/test/g8/test</code> として提供できる。
+もし無ければ <code>&gt;test</code> が使用される。
+特に sbt プロジェクトを生成するテンプレートはこの方法でテストできるはずだ。
+</p><p>sbt プロジェクト以外のテンプレートはどう対応するべきだろうか?
+</p><pre><code>project/default.properties
+TodaysMenu.html
+</code></pre><p>それでも sbt のシェルを使ってテンプレートをテストすることは可能だ。
+<code>g8</code> というアクションを使えばデフォルトのフィールド値をテンプレートに適用して
+<code>target/g8</code> ディレクトリ内にファイルを生成する。
+</p><p>Github にテンプレートをプッシュすれば即座に実際の g8 ランタイムを使ってテストをすることが可能だ。
+(プロジェクト名に <code>.g8</code> 拡張子を付けるのを忘れないように)
+完成したらテンプレートプロジェクトを <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">wiki</a> に追加して他の Giter8 ユーザが見つけれるようにしよう。
+</p><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="scaffolding.html"> Scaffolding プラグイン </a>                        
+                        <ul class="language-bar">
+        <li><a href="../testing.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ja/testing.html"><span class="lang-item lang-ja">日本語</span></a></li>
+      </ul>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">セットアップ</a></div></li><li><div><a href="usage.html">使用方法</a></div></li><li><div><a href="template.html">テンプレートの作り方</a></div><ol class="toc"> <li><div><a href="formatting.html">テンプレートフィールドのフォーマット</a></div></li><li><div class="current">ローカル環境でのテンプレートのテスト</div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding プラグイン</a></div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — ローカル環境でのテンプレートのテスト
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

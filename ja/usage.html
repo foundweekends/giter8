@@ -1,0 +1,95 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — 使用方法</title>
+        
+        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'ja';
+        </script>
+        
+        <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="setup.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="template.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h2 id="%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法<a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>テンプレートのレポジトリは Github 上では <code>.g8</code> で終わる名前を使う規約を勝手に作った。
+<a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">Wiki にテンプレートのリスト</a>があるので見てほしい。
+</p><p>例えば、<a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
+</p><pre><code>$ g8 softprops/unfiltered.g8
+</code></pre><p>Giter8 はこれを Github 上の <code>softprops/unfiltered.g8</code>
+というレポジトリだと解決してプロジェクトのテンプレートやパラメータを問い合わせる。
+他に、git レポジトリをフルネームで指定することも可能だ。
+</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</code></pre><p>テンプレートを実行すると、各パラメータへのプロンプトが表示される。
+このときデフォルト値は角括弧で表示される:
+</p><pre><code>name [My Web Project]: 
+</code></pre><p>何らかの値を書き込むか、エンターキーを押してデフォルト値をそのまま使う。
+全ての値が渡されると Giter8 はテンプレートを読み込んで、パラメータを適用して、
+ファイルシステムに書き込みを行う。
+</p><p>テンプレートに <code>name</code> というパラメータがあると、それはカレントディレクトリ以下のベースディレクトリ名として使われる
+(新プロジェクトを生成するときには通常この方法を使う)。
+<code>name</code> が無ければ、Giter8 はカレントディレクトリにファイルやディレクトリの書き込みを行うが、既存のファイルがある場合はスキップされる。
+</p><p>テンプレートのパラメータに慣れてくるとコマンドライン上から直接指定してプロンプトを回避することも可能だ:
+</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</code></pre><p>このとき未指定のパラメータはデフォルト値が代入されるので注意。
+</p><h3 id="%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA">プライベートリポジトリ<a href="#%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、git 同様に ssh キーを使ってプライベートリポジトリにアクセスすることができる。
+</p><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="template.html"> テンプレートの作り方 </a>                        
+                        <ul class="language-bar">
+        <li><a href="../usage.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ja/usage.html"><span class="lang-item lang-ja">日本語</span></a></li>
+      </ul>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">セットアップ</a></div></li><li><div class="current">使用方法</div></li><li><div><a href="template.html">テンプレートの作り方</a></div><ol class="toc"> <li><div><a href="formatting.html">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="testing.html">ローカル環境でのテンプレートのテスト</a></div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding プラグイン</a></div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — 使用方法
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

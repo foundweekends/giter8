@@ -1,0 +1,98 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html manifest="pamflet.manifest">
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — Scaffolding プラグイン</title>
+        
+        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'ja';
+        </script>
+        <script type="text/javascript" src="../js/prettify/prettify.js"></script><script type="text/javascript" src="../js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="../css/prettify.css"/><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
+        <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="testing.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="Contents+in+Depth.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h2 id="Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3">Scaffolding プラグイン<a href="#Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 は scaffolding 用の sbt プラグインも提供している。
+</p><h3 id="scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8">scaffold プラグインの使用<a href="#scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>以下を <code>project/scaffold.sbt</code> に書く:
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-scaffold&quot; % &quot;0.7.0&quot;)
+</code></pre><p>これで sbt シェルから <code>g8Scaffold</code> コマンドを使えるようになる。
+タブ補完を使って使用可能なテンプレートを発見できる。
+</p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;
+controller   global       model
+</code></pre><p>テンプレート同様に scaffold 処理に必要なフィールドは逐次プロンプトされる:
+</p><pre><code class="">&gt; g8Scaffold controller
+className [Application]:
+</code></pre><h3 id="scaffold+%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">scaffold の作り方<a href="#scaffold+%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>g8 ランタイムは、Github プロジェクトがあるとき、<code>src/main/scaffolds</code> 以下に scaffold を探しに行く。
+<code>src/main/scaffolds</code>内の各ディレクトリは別々の scaffold で、そのディレクトリ名に応じて
+sbt シェルからアクセスできる。通常のテンプレート同様に、scaffold のディレクトリ内には <code>default.properties</code>
+を置いてフィールド値を定義することができる。ここでも <code>name</code> は特殊なフィールド名で、
+もし <code>name</code> フィールドがあれば scaffold は <code>name</code> に基いたディレクトリ内に生成され、
+その下に scaffold のソースディレクトリを複製する形でサブディレクトリ構造が形成される。
+</p><p>テンプレートとして使用された scaffold は <code>&lt;project_root&gt;/.g8</code> に保存される。
+</p><pre><code class="">$ ls sample/.g8
+total 0
+drwxr-xr-x   5 jtournay  staff   170B Aug  6 03:21 .
+drwxr-xr-x  11 jtournay  staff   374B Aug  6 05:29 ..
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 controller
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 global
+drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
+</code></pre><p>これを利用して、任意の sbt プロジェクトがあるとき <code>.g8</code> ディレクトリを作ることで独自の scaffold を作ることも可能だ。
+</p><div class="bottom nav end span-16">
+                        <ul class="language-bar">
+        <li><a href="../scaffolding.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ja/scaffolding.html"><span class="lang-item lang-ja">日本語</span></a></li>
+      </ul>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">セットアップ</a></div></li><li><div><a href="usage.html">使用方法</a></div></li><li><div><a href="template.html">テンプレートの作り方</a></div><ol class="toc"> <li><div><a href="formatting.html">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="testing.html">ローカル環境でのテンプレートのテスト</a></div></li> </ol></li><li><div class="current">Scaffolding プラグイン</div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — Scaffolding プラグイン
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

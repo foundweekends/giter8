@@ -210,9 +210,9 @@ recommended above, it should already be configured.
 </p><p>If you need to upgrade an existing template project to the current plugin, you can
 add it as a source dependency in <code>project/giter8.sbt</code>:
 </p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-plugin&quot; % &quot;0.7.0&quot;)
-</code></pre><p>When you enter sbt’s interactive mode in the base directory of a
+</code></pre><p>When you enter sbt’s shell in the base directory of a
 template project that is configured to use this plugin, the action
-<code>g8-test</code> will apply the template in the default output directory
+<code>g8Test</code> will apply the template in the default output directory
 (under <code>target/sbt-test</code>) and run the <a href="http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html">scripted test</a>
 for <em>that</em> project in a forked process.  You can supply the test scripted as
 <code>project/giter8.test</code> or <code>src/test/g8/test</code>, otherwise <code>&gt;test</code> is used.
@@ -220,7 +220,7 @@ This is a good sanity check for templates that are supposed to produce sbt proje
 </p><p>But what if your template is not for an sbt project?
 </p><pre><code>project/default.properties
 TodaysMenu.html
-</code></pre><p>You can still use sbt’s interactive mode to test the template. The
+</code></pre><p>You can still use sbt’s shell to test the template. The
 lower level <code>g8</code> action will apply default field values
 to the template and write it to the same <code>target/g8</code> directory.
 </p><p>As soon as you push your template to Github (remember to name the
@@ -230,7 +230,7 @@ runtime. When you’re ready, add your template project to the
 </p><h2 id="Scaffolding+plugin">Scaffolding plugin<a href="#Scaffolding+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 supplies an sbt plugin for creating and using scaffolds.
 </p><h3 id="Using+the+scaffold+plugin">Using the scaffold plugin<a href="#Using+the+scaffold+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Add the following lines in <code>project/scaffold.sbt</code>
 </p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-scaffold&quot; % &quot;0.7.0&quot;)
-</code></pre><p>Once done, the  <code>g8Scaffold</code> command can be used in the sbt console.
+</code></pre><p>Once done, the  <code>g8Scaffold</code> command can be used in the sbt shell.
 Use TAB completion to discover available templates.
 </p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;
 controller   global       model
@@ -238,21 +238,21 @@ controller   global       model
 </p><pre><code class="">&gt; g8Scaffold controller
 className [Application]:
 </code></pre><h3 id="Creating+a+scaffold">Creating a scaffold<a href="#Creating+a+scaffold" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The g8 runtime looks for scaffolds in the <code>src/main/scaffolds</code> in the given Github project.
-Each folder inside <code>src/main/scaffolds</code> is a different scaffold, and will be
-accessible in the sbt console using the folder name. Scaffold folders
+Each directory inside <code>src/main/scaffolds</code> is a different scaffold, and will be
+accessible in the sbt shell using the directory name. Scaffold directories
 may have a <code>default.properties</code> file to define field values, just like
 ordinary templates. <code>name</code> is again a special field name: if it exists,
-the scaffold will be generated into a top-level folder based on <code>name</code>,
-with subfolders following the layout of the source scaffold folder.
+the scaffold will be generated into a directory based on <code>name</code>,
+with subdirectories following the layout of the source scaffold directory.
 </p><p>Once a template as been used, scaffolds are stored into <code>&lt;project_root&gt;/.g8</code>
-</p><pre><code class="">&gt;  sample/.g8
+</p><pre><code class="">$ ls sample/.g8
 total 0
 drwxr-xr-x   5 jtournay  staff   170B Aug  6 03:21 .
 drwxr-xr-x  11 jtournay  staff   374B Aug  6 05:29 ..
 drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 controller
 drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 global
 drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
-</code></pre><p>It’s also possible to create your own scaffold in any sbt project by creating or modifying the <code>.g8</code> folder.
+</code></pre><p>It’s also possible to create your own scaffold in any sbt project by creating the <code>.g8</code> directory.
 </p>
           </div>
         </div>
