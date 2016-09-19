@@ -44,9 +44,9 @@ add it as a source dependency in `project/giter8.sbt`:
 addSbtPlugin("org.foundweekends.giter8" % "giter8-plugin" % "$version$")
 ```
 
-When you enter sbt's interactive mode in the base directory of a
+When you enter sbt's shell in the base directory of a
 template project that is configured to use this plugin, the action
-`g8-test` will apply the template in the default output directory
+`g8Test` will apply the template in the default output directory
 (under `target/sbt-test`) and run the [scripted test][scripted]
 for *that* project in a forked process.  You can supply the test scripted as
 `project/giter8.test` or `src/test/g8/test`, otherwise `>test` is used.
@@ -57,7 +57,7 @@ But what if your template is not for an sbt project?
     project/default.properties
     TodaysMenu.html
 
-You can still use sbt's interactive mode to test the template. The
+You can still use sbt's shell to test the template. The
 lower level `g8` action will apply default field values
 to the template and write it to the same `target/g8` directory.
 
