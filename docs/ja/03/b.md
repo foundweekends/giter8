@@ -34,7 +34,7 @@ Github ブランチにテンプレートをプッシュする前にちゃんと�
 `project/giter8.sbt` に書き込む:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "giter8-plugin" % "$version$")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "$version$")
 ```
 
 このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
