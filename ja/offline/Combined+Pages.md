@@ -259,7 +259,7 @@ Github ブランチにテンプレートをプッシュする前にちゃんと�
 `project/giter8.sbt` に書き込む:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "giter8-plugin" % "0.7.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.7.0")
 ```
 
 このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
