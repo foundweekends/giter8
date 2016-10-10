@@ -219,11 +219,14 @@ A `name` field with a value of `My Project` could be rendered in several ways:
 Note that multiple format options can be specified (comma-separated) which will
 be applied in the order given.
 
-For file and directory names a format option can be specified after a double
+For file and directory names formatting options can be specified after a double
 underscore. For example, a directory named `$organization__packaged$` will
 change `org.somewhere` to `org/somewhere` like the built-in support for
 `package`. A file named `$name__Camel$.scala` and the name `awesome project`
-will create the file `AwesomeProject.scala`.
+will create the file `AwesomeProject.scala`. Multiple formatting options can
+be specified by separating them with an underscore. For example,
+`$name__word_lower$.scala` and the name `AWESOME !!` will create the file
+`awesome.scala`.
 
 ### Testing templates locally
 

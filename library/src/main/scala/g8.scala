@@ -145,7 +145,14 @@ object G8 {
 
     new File(toPath, applyTemplate(formatize(relative), fileParams))
   }
-  private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
+  val fileFormattedPattern = """\$[^$]+__[^$]+\$""".r
+  private def formatize(s: String) = {
+    val filler = fileFormattedPattern.split(s)
+    val formatized = fileFormattedPattern.findAllMatchIn(s).toList
+      .map(_.toString.split("__"))
+      .map(x=> x(0) + ";format=\"" + x(1).dropRight(1).replaceAll("_", ",") + "\"$")
+    filler.zipAll(formatized, "", "").map(x=>s"${x._1}${x._2}").mkString("")
+  }
 
   def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
   def startCase(s: String) = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
