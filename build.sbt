@@ -43,7 +43,7 @@ lazy val app = (project in file("app")).
     name := "giter8",
     crossScalaVersions := List(scala210, scala211),
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
-    libraryDependencies ++= Seq(scopt),
+    libraryDependencies ++= Seq(scopt, logback),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
   )
