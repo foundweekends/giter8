@@ -98,7 +98,7 @@ lazy val lib = (project in file("library")).
     description := "shared library for app and plugin",
     crossScalaVersions := List(scala210, scala211),
     libraryDependencies ++= Seq(
-      scalasti, jline, jgit, commonsIo, plexusArchiver,
+      scalasti, jgit, commonsIo, plexusArchiver,
       scalacheck % Test, sbtIo % Test
     ) ++
     (CrossVersion.partialVersion(scalaVersion.value) match {
