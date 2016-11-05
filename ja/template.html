@@ -39,7 +39,22 @@
           </a>
         <div class="container contentswrapper">
           <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
+            <h2 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86">テンプレートのライセンスは CC0 1.0 を使う<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>ソフトウェアのテンプレートのライセンスには、いわゆる「パブリックドメイン」同様に全ての著作権および隣接する権利を放棄する
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a> を使用することを推奨する。
+</p><p>日本のようなベルヌ条約締結国に在住する場合、著作権は登録無しでも自動的に発生する。
+そのため、テンプレートを公開しても使用ライセンスを明示しない限り他人は使用する法的権利が無いことになる。
+ややこしいのは寛容 (permissive) と言われている MIT License や Apache License
+でも、テンプレートの使用者がテンプレート作者への帰属 (attribution, クレジットに名前を書くこと) を行うことを要請する。
+テンプレートに含まれるコードスニペットへの権利を一切放棄するには、国際的なパブリックドメイン相当の CC0 のもとで配布する一択となる。
+</p><pre><code class="">Template license
+----------------
+Written in &lt;YEAR&gt; by &lt;AUTHOR NAME&gt; &lt;AUTHOR E-MAIL ADDRESS&gt;
+[other author/contributor lines as appropriate]
+
+To the extent possible under law, the author(s) have dedicated all copyright and related
+and neighboring rights to this template to the public domain worldwide.
+This template is distributed without any warranty. See &lt;http://creativecommons.org/publicdomain/zero/1.0/&gt;.
+</code></pre><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">テンプレートのレイアウト<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
 </p><ul><li>もし <code>src/main/g8</code> ディレクトリがあれば、<code>src/main/g8</code> を使う (<code>src</code> レイアウト)
 </li><li>もし無ければ、トップディレクトリがそのまま使われる (root レイアウト)
 </li></ul><h3 id="src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">src レイアウト<a href="#src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>テンプレートそのものが sbt プロジェクトであることが簡単なので、基本的には src レイアウトが推奨される。

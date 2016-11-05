@@ -45,10 +45,12 @@
       <div class="tocbody">
       <div><a href="#Giter8">Giter8</a></div><ol class="toc"> <li><div><a href="#Setup">Setup</a></div></li><li><div><a href="#Usage">Usage</a></div></li><li><div><a href="#Making+your+own+templates">Making your own templates</a></div><ol class="toc"> <li><div><a href="#Formatting+template+fields">Formatting template fields</a></div></li><li><div><a href="#Testing+templates+locally">Testing templates locally</a></div></li> </ol></li><li><div><a href="#Scaffolding+plugin">Scaffolding plugin</a></div><ol class="toc">  </ol></li> </ol></div></div><h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 is a command line tool to generate files and directories from
 templates published on Github or any other git repository.
-It’s implemented in Scala and runs through the 
-<a href="http://www.scala-sbt.org/0.13/docs/Setup.html">sbt launcher</a>, but it can produce 
+It’s implemented in Scala and runs through the
+<a href="http://www.scala-sbt.org/0.13/docs/Setup.html">sbt launcher</a>, but it can produce
 output for any purpose.
-</p><h3 id="Credits">Credits<a href="#Credits" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Original implementation (C) 2010-2015 Nathan Hamblen and contributors
+</p><h3 id="sbt+new+integration">sbt new integration<a href="#sbt+new+integration" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Starting sbt 0.13.13, Giter8 can be called from sbt’s <a href="http://www.scala-sbt.org/0.13/docs/sbt-new-and-Templates.html">&quot;new&quot; command</a> as follows:
+</p><pre><code class="">$ sbt new eed3si9n/hello.g8
+</code></pre><h3 id="Credits">Credits<a href="#Credits" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Original implementation (C) 2010-2015 Nathan Hamblen and contributors
 </li><li>Adapted and extended in 2016 by foundweekends project
 </li></ul><p>Giter8 is licensed under Apache 2.0 license
 </p><h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can install Giter8 and other Scala command line tools with
@@ -88,7 +90,24 @@ them on the command line and skip the interaction:
 </p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
 </code></pre><p>Any unsupplied parameters are assigned their default values.
 </p><h3 id="Private+Repositories">Private Repositories<a href="#Private+Repositories" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 will use your ssh key to access private repositories, just like git does.
-</p><h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>The g8 runtime looks for templates in two locations in a given Github project:
+</p><h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="Use+CC0+1.0+for+template+licensing">Use CC0 1.0 for template licensing<a href="#Use+CC0+1.0+for+template+licensing" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>We recommend licensing software templates under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>,
+which waives all copyrights and related rights, similar to the “public domain.”
+</p><p>If you reside in a country covered by the Berne Convention, such as the US,
+copyright will arise automatically without registration.
+Thus, people won’t have legal right to use your template if you do not
+declare the terms of license.
+The tricky thing is that even permissive licenses such as MIT License and Apache License will
+require attribution to your template in the template user’s software.
+To remove all claims to the templated snippets, distribute it under CC0, which is an international equivalent to public domain.
+</p><pre><code class="">Template license
+----------------
+Written in &lt;YEAR&gt; by &lt;AUTHOR NAME&gt; &lt;AUTHOR E-MAIL ADDRESS&gt;
+[other author/contributor lines as appropriate]
+
+To the extent possible under law, the author(s) have dedicated all copyright and related
+and neighboring rights to this template to the public domain worldwide.
+This template is distributed without any warranty. See &lt;http://creativecommons.org/publicdomain/zero/1.0/&gt;.
+</code></pre><h3 id="template+layout">template layout<a href="#template+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The g8 runtime looks for templates in two locations in a given Github project:
 </p><ul><li>If the <code>src/main/g8</code> directory is present it uses <code>src/main/g8</code> (<code>src</code> layout)
 </li><li>If it does not exist, then the root directry is used root layout)
 </li></ul><h3 id="src+layout">src layout<a href="#src+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>This src layout is recommended so that it is easy for the template
@@ -229,7 +248,7 @@ runtime. When you’re ready, add your template project to the
 <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">the wiki</a> so other giter8 users can find it.
 </p><h2 id="Scaffolding+plugin">Scaffolding plugin<a href="#Scaffolding+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 supplies an sbt plugin for creating and using scaffolds.
 </p><h3 id="Using+the+scaffold+plugin">Using the scaffold plugin<a href="#Using+the+scaffold+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Add the following lines in <code>project/scaffold.sbt</code>
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;giter8-scaffold&quot; % &quot;0.7.1&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.7.1&quot;)
 </code></pre><p>Once done, the  <code>g8Scaffold</code> command can be used in the sbt shell.
 Use TAB completion to discover available templates.
 </p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;

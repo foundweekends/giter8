@@ -45,7 +45,9 @@
       <div class="tocbody">
       <div><a href="#Giter8">Giter8</a></div><ol class="toc"> <li><div><a href="#%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">セットアップ</a></div></li><li><div><a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法</a></div></li><li><div><a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方</a></div><ol class="toc"> <li><div><a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89%E3%81%AE%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="#%E3%83%AD%E3%83%BC%E3%82%AB%E3%83%AB%E7%92%B0%E5%A2%83%E3%81%A7%E3%81%AE%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%86%E3%82%B9%E3%83%88">ローカル環境でのテンプレートのテスト</a></div></li> </ol></li><li><div><a href="#Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3">Scaffolding プラグイン</a></div><ol class="toc">  </ol></li> </ol></div></div><h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 (読み「ギタレート」「ぎられぃ」) は、Github をはじめとする git レポジトリ上に公開されたテンプレート使ってファイルやディレクトリを生成するためのコマンドラインツールだ。
 Scala を使って実装されていて <a href="http://www.scala-sbt.org/0.13/docs/Setup.html">sbt launcher</a> を使って実行されるが、そのアウトプットとしてはどの用途にも使うことができる。
-</p><h3 id="%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88">クレジット<a href="#%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>元の実装は (C) 2010-2015 Nathan Hamblen さんおよびコントリビューターの皆さん。
+</p><h3 id="sbt+new+%E3%81%A8%E3%81%AE%E7%B5%B1%E5%90%88">sbt new との統合<a href="#sbt+new+%E3%81%A8%E3%81%AE%E7%B5%B1%E5%90%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>sbt 0.13.13 より、Giter8 は sbt の <a href="http://www.scala-sbt.org/0.13/docs/sbt-new-and-Templates.html">&quot;new&quot; コマンド</a>から呼び出すことができる:
+</p><pre><code class="">$ sbt new eed3si9n/hello.g8
+</code></pre><h3 id="%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88">クレジット<a href="#%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>元の実装は (C) 2010-2015 Nathan Hamblen さんおよびコントリビューターの皆さん。
 </li><li>2016年以降は foundweekends プロジェクトが拡張を加えている。
 </li></ul><p>Giter8 は Apache 2.0 license によって示される条件下において公開される。
 </p><h2 id="%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">セットアップ<a href="#%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 や他の Scala コマンドラインツールは <a href="http://www.foundweekends.org/conscript/ja/setup.html">Conscript</a>
@@ -80,7 +82,22 @@ Giter8 とその依存ライブラリがダウンロードされて使用方法�
 </p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
 </code></pre><p>このとき未指定のパラメータはデフォルト値が代入されるので注意。
 </p><h3 id="%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA">プライベートリポジトリ<a href="#%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、git 同様に ssh キーを使ってプライベートリポジトリにアクセスすることができる。
-</p><h2 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
+</p><h2 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86">テンプレートのライセンスは CC0 1.0 を使う<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>ソフトウェアのテンプレートのライセンスには、いわゆる「パブリックドメイン」同様に全ての著作権および隣接する権利を放棄する
+<a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a> を使用することを推奨する。
+</p><p>日本のようなベルヌ条約締結国に在住する場合、著作権は登録無しでも自動的に発生する。
+そのため、テンプレートを公開しても使用ライセンスを明示しない限り他人は使用する法的権利が無いことになる。
+ややこしいのは寛容 (permissive) と言われている MIT License や Apache License
+でも、テンプレートの使用者がテンプレート作者への帰属 (attribution, クレジットに名前を書くこと) を行うことを要請する。
+テンプレートに含まれるコードスニペットへの権利を一切放棄するには、国際的なパブリックドメイン相当の CC0 のもとで配布する一択となる。
+</p><pre><code class="">Template license
+----------------
+Written in &lt;YEAR&gt; by &lt;AUTHOR NAME&gt; &lt;AUTHOR E-MAIL ADDRESS&gt;
+[other author/contributor lines as appropriate]
+
+To the extent possible under law, the author(s) have dedicated all copyright and related
+and neighboring rights to this template to the public domain worldwide.
+This template is distributed without any warranty. See &lt;http://creativecommons.org/publicdomain/zero/1.0/&gt;.
+</code></pre><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">テンプレートのレイアウト<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
 </p><ul><li>もし <code>src/main/g8</code> ディレクトリがあれば、<code>src/main/g8</code> を使う (<code>src</code> レイアウト)
 </li><li>もし無ければ、トップディレクトリがそのまま使われる (root レイアウト)
 </li></ul><h3 id="src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">src レイアウト<a href="#src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>テンプレートそのものが sbt プロジェクトであることが簡単なので、基本的には src レイアウトが推奨される。

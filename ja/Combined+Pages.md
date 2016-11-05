@@ -5,6 +5,14 @@ Giter8
 Giter8 (読み「ギタレート」「ぎられぃ」) は、Github をはじめとする git レポジトリ上に公開されたテンプレート使ってファイルやディレクトリを生成するためのコマンドラインツールだ。
 Scala を使って実装されていて [sbt launcher][launcher] を使って実行されるが、そのアウトプットとしてはどの用途にも使うことができる。
 
+### sbt new との統合
+
+sbt 0.13.13 より、Giter8 は sbt の ["new" コマンド][new]から呼び出すことができる:
+
+```
+$ sbt new eed3si9n/hello.g8
+```
+
 ### クレジット
 
 - 元の実装は (C) 2010-2015 Nathan Hamblen さんおよびコントリビューターの皆さん。
@@ -13,6 +21,7 @@ Scala を使って実装されていて [sbt launcher][launcher] を使って実
 Giter8 は Apache 2.0 license によって示される条件下において公開される。
 
 [launcher]: http://www.scala-sbt.org/0.13/docs/Setup.html
+[new]: http://www.scala-sbt.org/0.13/docs/sbt-new-and-Templates.html
 
 
 セットアップ
@@ -85,8 +94,34 @@ Giter8 はこれを Github 上の `softprops/unfiltered.g8`
 Giter8 は、git 同様に ssh キーを使ってプライベートリポジトリにアクセスすることができる。
 
 
+  [CC0]: https://creativecommons.org/publicdomain/zero/1.0/
+
 テンプレートの作り方
 -----------------
+
+### テンプレートのライセンスは CC0 1.0 を使う
+
+ソフトウェアのテンプレートのライセンスには、いわゆる「パブリックドメイン」同様に全ての著作権および隣接する権利を放棄する
+[CC0 1.0][CC0] を使用することを推奨する。
+
+日本のようなベルヌ条約締結国に在住する場合、著作権は登録無しでも自動的に発生する。
+そのため、テンプレートを公開しても使用ライセンスを明示しない限り他人は使用する法的権利が無いことになる。
+ややこしいのは寛容 (permissive) と言われている MIT License や Apache License
+でも、テンプレートの使用者がテンプレート作者への帰属 (attribution, クレジットに名前を書くこと) を行うことを要請する。
+テンプレートに含まれるコードスニペットへの権利を一切放棄するには、国際的なパブリックドメイン相当の CC0 のもとで配布する一択となる。
+
+```
+Template license
+----------------
+Written in <YEAR> by <AUTHOR NAME> <AUTHOR E-MAIL ADDRESS>
+[other author/contributor lines as appropriate]
+
+To the extent possible under law, the author(s) have dedicated all copyright and related
+and neighboring rights to this template to the public domain worldwide.
+This template is distributed without any warranty. See <http://creativecommons.org/publicdomain/zero/1.0/>.
+```
+
+### テンプレートのレイアウト
 
 Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
 

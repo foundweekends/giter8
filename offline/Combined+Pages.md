@@ -4,9 +4,17 @@ Giter8
 
 Giter8 is a command line tool to generate files and directories from
 templates published on Github or any other git repository.
-It's implemented in Scala and runs through the 
-[sbt launcher][launcher], but it can produce 
+It's implemented in Scala and runs through the
+[sbt launcher][launcher], but it can produce
 output for any purpose.
+
+### sbt new integration
+
+Starting sbt 0.13.13, Giter8 can be called from sbt's ["new" command][new] as follows:
+
+```
+$ sbt new eed3si9n/hello.g8
+```
 
 ### Credits
 
@@ -16,6 +24,7 @@ output for any purpose.
 Giter8 is licensed under Apache 2.0 license
 
 [launcher]: http://www.scala-sbt.org/0.13/docs/Setup.html
+[new]: http://www.scala-sbt.org/0.13/docs/sbt-new-and-Templates.html
 
 
 Setup
@@ -93,8 +102,36 @@ Any unsupplied parameters are assigned their default values.
 Giter8 will use your ssh key to access private repositories, just like git does.
 
 
+  [CC0]: https://creativecommons.org/publicdomain/zero/1.0/
+
 Making your own templates
 -------------------------
+
+### Use CC0 1.0 for template licensing
+
+We recommend licensing software templates under [CC0 1.0][CC0],
+which waives all copyrights and related rights, similar to the "public domain."
+
+If you reside in a country covered by the Berne Convention, such as the US,
+copyright will arise automatically without registration.
+Thus, people won't have legal right to use your template if you do not
+declare the terms of license.
+The tricky thing is that even permissive licenses such as MIT License and Apache License will
+require attribution to your template in the template user's software.
+To remove all claims to the templated snippets, distribute it under CC0, which is an international equivalent to public domain.
+
+```
+Template license
+----------------
+Written in <YEAR> by <AUTHOR NAME> <AUTHOR E-MAIL ADDRESS>
+[other author/contributor lines as appropriate]
+
+To the extent possible under law, the author(s) have dedicated all copyright and related
+and neighboring rights to this template to the public domain worldwide.
+This template is distributed without any warranty. See <http://creativecommons.org/publicdomain/zero/1.0/>.
+```
+
+### template layout
 
 The g8 runtime looks for templates in two locations in a given Github project:
 
@@ -329,7 +366,7 @@ Giter8 supplies an sbt plugin for creating and using scaffolds.
 Add the following lines in `project/scaffold.sbt`
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "giter8-scaffold" % "0.7.1")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.7.1")
 ```
 
 Once done, the  `g8Scaffold` command can be used in the sbt shell.
