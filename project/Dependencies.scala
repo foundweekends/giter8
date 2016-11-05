@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val scalasti = "org.clapper" %% "scalasti" % "2.0.0"
+  val scalasti = "org.clapper" %% "scalasti" % "2.1.2"
   val jline = "jline" % "jline" % "2.13"
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll(
@@ -16,7 +16,7 @@ object Dependencies {
   // http://hc.apache.org/httpcomponents-client-4.2.x/
   val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "3.7.0.201502260915-r"
   val scopt = "com.github.scopt" %% "scopt" % "3.5.0"
-  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.0"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
   val sbtIo = "org.scala-sbt" %% "io" % "1.0.0-M6"
   val scala210 = "2.10.6"
   val scala211 = "2.11.8"
