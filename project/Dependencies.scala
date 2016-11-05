@@ -2,7 +2,6 @@ import sbt._
 
 object Dependencies {
   val scalasti = "org.clapper" %% "scalasti" % "2.1.2"
-  val jline = "jline" % "jline" % "2.13"
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll(
     ExclusionRule("org.apache.commons", "commons-compress"),
