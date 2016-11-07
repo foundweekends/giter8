@@ -36,7 +36,14 @@ object BintrayPublish extends AutoPlugin {
     BintrayKeys.bintrayRepository := "sbt-plugin-releases",
     BintrayKeys.bintrayPackage := "sbt-giter8",
     pomIncludeRepository := { _ => false },
-    javaVersionPrefix in javaVersionCheck := Some("1.6")
+    javaVersionPrefix in javaVersionCheck := {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, v)) if v <= 11 =>
+          Some("1.6")
+        case _ =>
+          Some("1.8")
+      }
+    }
   )
 }
 
@@ -52,7 +59,14 @@ object SonatypePublish extends AutoPlugin {
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
       else Some("releases" at nexus + "service/local/staging/deploy/maven2")
     },
-    javaVersionPrefix in javaVersionCheck := Some("1.6")
+    javaVersionPrefix in javaVersionCheck := {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((2, v)) if v <= 11 =>
+          Some("1.6")
+        case _ =>
+          Some("1.8")
+      }
+    }
   )
 }
 

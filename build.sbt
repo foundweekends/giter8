@@ -29,7 +29,7 @@ lazy val root = (project in file(".")).
       scmInfo := Some(ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
     )),
     name := "giter8",
-    crossScalaVersions := List(scala210, scala211),
+    crossScalaVersions := List(scala210, scala211, scala212),
     siteGithubRepo := "foundweekends/giter8",
     siteEmail := { "eed3si9n" + "@" + "gmail.com" }
   )
@@ -41,7 +41,7 @@ lazy val app = (project in file("app")).
   settings(
     description := "Command line tool to apply templates defined on github",
     name := "giter8",
-    crossScalaVersions := List(scala210, scala211),
+    crossScalaVersions := List(scala210, scala211, scala212),
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
     libraryDependencies ++= Seq(scopt, logback),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
@@ -96,7 +96,7 @@ lazy val lib = (project in file("library")).
   settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",
-    crossScalaVersions := List(scala210, scala211),
+    crossScalaVersions := List(scala210, scala211, scala212),
     libraryDependencies ++= Seq(
       scalasti, jgit, commonsIo, plexusArchiver,
       scalacheck % Test, sbtIo % Test
