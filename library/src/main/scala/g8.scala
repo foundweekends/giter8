@@ -271,7 +271,7 @@ object G8 {
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
-  /** transforms any ls() and maven() property operations to the latest
+  /** transforms any maven() property operations to the latest
     * version number reported by that service. */
   def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
     Maven.lookup(props)
