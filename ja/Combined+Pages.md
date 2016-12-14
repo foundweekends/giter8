@@ -57,18 +57,18 @@ Giter8 は OS X のパッケージマネジャーである [Homebrew][] から�
 テンプレートのレポジトリは Github 上では `.g8` で終わる名前を使う規約を勝手に作った。
 [Wiki にテンプレートのリスト][wiki]があるので見てほしい。
 
-例えば、[softprops/unfiltered.g8][uft] というテンプレートを適用するには以下を実行する:
+例えば、[unfiltered/unfiltered.g8][uft] というテンプレートを適用するには以下を実行する:
 
-[uft]: http://github.com/softprops/unfiltered.g8
+[uft]: http://github.com/unfiltered/unfiltered.g8
 [wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
 
-    $ g8 softprops/unfiltered.g8
+    $ g8 unfiltered/unfiltered.g8
 
-Giter8 はこれを Github 上の `softprops/unfiltered.g8`
+Giter8 はこれを Github 上の `unfiltered/unfiltered.g8`
 というレポジトリだと解決してプロジェクトのテンプレートやパラメータを問い合わせる。
 他に、git レポジトリをフルネームで指定することも可能だ。
 
-    $ g8 https://github.com/softprops/unfiltered.g8.git
+    $ g8 https://github.com/unfiltered/unfiltered.g8.git
 
 テンプレートを実行すると、各パラメータへのプロンプトが表示される。
 このときデフォルト値は角括弧で表示される:
@@ -85,7 +85,7 @@ Giter8 はこれを Github 上の `softprops/unfiltered.g8`
 
 テンプレートのパラメータに慣れてくるとコマンドライン上から直接指定してプロンプトを回避することも可能だ:
 
-    $ g8 softprops/unfiltered.g8 --name=my-new-website
+    $ g8 unfiltered/unfiltered.g8 --name=my-new-website
 
 このとき未指定のパラメータはデフォルト値が代入されるので注意。
 
@@ -210,7 +210,7 @@ developer_url [https://github.com/n8han]:
 ```
 name = My Template Project
 description = Creates a giter8 project template.
-unfiltered_version = maven(net.databinder, unfiltered_2.11)
+unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
 ```
 
 ### root レイアウト

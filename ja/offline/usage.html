@@ -41,12 +41,12 @@
           <div class="span-16 prepend-1 append-1 contents">
             <h2 id="%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法<a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>テンプレートのレポジトリは Github 上では <code>.g8</code> で終わる名前を使う規約を勝手に作った。
 <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">Wiki にテンプレートのリスト</a>があるので見てほしい。
-</p><p>例えば、<a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
-</p><pre><code>$ g8 softprops/unfiltered.g8
-</code></pre><p>Giter8 はこれを Github 上の <code>softprops/unfiltered.g8</code>
+</p><p>例えば、<a href="http://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
+</p><pre><code>$ g8 unfiltered/unfiltered.g8
+</code></pre><p>Giter8 はこれを Github 上の <code>unfiltered/unfiltered.g8</code>
 というレポジトリだと解決してプロジェクトのテンプレートやパラメータを問い合わせる。
 他に、git レポジトリをフルネームで指定することも可能だ。
-</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</p><pre><code>$ g8 https://github.com/unfiltered/unfiltered.g8.git
 </code></pre><p>テンプレートを実行すると、各パラメータへのプロンプトが表示される。
 このときデフォルト値は角括弧で表示される:
 </p><pre><code>name [My Web Project]: 
@@ -57,7 +57,7 @@
 (新プロジェクトを生成するときには通常この方法を使う)。
 <code>name</code> が無ければ、Giter8 はカレントディレクトリにファイルやディレクトリの書き込みを行うが、既存のファイルがある場合はスキップされる。
 </p><p>テンプレートのパラメータに慣れてくるとコマンドライン上から直接指定してプロンプトを回避することも可能だ:
-</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</p><pre><code>$ g8 unfiltered/unfiltered.g8 --name=my-new-website
 </code></pre><p>このとき未指定のパラメータはデフォルト値が代入されるので注意。
 </p><h3 id="%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA">プライベートリポジトリ<a href="#%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、git 同様に ssh キーを使ってプライベートリポジトリにアクセスすることができる。
 </p><div class="bottom nav span-16">

@@ -68,13 +68,13 @@ same <code>cs</code> command again.
 </p><pre><code>$ brew update &amp;&amp; brew install giter8
 </code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on github and be named with the
 suffix <code>.g8</code>. We’re keeping a <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
-</p><p>To apply a template, for example, <a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a>:
-</p><pre><code>$ g8 softprops/unfiltered.g8
-</code></pre><p>Giter8 resolves this to the <code>softprops/unfiltered.g8</code>
+</p><p>To apply a template, for example, <a href="http://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
+</p><pre><code>$ g8 unfiltered/unfiltered.g8
+</code></pre><p>Giter8 resolves this to the <code>unfiltered/unfiltered.g8</code>
 repository and queries Github for the project’s template
 parameters.
 Alternatively, you can also use a git repository full name
-</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</p><pre><code>$ g8 https://github.com/unfiltered/unfiltered.g8.git
 </code></pre><p>You’ll be prompted for each parameter, with its default
 value in square brackets:
 </p><pre><code>name [My Web Project]: 
@@ -87,7 +87,7 @@ Otherwise, giter8 will output its files and directories into
 the current directory, skipping over any files that already exist.
 </p><p>Once you become familiar with a template’s parameters, you can enter
 them on the command line and skip the interaction:
-</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</p><pre><code>$ g8 unfiltered/unfiltered.g8 --name=my-new-website
 </code></pre><p>Any unsupplied parameters are assigned their default values.
 </p><h3 id="Private+Repositories">Private Repositories<a href="#Private+Repositories" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 will use your ssh key to access private repositories, just like git does.
 </p><h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="Use+CC0+1.0+for+template+licensing">Use CC0 1.0 for template licensing<a href="#Use+CC0+1.0+for+template+licensing" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>We recommend licensing software templates under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>,
@@ -166,7 +166,7 @@ Scala version identifier in the artifact id. So for the Unfiltered
 library, we could refer to the latest version as follows:
 </p><pre><code class="">name = My Template Project
 description = Creates a giter8 project template.
-unfiltered_version = maven(net.databinder, unfiltered_2.11)
+unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
 </code></pre><h3 id="root+layout">root layout<a href="#root+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There’s an experimental layout called root layout,
 which uses the root directory of the Github project as
 the root of template.

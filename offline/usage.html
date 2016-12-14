@@ -41,13 +41,13 @@
           <div class="span-16 prepend-1 append-1 contents">
             <h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on github and be named with the
 suffix <code>.g8</code>. We’re keeping a <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
-</p><p>To apply a template, for example, <a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a>:
-</p><pre><code>$ g8 softprops/unfiltered.g8
-</code></pre><p>Giter8 resolves this to the <code>softprops/unfiltered.g8</code>
+</p><p>To apply a template, for example, <a href="http://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
+</p><pre><code>$ g8 unfiltered/unfiltered.g8
+</code></pre><p>Giter8 resolves this to the <code>unfiltered/unfiltered.g8</code>
 repository and queries Github for the project’s template
 parameters.
 Alternatively, you can also use a git repository full name
-</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</p><pre><code>$ g8 https://github.com/unfiltered/unfiltered.g8.git
 </code></pre><p>You’ll be prompted for each parameter, with its default
 value in square brackets:
 </p><pre><code>name [My Web Project]: 
@@ -60,7 +60,7 @@ Otherwise, giter8 will output its files and directories into
 the current directory, skipping over any files that already exist.
 </p><p>Once you become familiar with a template’s parameters, you can enter
 them on the command line and skip the interaction:
-</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</p><pre><code>$ g8 unfiltered/unfiltered.g8 --name=my-new-website
 </code></pre><p>Any unsupplied parameters are assigned their default values.
 </p><h3 id="Private+Repositories">Private Repositories<a href="#Private+Repositories" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 will use your ssh key to access private repositories, just like git does.
 </p><div class="bottom nav span-16">

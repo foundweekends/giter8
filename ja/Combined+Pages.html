@@ -63,12 +63,12 @@ Giter8 とその依存ライブラリがダウンロードされて使用方法�
 </p><pre><code>$ brew update &amp;&amp; brew install giter8
 </code></pre><h2 id="%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法<a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>テンプレートのレポジトリは Github 上では <code>.g8</code> で終わる名前を使う規約を勝手に作った。
 <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">Wiki にテンプレートのリスト</a>があるので見てほしい。
-</p><p>例えば、<a href="http://github.com/softprops/unfiltered.g8">softprops/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
-</p><pre><code>$ g8 softprops/unfiltered.g8
-</code></pre><p>Giter8 はこれを Github 上の <code>softprops/unfiltered.g8</code>
+</p><p>例えば、<a href="http://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
+</p><pre><code>$ g8 unfiltered/unfiltered.g8
+</code></pre><p>Giter8 はこれを Github 上の <code>unfiltered/unfiltered.g8</code>
 というレポジトリだと解決してプロジェクトのテンプレートやパラメータを問い合わせる。
 他に、git レポジトリをフルネームで指定することも可能だ。
-</p><pre><code>$ g8 https://github.com/softprops/unfiltered.g8.git
+</p><pre><code>$ g8 https://github.com/unfiltered/unfiltered.g8.git
 </code></pre><p>テンプレートを実行すると、各パラメータへのプロンプトが表示される。
 このときデフォルト値は角括弧で表示される:
 </p><pre><code>name [My Web Project]: 
@@ -79,7 +79,7 @@ Giter8 とその依存ライブラリがダウンロードされて使用方法�
 (新プロジェクトを生成するときには通常この方法を使う)。
 <code>name</code> が無ければ、Giter8 はカレントディレクトリにファイルやディレクトリの書き込みを行うが、既存のファイルがある場合はスキップされる。
 </p><p>テンプレートのパラメータに慣れてくるとコマンドライン上から直接指定してプロンプトを回避することも可能だ:
-</p><pre><code>$ g8 softprops/unfiltered.g8 --name=my-new-website
+</p><pre><code>$ g8 unfiltered/unfiltered.g8 --name=my-new-website
 </code></pre><p>このとき未指定のパラメータはデフォルト値が代入されるので注意。
 </p><h3 id="%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA">プライベートリポジトリ<a href="#%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 は、git 同様に ssh キーを使ってプライベートリポジトリにアクセスすることができる。
 </p><h2 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">テンプレートの作り方<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86">テンプレートのライセンスは CC0 1.0 を使う<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>ソフトウェアのテンプレートのライセンスには、いわゆる「パブリックドメイン」同様に全ての著作権および隣接する権利を放棄する
@@ -144,7 +144,7 @@ developer_url [https://github.com/n8han]:
 そのため、例えば最新の Unfiltered ライブラリを指定するには以下のように書く必要がある:
 </p><pre><code class="">name = My Template Project
 description = Creates a giter8 project template.
-unfiltered_version = maven(net.databinder, unfiltered_2.11)
+unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
 </code></pre><h3 id="root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">root レイアウト<a href="#root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>実験的レイアウトとして root レイアウトというのがあって、これは Github プロジェクトのルートディレクトリをテンプレートのルートとして用いる。
 </p><p>ただし、この方法だと <code>project</code> 内にテンプレートフィールドを使うことができなくなるので適用範囲は非常に限られている。
 sbt ビルドでは無いテンプレートやフィールドを一切持たないテンプレートには有用かもしれない。
