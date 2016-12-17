@@ -90,7 +90,7 @@ object Giter8 extends Giter8 {
   )
 
   /** Main-class runner just for testing from sbt*/
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     System.exit(run(args))
   }
 }

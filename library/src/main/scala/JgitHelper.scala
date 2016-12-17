@@ -30,7 +30,7 @@ object JgitHelper {
     new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
   /** Clean temporary directory used for git cloning */
-  def cleanup() {
+  def cleanup(): Unit = {
     if (tempdir.exists)
       FileUtils.forceDelete(tempdir)
   }
