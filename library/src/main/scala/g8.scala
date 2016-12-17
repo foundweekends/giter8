@@ -332,7 +332,7 @@ object G8 {
 
     desc.foreach { d =>
       @scala.annotation.tailrec
-      def liner(cursor: Int, rem: Iterable[String]) {
+      def liner(cursor: Int, rem: Iterable[String]): Unit = {
         if (!rem.isEmpty) {
           val next = cursor + 1 + rem.head.length
           if (next > 70) {
@@ -412,7 +412,7 @@ object G8 {
     Right("Template applied in %s" format (base.toString))
   }
 
-  def copyScaffolds(sf: File, output: File) {
+  def copyScaffolds(sf: File, output: File): Unit = {
 
     val scaffolds = if(sf.exists) Some(getFiles(_ => true)(sf)) else None
 
