@@ -62,7 +62,7 @@ lazy val scaffold = (project in file("scaffold")).
     ),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib),
+    scripted := ScriptedPlugin.scripted.dependsOn(publishLocal in lib).inputTaskValue,
     test in Test := {
       scripted.toTask("").value
     }
@@ -83,8 +83,8 @@ lazy val plugin = (project in file("plugin")).
     ),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scripted <<= ScriptedPlugin.scripted dependsOn(publishLocal in lib),
-    libraryDependencies <+= sbtVersion("org.scala-sbt" % "scripted-plugin" % _),
+    scripted := ScriptedPlugin.scripted.dependsOn(publishLocal in lib).inputTaskValue,
+    libraryDependencies += ("org.scala-sbt" % "scripted-plugin" % sbtVersion.value),
     test in Test := {
       scripted.toTask("").value
     }
