@@ -31,10 +31,12 @@ object FormatSpecification extends Properties("Format") {
     forAll(asciiString, asciiString, nonDollar) { (x, y, z) =>
       conversion(s"""$$$x;format="upper"$$$z""", Map(x -> y)) == y.toUpperCase + z
     }
-  property("formatUppercase") =
+  property("formatLowercase") =
     forAll(asciiString, asciiString, nonDollar) { (x, y, z) =>
       conversion(s"""$$$x;format="lower"$$$z""", Map(x -> y)) == y.toLowerCase + z
     }
+  property("formatSnakecase") =
+    conversion("""$x;format="snake"$""", Map("x" -> "My-Example-Project")) == "My_Example_Project"
 
   lazy val hiragana = (0x3041 to 0x3094).toList
   lazy val nonDollarChar: Gen[Char] = Gen.oneOf(((0x20 to 0xff).toList ::: hiragana).filter( x =>
