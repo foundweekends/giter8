@@ -77,7 +77,8 @@ object JgitHelper {
           )
           run(publicConfig, arguments)
         } catch {
-          case _: org.eclipse.jgit.api.errors.JGitInternalException =>
+          case e: org.eclipse.jgit.api.errors.TransportException
+            if e.getMessage == "Repository not found." =>
             // assume it was an access failure, try with ssh
             // after cleaning the clone directory
             val privateConfig = config.copy(
