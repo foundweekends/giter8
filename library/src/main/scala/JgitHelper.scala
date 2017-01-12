@@ -17,8 +17,10 @@
 
 package giter8
 
+import org.apache.commons.io.filefilter.TrueFileFilter
 import org.eclipse.jgit.transport._
 import org.stringtemplate.v4.compiler.STException
+import scala.collection.JavaConverters._
 
 object JgitHelper {
   import java.io.File
@@ -130,9 +132,18 @@ object JgitHelper {
       Left("Not a readable directory: " + filename)
     else {
       FileUtils.copyDirectory(dir, tempdir)
+      copyExecutableAttribute(dir, tempdir)
       Right(tempdir)
     }
   }
+
+  private[this] def copyExecutableAttribute(fromDir: File, toDir: File) = {
+    FileUtils.iterateFiles(fromDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE).asScala.filter(_.canExecute).foreach { file =>
+      val realtivePath = fromDir.toURI.relativize(file.toURI).getPath
+      new File(toDir, realtivePath).setExecutable(true)
+    }
+  }
+
 }
 
 object ConsoleCredentialsProvider extends CredentialsProvider {
