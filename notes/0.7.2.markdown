@@ -1,0 +1,15 @@
+### minor enhancements and fixes
+
+- Adds logback as dependency. [#220][220] by [@padilo][@padilo]
+- Snake format will now change hyphen to underscore. [#245][245] by [@eed3si9n][@eed3si9n]
+- Fixes access to private repos. [#248][248] by [@patrick-premont][@patrick-premont]
+- Copies executable attributes when copying`file://`. [#249][249] by [@kirillsablin][@kirillsablin]
+
+  [@eed3si9n]: https://github.com/eed3si9n
+  [@padilo]: https://github.com/padilo
+  [@patrick-premont]: https://github.com/patrick-premont
+  [@kirillsablin]: https://github.com/kirillsablin
+  [220]: https://github.com/foundweekends/giter8/pull/220
+  [245]: https://github.com/foundweekends/giter8/pull/245
+  [248]: https://github.com/foundweekends/giter8/pull/248
+  [249]: https://github.com/foundweekends/giter8/pull/249
