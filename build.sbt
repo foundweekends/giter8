@@ -1,6 +1,6 @@
 import Dependencies._
 
-val g8version = "0.7.2-SNAPSHOT"
+val g8version = "0.7.2"
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file(".")).
@@ -31,7 +31,8 @@ lazy val root = (project in file(".")).
     name := "giter8",
     crossScalaVersions := List(scala210, scala211, scala212),
     siteGithubRepo := "foundweekends/giter8",
-    siteEmail := { "eed3si9n" + "@" + "gmail.com" }
+    siteEmail := { "eed3si9n" + "@" + "gmail.com" },
+    customCommands
   )
 
 lazy val app = (project in file("app")).
@@ -107,3 +108,13 @@ lazy val lib = (project in file("library")).
       case _ => Nil
     })
   )
+
+def customCommands: Seq[Setting[_]] = Seq(
+  commands += Command.command("release") { state =>
+    "clean" ::
+    "so compile" ::
+    "so publishSigned" ::
+    "reload" ::
+    state
+  }
+)
