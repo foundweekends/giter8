@@ -6,7 +6,7 @@ import org.scalatest.{FlatSpec, Matchers}
 import G8._
 
 class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers {
-  "Giter8" should "treat sorces root as template root" in testCase { case (template, expected, actual) =>
+  "Giter8" should "treat sources root as template root" in testCase { case (template, expected, actual) =>
     "I am foo.txt" >> (template / "foo.txt")
     "I am foo.txt" >> (expected / "foo.txt")
     checkGeneratedProject(template, expected, actual)
@@ -78,7 +78,7 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
 
   ignore should "read default.properties from sbt project directory" in testCase { case (template, expected, actual) =>
     "foo = bar" >> (template / "project" / "default.properties")
-    "$foo$" >> (template / "src" / "main" / "g8" /  "foo.txt")
+    "$foo$" >> (template / "src" / "main" / "g8" / "foo.txt")
     "bar" >> (expected / "foo.txt")
     checkGeneratedProject(template, expected, actual)
   }
@@ -97,6 +97,24 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
 
     "package $package$" >> (template / "src/main/g8/src/main/scala" / "$package$" / "Main.scala")
     "package com.example" >> (expected / "package-test" / "src/main/scala" / "com/example" / "Main.scala")
+    checkGeneratedProject(template, expected, actual)
+  }
+
+  it should "respect .gitignore in template root" in testCase { case (template, expected, actual) =>
+    val gitignore =
+      """|foo.txt
+         |*.test
+         |.idea/
+         |.DS_Store
+      """.stripMargin
+    gitignore >> (template / "src" / "main" / "g8" / ".gitignore")
+    gitignore >> (expected / ".gitignore")
+
+    touch(template / "src" / "main" / "g8" / "foo.txt")
+    touch(template / "src" / "main" / "g8" / "bar.test")
+    touch(template / "src" / "main" / "g8" / ".DS_Store")
+    touch(template / "src" / "main" / "g8" / "folder" / ".DS_Store")
+    touch(template / "src" / "main" / "g8" / ".idea" / "ignoreMe")
     checkGeneratedProject(template, expected, actual)
   }
 
@@ -129,4 +147,5 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       }
     }
   }
+
 }
