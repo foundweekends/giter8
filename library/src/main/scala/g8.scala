@@ -20,7 +20,6 @@ package giter8
 import java.io.File
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
-import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributes
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
@@ -30,7 +29,7 @@ import org.stringtemplate.v4.misc.STMessage
 import scala.util.control.Exception.{ catching, allCatch }
 
 object G8 {
-  import org.clapper.scalasti.{ST, STGroup, STHelper, STErrorListener}
+  import org.clapper.scalasti.{STGroup, STHelper, STErrorListener}
 
   /** Properties in the order they were created/defined */
   type OrderedProperties  = List[(String, String)]
