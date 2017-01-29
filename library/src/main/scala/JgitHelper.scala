@@ -44,7 +44,7 @@ object JgitHelper {
     val HttpUrl = "^(http://.*)$".r
     val SshUrl = "^(ssh://.*)$".r
 
-    def unapplySeq(s: Any): Option[List[String]] =
+    def unapplySeq(s: CharSequence): Option[List[String]] =
       NativeUrl.unapplySeq(s) orElse
       HttpsUrl.unapplySeq(s) orElse
       HttpUrl.unapplySeq(s) orElse
