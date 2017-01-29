@@ -53,7 +53,7 @@ Giter8 is also installable with the OS X package manager [Homebrew][]:
 
     $ brew update && brew install giter8
 
-[Homebrew]: http://mxcl.github.com/homebrew/
+[Homebrew]: http://brew.sh
 
 
 Usage
@@ -136,7 +136,7 @@ This template is distributed without any warranty. See <http://creativecommons.o
 The g8 runtime looks for templates in two locations in a given Github project:
 
 - If the `src/main/g8` directory is present it uses `src/main/g8` (`src` layout)
-- If it does not exist, then the root directry is used root layout)
+- If it does not exist, then the root directory is used root layout)
 
 ### src layout
 
@@ -157,7 +157,7 @@ fields and their default values using the Java properties file format.
 ### default.properties
 
 `default.properties` file may be placed in `project/` directory,
-or directly under the root of the tempalate.
+or directly under the root of the template.
 Properties are simple keys and values that replace them.
 
 [StringTemplate][st], wrapped by [Scalasti][scalasti], is the engine

@@ -48,7 +48,7 @@ Giter8 は OS X のパッケージマネジャーである [Homebrew][] から�
 
     $ brew update && brew install giter8
 
-[Homebrew]: http://mxcl.github.com/homebrew/
+[Homebrew]: http://brew.sh
 
 
 使用方法
