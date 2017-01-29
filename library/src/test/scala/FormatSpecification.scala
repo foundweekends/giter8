@@ -18,7 +18,6 @@ package giter8
 
 import org.scalacheck._
 import sbt.io._, syntax._
-import java.nio.charset.Charset
 
 object FormatSpecification extends Properties("Format") {
   import Prop.forAll

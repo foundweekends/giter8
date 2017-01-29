@@ -17,13 +17,9 @@
 
 package giter8
 
-import scala.concurrent.Await
-import scala.concurrent.duration._
-import scala.util.control.Exception.allCatch
 import scala.util.parsing.combinator._
 import scala.xml.XML
 import org.apache.http.HttpResponse
-import org.apache.http.client.HttpClient
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 
@@ -48,7 +44,6 @@ object Maven extends JavaTokenParsers {
     org: String,
     name: String
   ): Either[String, String] = {
-    import scala.concurrent.ExecutionContext.Implicits.global
     val loc = s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml"
     withHttp(loc) { response =>
       val status = response.getStatusLine

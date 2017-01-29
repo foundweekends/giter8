@@ -19,14 +19,12 @@ package giter8
 
 import org.apache.commons.io.filefilter.TrueFileFilter
 import org.eclipse.jgit.transport._
-import org.stringtemplate.v4.compiler.STException
 import scala.collection.JavaConverters._
 
 object JgitHelper {
   import java.io.File
   import org.apache.commons.io.FileUtils
   import org.eclipse.jgit.api._
-  import scala.util.control.Exception.{allCatch,catching}
 
   private val tempdir =
     new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
@@ -100,8 +98,6 @@ object JgitHelper {
   }
 
   def clone(repo: String, config: Config) = {
-    import org.eclipse.jgit.api.ListBranchCommand.ListMode
-    import org.eclipse.jgit.lib._
     import scala.collection.JavaConverters._
 
     val cmd = Git.cloneRepository()
