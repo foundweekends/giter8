@@ -46,7 +46,7 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
         }
     }
 
-  val scafffoldTask =
+  val scaffoldTask =
     Def.inputTask{
       val (name, args) = parser.parsed
       val folder = g8ScaffoldTemplatesDirectory.value
@@ -58,6 +58,6 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
     g8ScaffoldTemplatesDirectory := { baseDirectory.value / ".g8" },
-    g8Scaffold := scafffoldTask.evaluated
+    g8Scaffold := scaffoldTask.evaluated
   )
 }
