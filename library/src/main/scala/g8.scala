@@ -230,7 +230,7 @@ object G8 {
       val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
       val xs = getFiles(x => {
         val p = x.toURI.toASCIIString
-        !skipFiles(x) && !p.contains("/target/")
+        !skipFiles(x) && !p.stripPrefix(baseDirectory.toURI.toASCIIString).contains("target/")
       })(root)
       xs
     }
