@@ -2,7 +2,6 @@ package giter8
 
 import java.io.{File, InputStream}
 
-import org.apache.commons.io.FileUtils
 import org.scalatest.Assertions.fail
 
 import scala.io.Source
@@ -19,13 +18,6 @@ trait IntegrationTestHelpers {
 
   object InfiniteLineBreaks extends InputStream {
     override def read(): Int = '\n'.toByte
-  }
-
-  def inTempDirectory(code: File => Unit): Unit = {
-    val tempDir = new File(FileUtils.getTempDirectory, "g8test-" + System.nanoTime)
-    tempDir.mkdirs()
-    code(tempDir)
-    tempDir.delete()
   }
 
   def compareDirectories(actual: File, expected: File): Unit = {
