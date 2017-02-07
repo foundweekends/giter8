@@ -16,6 +16,7 @@ object Dependencies {
   val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "3.7.0.201502260915-r"
   val scopt = "com.github.scopt" %% "scopt" % "3.5.0"
   val scalacheck = "org.scalacheck" %% "scalacheck" % "1.13.4"
+  val scalatest = "org.scalatest" %% "scalatest" % "3.0.1"
   val sbtIo = "org.scala-sbt" %% "io" % "1.0.0-M7"
   val scala210 = "2.10.6"
   val scala211 = "2.11.8"

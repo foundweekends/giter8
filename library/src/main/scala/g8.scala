@@ -228,9 +228,12 @@ object G8 {
       val testFiles = baseAndMeta("test", "giter8.test", "g8.test")
       // .git and other files
       val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
+      val gitignoreFile: File = getFiles(_ => true)(root / ".gitignore").head
+      val ignores = if (gitignoreFile.exists) Some(JGitIgnore(gitignoreFile)) else None
       val xs = getFiles(x => {
         val p = x.toURI.toASCIIString
-        !skipFiles(x) && !p.contains("/target/")
+        val isIgnored = ignores.isDefined && ignores.get.isIgnored(p)
+        !isIgnored && !skipFiles(x) && !p.stripPrefix(baseDirectory.toURI.toASCIIString).contains("target/")
       })(root)
       xs
     }

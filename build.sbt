@@ -100,7 +100,7 @@ lazy val lib = (project in file("library")).
     crossScalaVersions := List(scala210, scala211, scala212),
     libraryDependencies ++= Seq(
       scalasti, jgit, commonsIo, plexusArchiver,
-      scalacheck % Test, sbtIo % Test
+      scalacheck % Test, sbtIo % Test, scalatest % Test
     ) ++
     (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, scalaMajor)) if scalaMajor >= 11 =>
