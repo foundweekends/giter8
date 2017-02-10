@@ -3,7 +3,8 @@ language: scala
 sudo: false
 
 script:
-  - sbt "so test"
+- jdk_switcher use openjdk6 && sbt "++ 2.10.6" "test:compile"
+- jdk_switcher use oraclejdk8 && sbt "so test"
 
 jdk:
   - oraclejdk8

@@ -17,15 +17,13 @@
 import sbt._
 import sbt.Keys._
 import bintray.{ BintrayKeys, BintrayPlugin }
-import com.typesafe.sbt.JavaVersionCheckPlugin
-import JavaVersionCheckPlugin.autoImport._
 
 /**
  * Publish to private bintray repository.
  */
 object BintrayPublish extends AutoPlugin {
   override def trigger = allRequirements
-  override def requires = plugins.JvmPlugin && BintrayPlugin && JavaVersionCheckPlugin
+  override def requires = plugins.JvmPlugin && BintrayPlugin
 
   override def buildSettings = Seq(
     BintrayKeys.bintrayOrganization := Some("sbt"),
@@ -35,15 +33,7 @@ object BintrayPublish extends AutoPlugin {
   override def projectSettings = Seq(
     BintrayKeys.bintrayRepository := "sbt-plugin-releases",
     BintrayKeys.bintrayPackage := "sbt-giter8",
-    pomIncludeRepository := { _ => false },
-    javaVersionPrefix in javaVersionCheck := {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, v)) if v <= 11 =>
-          Some("1.6")
-        case _ =>
-          Some("1.8")
-      }
-    }
+    pomIncludeRepository := { _ => false }
   )
 }
 
@@ -51,21 +41,13 @@ object BintrayPublish extends AutoPlugin {
  * Publish to private bintray repository.
  */
 object SonatypePublish extends AutoPlugin {
-  override def requires = plugins.JvmPlugin && JavaVersionCheckPlugin
+  override def requires = plugins.JvmPlugin
 
   override def projectSettings = Seq(
     publishTo := {
       val nexus = "https://oss.sonatype.org/"
       if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
       else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    },
-    javaVersionPrefix in javaVersionCheck := {
-      CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, v)) if v <= 11 =>
-          Some("1.6")
-        case _ =>
-          Some("1.8")
-      }
     }
   )
 }
