@@ -69,6 +69,15 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
     JGit.open(tempdir).getRepository.getBranch shouldBe "fooBranch"
   }
 
+  it should "not fail if checkout existing branch" in tempDirectory { tempdir =>
+    remoteRepository.checkout().setName("master").call()
+
+    interactor.cloneRepository(remoteRepositoryUrl, tempdir) shouldBe 'success
+    interactor.checkoutBranch(tempdir, "master") shouldBe 'success
+
+    JGit.open(tempdir).getRepository.getBranch shouldBe "master"
+  }
+
   it should "retrieve default branch (where HEAD is pointing)" in tempDirectory { tempdir =>
     remoteRepository.checkout().setName("fooBranch").setCreateBranch(true).call()
     "in foo branch" >> (remoteRepositoryDirectory / "test.txt")
