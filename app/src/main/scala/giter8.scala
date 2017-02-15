@@ -57,7 +57,10 @@ class Giter8 extends xsbti.AppMain {
       config.copy(repo = repo)
     } text ("git or file URL, or github user/repo")
     opt[String]('b', "branch") action { (b, config) => 
-      config.copy(branch = Some(b))
+      config.copy(ref = Some(Branch(b)))
+    } text("Resolve a template within a given branch")
+    opt[String]('t', "tag") action { (t, config) =>
+      config.copy(ref = Some(Tag(t)))
     } text("Resolve a template within a given branch")
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
@@ -75,6 +78,9 @@ class Giter8 extends xsbti.AppMain {
       |
       |Apply template from a remote branch
       |    g8 foundweekends/giter8 -b some-branch
+      |
+      |Apply template from a remote tag
+      |    g8 foundweekends/giter8 -t some-tag
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo

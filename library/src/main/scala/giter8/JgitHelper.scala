@@ -23,7 +23,11 @@ import org.apache.commons.io.FileUtils
 
 import scala.util.{Failure, Success}
 
-case class Config(repo: String, branch: Option[String] = None, forceOverwrite: Boolean = false)
+sealed trait Ref
+case class Tag(name: String) extends Ref
+case class Branch(name: String) extends Ref
+
+case class Config(repo: String, ref: Option[Ref] = None, forceOverwrite: Boolean = false)
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
@@ -47,7 +51,7 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
   def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] = for {
     repository <- GitRepository.fromString(config.repo)
-    _ <- gitInteractor.clone(repository, config.branch, tempdir)  match {
+    _ <- gitInteractor.clone(repository, config.ref, tempdir)  match {
       case Success(_) => Right(tempdir.getAbsolutePath)
       case Failure(e) => Left(e.getMessage)
     }
