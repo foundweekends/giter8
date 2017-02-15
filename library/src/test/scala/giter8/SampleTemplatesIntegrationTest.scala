@@ -6,6 +6,8 @@ import org.scalatest.FunSuite
 import G8._
 
 class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelpers {
+  import TestFileHelpers.tempDirectory
+
   case class TestCase(name: String, template: File, output: File)
 
   val testCases: Seq[TestCase] = {
@@ -17,7 +19,7 @@ class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelper
 
   testCases foreach { testCase =>
     test(s"Test template: '${testCase.name}'") {
-      inTempDirectory { tmp =>
+      tempDirectory { tmp =>
         checkGeneratedProject(testCase.template, testCase.output, tmp)
       }
     }
