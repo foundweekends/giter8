@@ -408,3 +408,17 @@ drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
 ```
 
 It's also possible to create your own scaffold in any sbt project by creating the `.g8` directory.
+
+
+Contributing
+-----
+
+### Installing local version of giter8
+
+When you're working on giter8 locally you probably want 
+to try out your changes before you open a pull request. This is how you do it.
+
+Giter8 uses [conscript] as distribution mechanism. You can find more documentation
+about conscript on its [official page].
+
+#### Fixing 
