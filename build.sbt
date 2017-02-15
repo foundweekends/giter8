@@ -1,6 +1,31 @@
 import Dependencies._
+import de.heikoseeberger.sbtheader.HeaderPattern
 
 val g8version = "0.7.3-SNAPSHOT"
+
+lazy val headerSettings = headers := Map(
+    "scala" -> (
+      HeaderPattern.cStyleBlockComment,
+      """|/*
+         | * Original implementation (C) 2010-2015 Nathan Hamblen and contributors
+         | * Adapted and extended in 2016 by foundweekends project
+         | *
+         | * Licensed under the Apache License, Version 2.0 (the "License");
+         | * you may not use this file except in compliance with the License.
+         | * You may obtain a copy of the License at
+         | *
+         | * http://www.apache.org/licenses/LICENSE-2.0
+         | *
+         | * Unless required by applicable law or agreed to in writing, software
+         | * distributed under the License is distributed on an "AS IS" BASIS,
+         | * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+         | * See the License for the specific language governing permissions and
+         | * limitations under the License.
+         | */
+         |
+         |""".stripMargin
+    )
+)
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file(".")).
@@ -37,6 +62,7 @@ lazy val root = (project in file(".")).
 
 lazy val app = (project in file("app")).
   disablePlugins(BintrayPlugin).
+  enablePlugins(AutomateHeaderPlugin).
   enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish).
   dependsOn(lib).
   settings(
@@ -46,11 +72,13 @@ lazy val app = (project in file("app")).
     sourceDirectory in csRun := { (baseDirectory).value.getParentFile / "src" / "main" / "conscript" },
     libraryDependencies ++= Seq(scopt, logback),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "giter8"
+    buildInfoPackage := "giter8",
+    headerSettings
   )
 
 lazy val scaffold = (project in file("scaffold")).
   enablePlugins(BintrayPublish).
+  enablePlugins(AutomateHeaderPlugin).
   dependsOn(lib).
   settings(
     name := "sbt-giter8-scaffold",
@@ -66,11 +94,14 @@ lazy val scaffold = (project in file("scaffold")).
     scripted := ScriptedPlugin.scripted.dependsOn(publishLocal in lib).evaluated,
     test in Test := {
       scripted.toTask("").value
-    }
+    },
+    headerSettings,
+    excludes := Seq("src/main/scala/ScafoldPlugin.scala")
   )
 
 lazy val plugin = (project in file("plugin")).
   enablePlugins(BintrayPublish).
+  enablePlugins(AutomateHeaderPlugin).
   dependsOn(lib).
   settings(
     name := "sbt-giter8",
@@ -88,11 +119,14 @@ lazy val plugin = (project in file("plugin")).
     libraryDependencies += ("org.scala-sbt" % "scripted-plugin" % sbtVersion.value),
     test in Test := {
       scripted.toTask("").value
-    }
+    },
+    headerSettings,
+    excludes := Seq("src/main/scala/gio.scala")
   )
 
 lazy val lib = (project in file("library")).
   disablePlugins(BintrayPlugin).
+  enablePlugins(AutomateHeaderPlugin).
   enablePlugins(SonatypePublish).
   settings(
     name := "giter8-lib",
@@ -107,7 +141,11 @@ lazy val lib = (project in file("library")).
       case Some((2, scalaMajor)) if scalaMajor >= 11 =>
         Seq(scalaXml, parserCombinator)
       case _ => Nil
-    })
+      }),
+    headerSettings,
+    excludes := Seq(
+      "src/main/scala/maven.scala",
+      "src/main/scala/ScalastiHelper.scala")
   )
 
 def customCommands: Seq[Setting[_]] = Seq(
