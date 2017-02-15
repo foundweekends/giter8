@@ -145,7 +145,9 @@ lazy val lib = (project in file("library")).
     headerSettings,
     excludes := Seq(
       "src/main/scala/maven.scala",
-      "src/main/scala/ScalastiHelper.scala")
+      "src/main/scala/ScalastiHelper.scala",
+      "test/**"
+    )
   )
 
 def customCommands: Seq[Setting[_]] = Seq(

@@ -6,90 +6,106 @@ import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.{Git => JGit}
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers, TryValues}
 import G8._
-import scala.collection.JavaConverters._
 
+import scala.collection.JavaConverters._
 
 class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with TryValues {
   import TestFileHelpers._
 
-  var remoteRepositoryDirectory: File = _
-  var remoteRepository: JGit = _
-  var remoteRepositoryUrl: String = _
-
+  var remoteRepository: File = _
   var interactor: JGitInteractor = _
 
   before {
     interactor = new JGitInteractor
 
-    remoteRepositoryDirectory = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
-    remoteRepositoryUrl = remoteRepositoryDirectory.getAbsolutePath
-    JGit.init().setDirectory(remoteRepositoryDirectory).call()
+    remoteRepository = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
+    JGit.init().setDirectory(remoteRepository).call()
 
-    remoteRepository = JGit.open(remoteRepositoryDirectory)
-    "test" >> (remoteRepositoryDirectory / "README.md")
-
-    remoteRepository.commit().setMessage("Initial commit").setAll(true).call()
+    "test" >> (remoteRepository / "README.md")
+    remoteRepository.commit("Initial commit")
   }
 
   after {
-    remoteRepositoryDirectory.delete()
+    remoteRepository.delete()
   }
 
-  "JGitInteractor" should "clone the remote repository" in tempDirectory { tempdir =>
-    interactor.cloneRepository(remoteRepositoryUrl, tempdir) shouldBe 'success
-    val clonedRepository = JGit.open(tempdir)
+  "JGitInteractor" should "clone the remote repository" in tempDirectory { localRepository =>
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
 
-    clonedRepository.getRepository.getBranch shouldBe "master"
-
-    val commits = clonedRepository.log.all.call.asScala
-    commits.map(c => c.getFullMessage) should contain theSameElementsAs Seq("Initial commit")
+    localRepository.branch shouldBe "master"
+    localRepository.commits should contain theSameElementsAs Seq("Initial commit")
   }
 
   it should "retrieve branch list from remote repository" in {
     val branches = Seq("fooBranch", "barBranch")
 
     branches foreach { branch =>
-      remoteRepository.branchCreate().setName(branch).call()
+      remoteRepository.checkout(branch, createBranch = true)
     }
 
-    interactor.getRemoteBranches(remoteRepositoryUrl).success.value should contain theSameElementsAs branches :+ "master"
+    interactor.getRemoteBranches(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs branches :+ "master"
   }
 
-  it should "checkout repository to given branch" in tempDirectory { tempdir =>
-    remoteRepository.checkout().setName("fooBranch").setCreateBranch(true).call()
+  it should "checkout repository to given branch" in tempDirectory { localRepository =>
+    remoteRepository.checkout("firstBranch", createBranch = true)
 
-    "in new branch" >> (remoteRepositoryDirectory / "test.txt")
-    remoteRepository.commit().setAll(true).setMessage("Create new branch").call()
+    remoteRepository.checkout("secondBranch", createBranch = true)
+    "in new branch" >> (remoteRepository / "test.txt")
+    remoteRepository.commit("Create new branch")
 
-    remoteRepository.checkout().setName("master").call()
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    interactor.checkoutBranch(localRepository, "firstBranch") shouldBe 'success
 
-    interactor.cloneRepository(remoteRepositoryUrl, tempdir) shouldBe 'success
-    interactor.checkoutBranch(tempdir, "fooBranch") shouldBe 'success
-
-    JGit.open(tempdir).getRepository.getBranch shouldBe "fooBranch"
+    localRepository.branch shouldBe "firstBranch"
+    localRepository.commits should contain theSameElementsAs Seq("Initial commit")
   }
 
-  it should "not fail if checkout existing branch" in tempDirectory { tempdir =>
-    remoteRepository.checkout().setName("master").call()
+  it should "not fail if checkout existing branch" in tempDirectory { localRepository =>
+    remoteRepository.checkout("master")
 
-    interactor.cloneRepository(remoteRepositoryUrl, tempdir) shouldBe 'success
-    interactor.checkoutBranch(tempdir, "master") shouldBe 'success
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    interactor.checkoutBranch(localRepository, "master") shouldBe 'success
 
-    JGit.open(tempdir).getRepository.getBranch shouldBe "master"
+    localRepository.branch shouldBe "master"
   }
 
-  it should "retrieve default branch (where HEAD is pointing)" in tempDirectory { tempdir =>
-    remoteRepository.checkout().setName("fooBranch").setCreateBranch(true).call()
-    "in foo branch" >> (remoteRepositoryDirectory / "test.txt")
-    remoteRepository.commit().setAll(true).setMessage("Create new branch foo").call()
+  it should "retrieve default branch (where HEAD is pointing)" in tempDirectory { localRepository =>
+    remoteRepository.checkout("firstBranch", createBranch = true)
+    "in foo branch" >> (remoteRepository / "test.txt")
+    remoteRepository.commit("Create new branch foo")
 
-    remoteRepository.checkout().setName("barBranch").setCreateBranch(true).call()
-    "in bar branch" >> (remoteRepositoryDirectory / "test.txt")
-    remoteRepository.commit().setAll(true).setMessage("Create new branch bar").call()
+    remoteRepository.checkout("secondBranch", createBranch = true)
+    "in bar branch" >> (remoteRepository / "test.txt")
+    remoteRepository.commit("Create new branch bar")
 
-    remoteRepository.checkout().setName("fooBranch").call()
+    remoteRepository.checkout("firstBranch")
 
-    interactor.cloneRepository(remoteRepositoryUrl, tempdir)
-    interactor.getDefaultBranch(tempdir).success.value shouldBe "fooBranch"
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository)
+    interactor.getDefaultBranch(localRepository).success.value shouldBe "firstBranch"
   }
+
+  implicit class RichRepository(repository: File) {
+    def commits: Seq[String] = withRepository { git =>
+      git.log.call.asScala.map(c => c.getFullMessage).toSeq
+    }
+
+    def branch: String = withRepository { git =>
+      git.getRepository.getBranch
+    }
+
+    def commit(message: String): Unit = withRepository { git =>
+      git.commit.setAll(true).setMessage(message).call()
+    }
+
+    def checkout(name: String, createBranch: Boolean = false): Unit = withRepository { git =>
+      git.checkout.setName(name).setCreateBranch(createBranch).call()
+    }
+
+    private def withRepository[A](code: JGit => A): A = {
+      val git = JGit.open(repository)
+      try code(git)
+      finally git.close()
+    }
+  }
+
 }
