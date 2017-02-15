@@ -1,8 +1,23 @@
+/*
+ * Original implementation (C) 2010-2015 Nathan Hamblen and contributors
+ * Adapted and extended in 2016 by foundweekends project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package giter8
 
-class Giter8 extends xsbti.AppMain with Apply {
-  import dispatch._
-
+class Giter8 extends xsbti.AppMain {
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
   /** The launched conscript entry point */
@@ -12,18 +27,15 @@ class Giter8 extends xsbti.AppMain with Apply {
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
     val result = (args.partition { s =>
-      G8Helpers.Param.pattern.matcher(s).matches
+      G8.Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
         parser.parse(options, Config()).map { config =>
-          if (config.search)
-            search(config)
-          else
-            inspect(config, params)
+          JgitHelper.run(config, params)
         }.getOrElse(Left(""))
       case _ => Left(parser.usage)
     })
-    cleanup()
+    JgitHelper.cleanup()
     result.fold ({ (error: String) =>
       System.err.println(s"\n$error\n")
       1
@@ -35,47 +47,37 @@ class Giter8 extends xsbti.AppMain with Apply {
 
   val parser = new scopt.OptionParser[Config]("giter8") {
     head("g8", giter8.BuildInfo.version)
-    cmd("search") action { (_, config) =>
-      config.copy(search = true)
-    } text("Search for templates on github")
+    // cmd("search") action { (_, config) =>
+    //   config.copy(search = true)
+    // } text("Search for templates on github")
     arg[String]("<template>") action { (repo, config) =>
       config.copy(repo = repo)
     } text ("git or file URL, or github user/repo")
     opt[String]('b', "branch") action { (b, config) => 
       config.copy(branch = Some(b))
     } text("Resolve a template within a given branch")
-    opt[String]('t', "tag") action { (t, config) =>
-      if (config.branch.nonEmpty) {
-        System.err.println("\nDo not specify branch and tag in the meantime\n")
-        System.exit(1)
-      }
-      config.copy(tag = Some(t))
-    } text("Resolve a template within a given tag")
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
     } text("Force overwrite of any existing files in output directory")
-    note("""  --paramname=paramvalue
-      |        Set given parameter value and bypass interaction.
+    version("version").text("Display version number")
+    note("""  --paramname=paramval  Set given parameter value and bypass interaction
       |
       |EXAMPLES
       |
       |Apply a template from github
-      |    g8 n8han/giter8
+      |    g8 foundweekends/giter8
       |
       |Apply using the git URL for the same template
-      |    g8 git://github.com/n8han/giter8.git
+      |    g8 git://github.com/foundweekends/giter8.git
       |
       |Apply template from a remote branch
-      |    g8 n8han/giter8 -b some-branch
-      |
-      |Apply template from a remote tag
-      |    g8 n8han/giter8 -t some-tag
+      |    g8 foundweekends/giter8 -b some-branch
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo
       |
       |Apply given name parameter and use defaults for all others.
-      |    g8 n8han/giter8 --name=template-test""".stripMargin)
+      |    g8 foundweekends/giter8 --name=template-test""".stripMargin)
   }
 }
 
@@ -88,7 +90,7 @@ object Giter8 extends Giter8 {
   )
 
   /** Main-class runner just for testing from sbt*/
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     System.exit(run(args))
   }
 }

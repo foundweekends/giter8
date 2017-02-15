@@ -1,0 +1,13 @@
+### minor enhancements
+
+- Cross building to 2.11. [#213][213] by [@eed3si9n][@eed3si9n]
+- Bumping up Plexus Archiver version. [#213][213] by [@eed3si9n][@eed3si9n]
+
+### upgrade
+
+If you're using conscript:
+
+    cs foundweekends/giter8
+
+  [213]: https://github.com/foundweekends/giter8/pull/213
+  [@eed3si9n]: https://github.com/eed3si9n
