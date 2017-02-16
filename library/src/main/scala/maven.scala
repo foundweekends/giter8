@@ -48,7 +48,7 @@ object Maven extends JavaTokenParsers {
     val mvnRepo = new File(home + "/mvnrepo")
     if(!home.exists() || !mvnRepo.exists()) None
     else {
-      scala.io.Source.fromFile(mvnRepo).getLines().filter(!_.trim.isEmpty).find(_=>true)
+      scala.io.Source.fromFile(mvnRepo).getLines().find(!_.trim.isEmpty)
     }
   }
 
