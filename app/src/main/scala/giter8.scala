@@ -17,6 +17,8 @@
 
 package giter8
 
+import java.io.File
+
 class Giter8 extends xsbti.AppMain {
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
@@ -26,16 +28,17 @@ class Giter8 extends xsbti.AppMain {
 
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
+    val helper = new JgitHelper(new Git(new JGitInteractor), G8TemplateRenderer)
     val result = (args.partition { s =>
       G8.Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
-        parser.parse(options, Config()).map { config =>
-          JgitHelper.run(config, params)
+        parser.parse(options, Config("")).map { config =>
+          helper.run(config, params, new File("."))
         }.getOrElse(Left(""))
       case _ => Left(parser.usage)
     })
-    JgitHelper.cleanup()
+    helper.cleanup()
     result.fold ({ (error: String) =>
       System.err.println(s"\n$error\n")
       1
