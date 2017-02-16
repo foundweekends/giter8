@@ -1,11 +1,13 @@
 package giter8
 
-import java.io.{File, PrintWriter}
+import java.io.File
 
 import org.scalatest.{FlatSpec, Matchers}
 import G8._
 
 class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers {
+  import TestFileHelpers._
+
   "Giter8" should "treat sources root as template root" in testCase { case (template, expected, actual) =>
     "I am foo.txt" >> (template / "foo.txt")
     "I am foo.txt" >> (expected / "foo.txt")
@@ -119,33 +121,11 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
   }
 
   private def testCase(test: (File, File, File) => Unit): Unit = {
-    inTempDirectory { tmp =>
+    tempDirectory { tmp =>
       val templateDir = mkdir(tmp / "template")
       val outputDir = mkdir(tmp / "output")
       val actualDir = mkdir(tmp / "actual")
       test(templateDir, outputDir, actualDir)
     }
   }
-
-  private def mkdir(dir: File): File = {
-    if (dir.exists()) throw new Exception(s"${dir.getAbsolutePath} already exists")
-    if (!dir.mkdirs()) throw new Exception(s"Cannot create ${dir.getAbsolutePath}")
-    else dir
-  }
-
-  private def touch(file: File): Unit = if (!file.exists) {
-    file.getParentFile.mkdirs()
-    file.createNewFile()
-  }
-
-  implicit class WriteableString(s: String) {
-    def >>(file: File): Unit = {
-      touch(file)
-      new PrintWriter(file) {
-        write(s)
-        close()
-      }
-    }
-  }
-
 }

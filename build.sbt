@@ -100,14 +100,15 @@ lazy val lib = (project in file("library")).
     crossScalaVersions := List(scala210, scala211, scala212),
     libraryDependencies ++= Seq(
       scalasti, jgit, commonsIo, plexusArchiver,
-      scalacheck % Test, sbtIo % Test, scalatest % Test
+      scalacheck % Test, sbtIo % Test, scalatest % Test,
+      scalamock % Test, "org.slf4j" % "slf4j-simple" % "1.7.12" % Test
     ) ++
     (CrossVersion.partialVersion(scalaVersion.value) match {
       case Some((2, scalaMajor)) if scalaMajor >= 11 =>
         Seq(scalaXml, parserCombinator)
       case _ => Nil
-    })
-  )
+      })
+    )
 
 def customCommands: Seq[Setting[_]] = Seq(
   commands += Command.command("release") { state =>
