@@ -18,12 +18,13 @@
 package giter8
 
 import java.io.File
+import java.nio.file.Paths
 
 import org.apache.commons.io.FileUtils
 
 import scala.util.{Failure, Success}
 
-case class Config(repo: String, branch: Option[String] = None, forceOverwrite: Boolean = false)
+case class Config(repo: String, branch: Option[String] = None, forceOverwrite: Boolean = false, directory: Option[String] = None)
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
@@ -47,11 +48,11 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
   def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] = for {
     repository <- GitRepository.fromString(config.repo)
-    _ <- gitInteractor.clone(repository, config.branch, tempdir)  match {
-      case Success(_) => Right(tempdir.getAbsolutePath)
+    baseDir <- gitInteractor.clone(repository, config.branch, tempdir)  match {
+      case Success(_) => Right(Paths.get(tempdir.getAbsolutePath, config.directory.getOrElse("")).toFile)
       case Failure(e) => Left(e.getMessage)
     }
-    foo <- templateRenderer.render(tempdir, outDirectory, arguments, config.forceOverwrite)
+    foo <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
   } yield foo
 
 }

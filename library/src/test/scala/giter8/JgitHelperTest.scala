@@ -14,6 +14,7 @@ class MockRenderer extends TemplateRenderer {
   var forceOverwrite: Boolean = _
 
   override def render(baseDirectory: File, outputDirectory: File, arguments: Seq[String], forceOverwrite: Boolean): Either[String, String] = {
+    this.baseDirectory = baseDirectory
     this.outputDirectory = outputDirectory
     this.arguments = arguments
     this.forceOverwrite = forceOverwrite
@@ -92,5 +93,10 @@ class JgitHelperTest extends FlatSpec with Matchers {
   it should "pass forceOverwrite flag to renderer" in new TestFixture {
     helper.run(Config("foo/bar", None, forceOverwrite = true), Seq.empty, new File(""))
     renderer.forceOverwrite shouldBe true
+  }
+
+  it should "pass directory to renderer" in new TestFixture {
+    helper.run(Config("foo/bar", None, forceOverwrite = true, Some("directory")), Seq.empty, new File(""))
+    renderer.baseDirectory.getAbsolutePath().endsWith("directory") shouldBe true
   }
 }
