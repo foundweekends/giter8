@@ -79,8 +79,8 @@ class Giter8 extends xsbti.AppMain {
       |Apply template from a remote branch
       |    g8 foundweekends/giter8 -b some-branch
       |
-      |Apply template from a directory exists in the repo
-      |    g8 foundweekends/giter8 -d some-directory
+      |Apply template from a directory that exists in the repo
+      |    g8 foundweekends/giter8 -d some-directory/template
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo

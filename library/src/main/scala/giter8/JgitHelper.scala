@@ -18,7 +18,6 @@
 package giter8
 
 import java.io.File
-import java.nio.file.Paths
 
 import org.apache.commons.io.FileUtils
 
@@ -49,7 +48,7 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
   def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] = for {
     repository <- GitRepository.fromString(config.repo)
     baseDir <- gitInteractor.clone(repository, config.branch, tempdir)  match {
-      case Success(_) => Right(Paths.get(tempdir.getAbsolutePath, config.directory.getOrElse("")).toFile)
+      case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
       case Failure(e) => Left(e.getMessage)
     }
     foo <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
