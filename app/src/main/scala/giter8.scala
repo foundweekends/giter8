@@ -62,6 +62,9 @@ class Giter8 extends xsbti.AppMain {
     opt[String]('t', "tag") action { (t, config) =>
       config.copy(ref = Some(Tag(t)))
     } text("Resolve a template within a given branch")
+    opt[String]('d', "directory") action { (d, config) =>
+      config.copy(directory = Some(d))
+    } text("Resolve a template within a given directory")
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
     } text("Force overwrite of any existing files in output directory")
@@ -81,6 +84,9 @@ class Giter8 extends xsbti.AppMain {
       |
       |Apply template from a remote tag
       |    g8 foundweekends/giter8 -t some-tag
+      |
+      |Apply template from a directory that exists in the repo
+      |    g8 foundweekends/giter8 -d some-directory/template
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo
