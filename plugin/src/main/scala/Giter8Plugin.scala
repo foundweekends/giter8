@@ -19,6 +19,10 @@ package giter8
 
 import sbt._
 import ScriptedPlugin._
+import org.apache.http.client.methods.HttpGet
+import org.apache.http.impl.client.DefaultHttpClient
+
+import scala.util.{Failure, Success, Try}
 
 object Giter8Plugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
@@ -67,20 +71,34 @@ object Giter8Plugin extends sbt.AutoPlugin {
       (propertiesLoc0 orElse propertiesLoc1).get
     },
     g8Properties in g8 := {
+      val httpClient = new HttpClient {
+        val apacheHttpClient = new DefaultHttpClient
+        override def execute(request: HttpGetRequest): Try[HttpResponse] = {
+          Try(apacheHttpClient.execute(new HttpGet(request.url))).map { response =>
+            val statusLine = response.getStatusLine
+            val body = Option(response.getEntity).map { entity =>
+              Source
+                .fromInputStream(entity.getContent)
+                .getLines()
+                .mkString("\n")
+            }
+
+            HttpResponse(statusLine.getStatusCode, statusLine.getReasonPhrase, body)
+          }
+        }
+      }
+
       val f = (g8PropertiesFile in g8).value
       if (f.exists) {
-        val in = new java.io.FileInputStream(f)
-        try {
-          G8.transformProps(G8.readProps(in))
-            .fold(
-              err => sys.error(err),
-              _.foldLeft(G8.ResolvedProperties.empty) {
-                case (resolved, (k, v)) =>
-                  resolved + (k -> G8.DefaultValueF(v)(resolved))
-              }.toMap
-            )
-        } finally {
-          in.close
+        val propertiesTry: Try[Map[String, String]] = for {
+          a <- FilePropertyResolver(f).resolve(Map.empty)
+          b <- MavenPropertyResolver(httpClient).resolve(a)
+        } yield b
+
+        propertiesTry match {
+          case Success(properties) => properties
+          case Failure(e)          => sys.error(e.getMessage)
+
         }
       } else Map.empty
     }

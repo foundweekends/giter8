@@ -50,11 +50,10 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
     Def.inputTask {
       val (name, args) = parser.parsed
       val folder       = g8ScaffoldTemplatesDirectory.value
-      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, false)
-        .fold(
-          e => sys.error(e),
-          r => println("Success :)")
-        )
+      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, false) match {
+        case Right(_) => println("Success :)")
+        case Left(e)  => sys.error(e)
+      }
     }
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(

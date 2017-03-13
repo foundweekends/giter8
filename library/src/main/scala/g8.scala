@@ -18,33 +18,21 @@
 package giter8
 
 import java.io.{File, FileInputStream}
+import java.net.URI
 
 import org.apache.commons.io.FileUtils
+import org.apache.http.{Header, HeaderIterator, ProtocolVersion, RequestLine}
+import org.apache.http.client.methods.{HttpGet, HttpUriRequest}
+import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.params.HttpParams
 import org.stringtemplate.v4.compiler.STException
 
-import scala.util.{Failure, Success}
+import scala.io.Source
+import scala.util.{Failure, Success, Try}
 
 object G8 {
+
   import FileDsl._
-
-  /** Properties in the order they were created/defined */
-  type OrderedProperties = List[(String, String)]
-  object OrderedProperties {
-    val empty = List.empty[(String, String)]
-  }
-
-  /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input, ready for insertion into template */
-  type ResolvedProperties = Map[String, String]
-  object ResolvedProperties {
-    val empty = Map.empty[String, String]
-  }
-
-  /**
-    * A function which will return the resolved value of a property given the properties resolved thus far.
-    * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
-    * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
-    */
-  type ValueF = ResolvedProperties => String
 
   // Called from JgitHelper
   def fromDirectory(baseDirectory: File,
@@ -74,7 +62,9 @@ object G8 {
   val defaultTemplatePaths: List[Path] = List(path("src") / "main" / "g8", Path(Nil))
 
   def apply(fromMapping: Seq[(File, String)], toPath: File, parameters: Map[String, String]): Seq[File] =
-    fromMapping filter { !_._1.isDirectory } flatMap {
+    fromMapping filter {
+      !_._1.isDirectory
+    } flatMap {
       case (in, relative) =>
         val out = expandPath(relative, toPath, parameters)
         FileRenderer.renderFile(in, out, parameters) match {
@@ -82,17 +72,6 @@ object G8 {
           case Failure(t)  => throw t
         }
     }
-
-  /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
-  case class DefaultValueF(default: String) extends ValueF {
-    override def apply(resolved: ResolvedProperties): String = StringRenderer.render(default, resolved).get
-  }
-
-  /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
-  type UnresolvedProperties = List[(String, ValueF)]
-  object UnresolvedProperties {
-    val empty = List.empty[(String, ValueF)]
-  }
 
   def expandPath(relative: String, toPath: File, parameters: Map[String, String]): File =
     try {
@@ -122,7 +101,7 @@ object G8 {
     else Stream()
 
   private[giter8] def applyT(
-      fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])]
+      fetch: File => Either[String, (Map[String, String], Stream[File], File, Option[File])]
       // isScaffolding: Boolean = false
   )(
       tmpl: File,
@@ -133,21 +112,27 @@ object G8 {
     try {
       fetch(tmpl).right.flatMap {
         case (defaults, templates, templatesRoot, scaffoldsRoot) =>
-          val parameters = consoleParams(defaults, arguments).getOrElse {
-            interact(defaults)
-          }
+          val parametersTry = for {
+            parsedArgs      <- Try(Util.parseArguments(arguments))
+            fromArguments   <- StaticPropertyResolver(parsedArgs).resolve(defaults)
+            fromInteraction <- InteractivePropertyResolver.resolve(fromArguments)
+          } yield fromInteraction
 
-          val base = outputFolder / parameters.get("name").map(FormatFunctions.normalize).getOrElse(".")
-          val r = writeTemplates(templatesRoot,
-                                 templates,
-                                 parameters,
-                                 base, // isScaffolding,
-                                 forceOverwrite)
-          for {
-            _    <- r.right
-            root <- scaffoldsRoot
-          } copyScaffolds(root, base)
-          r
+          parametersTry match {
+            case Failure(e) => Left(e.getMessage)
+            case Success(parameters) =>
+              val base = outputFolder / parameters.get("name").map(FormatFunctions.normalize).getOrElse(".")
+              val r = writeTemplates(templatesRoot,
+                                     templates,
+                                     parameters,
+                                     base, // isScaffolding,
+                                     forceOverwrite)
+              for {
+                _    <- r.right
+                root <- scaffoldsRoot
+              } copyScaffolds(root, base)
+              r
+          }
       }
     } catch {
       case e: STException =>
@@ -158,10 +143,22 @@ object G8 {
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
-  /** transforms any maven() property operations to the latest
-    * version number reported by that service. */
-  def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
-    Maven.lookup(props)
+  val httpClient = new HttpClient {
+    val apacheHttpClient = new DefaultHttpClient
+    override def execute(request: HttpGetRequest): Try[HttpResponse] = {
+      Try(apacheHttpClient.execute(new HttpGet(request.url))).map { response =>
+        val statusLine = response.getStatusLine
+        val body = Option(response.getEntity).map { entity =>
+          Source
+            .fromInputStream(entity.getContent)
+            .getLines()
+            .mkString("\n")
+        }
+
+        HttpResponse(statusLine.getStatusCode, statusLine.getReasonPhrase, body)
+      }
+    }
+  }
 
   /**
     * Extract params, template files, and scaffolding folder based on the conventionnal project structure
@@ -169,80 +166,23 @@ object G8 {
   private[giter8] def fetchInfo(
       baseDirectory: File,
       templatePaths: List[Path],
-      scaffoldPaths: List[Path]): Either[String, (UnresolvedProperties, Stream[File], File, Option[File])] = {
+      scaffoldPaths: List[Path]): Either[String, (Map[String, String], Stream[File], File, Option[File])] = {
     val template = Template(baseDirectory, templatePaths, scaffoldPaths)
 
-    val parametersEither = template.propertyFiles.headOption
+    val parametersEither: Either[String, Map[String, String]] = template.propertyFiles.headOption
       .map { f =>
-        val props       = readProps(new FileInputStream(f))
-        val transformed = transformProps(props)
-        transformed.right.map { _.map { case (k, v) => (k, DefaultValueF(v)) } }
+        FilePropertyResolver(f)
+          .resolve(Map.empty)
+          .flatMap(MavenPropertyResolver(httpClient).resolve) match {
+          case Success(parameters) => Right(parameters)
+          case Failure(e)          => Left(e.getMessage)
+        }
+      //        transformed.right.map { _.map { case (k, v) => (k, DefaultValueF(v)) } }
       }
-      .getOrElse(Right(UnresolvedProperties.empty))
+      .getOrElse(Right(Map.empty))
 
     for (parameters <- parametersEither.right)
-      yield (parameters, template.templateFiles.toStream, template.root, template.scaffoldsRoot)
-  }
-
-  def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {
-    arguments.headOption.map { _ =>
-      val specified = (ResolvedProperties.empty /: arguments) {
-        case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
-          map + (key -> value)
-        case (map, Param(key, _)) =>
-          println("Ignoring unrecognized parameter: " + key)
-          map
-      }
-
-      // Add anything from defaults that wasn't picked up as an argument from the console.
-      defaults.foldLeft(specified) {
-        case (resolved, (k, f)) =>
-          if (!resolved.contains(k)) resolved + (k -> f(resolved))
-          else resolved
-      }
-    }
-  }
-
-  def interact(params: UnresolvedProperties): ResolvedProperties = {
-    val (desc, others) = params partition { case (k, _) => k == "description" }
-
-    desc.foreach { d =>
-      @scala.annotation.tailrec
-      def liner(cursor: Int, rem: Iterable[String]): Unit = {
-        if (!rem.isEmpty) {
-          val next = cursor + 1 + rem.head.length
-          if (next > 70) {
-            println()
-            liner(0, rem)
-          } else {
-            print(rem.head + " ")
-            liner(next, rem.tail)
-          }
-        }
-      }
-      println()
-      liner(0, d._2(ResolvedProperties.empty).split(" "))
-      println("\n")
-    }
-
-    val fixed = Set("verbatim")
-
-    others
-      .foldLeft(ResolvedProperties.empty) {
-        case (resolved, (k, f)) =>
-          resolved + (
-            if (fixed.contains(k))
-              k -> f(resolved)
-            else {
-              val default = f(resolved)
-              printf("%s [%s]: ", k, default)
-              Console.flush() // Gotta flush for Windows console!
-              val in = Console.readLine().trim
-              (k, if (in.isEmpty) default else in)
-            }
-          )
-      }
-      .toMap
+      yield (parameters, template.templateFiles, template.root, template.scaffoldsRoot)
   }
 
   private def relativize(in: File, from: File): String = from.toURI().relativize(in.toURI).getPath
@@ -293,24 +233,5 @@ object G8 {
       val out    = new File(hidden, name)
       FileUtils.copyFile(f, out)
     }
-  }
-
-  def readProps(stm: java.io.InputStream): G8.OrderedProperties = {
-    val p = new LinkedListProperties
-    p.load(stm)
-    stm.close()
-    (OrderedProperties.empty /: p.keyList) { (l, k) =>
-      l :+ (k -> p.getProperty(k))
-    }
-  }
-}
-
-/** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */
-private[giter8] class LinkedListProperties extends java.util.Properties {
-  var keyList = List.empty[String]
-
-  override def put(k: Object, v: Object) = {
-    keyList = keyList :+ k.toString
-    super.put(k, v)
   }
 }
