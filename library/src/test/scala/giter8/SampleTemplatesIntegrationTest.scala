@@ -4,17 +4,24 @@ import java.io.File
 
 import org.scalatest.FunSuite
 
-class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelpers {
-  import TestFileHelpers.tempDirectory
+class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelpers with TestFileHelpers {
   import FileDsl._
 
   case class TestCase(name: String, template: File, output: File)
 
-  val testCases: Seq[TestCase] = {
-    val testCasesDirectory = new File(getClass.getResource("/testcases").getPath)
-    testCasesDirectory.listFiles map { testCase =>
-      TestCase(testCase.getName, testCase / "template", testCase / "output")
+  def testCaseDirectories(): Seq[File] = {
+    val resourcesDirectory = Option(new File(getClass.getResource("/").getPath))
+    resourcesDirectory match {
+      case None => Seq.empty
+      case Some(directory) =>
+        directory.listFiles.filter { f =>
+          f.isDirectory && f.getName != "giter8" && f.list().contains("template") && f.list().contains("output")
+        }
     }
+  }
+
+  val testCases: Seq[TestCase] = testCaseDirectories map { dir =>
+    TestCase(dir.getName, dir / "template", dir / "output")
   }
 
   testCases foreach { testCase =>

@@ -106,8 +106,10 @@ lazy val lib = (project in file("library"))
   .settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",
+    unmanagedResourceDirectories in Test += file("examples"),
     crossScalaVersions := List(scala210, scala211, scala212),
     libraryDependencies ++= Seq(
+      "com.google.code.findbugs" % "jsr305" % "3.0.1" % Compile,
       scalasti,
       jgit,
       commonsIo,

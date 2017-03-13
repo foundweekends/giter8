@@ -7,7 +7,7 @@ import org.scalatest.matchers.{MatchResult, Matcher}
 
 import scala.io.Source
 
-object TestFileHelpers {
+trait TestFileHelpers {
   def tempDirectory(code: File => Unit): Unit = {
     val tempDir = new File(FileUtils.getTempDirectory, "g8test-" + System.nanoTime)
     tempDir.mkdirs()

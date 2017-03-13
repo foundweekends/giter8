@@ -3,8 +3,7 @@ package giter8
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.scalatest.{FlatSpec, Matchers}
 
-class FileRendererTest extends FlatSpec with Matchers {
-  import TestFileHelpers._
+class FileRendererTest extends FlatSpec with Matchers with TestFileHelpers {
   import FileDsl._
   import FileRenderer._
 
