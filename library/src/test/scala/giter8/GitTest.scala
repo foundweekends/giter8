@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 class GitTest extends FlatSpec with Matchers with EitherValues with TryValues with MockFactory {
   trait TestFixture {
     var directoryWasCleaned = false
-    var directoryWasCopied = false
+    var directoryWasCopied  = false
     val interactorMock: GitInteractor = mock[GitInteractor]
 
     val git = new Git(interactorMock) {
@@ -26,8 +26,8 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   "Git" should "clone repository with given branch" in new TestFixture {
-    val repository = Remote("url")
-    val branch = Some(Branch("fooBranch"))
+    val repository  = Remote("url")
+    val branch      = Some(Branch("fooBranch"))
     val destination = new File(".")
 
     interactorMock.getRemoteBranches _ expects repository.url returning Success(Seq(branch.get.name))
@@ -38,8 +38,8 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "throw an error if there is no given branch" in new TestFixture {
-    val repository = Remote("url")
-    val branch = Some(Branch("nonExisting"))
+    val repository  = Remote("url")
+    val branch      = Some(Branch("nonExisting"))
     val destination = new File(".")
 
     interactorMock.getRemoteBranches _ expects repository.url returning Success(Seq("someOtherBranch"))
@@ -47,8 +47,8 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "clone repository with given tag" in new TestFixture {
-    val repository = Remote("url")
-    val tag = Some(Tag("v1.0.0"))
+    val repository  = Remote("url")
+    val tag         = Some(Tag("v1.0.0"))
     val destination = new File(".")
 
     interactorMock.getRemoteTags _ expects repository.url returning Success(Seq(tag.get.name))
@@ -59,8 +59,8 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "throw an error if there is no given tag" in new TestFixture {
-    val repository = Remote("url")
-    val tag = Some(Tag("nonExisting"))
+    val repository  = Remote("url")
+    val tag         = Some(Tag("nonExisting"))
     val destination = new File(".")
 
     interactorMock.getRemoteTags _ expects repository.url returning Success(Seq("someOtherBranch"))
@@ -68,7 +68,7 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "clone repository with default branch if no branch was given" in new TestFixture {
-    val repository = Remote("url")
+    val repository  = Remote("url")
     val destination = new File(".")
 
     interactorMock.getDefaultBranch _ expects destination returning Success("default")
@@ -79,8 +79,8 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "copy local repository directory if no branch is given" in new TestFixture {
-    val repository = Local("some/repo")
-    val branch = None
+    val repository  = Local("some/repo")
+    val branch      = None
     val destination = new File(".")
 
     git.clone(repository, branch, destination)
@@ -88,8 +88,8 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "retry cloning Github repository with given branch if clone with public URL is failed" in new TestFixture {
-    val repository = GitHub("foo", "bar")
-    val branch = Some(Branch("someBranch"))
+    val repository  = GitHub("foo", "bar")
+    val branch      = Some(Branch("someBranch"))
     val destination = new File(".")
 
     interactorMock.getRemoteBranches _ expects repository.publicUrl returning Failure(TransportError(""))
@@ -103,8 +103,8 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "retry cloning Github repository with default branch if clone with public URL is failed" in new TestFixture {
-    val repository = GitHub("foo", "bar")
-    val branch = None
+    val repository  = GitHub("foo", "bar")
+    val branch      = None
     val destination = new File(".")
 
     interactorMock.cloneRepository _ expects (repository.publicUrl, destination) returning Failure(TransportError(""))

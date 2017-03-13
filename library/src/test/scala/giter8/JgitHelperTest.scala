@@ -8,28 +8,31 @@ import org.scalatest.{FlatSpec, Matchers}
 import scala.util.{Success, Try}
 
 class MockRenderer extends TemplateRenderer {
-  var baseDirectory: File = _
-  var outputDirectory: File = _
-  var arguments: Seq[String] = _
+  var baseDirectory: File     = _
+  var outputDirectory: File   = _
+  var arguments: Seq[String]  = _
   var forceOverwrite: Boolean = _
 
-  override def render(baseDirectory: File, outputDirectory: File, arguments: Seq[String], forceOverwrite: Boolean): Either[String, String] = {
-    this.baseDirectory = baseDirectory
+  override def render(baseDirectory: File,
+                      outputDirectory: File,
+                      arguments: Seq[String],
+                      forceOverwrite: Boolean): Either[String, String] = {
+    this.baseDirectory   = baseDirectory
     this.outputDirectory = outputDirectory
-    this.arguments = arguments
-    this.forceOverwrite = forceOverwrite
+    this.arguments       = arguments
+    this.forceOverwrite  = forceOverwrite
     Right("OK")
   }
 }
 
 class MockGit extends Git(null) {
   var repository: GitRepository = _
-  var ref: Option[Ref] = _
-  var dest: File = _
+  var ref: Option[Ref]          = _
+  var dest: File                = _
 
   override def clone(repository: GitRepository, ref: Option[Ref], dest: File): Try[Unit] = {
     this.repository = repository
-    this.ref = ref
+    this.ref        = ref
     Success(())
   }
 }
@@ -37,26 +40,19 @@ class MockGit extends Git(null) {
 class JgitHelperTest extends FlatSpec with Matchers {
 
   trait TestFixture {
-    val git = new MockGit
+    val git      = new MockGit
     val renderer = new MockRenderer
-    val helper = new JgitHelper(git, renderer)
+    val helper   = new JgitHelper(git, renderer)
   }
 
   "JGitHelper" should "clone repo with correct URL and branch" in {
     case class TestCase(config: Config, repository: GitRepository, ref: Option[Ref])
     val testCases: Seq[TestCase] = Seq(
-      TestCase(
-        Config("file:///foo", ref = Some(Branch("baz"))),
-        Local("/foo"),
-        Some(Branch("baz"))),
-      TestCase(
-        Config("https://github.com/foo/bar.g8.git", ref = None),
-        Remote("https://github.com/foo/bar.g8.git"),
-        None),
-      TestCase(
-        Config("foo/bar", ref = Some(Tag("baz"))),
-        GitHub("foo", "bar"),
-        Some(Tag("baz")))
+      TestCase(Config("file:///foo", ref                       = Some(Branch("baz"))), Local("/foo"), Some(Branch("baz"))),
+      TestCase(Config("https://github.com/foo/bar.g8.git", ref = None),
+               Remote("https://github.com/foo/bar.g8.git"),
+               None),
+      TestCase(Config("foo/bar", ref = Some(Tag("baz"))), GitHub("foo", "bar"), Some(Tag("baz")))
     )
 
     testCases foreach { testCase =>

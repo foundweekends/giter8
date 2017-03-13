@@ -29,7 +29,7 @@ class JGitIgnore(patterns: Seq[String]) {
   def isIgnored(path: String): Boolean = {
     val ignoreRules = patterns.map(new FastIgnoreRule(_))
     ignoreRules.exists { rule =>
-       rule.getResult && rule.isMatch(path, false)
+      rule.getResult && rule.isMatch(path, false)
     }
   }
 }
@@ -43,11 +43,7 @@ object JGitIgnore {
   }
 
   def apply(file: File): JGitIgnore = {
-    val patterns = Source.fromFile(file).
-      getLines().
-      filterNot(_.startsWith("#")).
-      filterNot(_.trim.isEmpty).
-      toIndexedSeq
+    val patterns = Source.fromFile(file).getLines().filterNot(_.startsWith("#")).filterNot(_.trim.isEmpty).toIndexedSeq
     new JGitIgnore(patterns)
   }
 }

@@ -22,7 +22,7 @@ import Keys._
 
 object ScaffoldPlugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
-  override val trigger = allRequirements
+  override val trigger  = allRequirements
 
   object autoImport {
     lazy val g8ScaffoldTemplatesDirectory = settingKey[File]("Directory used to hold scaffolding templates.")
@@ -37,23 +37,24 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
     Def.setting {
       val dir = g8ScaffoldTemplatesDirectory.value
       (state: State) =>
-      val templates = Option(dir.listFiles).toList.flatten
-        .filter(f => f.isDirectory && !f.isHidden)
-        .map(_.getName: Parser[String])
-      (Space) ~> token(templates.foldLeft(" ": Parser[String])(_ | _)).examples("<template>") ~
-        (Space ~> StringBasic.examples("--k=v")).* map {
+        val templates = Option(dir.listFiles).toList.flatten
+          .filter(f => f.isDirectory && !f.isHidden)
+          .map(_.getName: Parser[String])
+        (Space) ~> token(templates.foldLeft(" ": Parser[String])(_ | _)).examples("<template>") ~
+          (Space ~> StringBasic.examples("--k=v")).* map {
           case tmp ~ args => (tmp, args.toList)
         }
     }
 
   val scaffoldTask =
-    Def.inputTask{
+    Def.inputTask {
       val (name, args) = parser.parsed
-      val folder = g8ScaffoldTemplatesDirectory.value
-      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, false).fold(
-        e => sys.error(e),
-        r => println("Success :)")
-      )
+      val folder       = g8ScaffoldTemplatesDirectory.value
+      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, false)
+        .fold(
+          e => sys.error(e),
+          r => println("Success :)")
+        )
     }
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(

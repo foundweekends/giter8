@@ -13,10 +13,11 @@ class GitRepositoryTest extends FlatSpec with Matchers {
       "ssh://some.path.com/repo" -> GitRepository.Remote("ssh://some.path.com/repo"),
       "file://relative/path" -> GitRepository.Local("relative/path"),
       "file:///home/foo/bar" -> GitRepository.Local("/home/foo/bar"),
-      "foo/bar" -> GitRepository.GitHub("foo", "bar"))
+      "foo/bar" -> GitRepository.GitHub("foo", "bar")
+    )
 
     testCases foreach { testCase =>
-      val string = testCase._1
+      val string   = testCase._1
       val expected = testCase._2
       GitRepository.fromString(string) shouldBe Right(expected)
     }

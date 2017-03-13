@@ -12,7 +12,7 @@ import scala.collection.JavaConverters._
 class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with TryValues {
   import TestFileHelpers._
 
-  var remoteRepository: File = _
+  var remoteRepository: File     = _
   var interactor: JGitInteractor = _
 
   before {
@@ -43,7 +43,10 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
       remoteRepository.checkout(branch, createBranch = true)
     }
 
-    interactor.getRemoteBranches(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs branches :+ "master"
+    interactor
+      .getRemoteBranches(remoteRepository.getAbsolutePath)
+      .success
+      .value should contain theSameElementsAs branches :+ "master"
   }
 
   it should "retrieve tag list from remote repository" in {

@@ -33,17 +33,20 @@ class Giter8 extends xsbti.AppMain {
       G8.Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
-        parser.parse(options, Config("")).map { config =>
-          helper.run(config, params, new File("."))
-        }.getOrElse(Left(""))
+        parser
+          .parse(options, Config(""))
+          .map { config =>
+            helper.run(config, params, new File("."))
+          }
+          .getOrElse(Left(""))
       case _ => Left(parser.usage)
     })
     helper.cleanup()
-    result.fold ({ (error: String) =>
+    result.fold({ (error: String) =>
       System.err.println(s"\n$error\n")
       1
     }, { (message: String) =>
-      println("\n%s\n" format message )
+      println("\n%s\n" format message)
       0
     })
   }
@@ -56,18 +59,18 @@ class Giter8 extends xsbti.AppMain {
     arg[String]("<template>") action { (repo, config) =>
       config.copy(repo = repo)
     } text ("git or file URL, or github user/repo")
-    opt[String]('b', "branch") action { (b, config) => 
+    opt[String]('b', "branch") action { (b, config) =>
       config.copy(ref = Some(Branch(b)))
-    } text("Resolve a template within a given branch")
+    } text ("Resolve a template within a given branch")
     opt[String]('t', "tag") action { (t, config) =>
       config.copy(ref = Some(Tag(t)))
-    } text("Resolve a template within a given branch")
+    } text ("Resolve a template within a given branch")
     opt[String]('d', "directory") action { (d, config) =>
       config.copy(directory = Some(d))
-    } text("Resolve a template within a given directory")
+    } text ("Resolve a template within a given directory")
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
-    } text("Force overwrite of any existing files in output directory")
+    } text ("Force overwrite of any existing files in output directory")
     version("version").text("Display version number")
     note("""  --paramname=paramval  Set given parameter value and bypass interaction
       |
@@ -100,9 +103,11 @@ class Exit(val code: Int) extends xsbti.Exit
 
 object Giter8 extends Giter8 {
   import java.io.File
-  val home = Option(System.getProperty("G8_HOME")).map(new File(_)).getOrElse(
-    new File(System.getProperty("user.home"), ".g8")
-  )
+  val home = Option(System.getProperty("G8_HOME"))
+    .map(new File(_))
+    .getOrElse(
+      new File(System.getProperty("user.home"), ".g8")
+    )
 
   /** Main-class runner just for testing from sbt*/
   def main(args: Array[String]): Unit = {

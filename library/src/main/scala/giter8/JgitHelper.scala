@@ -29,7 +29,10 @@ case class Tag(name: String) extends Ref
 
 case class Branch(name: String) extends Ref
 
-case class Config(repo: String, ref: Option[Ref] = None, forceOverwrite: Boolean = false, directory: Option[String] = None)
+case class Config(repo: String,
+                  ref: Option[Ref]          = None,
+                  forceOverwrite: Boolean   = false,
+                  directory: Option[String] = None)
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
@@ -37,12 +40,12 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
   implicit class flatMapMonad[L, R](either: Either[L, R]) {
     def flatMap[R1](f: R => Either[L, R1]): Either[L, R1] = either match {
       case Right(r) => f(r)
-      case Left(l) => Left(l)
+      case Left(l)  => Left(l)
     }
 
     def map[R1](f: R => R1): Either[L, R1] = either match {
       case Right(r) => Right(f(r))
-      case Left(l) => Left(l)
+      case Left(l)  => Left(l)
     }
   }
 
@@ -51,13 +54,14 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
   /** Clean temporary directory used for git cloning */
   def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDelete(tempdir)
 
-  def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] = for {
-    repository <- GitRepository.fromString(config.repo)
-    baseDir <- gitInteractor.clone(repository, config.ref, tempdir) match {
-      case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
-      case Failure(e) => Left(e.getMessage)
-    }
-    renderedTemplate <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
-  } yield renderedTemplate
+  def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] =
+    for {
+      repository <- GitRepository.fromString(config.repo)
+      baseDir <- gitInteractor.clone(repository, config.ref, tempdir) match {
+        case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
+        case Failure(e) => Left(e.getMessage)
+      }
+      renderedTemplate <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
+    } yield renderedTemplate
 
 }
