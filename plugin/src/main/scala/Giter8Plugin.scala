@@ -54,9 +54,10 @@ object Giter8Plugin extends sbt.AutoPlugin {
       else List(baseDirectory.value)
     },
     sources in g8 := {
-      val dirs = (unmanagedSourceDirectories in g8).value
-      val root = dirs.head
-      G8.templateFiles(root, baseDirectory.value)
+      val dirs     = (unmanagedSourceDirectories in g8).value
+      val root     = dirs.head
+      val template = Template(root)
+      template.templateFiles
     },
     target in g8 := { target.value / "g8" },
     g8PropertiesFile in g8 := {

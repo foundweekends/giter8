@@ -17,7 +17,7 @@
 
 package giter8
 
-import java.io.File
+import java.io.{File, FileInputStream}
 
 import org.apache.commons.io.FileUtils
 import org.stringtemplate.v4.compiler.STException
@@ -121,38 +121,6 @@ object G8 {
     else if (filter(f)) Stream(f)
     else Stream()
 
-  /** Select the root template directory from the given relative paths. */
-  def templateRoot(baseDirectory: File, templatePaths: List[Path]): File =
-    // Go through the list of dirs and pick the first one.
-    (templatePaths map {
-      case Path(Nil) => baseDirectory
-      case p         => baseDirectory / p
-    }).find(_.exists).getOrElse(baseDirectory)
-
-  /** Extract template files under the first matching relative templatePaths under the baseDirectory. */
-  def templateFiles(root: File, baseDirectory: File): Stream[File] = {
-    val gitFiles      = getFiles(_ => true)(baseDirectory / ".git").toSet
-    val scaffoldFiles = getFiles(_ => true)(baseDirectory / "src" / "main" / "scaffolds").toSet
-    val metaDir       = baseDirectory / "project"
-    def baseAndMeta(xs: String*): Set[File] =
-      xs.toSet flatMap { x: String =>
-        Set(baseDirectory / x, metaDir / x)
-      }
-    val pluginFiles = baseAndMeta("giter8.sbt", "g8.sbt")
-    val metadata    = baseAndMeta("activator.properties", "template.properties")
-    val testFiles   = baseAndMeta("test", "giter8.test", "g8.test")
-    // .git and other files
-    val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
-    val gitignoreFile: File  = getFiles(_ => true)(root / ".gitignore").head
-    val ignores              = if (gitignoreFile.exists) Some(JGitIgnore(gitignoreFile)) else None
-    val xs = getFiles(x => {
-      val p         = x.toURI.toASCIIString
-      val isIgnored = ignores.isDefined && ignores.get.isIgnored(p)
-      !isIgnored && !skipFiles(x) && !p.stripPrefix(baseDirectory.toURI.toASCIIString).contains("target/")
-    })(root)
-    xs
-  }
-
   private[giter8] def applyT(
       fetch: File => Either[String, (UnresolvedProperties, Stream[File], File, Option[File])]
       // isScaffolding: Boolean = false
@@ -202,23 +170,9 @@ object G8 {
       baseDirectory: File,
       templatePaths: List[Path],
       scaffoldPaths: List[Path]): Either[String, (UnresolvedProperties, Stream[File], File, Option[File])] = {
-    import java.io.FileInputStream
-    val templatesRoot  = templateRoot(baseDirectory, templatePaths)
-    val fs             = templateFiles(templatesRoot, baseDirectory)
-    val metaDir        = baseDirectory / "project"
-    val propertiesLoc0 = templatesRoot / "default.properties"
-    val propertiesLoc1 = metaDir / "default.properties"
-    val propertiesLocs = Set(propertiesLoc0, propertiesLoc1)
-    val scaffoldsRoot =
-      (scaffoldPaths map {
-        case Path(Nil) => baseDirectory
-        case p         => baseDirectory / p
-      }).find(_.exists)
-    val (propertiesFiles, tmpls) = fs.partition {
-      propertiesLocs(_)
-    }
+    val template = Template(baseDirectory, templatePaths, scaffoldPaths)
 
-    val parametersEither = propertiesFiles.headOption
+    val parametersEither = template.propertyFiles.headOption
       .map { f =>
         val props       = readProps(new FileInputStream(f))
         val transformed = transformProps(props)
@@ -226,9 +180,8 @@ object G8 {
       }
       .getOrElse(Right(UnresolvedProperties.empty))
 
-    val g8templates = tmpls.filter(!_.isDirectory)
-
-    for (parameters <- parametersEither.right) yield (parameters, g8templates, templatesRoot, scaffoldsRoot)
+    for (parameters <- parametersEither.right)
+      yield (parameters, template.templateFiles.toStream, template.root, template.scaffoldsRoot)
   }
 
   def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {
