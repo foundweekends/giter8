@@ -25,11 +25,9 @@ import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
-import org.stringtemplate.v4.misc.STMessage
 import scala.util.control.Exception.{catching, allCatch}
 
 object G8 {
-  import org.clapper.scalasti.{STGroup, STHelper, STErrorListener}
 
   /** Properties in the order they were created/defined */
   type OrderedProperties = List[(String, String)]
@@ -100,33 +98,9 @@ object G8 {
     Seq(out)
   }
 
-  def applyTemplate(default: String, resolved: ResolvedProperties): String = {
-    val group = STGroup('$', '$')
-    group.nativeGroup.setListener(new STErrorHandler)
-    group.registerRenderer(renderer)
-    STHelper(group, default)
-      .setAttributes(resolved)
-      .render()
-  }
-
-  class STErrorHandler extends STErrorListener {
-    def compileTimeError(msg: STMessage) = {
-      throw new STException(msg.toString, null)
-    }
-    def runTimeError(msg: STMessage) = {
-      throw new STException(msg.toString, null)
-    }
-    def IOError(msg: STMessage) = {
-      throw new STException(msg.toString, null)
-    }
-    def internalError(msg: STMessage) = {
-      throw new STException(msg.toString, null)
-    }
-  }
-
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
   case class DefaultValueF(default: String) extends ValueF {
-    override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
+    override def apply(resolved: ResolvedProperties): String = StringRenderer.render(default, resolved).get
   }
 
   /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
@@ -134,8 +108,6 @@ object G8 {
   object UnresolvedProperties {
     val empty = List.empty[(String, ValueF)]
   }
-
-  private val renderer = new StringRenderer
 
   def write(in: File, out: File, parameters: Map[String, String] /*, append: Boolean*/ ): Unit =
     try {
@@ -157,7 +129,7 @@ object G8 {
     }
 
   def write(out: File, template: String, parameters: Map[String, String] /*, append: Boolean = false*/ ): Unit =
-    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8 /*, append*/ )
+    FileUtils.writeStringToFile(out, StringRenderer.render(template, parameters).get, UTF_8 /*, append*/ )
 
   def verbatim(file: File, parameters: Map[String, String]): Boolean =
     parameters.get("verbatim") map { s =>
@@ -185,7 +157,7 @@ object G8 {
         case x => x
       }: _*)
 
-      new File(toPath, applyTemplate(formatize(relative), fileParams))
+      new File(toPath, StringRenderer.render(FormatFunctions.formatize(relative), fileParams).get)
     } catch {
       case e: STException =>
         // add the current relative path to the exception for debugging purposes
@@ -193,19 +165,6 @@ object G8 {
       case t: Throwable =>
         throw t
     }
-
-  private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
-
-  def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
-  def startCase(s: String)    = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
-  def wordOnly(s: String)     = s.replaceAll("""\W""", "")
-  def upperCamel(s: String)   = wordOnly(startCase(s))
-  def lowerCamel(s: String)   = decapitalize(upperCamel(s))
-  def hyphenate(s: String)    = s.replaceAll("""\s+""", "-")
-  def normalize(s: String)    = hyphenate(s.toLowerCase)
-  def snakeCase(s: String)    = s.replaceAll("""[\s\.\-]+""", "_")
-  def packageDir(s: String)   = s.replace(".", System.getProperty("file.separator"))
-  def addRandomId(s: String)  = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
 
   val Param = """^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
@@ -268,7 +227,7 @@ object G8 {
             interact(defaults)
           }
 
-          val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse(".")
+          val base = outputFolder / parameters.get("name").map(FormatFunctions.normalize).getOrElse(".")
           val r = writeTemplates(templatesRoot,
                                  templates,
                                  parameters,
@@ -371,8 +330,7 @@ object G8 {
       println("\n")
     }
 
-    val fixed    = Set("verbatim")
-    val renderer = new StringRenderer
+    val fixed = Set("verbatim")
 
     others
       .foldLeft(ResolvedProperties.empty) {
@@ -402,7 +360,6 @@ object G8 {
                      forceOverwrite: Boolean): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
-    val renderer = new StringRenderer
 
     templates
       .map { in =>
@@ -483,36 +440,5 @@ private[giter8] class LinkedListProperties extends java.util.Properties {
   override def put(k: Object, v: Object) = {
     keyList = keyList :+ k.toString
     super.put(k, v)
-  }
-}
-
-class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
-  import G8._
-  def toString(value: String): String = value
-
-  override def toString(value: String, formatName: String, locale: java.util.Locale): String = {
-    if (formatName == null)
-      value
-    else {
-      val formats = formatName.split(",").map(_.trim)
-      formats.foldLeft(value)(format)
-    }
-  }
-
-  def format(value: String, formatName: String): String = formatName match {
-    case "upper"    | "uppercase"       => value.toUpperCase
-    case "lower"    | "lowercase"       => value.toLowerCase
-    case "cap"      | "capitalize"      => value.capitalize
-    case "decap"    | "decapitalize"    => decapitalize(value)
-    case "start"    | "start-case"      => startCase(value)
-    case "word"     | "word-only"       => wordOnly(value)
-    case "Camel"    | "upper-camel"     => upperCamel(value)
-    case "camel"    | "lower-camel"     => lowerCamel(value)
-    case "hyphen"   | "hyphenate"       => hyphenate(value)
-    case "norm"     | "normalize"       => normalize(value)
-    case "snake"    | "snake-case"      => snakeCase(value)
-    case "packaged" | "package-dir"     => packageDir(value)
-    case "random"   | "generate-random" => addRandomId(value)
-    case _ => value
   }
 }
