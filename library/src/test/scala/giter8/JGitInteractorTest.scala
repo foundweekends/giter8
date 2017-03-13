@@ -11,6 +11,7 @@ import scala.collection.JavaConverters._
 
 class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with TryValues {
   import TestFileHelpers._
+  import FileDsl._
 
   var remoteRepository: File     = _
   var interactor: JGitInteractor = _

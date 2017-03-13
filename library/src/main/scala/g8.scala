@@ -28,6 +28,7 @@ import org.stringtemplate.v4.compiler.STException
 import scala.util.control.Exception.{catching, allCatch}
 
 object G8 {
+  import FileDsl._
 
   /** Properties in the order they were created/defined */
   type OrderedProperties = List[(String, String)]
@@ -167,12 +168,6 @@ object G8 {
     }
 
   val Param = """^--(\S+)=(.+)$""".r
-  implicit class RichFile(file: File) {
-    def /(child: String): File = new File(file, child)
-    def /(path: Path): File    = (file /: path.paths) { _ / _ }
-  }
-  def file(path: String): File = new File(path)
-  def path(path: String): Path = Path(List(path))
 
   private[giter8] def getFiles(filter: File => Boolean)(f: File): Stream[File] =
     if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter))
@@ -427,10 +422,6 @@ object G8 {
       l :+ (k -> p.getProperty(k))
     }
   }
-}
-
-case class Path(paths: List[String]) {
-  def /(child: String): Path = copy(paths = paths ::: List(child))
 }
 
 /** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */

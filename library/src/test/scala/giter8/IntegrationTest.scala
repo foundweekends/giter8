@@ -7,6 +7,7 @@ import G8._
 
 class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers {
   import TestFileHelpers._
+  import FileDsl._
 
   "Giter8" should "treat sources root as template root" in testCase {
     case (template, expected, actual) =>

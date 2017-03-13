@@ -3,10 +3,10 @@ package giter8
 import java.io.File
 
 import org.scalatest.FunSuite
-import G8._
 
 class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelpers {
   import TestFileHelpers.tempDirectory
+  import FileDsl._
 
   case class TestCase(name: String, template: File, output: File)
 
