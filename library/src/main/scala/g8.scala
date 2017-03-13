@@ -18,14 +18,11 @@
 package giter8
 
 import java.io.File
+
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.Charsets.UTF_8
-import org.codehaus.plexus.logging.Logger
-import org.codehaus.plexus.logging.console.ConsoleLogger
-import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
-import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
-import scala.util.control.Exception.{catching, allCatch}
+
+import scala.util.{Failure, Success}
 
 object G8 {
   import FileDsl._
@@ -79,25 +76,12 @@ object G8 {
   def apply(fromMapping: Seq[(File, String)], toPath: File, parameters: Map[String, String]): Seq[File] =
     fromMapping filter { !_._1.isDirectory } flatMap {
       case (in, relative) =>
-        apply(in, expandPath(relative, toPath, parameters), parameters)
+        val out = expandPath(relative, toPath, parameters)
+        FileRenderer.renderFile(in, out, parameters) match {
+          case Success(()) => Seq(out)
+          case Failure(t)  => throw t
+        }
     }
-
-  def apply(in: File, out: File, parameters: Map[String, String]) = {
-    try {
-      if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
-      else {
-        write(in, out, parameters /*, false*/ )
-      }
-    } catch {
-      case e: Exception =>
-        println("Falling back to file copy for %s: %s" format (in.toString, e.getMessage))
-        FileUtils.copyFile(in, out)
-    }
-    allCatch opt {
-      if (in.canExecute) out.setExecutable(true)
-    }
-    Seq(out)
-  }
 
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
   case class DefaultValueF(default: String) extends ValueF {
@@ -110,43 +94,6 @@ object G8 {
     val empty = List.empty[(String, ValueF)]
   }
 
-  def write(in: File, out: File, parameters: Map[String, String] /*, append: Boolean*/ ): Unit =
-    try {
-      Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
-        case Some(attr) =>
-          val mode = attr.getOctalMode
-          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
-          util.Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
-        case None =>
-          // PlexusIoResourceAttributes is not available for some OS'es such as windows
-          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
-      }
-    } catch {
-      case e: STException =>
-        // add the current file to the exception for debugging purposes
-        throw new STException(s"File: $in, ${e.getMessage}", null)
-      case t: Throwable =>
-        throw t
-    }
-
-  def write(out: File, template: String, parameters: Map[String, String] /*, append: Boolean = false*/ ): Unit =
-    FileUtils.writeStringToFile(out, StringRenderer.render(template, parameters).get, UTF_8 /*, append*/ )
-
-  def verbatim(file: File, parameters: Map[String, String]): Boolean =
-    parameters.get("verbatim") map { s =>
-      globMatch(file, s.split(' ').toSeq)
-    } getOrElse { false }
-  private def globMatch(file: File, patterns: Seq[String]): Boolean =
-    patterns exists { globRegex(_).findFirstIn(file.getName).isDefined }
-  private def globRegex(pattern: String) =
-    "^%s$"
-      .format(pattern flatMap {
-        case '*' => """.*"""
-        case '?' => """."""
-        case '.' => """\."""
-        case x   => x.toString
-      })
-      .r
   def expandPath(relative: String, toPath: File, parameters: Map[String, String]): File =
     try {
       val fileParams = Map(parameters.toSeq map {
@@ -353,9 +300,6 @@ object G8 {
                      base: File,
                      // isScaffolding: Boolean,
                      forceOverwrite: Boolean): Either[String, String] = {
-
-    import java.nio.charset.MalformedInputException
-
     templates
       .map { in =>
         val name = relativize(in, tmpl)
@@ -367,25 +311,9 @@ object G8 {
           if (out.exists) {
             println("Skipping existing file: %s" format out.toString)
           } else {
-            out.getParentFile.mkdirs()
-            if (G8.verbatim(out, parameters))
-              FileUtils.copyFile(in, out)
-            else {
-              catching(classOf[MalformedInputException])
-                .opt {
-                  Some(G8.write(in, out, parameters /*, append = existingScaffoldingAction.getOrElse(false)*/ ))
-                }
-                .getOrElse {
-                  // if (existingScaffoldingAction.getOrElse(false)) {
-                  //   val existing = FileUtils.readFileToString(in, UTF_8)
-                  //   FileUtils.write(out, existing, UTF_8, true)
-                  // } else {
-                  FileUtils.copyFile(in, out)
-                  // }
-                }
-            }
-            if (in.canExecute) {
-              out.setExecutable(true)
+            FileRenderer.renderFile(in, out, parameters) match {
+              case Success(()) => ()
+              case Failure(e)  => return Left(e.getMessage)
             }
           }
       }

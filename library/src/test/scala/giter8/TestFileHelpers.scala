@@ -3,6 +3,9 @@ package giter8
 import java.io.{File, PrintWriter}
 
 import org.apache.commons.io.FileUtils
+import org.scalatest.matchers.{MatchResult, Matcher}
+
+import scala.io.Source
 
 object TestFileHelpers {
   def tempDirectory(code: File => Unit): Unit = {
@@ -30,6 +33,18 @@ object TestFileHelpers {
         write(s)
         close()
       }
+    }
+  }
+
+  def haveContents(contents: String): Matcher[File] = new Matcher[File] {
+    override def apply(left: File): MatchResult = {
+      val fileContents = Source.fromFile(left).getLines().mkString("\n")
+      MatchResult(
+        matches = fileContents == contents,
+        rawFailureMessage =
+          s"File ${left.getAbsolutePath} has invalid contents:\n\texpected $contents\n\tactual: $fileContents",
+        rawNegatedFailureMessage = s"${left.getAbsolutePath} has contents $contents"
+      )
     }
   }
 }
