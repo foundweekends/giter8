@@ -5,14 +5,13 @@ import java.io.{File, InputStream}
 import org.scalatest.Assertions.fail
 
 import scala.io.Source
+import scala.util.{Failure, Success}
 
 trait IntegrationTestHelpers {
   def checkGeneratedProject(template: File, expected: File, actual: File): Unit = {
-    Console.withIn(InfiniteLineBreaks) {
-      G8.fromDirectory(template, actual, Seq.empty, forceOverwrite = false) match {
-        case Right(_)  => compareDirectories(actual, expected)
-        case Left(err) => fail(err)
-      }
+    Giter8.applyTemplate(template, None, actual, Map.empty, interactive = false) match {
+      case Success(_)   => compareDirectories(actual, expected)
+      case Failure(err) => fail(err)
     }
   }
 

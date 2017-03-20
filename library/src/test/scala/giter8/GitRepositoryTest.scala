@@ -1,8 +1,10 @@
 package giter8
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers, TryValues}
 
-class GitRepositoryTest extends FlatSpec with Matchers {
+import scala.util.Success
+
+class GitRepositoryTest extends FlatSpec with Matchers with TryValues {
 
   "JGit" should "resolve repo name correctly" in {
     val testCases: Map[String, GitRepository] = Map(
@@ -16,10 +18,9 @@ class GitRepositoryTest extends FlatSpec with Matchers {
       "foo/bar" -> GitRepository.GitHub("foo", "bar")
     )
 
-    testCases foreach { testCase =>
-      val string   = testCase._1
-      val expected = testCase._2
-      GitRepository.fromString(string) shouldBe Right(expected)
+    testCases foreach {
+      case (string, repository) =>
+        GitRepository.fromString(string).success.value shouldBe repository
     }
   }
 

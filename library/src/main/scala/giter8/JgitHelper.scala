@@ -19,9 +19,10 @@ package giter8
 
 import java.io.File
 
+import giter8.Giter8.applyTemplate
 import org.apache.commons.io.FileUtils
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 sealed trait Ref
 
@@ -36,32 +37,19 @@ case class Config(repo: String,
 
 class JgitHelper(gitInteractor: Git) {
 
-  // Workaround before moving to Scala 2.12
-  implicit class flatMapMonad[L, R](either: Either[L, R]) {
-    def flatMap[R1](f: R => Either[L, R1]): Either[L, R1] = either match {
-      case Right(r) => f(r)
-      case Left(l)  => Left(l)
-    }
-
-    def map[R1](f: R => R1): Either[L, R1] = either match {
-      case Right(r) => Right(f(r))
-      case Left(l)  => Left(l)
-    }
-  }
-
   private val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
   /** Clean temporary directory used for git cloning */
   def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDelete(tempdir)
 
-  def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] =
-    for {
+  def run(config: Config, arguments: Seq[String], outputDirectory: File): Either[String, String] =
+    (for {
       repository <- GitRepository.fromString(config.repo)
-      baseDir <- gitInteractor.clone(repository, config.ref, tempdir) match {
-        case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
-        case Failure(e) => Left(e.getMessage)
-      }
-      renderedTemplate <- G8.fromDirectory(baseDir, outDirectory, arguments, config.forceOverwrite)
-    } yield renderedTemplate
-
+      _          <- gitInteractor.clone(repository, config.ref, tempdir)
+      parameters <- Try(Util.parseArguments(arguments))
+      res        <- applyTemplate(tempdir, config.directory, outputDirectory, parameters, interactive = true)
+    } yield res) match {
+      case Success(s) => Right(s)
+      case Failure(e) => Left(e.getMessage)
+    }
 }

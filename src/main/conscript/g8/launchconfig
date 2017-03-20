@@ -2,7 +2,7 @@
   version: 0.7.2
   org: org.foundweekends.giter8
   name: giter8
-  class: giter8.Giter8
+  class: giter8.Giter8App
 [scala]
   version: 2.10.6
 [repositories]

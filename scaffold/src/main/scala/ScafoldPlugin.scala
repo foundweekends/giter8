@@ -20,6 +20,8 @@ package giter8
 import sbt._
 import Keys._
 
+import scala.util.{Failure, Success}
+
 object ScaffoldPlugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
   override val trigger  = allRequirements
@@ -50,9 +52,9 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
     Def.inputTask {
       val (name, args) = parser.parsed
       val folder       = g8ScaffoldTemplatesDirectory.value
-      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, false) match {
-        case Right(_) => println("Success :)")
-        case Left(e)  => sys.error(e)
+      Giter8.applyTemplate(folder / name, None, baseDirectory.value, Util.parseArguments(args), interactive = true) match {
+        case Success(s) => Right(s)
+        case Failure(e) => Left(e.getMessage)
       }
     }
 

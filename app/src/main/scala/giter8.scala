@@ -19,14 +19,14 @@ package giter8
 
 import java.io.File
 
-class Giter8 extends xsbti.AppMain {
+class Giter8App extends xsbti.AppMain {
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
   val Param = """^--(\S+)=(.+)$""".r
 
   /** The launched conscript entry point */
   def run(config: xsbti.AppConfiguration): Exit =
-    new Exit(Giter8.run(config.arguments))
+    new Exit(Giter8App.run(config.arguments))
 
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
@@ -103,7 +103,7 @@ class Giter8 extends xsbti.AppMain {
 
 class Exit(val code: Int) extends xsbti.Exit
 
-object Giter8 extends Giter8 {
+object Giter8App extends Giter8App {
   import java.io.File
   val home = Option(System.getProperty("G8_HOME"))
     .map(new File(_))

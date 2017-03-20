@@ -17,13 +17,16 @@
 
 package giter8
 
+import scala.util.{Failure, Success, Try}
 import scala.util.matching.Regex
 
 sealed trait GitRepository
 
 object GitRepository {
-  case class Local(path: String) extends GitRepository
+  case class UnknownRepositoryError(repository: String)
+      extends RuntimeException(s"unknown repository type: $repository")
 
+  case class Local(path: String) extends GitRepository
   case class Remote(url: String) extends GitRepository
 
   case class GitHub(user: String, repo: String) extends GitRepository {
@@ -31,14 +34,14 @@ object GitRepository {
     def privateUrl: String = s"git@github.com:$user/$repo.g8.git"
   }
 
-  def fromString(string: String): Either[String, GitRepository] = string match {
-    case Matches.Local(path)        => Right(Local(path))
-    case Matches.NativeUrl(url)     => Right(Remote(url))
-    case Matches.HttpsUrl(url)      => Right(Remote(url))
-    case Matches.HttpUrl(url)       => Right(Remote(url))
-    case Matches.SshUrl(url)        => Right(Remote(url))
-    case Matches.GitHub(user, repo) => Right(GitHub(user, repo))
-    case _                          => Left(s"unknown repository type: $string")
+  def fromString(repository: String): Try[GitRepository] = repository match {
+    case Matches.Local(path)        => Success(Local(path))
+    case Matches.NativeUrl(url)     => Success(Remote(url))
+    case Matches.HttpsUrl(url)      => Success(Remote(url))
+    case Matches.HttpUrl(url)       => Success(Remote(url))
+    case Matches.SshUrl(url)        => Success(Remote(url))
+    case Matches.GitHub(user, repo) => Success(GitHub(user, repo))
+    case _                          => Failure(UnknownRepositoryError(repository))
   }
 
   object Matches {
