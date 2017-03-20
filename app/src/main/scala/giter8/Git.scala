@@ -24,9 +24,9 @@ import giter8.GitRepository.{GitHub, Local, Remote}
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.TrueFileFilter
 
+import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
-import scala.collection.JavaConverters._
 
 class Git(gitInteractor: GitInteractor) {
   import Git._

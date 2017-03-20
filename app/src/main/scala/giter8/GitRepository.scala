@@ -17,8 +17,8 @@
 
 package giter8
 
-import scala.util.{Failure, Success, Try}
 import scala.util.matching.Regex
+import scala.util.{Failure, Success, Try}
 
 sealed trait GitRepository
 

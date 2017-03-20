@@ -5,8 +5,8 @@ import java.io.File
 import giter8.Git.{NoBranchError, NoTagError}
 import giter8.GitInteractor.TransportError
 import giter8.GitRepository.{GitHub, Local, Remote}
-import org.scalatest.{EitherValues, FlatSpec, Matchers, TryValues}
 import org.scalamock.scalatest.MockFactory
+import org.scalatest.{EitherValues, FlatSpec, Matchers, TryValues}
 
 import scala.util.{Failure, Success, Try}
 

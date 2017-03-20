@@ -2,7 +2,7 @@ package giter8
 
 import org.scalatest.{FlatSpec, Matchers}
 
-class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers {
+class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers with FileContentMatchers {
   import TemplateRenderer._
   import FileDsl._
 

@@ -49,7 +49,12 @@ lazy val app = (project in file("app"))
     sourceDirectory in csRun := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
     },
-    libraryDependencies ++= Seq(scopt, logback),
+    libraryDependencies ++= Seq(
+      scopt,
+      logback,
+      scalatest % Test,
+      scalamock % Test
+    ),
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
   )

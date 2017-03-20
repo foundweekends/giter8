@@ -20,12 +20,12 @@ package giter8
 import java.io.File
 
 import giter8.GitInteractor.TransportError
-import org.eclipse.jgit.api.errors.{RefAlreadyExistsException, TransportException}
-import org.eclipse.jgit.transport.CredentialsProvider
+import org.eclipse.jgit.api.errors.TransportException
 import org.eclipse.jgit.api.{Git => JGit}
+import org.eclipse.jgit.transport.CredentialsProvider
 
-import scala.util.{Failure, Success, Try}
 import scala.collection.JavaConverters._
+import scala.util.{Failure, Success, Try}
 
 trait GitInteractor {
   def cloneRepository(url: String, dest: File): Try[Unit]

@@ -17,8 +17,8 @@
 
 package giter8
 
+import sbt.Keys._
 import sbt._
-import Keys._
 
 import scala.util.{Failure, Success}
 
@@ -32,8 +32,8 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
   }
 
   import autoImport._
-  import complete._
   import complete.DefaultParsers._
+  import complete._
 
   val parser: Def.Initialize[State => Parser[(String, List[String])]] =
     Def.setting {

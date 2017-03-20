@@ -2,8 +2,6 @@ package giter8
 
 import org.scalatest.{FlatSpec, Matchers, TryValues}
 
-import scala.util.Success
-
 class GitRepositoryTest extends FlatSpec with Matchers with TryValues {
 
   "JGit" should "resolve repo name correctly" in {

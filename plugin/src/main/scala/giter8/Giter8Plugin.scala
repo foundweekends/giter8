@@ -19,20 +19,16 @@ package giter8
 
 import java.io.File
 
+import sbt.ScriptedPlugin._
 import sbt._
-import ScriptedPlugin._
-import giter8.Giter8.makePropertyResolver
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.DefaultHttpClient
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Success}
 
 object Giter8Plugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
   override val trigger  = allRequirements
 
   import Keys._
-  import scala.io.Source
 
   object autoImport {
     lazy val g8              = taskKey[Unit]("Apply default parameters to input templates and write to output.")
