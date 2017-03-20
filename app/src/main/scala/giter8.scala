@@ -22,15 +22,17 @@ import java.io.File
 class Giter8 extends xsbti.AppMain {
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
+  val Param = """^--(\S+)=(.+)$""".r
+
   /** The launched conscript entry point */
   def run(config: xsbti.AppConfiguration): Exit =
     new Exit(Giter8.run(config.arguments))
 
   /** Runner shared my main-class runner */
   def run(args: Array[String]): Int = {
-    val helper = new JgitHelper(new Git(new JGitInteractor), G8TemplateRenderer)
+    val helper = new JgitHelper(new Git(new JGitInteractor))
     val result = (args.partition { s =>
-      G8.Param.pattern.matcher(s).matches
+      Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
         parser

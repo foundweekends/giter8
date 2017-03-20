@@ -34,7 +34,7 @@ case class Config(repo: String,
                   forceOverwrite: Boolean   = false,
                   directory: Option[String] = None)
 
-class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
+class JgitHelper(gitInteractor: Git) {
 
   // Workaround before moving to Scala 2.12
   implicit class flatMapMonad[L, R](either: Either[L, R]) {
@@ -61,7 +61,7 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
         case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
         case Failure(e) => Left(e.getMessage)
       }
-      renderedTemplate <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
+      renderedTemplate <- G8.fromDirectory(baseDir, outDirectory, arguments, config.forceOverwrite)
     } yield renderedTemplate
 
 }
