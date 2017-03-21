@@ -40,7 +40,7 @@ object GitInteractor {
   case class TransportError(message: String) extends RuntimeException(message)
 }
 
-class JGitInteractor extends GitInteractor {
+object JGitInteractor extends GitInteractor {
   CredentialsProvider.setDefault(ConsoleCredentialsProvider)
 
   override def cloneRepository(url: String, dest: File): Try[Unit] = Try {
