@@ -20,6 +20,7 @@ package giter8
 import sbt.Keys._
 import sbt._
 
+import scala.collection.immutable.Seq
 import scala.util.{Failure, Success}
 
 object ScaffoldPlugin extends sbt.AutoPlugin {
@@ -35,31 +36,31 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
   import complete.DefaultParsers._
   import complete._
 
-  val parser: Def.Initialize[State => Parser[(String, List[String])]] =
-    Def.setting {
-      val dir = g8ScaffoldTemplatesDirectory.value
-      (state: State) =>
-        val templates = Option(dir.listFiles).toList.flatten
-          .filter(f => f.isDirectory && !f.isHidden)
-          .map(_.getName: Parser[String])
-        (Space) ~> token(templates.foldLeft(" ": Parser[String])(_ | _)).examples("<template>") ~
-          (Space ~> StringBasic.examples("--k=v")).* map {
-          case tmp ~ args => (tmp, args.toList)
-        }
-    }
+  private val parser = Def.setting { state: State =>
+    val dir                 = g8ScaffoldTemplatesDirectory.value
+    val templateDirectories = Option(dir.listFiles).toList.flatten.filter(f => f.isDirectory && !f.isHidden)
 
-  val scaffoldTask =
-    Def.inputTask {
-      val (name, args) = parser.parsed
-      val folder       = g8ScaffoldTemplatesDirectory.value
-      Giter8.applyTemplate(folder / name, None, baseDirectory.value, Util.parseArguments(args), interactive = true) match {
-        case Success(s) => Right(s)
-        case Failure(e) => Left(e.getMessage)
-      }
+    val templateParsers = templateDirectories.map(_.getName: Parser[String])
+    val nameParser      = token(templateParsers.reduce(_ | _)).examples("<template>")
+    val argumentParser  = Space ~> StringBasic.examples("--k=v")
+
+    Space ~> nameParser ~ argumentParser.* map {
+      case tmp ~ args => (tmp, args)
     }
+  }
+
+  private val scaffoldTask = Def.inputTask {
+    val (name, args) = parser.parsed
+    val folder       = g8ScaffoldTemplatesDirectory.value
+    val log          = streams.value.log
+    Giter8.applyTemplate(folder / name, None, baseDirectory.value, Util.parseArguments(args), interactive = true) match {
+      case Success(s) => log.info(s"Template '$name' applied")
+      case Failure(e) => log.error(e.getMessage)
+    }
+  }
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
-    g8ScaffoldTemplatesDirectory := { baseDirectory.value / ".g8" },
+    g8ScaffoldTemplatesDirectory := baseDirectory.value / ".g8",
     g8Scaffold := scaffoldTask.evaluated
   )
 }
