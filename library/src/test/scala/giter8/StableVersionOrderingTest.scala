@@ -33,13 +33,13 @@ final class StableVersionOrderingTest extends Properties("StableVersion") {
         if (maxMinorCount == 1) {
           (sortedVersion.major == maxMajor &&
            sortedVersion.minor == maxMinor) :|
-            s"expected major: ${sortedVersion.major} minor ${sortedVersion.minor}, " +
+            s"expected major: ${sortedVersion.major} minor: ${sortedVersion.minor}, " +
             s"got major: ${maxMajor} minor: ${maxMinor}"
         } else {
           (sortedVersion.major == maxMajor &&
            sortedVersion.minor == maxMinor &&
            sortedVersion.patch == maxPatch) :|
-            s"expected major: ${sortedVersion.major} minor: ${sortedVersion.minor} patch: ${sortedVersion}, " +
+            s"expected major: ${sortedVersion.major} minor: ${sortedVersion.minor} patch: ${sortedVersion.patch}, " +
             s"got major: ${maxMajor} minor: ${maxMinor} patch: ${maxPatch}"
         }
       }
