@@ -38,25 +38,13 @@ object TemplateRenderer {
   }
 
   def copyScaffolds(scaffoldsRoot: Option[File], scaffoldsFiles: Seq[File], outputDirectory: File): Try[Unit] = Try {
-
-    //    val scaffolds = if (sf.exists) Some(Giter8Template.files(sf)) else None
-    //
-    //    for (fs <- scaffolds; f <- fs if !f.isDirectory) {
-    //      // Copy scaffolding recipes
-    //      val realProjectRoot = Giter8Template
-    //        .files(output)
-    //        .filterNot(_.isHidden)
-    //        .filter(_.isDirectory)
-    //        .filter(_.getName == "project")
-    //        .map(_.getParentFile)
-    //        .headOption
-    //        .getOrElse(output)
-    //
-    //      val hidden = new File(realProjectRoot, ".g8")
-    //      val name = relativePath(f, sf)
-    //      val out = new File(hidden, name)
-    //      FileUtils.copyFile(f, out)
-    //    }
+    scaffoldsRoot.foreach { root =>
+      scaffoldsFiles.foreach { file =>
+        val name = relativePath(root, file)
+        val out  = new File(outputDirectory, name)
+        FileUtils.copyFile(file, out)
+      }
+    }
   }
 
   private def writeTemplateFile(templateRoot: File, in: File, parameters: Map[String, String], base: File): Try[Unit] = {
@@ -90,33 +78,4 @@ object TemplateRenderer {
     val toUti   = to.toURI
     fromUri.relativize(toUti).getPath
   }
-
-  private def getFiles(filter: File => Boolean)(f: File): Stream[File] =
-    if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter))
-    else if (filter(f)) Stream(f)
-    else Stream()
-
-  private def getVisibleFiles = getFiles(!_.isHidden) _
-
-  def copyScaffolds(sf: File, output: File): Unit = {
-
-    val scaffolds = if (sf.exists) Some(getFiles(_ => true)(sf)) else None
-
-    for (fs <- scaffolds;
-         f  <- fs if !f.isDirectory) {
-      // Copy scaffolding recipes
-      val realProjectRoot = getVisibleFiles(output)
-        .filter(_.isDirectory)
-        .filter(_.getName == "project")
-        .map(_.getParentFile)
-        .headOption
-        .getOrElse(output)
-
-      val hidden = new File(realProjectRoot, ".g8")
-      val name   = TemplateRenderer.relativePath(f, sf)
-      val out    = new File(hidden, name)
-      FileUtils.copyFile(f, out)
-    }
-  }
-
 }

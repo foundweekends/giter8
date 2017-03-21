@@ -46,6 +46,7 @@ class Template private (baseDirectory: File, val root: File, val scaffoldsRoot: 
     .filterNot(testFiles)
     .filterNot(isTargetDir)
     .filterNot(_.isDirectory)
+    .filterNot(scaffoldsFiles.toSet)
     .partition(properties)
 
   private def baseAndMeta(xs: String*): Set[File] = xs.toSet flatMap { x: String =>

@@ -106,8 +106,8 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
   it should "resolve package names" in testCase {
     case (template, expected, actual) =>
       """|name = Package test
-       |package = com.example
-    """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
+         |package = com.example
+      """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
 
       "package $package$" >> (template / "src/main/g8/src/main/scala" / "$package$" / "Main.scala")
       "package com.example" >> (expected / "package-test" / "src/main/scala" / "com/example" / "Main.scala")
@@ -130,6 +130,26 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       touch(template / "src" / "main" / "g8" / ".DS_Store")
       touch(template / "src" / "main" / "g8" / "folder" / ".DS_Store")
       touch(template / "src" / "main" / "g8" / ".idea" / "ignoreMe")
+      checkGeneratedProject(template, expected, actual)
+  }
+
+  it should "copy scaffolds files from src/main/scaffolds" in testCase {
+    case (template, expected, actual) =>
+      touch(template / "src" / "main" / "scaffolds" / "A" / "foo.txt")
+      touch(template / "src" / "main" / "scaffolds" / "B" / "bar.txt")
+      touch(expected / ".g8" / "A" / "foo.txt")
+      touch(expected / ".g8" / "B" / "bar.txt")
+
+      checkGeneratedProject(template, expected, actual)
+  }
+
+  it should "copy scaffolds files from project/src/main/scaffolds" in testCase {
+    case (template, expected, actual) =>
+      touch(template / "project" / "src" / "main" / "scaffolds" / "A" / "foo.txt")
+      touch(template / "project" / "src" / "main" / "scaffolds" / "B" / "bar.txt")
+      touch(expected / ".g8" / "A" / "foo.txt")
+      touch(expected / ".g8" / "B" / "bar.txt")
+
       checkGeneratedProject(template, expected, actual)
   }
 

@@ -37,4 +37,16 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
     temp / "out" / "com" / "example" / "foo.txt" should exist
     temp / "out" / "com" / "example" / "foo.txt" should haveContents("bar")
   }
+
+  it should "copy scaffolds" in tempDirectory { temp =>
+    touch(temp / "scaffolds" / "A" / "a.txt")
+    touch(temp / "scaffolds" / "B" / "b.txt")
+
+    val scaffoldsFiles = Seq(temp / "scaffolds" / "A" / "a.txt", temp / "scaffolds" / "B" / "b.txt")
+
+    copyScaffolds(Some(temp / "scaffolds"), scaffoldsFiles, temp / "out" / ".g8")
+
+    temp / "out" / ".g8" / "A" / "a.txt" should exist
+    temp / "out" / ".g8" / "B" / "b.txt" should exist
+  }
 }
