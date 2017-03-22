@@ -22,7 +22,7 @@ import java.io.File
 import sbt.ScriptedPlugin._
 import sbt._
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 object Giter8Plugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
@@ -31,93 +31,64 @@ object Giter8Plugin extends sbt.AutoPlugin {
   import Keys._
 
   object autoImport {
-    lazy val g8              = taskKey[Unit]("Apply default parameters to input templates and write to output.")
-    lazy val g8PropertyFiles = settingKey[Seq[File]]("g8-properties-file")
-    lazy val g8Template      = settingKey[Template]("Giter8 template")
-    lazy val g8Properties    = taskKey[Map[String, String]]("g8-properties")
-    lazy val g8TestScript    = settingKey[File]("g8-test-script")
-    lazy val g8Test          = inputKey[Unit]("Run `sbt test` in output to smoke-test the templates")
+    lazy val g8                  = taskKey[Unit]("Apply default parameters to input templates and write to output")
+    lazy val g8TemplateDirectory = settingKey[File]("Giter8 template directory")
+    lazy val g8Template          = settingKey[Template]("Giter8 template")
+    lazy val g8TemplateFiles     = settingKey[Seq[File]]("Giter8 template files")
+    lazy val g8PropertyFiles     = settingKey[Seq[File]]("Giter8 template property files")
+    lazy val g8Properties        = taskKey[Map[String, String]]("Giter8 template default properties")
+    lazy val g8TargetDirectory   = settingKey[File]("Directory to copy rendered template")
+    lazy val g8TestScript        = settingKey[File]("Giter8 test script")
+    lazy val g8Test              = inputKey[Unit]("Run `sbt test` in output to smoke-test the templates")
   }
+
+  private lazy val copyG8TestScript = taskKey[Unit]("Copy Giter8 sbt-test script")
 
   import autoImport._
 
   lazy val baseGiter8Settings: Seq[Def.Setting[_]] = Seq(
-    g8 := {
-      val base     = (unmanagedSourceDirectories in g8).value
-      val srcs     = (sources in g8).value
-      val out      = (target in g8).value
-      val props    = (g8Properties in g8).value
-      val template = (g8Template in g8).value
-      IO.delete(out)
-      //Giter8(srcs pair relativeTo(base), out, props)
-
-      (for {
-        packageDir <- Success(props.get("name").map(FormatFunctions.normalize).getOrElse("."))
-        res        <- TemplateRenderer.render(template.root, template.templateFiles, out / packageDir, props)
-        _          <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
-      } yield res) match {
-        case Success(s) => println("Template applied")
-        case Failure(e) => println(e.getMessage)
+    aggregate in g8 := false,
+    g8TargetDirectory := target.value / "g8",
+    g8TemplateDirectory := {
+      Option(sourceDirectory.value / "g8") match {
+        case Some(directory) if directory.isDirectory && directory.listFiles.nonEmpty => directory
+        case _                                                                        => baseDirectory.value
       }
     },
-    aggregate in g8 := false,
-    unmanagedSourceDirectories in g8 := {
-      val g8directory = (sourceDirectory.value / "g8").get
-      if (g8directory.nonEmpty) g8directory
-      else Seq(baseDirectory.value)
-    },
-    sources in g8 := {
-      (g8Template in g8).value.templateFiles
-    },
-    g8Template in g8 := {
-      val dirs = (unmanagedSourceDirectories in g8).value
-      Template(dirs.head)
-    },
-    target in g8 := target.value / "g8",
-    g8PropertyFiles in g8 := (g8Template in g8).value.propertyFiles,
-    g8Properties in g8 := {
+    g8Template := Template(g8TemplateDirectory.value),
+    g8TemplateFiles := g8Template.value.templateFiles,
+    g8PropertyFiles := g8Template.value.propertyFiles,
+    g8Properties := {
       val resolver = PropertyResolverChain(
         FilePropertyResolver((g8PropertyFiles in g8).value: _*),
         MavenPropertyResolver(Giter8.defaultHttpClient)
       )
       resolver.resolve(Map.empty).getOrElse(Map.empty)
+    },
+    g8 := {
+      val out      = g8TargetDirectory.value
+      val props    = g8Properties.value
+      val template = g8Template.value
+
+      applyTemplate(out, props, template) match {
+        case Success(s) => println("Template applied")
+        case Failure(e) =>
+          println(e.getMessage)
+          sys.exit(1)
+      }
     }
   )
 
-  lazy val giter8TestSettings: Seq[Def.Setting[_]] = scriptedSettings ++ Seq(
-      g8Test in Test := { scriptedTask.evaluated },
-      aggregate in (Test, g8Test) := false,
-      scriptedDependencies := {
-      val x = (g8 in Test).value
+  lazy val giter8TestSettings: Seq[Def.Setting[_]] = Seq(
+    aggregate in g8Test := false,
+    sbtTestDirectory in g8Test := target.value / "sbt-test",
+    scriptedBufferLog in g8Test := true,
+    g8TargetDirectory in g8Test := sbtTestDirectory.value / name.value / "scripted",
+    scriptedDependencies := {
+      g8.value
+      copyG8TestScript.value
     },
-      g8 in Test := {
-      val base     = (unmanagedSourceDirectories in (Compile, g8)).value
-      val srcs     = (sources in (Compile, g8)).value
-      val out      = (target in (Test, g8)).value
-      val props    = (g8Properties in (Test, g8)).value
-      val ts       = (g8TestScript in (Test, g8)).value
-      val s        = streams.value
-      val template = (g8Template in (Test, g8)).value
-      IO.delete(out)
-//      val retval = Giter8(srcs pair relativeTo(base), out, props)
-      (for {
-        packageDir <- Success(props.get("name").map(FormatFunctions.normalize).getOrElse("."))
-        res        <- TemplateRenderer.render(template.root, template.templateFiles, out / packageDir, props)
-        _          <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
-      } yield res) match {
-        case Success(s) => println("Template applied")
-        case Failure(e) => println(e.getMessage)
-      }
-
-      // copy test script or generate one
-      val script = new File(out, "test")
-      if (ts.exists) IO.copyFile(ts, script)
-      else IO.write(script, """>test""")
-//      retval :+ script
-    },
-      sbtTestDirectory := { target.value / "sbt-test" },
-      target in (Test, g8) := { sbtTestDirectory.value / name.value / "scripted" },
-      g8TestScript := {
+    g8TestScript := {
       val dir     = (sourceDirectory in Test).value
       val metadir = (baseDirectory in LocalRootProject).value / "project"
       val file0   = dir / "g8" / "test"
@@ -129,8 +100,27 @@ object Giter8Plugin extends sbt.AutoPlugin {
                        metadir / "g8.test")
       files.find(_.exists).getOrElse(file0)
     },
-      scriptedBufferLog in (Test, g8) := true
-    )
+    copyG8TestScript := {
+      val testScript = g8TestScript.value
+      val out        = g8TargetDirectory.value
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
+      // copy test script or generate one
+      val script = new File(out, "test")
+      if (testScript.exists) IO.copyFile(testScript, script)
+      else IO.write(script, """> test""")
+    },
+    g8Test := scriptedTask.evaluated
+  )
+
+  private def applyTemplate(out: File, props: Map[String, String], template: Template): Try[String] = {
+    IO.delete(out)
+    for {
+      packageDir <- Success(props.get("name").map(FormatFunctions.normalize).getOrElse("."))
+      res        <- TemplateRenderer.render(template.root, template.templateFiles, out / packageDir, props)
+      _          <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
+    } yield res
+  }
+
+  override lazy val projectSettings: Seq[Def.Setting[_]] = baseGiter8Settings ++ scriptedSettings ++ inConfig(Test)(
+      giter8TestSettings)
 }
