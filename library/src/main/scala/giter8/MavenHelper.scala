@@ -22,36 +22,6 @@ import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpGet
 import org.apache.http.impl.client.DefaultHttpClient
 
-final case class StableVersion(major: Int, minor: Int, patch: Int) {
-  val semString = s"${major}.${minor}.${patch}"
-}
-
-object StableVersion {
-  def unapply(version: String): Option[StableVersion] = {
-    val parts = version.split("\\.")
-    if (parts.length == 3 && parts.forall(_.forall(_.isDigit))) {
-      Option(StableVersion(parts(0).toInt, parts(1).toInt, parts(2).toInt))
-    } else None
-  }
-
-  val majorWeight = 10000
-  val minorWeight = 100 //allow 99 minor versions
-  val patchWeight = 1 //allow 99 patch versions
-
-  def calcWeight(sv: StableVersion): Int =
-    (sv.major * majorWeight) + (sv.minor * minorWeight) + (sv.patch * patchWeight)
-
-  implicit val stableOrdering = new Ordering[StableVersion] {
-    override def compare(s1: StableVersion, s2: StableVersion): Int = {
-      val s1Weight = calcWeight(s1)
-      val s2Weight = calcWeight(s2)
-
-      s2Weight - s1Weight //we want the bigger weight first
-    }
-  }
-}
-
-
 // http://hc.apache.org/httpcomponents-client-4.2.x/httpclient/apidocs/
 trait MavenHelper {
   def fromMaven(org: String,

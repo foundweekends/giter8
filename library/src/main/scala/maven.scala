@@ -49,15 +49,15 @@ object Maven extends JavaTokenParsers with MavenHelper {
        toRight(s"Found metadata at $loc but can't extract latest version")
   }
 
-  private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(implicit svo: Ordering[StableVersion]): VersionE = {
+  private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(implicit svo: Ordering[VersionNumber]): VersionE = {
   (elem \ "versioning" \ "latest").headOption.map(_.text) match {
-    case Some(StableVersion(version)) => Right(version.semString)
+    case Some(VersionNumber.Stable(version)) => Right(version.toString)
     case _ =>
       val versions = (elem \ "versioning" \ "versions" \ "version").map(_.text)
       val validVersions = versions.collect {
-        case StableVersion(stableVersion) => stableVersion
+        case VersionNumber.Stable(version) => version
       }
-      validVersions.sorted.headOption.map(_.semString).
+      validVersions.sorted.headOption.map(_.toString).
         toRight(s"Could not find latest stable version at $loc")
     }
   }
