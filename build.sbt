@@ -21,6 +21,7 @@ lazy val root = (project in file(".")).
         Some("releases" at
              "https://oss.sonatype.org/service/local/staging/deploy/maven2"),
       publishArtifact in Test := false,
+      parallelExecution in Test := false,
       licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
       developers := List(
         Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han")),
