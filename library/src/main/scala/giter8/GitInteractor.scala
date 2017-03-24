@@ -30,8 +30,10 @@ import scala.collection.JavaConverters._
 trait GitInteractor {
   def cloneRepository(url: String, dest: File): Try[Unit]
   def getRemoteBranches(url: String): Try[Seq[String]]
+  def getRemoteTags(url: String): Try[Seq[String]]
   def getDefaultBranch(repository: File): Try[String]
   def checkoutBranch(repository: File, branch: String): Try[Unit]
+  def checkoutTag(repository: File, tag: String): Try[Unit]
 }
 
 object GitInteractor {
@@ -53,6 +55,14 @@ class JGitInteractor extends GitInteractor {
   override def getRemoteBranches(url: String): Try[Seq[String]] = {
     Try(JGit.lsRemoteRepository().setRemote(url).setHeads(true).setTags(false).call()) map { refs =>
       refs.asScala.map(r => r.getName.stripPrefix("refs/heads/")).toSeq
+    } recoverWith {
+      case e: TransportException => Failure(TransportError(e.getMessage))
+    }
+  }
+
+  override def getRemoteTags(url: String): Try[Seq[String]] = {
+    Try(JGit.lsRemoteRepository().setRemote(url).setHeads(false).setTags(true).call()) map { refs =>
+      refs.asScala.map(r => r.getName.stripPrefix("refs/tags/")).toSeq
     } recoverWith {
       case e: TransportException => Failure(TransportError(e.getMessage))
     }
@@ -81,5 +91,10 @@ class JGitInteractor extends GitInteractor {
         git.close()
       }
     }
+  }
+
+  override def checkoutTag(repository: File, tag: String): Try[Unit] = Try {
+    val git = JGit.open(repository)
+    Try(git.checkout().setName(tag).call()).map(_ => git.close())
   }
 }

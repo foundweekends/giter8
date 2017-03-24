@@ -2,7 +2,7 @@ package giter8
 
 import java.io.File
 
-import giter8.Git.NoBranchError
+import giter8.Git.{NoBranchError, NoTagError}
 import giter8.GitInteractor.TransportError
 import giter8.GitRepository.{GitHub, Local, Remote}
 import org.scalatest.{EitherValues, FlatSpec, Matchers, TryValues}
@@ -27,10 +27,10 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
 
   "Git" should "clone repository with given branch" in new TestFixture {
     val repository = Remote("url")
-    val branch = Some("fooBranch")
+    val branch = Some(Branch("fooBranch"))
     val destination = new File(".")
 
-    interactorMock.getRemoteBranches _ expects repository.url returning Success(Seq(branch.get))
+    interactorMock.getRemoteBranches _ expects repository.url returning Success(Seq(branch.get.name))
     interactorMock.cloneRepository _ expects (repository.url, destination) returning Success(())
     interactorMock.checkoutBranch _ expects (destination, "fooBranch") returning Success(())
 
@@ -39,11 +39,32 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
 
   it should "throw an error if there is no given branch" in new TestFixture {
     val repository = Remote("url")
-    val branch = Some("nonExisting")
+    val branch = Some(Branch("nonExisting"))
     val destination = new File(".")
 
     interactorMock.getRemoteBranches _ expects repository.url returning Success(Seq("someOtherBranch"))
     git.clone(repository, branch, destination).failure.exception.getClass shouldBe classOf[NoBranchError]
+  }
+
+  it should "clone repository with given tag" in new TestFixture {
+    val repository = Remote("url")
+    val tag = Some(Tag("v1.0.0"))
+    val destination = new File(".")
+
+    interactorMock.getRemoteTags _ expects repository.url returning Success(Seq(tag.get.name))
+    interactorMock.cloneRepository _ expects (repository.url, destination) returning Success(())
+    interactorMock.checkoutTag _ expects (destination, "v1.0.0") returning Success(())
+
+    git.clone(repository, tag, destination)
+  }
+
+  it should "throw an error if there is no given tag" in new TestFixture {
+    val repository = Remote("url")
+    val tag = Some(Tag("nonExisting"))
+    val destination = new File(".")
+
+    interactorMock.getRemoteTags _ expects repository.url returning Success(Seq("someOtherBranch"))
+    git.clone(repository, tag, destination).failure.exception.getClass shouldBe classOf[NoTagError]
   }
 
   it should "clone repository with default branch if no branch was given" in new TestFixture {
@@ -68,11 +89,11 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
 
   it should "retry cloning Github repository with given branch if clone with public URL is failed" in new TestFixture {
     val repository = GitHub("foo", "bar")
-    val branch = Some("someBranch")
+    val branch = Some(Branch("someBranch"))
     val destination = new File(".")
 
     interactorMock.getRemoteBranches _ expects repository.publicUrl returning Failure(TransportError(""))
-    interactorMock.getRemoteBranches _ expects repository.privateUrl returning Success(Seq(branch.get))
+    interactorMock.getRemoteBranches _ expects repository.privateUrl returning Success(Seq(branch.get.name))
     interactorMock.cloneRepository _ expects (repository.privateUrl, destination) returning Success(())
     interactorMock.checkoutBranch _ expects (destination, "someBranch") returning Success(())
 

@@ -46,6 +46,18 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
     interactor.getRemoteBranches(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs branches :+ "master"
   }
 
+  it should "retrieve tag list from remote repository" in {
+    val tags = Seq("v1.0.0", "some_tag")
+
+    tags foreach { tag =>
+      "foo" >> (remoteRepository / tag)
+      remoteRepository.commit(s"New tag $tag")
+      remoteRepository.tag(tag)
+    }
+
+    interactor.getRemoteTags(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs tags
+  }
+
   it should "checkout repository to given branch" in tempDirectory { localRepository =>
     remoteRepository.checkout("firstBranch", createBranch = true)
 
@@ -57,6 +69,18 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
     interactor.checkoutBranch(localRepository, "firstBranch") shouldBe 'success
 
     localRepository.branch shouldBe "firstBranch"
+    localRepository.commits should contain theSameElementsAs Seq("Initial commit")
+  }
+
+  it should "checkout to given tag" in tempDirectory { localRepository =>
+    remoteRepository.tag("v1.0.0")
+
+    "after tag" >> (remoteRepository / "test.txt")
+    remoteRepository.commit("Commit after tag")
+
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    interactor.checkoutTag(localRepository, "v1.0.0") shouldBe 'success
+
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
   }
 
@@ -99,6 +123,10 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
 
     def checkout(name: String, createBranch: Boolean = false): Unit = withRepository { git =>
       git.checkout.setName(name).setCreateBranch(createBranch).call()
+    }
+
+    def tag(name: String): Unit = withRepository { git =>
+      git.tag.setName(name).call()
     }
 
     private def withRepository[A](code: JGit => A): A = {
