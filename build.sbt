@@ -110,6 +110,7 @@ lazy val library = (project in file("library"))
   .settings(
     name := "giter8-library",
     description := "Shared library for Giter8 app and plugin",
+    excludeFilter in (Test, unmanagedResources) := ".DS_Store",
     unmanagedResourceDirectories in Test += file("examples"),
     crossScalaVersions := List(scala210, scala211, scala212),
     libraryDependencies ++= scala211libraryDependencies.value,

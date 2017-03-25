@@ -61,7 +61,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     g8Properties := {
       val resolver = PropertyResolverChain(
         FilePropertyResolver((g8PropertyFiles in g8).value: _*),
-        MavenPropertyResolver(Giter8Engine.defaultHttpClient)
+        MavenPropertyResolver(ApacheHttpClient)
       )
       resolver.resolve(Map.empty).getOrElse(Map.empty)
     },

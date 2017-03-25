@@ -25,21 +25,22 @@ import org.apache.http.impl.client.DefaultHttpClient
 import scala.io.Source
 import scala.util.{Success, Try}
 
-object Giter8Engine {
-  import FileDsl._
+object ApacheHttpClient extends HttpClient {
+  private val apacheHttpClient = new DefaultHttpClient
 
-  val defaultHttpClient = new HttpClient {
-    val apacheHttpClient = new DefaultHttpClient
-    override def execute(request: HttpGetRequest): Try[HttpResponse] = {
-      Try(apacheHttpClient.execute(new HttpGet(request.url))).map { response =>
-        val statusLine = response.getStatusLine
-        val body = Option(response.getEntity).map { entity =>
-          Source.fromInputStream(entity.getContent).getLines().mkString("\n")
-        }
-        HttpResponse(statusLine.getStatusCode, statusLine.getReasonPhrase, body)
+  override def execute(request: HttpGetRequest): Try[HttpResponse] = {
+    Try(apacheHttpClient.execute(new HttpGet(request.url))).map { response =>
+      val statusLine = response.getStatusLine
+      val body = Option(response.getEntity).map { entity =>
+        Source.fromInputStream(entity.getContent).getLines().mkString("\n")
       }
+      HttpResponse(statusLine.getStatusCode, statusLine.getReasonPhrase, body)
     }
   }
+}
+
+case class Giter8Engine(httpClient: HttpClient = ApacheHttpClient) {
+  import FileDsl._
 
   def applyTemplate(templateDirectory: File,
                     templatePath: Option[String],
@@ -52,15 +53,16 @@ object Giter8Engine {
       propertyResolver  <- makePropertyResolver(template.propertyFiles, additionalProperties, interactive)
       parameters        <- propertyResolver.resolve(Map.empty)
       packageDir        <- Success(parameters.get("name").map(FormatFunctions.normalize).getOrElse("."))
-      res               <- TemplateRenderer.render(template.root, template.templateFiles, outputDirectory / packageDir, parameters)
-      _                 <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, outputDirectory / ".g8")
+      out               <- Try(outputDirectory / packageDir)
+      res               <- TemplateRenderer.render(template.root, template.templateFiles, out, parameters)
+      _                 <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
     } yield res
 
   private def makePropertyResolver(propertyFiles: Seq[File],
                                    additionalProperties: Map[String, String],
                                    interactive: Boolean) = Success {
     val resolvers = Seq(FilePropertyResolver(propertyFiles: _*),
-                        MavenPropertyResolver(defaultHttpClient),
+                        MavenPropertyResolver(httpClient),
                         StaticPropertyResolver(additionalProperties))
     if (interactive) PropertyResolverChain(resolvers :+ InteractivePropertyResolver: _*)
     else PropertyResolverChain(resolvers: _*)

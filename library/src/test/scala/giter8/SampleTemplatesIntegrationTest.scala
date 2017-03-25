@@ -2,9 +2,9 @@ package giter8
 
 import java.io.File
 
-import org.scalatest.FunSuite
+import org.scalatest.{FunSuite, Matchers}
 
-class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelpers with TestFileHelpers {
+class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelpers with Matchers with TestFileHelpers {
   import FileDsl._
 
   case class TestCase(name: String, template: File, output: File)

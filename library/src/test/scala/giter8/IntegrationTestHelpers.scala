@@ -3,13 +3,41 @@ package giter8
 import java.io.{File, InputStream}
 
 import org.scalatest.Assertions.fail
+import org.scalatest.Matchers
 
 import scala.io.Source
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 
-trait IntegrationTestHelpers {
-  def checkGeneratedProject(template: File, expected: File, actual: File): Unit = {
-    Giter8Engine.applyTemplate(template, None, actual, Map.empty, interactive = false) match {
+trait IntegrationTestHelpers extends FileContentMatchers { self: Matchers =>
+
+  val mockHttpClient = new HttpClient {
+    override def execute(request: HttpGetRequest): Try[HttpResponse] = Try {
+      val responseBody =
+        <metadata>
+          <groupId>com.example</groupId>
+          <artifactId>foo</artifactId>
+          <versioning>
+            <latest>1.2.3-SNAPSHOT</latest>
+            <release>1.2.3-SNAPSHOT</release>
+            <versions>
+              <version>0.1.0</version>
+              <version>1.0.0</version>
+              <version>1.2.2-SNAPSHOT</version>
+              <version>1.2.3-SNAPSHOT</version>
+            </versions>
+            <lastUpdated>20170217001002</lastUpdated>
+          </versioning>
+        </metadata>
+
+      HttpResponse(200, "OK", Some(responseBody.mkString))
+    }
+  }
+
+  def checkGeneratedProject(template: File,
+                            expected: File,
+                            actual: File,
+                            httpClient: HttpClient = mockHttpClient): Unit = {
+    Giter8Engine(httpClient).applyTemplate(template, None, actual, Map.empty, interactive = false) match {
       case Success(_)   => compareDirectories(actual, expected)
       case Failure(err) => fail(err)
     }
@@ -43,17 +71,13 @@ trait IntegrationTestHelpers {
     val actualFiles   = getFiles(actual)
     actualFiles foreach {
       case (path, file) =>
-        compareFileContents(path, file, expectedFiles(path))
+        compareFileContents(file, expectedFiles(path))
     }
   }
 
-  private def compareFileContents(path: String, actual: File, expected: File): Unit = {
-    val actualLines   = Source.fromFile(actual).getLines().toSeq
-    val expectedLines = Source.fromFile(expected).getLines().toSeq
-    expectedLines.zipWithIndex foreach {
-      case (line, i) =>
-        assert(line == actualLines(i), s"in file $path:$i")
-    }
+  private def compareFileContents(actual: File, expected: File): Unit = {
+    val expectedLines = Source.fromFile(expected).getLines().mkString("\n")
+    actual should haveContents(expectedLines)
   }
 
   private def getFiles(baseDir: File): Map[String, File] = {

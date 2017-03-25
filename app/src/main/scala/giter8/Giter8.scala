@@ -20,15 +20,12 @@ package giter8
 import java.io.File
 import java.util.logging.{Level, Logger}
 
-import giter8.Giter8Engine.applyTemplate
 import org.apache.commons.io.FileUtils
 
 import scala.util.{Failure, Success, Try}
 
 sealed trait Ref
-
 case class Tag(name: String) extends Ref
-
 case class Branch(name: String) extends Ref
 
 case class Config(repo: String,
@@ -43,7 +40,8 @@ class Giter8 extends xsbti.AppMain {
 
   Logger.getLogger("giter8.Giter8App").setLevel(Level.SEVERE)
 
-  private val git = new Git(JGitInteractor)
+  private val git          = new Git(JGitInteractor)
+  private val giter8Engine = Giter8Engine(ApacheHttpClient)
 
   /** The launched conscript entry point */
   def run(config: xsbti.AppConfiguration): Exit = new Exit(run(config.arguments))
@@ -65,7 +63,7 @@ class Giter8 extends xsbti.AppMain {
       repository <- GitRepository.fromString(config.repo)
       _          <- git.clone(repository, config.ref, tempdir)
       parameters <- Try(Util.parseArguments(parameters))
-      res        <- applyTemplate(tempdir, config.directory, new File("."), parameters, interactive = true)
+      res        <- giter8Engine.applyTemplate(tempdir, config.directory, new File("."), parameters, interactive = true)
     } yield res
 
     if (tempdir.exists) FileUtils.forceDelete(tempdir)
