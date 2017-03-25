@@ -234,6 +234,18 @@ description = Creates a giter8 project template.
 unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
 ```
 
+To only use the latest stable release (excluding Milestone builds,
+Release candidates etc) specify a "stable" value in the
+property value format `maven(groupId, artifactId, stable)`.
+To use the latest stable version for the Scalatest library
+we could refer to it as follows:
+
+```
+name = My Template Project
+description = Creates a giter8 project template.
+scalatest_version = maven(org.scalatest, scalatest_2.11, stable)
+```
+
 ### root layout
 
 There's an experimental layout called root layout,
@@ -421,4 +433,9 @@ to try out your changes before you open a pull request. This is how you do it.
 Giter8 uses [conscript] as distribution mechanism. You can find more documentation
 about conscript on its [official page].
 
-#### Fixing 
+#### Fixing `PATH`:
+
+Before you install giter8 with conscript, you need to ensure, that
+conscript directory has higher precedence than default installation path.
+
+You can either delete existing version of giter8, or change `
