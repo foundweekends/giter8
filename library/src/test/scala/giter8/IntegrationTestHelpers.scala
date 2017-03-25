@@ -15,7 +15,7 @@ trait IntegrationTestHelpers extends FileContentMatchers { self: Matchers =>
       val responseBody =
         <metadata>
           <groupId>com.example</groupId>
-          <artifactId>foo</artifactId>
+          <artifactId>foo_2.12</artifactId>
           <versioning>
             <latest>1.2.3-SNAPSHOT</latest>
             <release>1.2.3-SNAPSHOT</release>

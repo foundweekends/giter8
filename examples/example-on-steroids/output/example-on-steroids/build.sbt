@@ -2,8 +2,8 @@ name := "Example on Steroids"
 
 description := "This is a giter8 example on steroids"
 
-scalaVersion := "2.11.5"
+scalaVersion := "2.12.1"
 
 libraryDependencies ++= Seq(
-  "com.example" % "foo" % "1.0.0"
+  "com.example" %% "foo_2.12" % "1.0.0"
 )
