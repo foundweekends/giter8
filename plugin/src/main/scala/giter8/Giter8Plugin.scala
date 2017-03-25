@@ -116,7 +116,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     IO.delete(out)
     for {
       packageDir <- Success(props.get("name").map(FormatFunctions.normalize).getOrElse("."))
-      res        <- TemplateRenderer.render(template.root, template.templateFiles, out / packageDir, props)
+      res        <- TemplateRenderer.render(template.root, template.templateFiles, out / packageDir, props, force = true)
       _          <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
     } yield res
   }

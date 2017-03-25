@@ -46,7 +46,8 @@ case class Giter8Engine(httpClient: HttpClient = ApacheHttpClient) {
                     templatePath: Option[String],
                     outputDirectory: File,
                     additionalProperties: Map[String, String],
-                    interactive: Boolean = false): Try[String] =
+                    interactive: Boolean = false,
+                    force: Boolean       = false): Try[String] =
     for {
       templateDirectory <- Try(new File(templateDirectory, templatePath.getOrElse("")))
       template          <- Try(Template(templateDirectory))
@@ -54,7 +55,7 @@ case class Giter8Engine(httpClient: HttpClient = ApacheHttpClient) {
       parameters        <- propertyResolver.resolve(Map.empty)
       packageDir        <- Success(parameters.get("name").map(FormatFunctions.normalize).getOrElse(""))
       out               <- Try(outputDirectory / packageDir)
-      res               <- TemplateRenderer.render(template.root, template.templateFiles, out, parameters)
+      res               <- TemplateRenderer.render(template.root, template.templateFiles, out, parameters, force)
       _                 <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
     } yield res
 

@@ -63,7 +63,12 @@ class Giter8 extends xsbti.AppMain {
       repository <- GitRepository.fromString(config.repo)
       _          <- git.clone(repository, config.ref, tempdir)
       parameters <- Try(Util.parseArguments(parameters))
-      res        <- giter8Engine.applyTemplate(tempdir, config.directory, new File("."), parameters, interactive = true)
+      res <- giter8Engine.applyTemplate(tempdir,
+                                        config.directory,
+                                        new File("."),
+                                        parameters,
+                                        interactive = true,
+                                        force       = config.forceOverwrite)
     } yield res
 
     if (tempdir.exists) FileUtils.forceDelete(tempdir)

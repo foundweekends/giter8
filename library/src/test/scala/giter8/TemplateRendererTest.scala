@@ -9,7 +9,7 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
   "TemplateRenderer" should "render template" in tempDirectory { temp =>
     "$foo$" >> (temp / "foo.txt")
 
-    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"))
+    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = false)
 
     temp / "out" / "foo.txt" should exist
     temp / "out" / "foo.txt" should haveContents("bar")
@@ -20,7 +20,7 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
     "$baz$" >> (temp / "B" / "baz.txt")
 
     val templateFiles = Seq(temp / "A" / "foo.txt", temp / "B" / "baz.txt")
-    render(temp, templateFiles, temp / "out", Map("foo" -> "bar", "baz" -> "quux"))
+    render(temp, templateFiles, temp / "out", Map("foo" -> "bar", "baz" -> "quux"), force = false)
 
     temp / "out" / "A" / "foo.txt" should exist
     temp / "out" / "A" / "foo.txt" should haveContents("bar")
@@ -32,7 +32,11 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
   it should "expand package name" in tempDirectory { temp =>
     "$foo$" >> (temp / "$package$" / "foo.txt")
 
-    render(temp, Seq(temp / "$package$" / "foo.txt"), temp / "out", Map("foo" -> "bar", "package" -> "com.example"))
+    render(temp,
+           Seq(temp / "$package$" / "foo.txt"),
+           temp / "out",
+           Map("foo" -> "bar", "package" -> "com.example"),
+           force = false)
 
     temp / "out" / "com" / "example" / "foo.txt" should exist
     temp / "out" / "com" / "example" / "foo.txt" should haveContents("bar")
@@ -48,5 +52,25 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
 
     temp / "out" / ".g8" / "A" / "a.txt" should exist
     temp / "out" / ".g8" / "B" / "b.txt" should exist
+  }
+
+  it should "preserve old files if force flag is false" in tempDirectory { temp =>
+    "$foo$" >> (temp / "foo.txt")
+    "old content" >> (temp / "out" / "foo.txt")
+
+    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = false)
+
+    temp / "out" / "foo.txt" should exist
+    temp / "out" / "foo.txt" should haveContents("old content")
+  }
+
+  it should "override files if force flag is true" in tempDirectory { temp =>
+    "$foo$" >> (temp / "foo.txt")
+    "old content" >> (temp / "out" / "foo.txt")
+
+    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = true)
+
+    temp / "out" / "foo.txt" should exist
+    temp / "out" / "foo.txt" should haveContents("bar")
   }
 }

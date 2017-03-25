@@ -29,10 +29,11 @@ object TemplateRenderer {
   def render(templateRoot: File,
              templateFiles: Seq[File],
              outputDirectory: File,
-             parameters: Map[String, String]): Try[String] = {
+             parameters: Map[String, String],
+             force: Boolean): Try[String] = {
 
     templateFiles.foreach { file =>
-      writeTemplateFile(templateRoot, file, parameters, outputDirectory)
+      writeTemplateFile(templateRoot, file, parameters, outputDirectory, force)
     }
     Success(s"Template applied in ${outputDirectory.toString}")
   }
@@ -47,10 +48,14 @@ object TemplateRenderer {
     }
   }
 
-  private def writeTemplateFile(templateRoot: File, in: File, parameters: Map[String, String], base: File): Try[Unit] = {
+  private def writeTemplateFile(templateRoot: File,
+                                in: File,
+                                parameters: Map[String, String],
+                                base: File,
+                                force: Boolean): Try[Unit] = {
     val relative = relativePath(templateRoot, in)
     expandPath(relative, base, parameters) flatMap { out =>
-      if (out.exists) Success(println(s"Skipping existing file: ${out.toString}"))
+      if (out.exists && !force) Success(println(s"Skipping existing file: ${out.toString}"))
       else FileRenderer.renderFile(in, out, parameters)
     } recoverWith {
       case e: STException =>
