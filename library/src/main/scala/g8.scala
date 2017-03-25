@@ -268,7 +268,7 @@ object G8 {
             interact(defaults)
           }
 
-          val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse(".")
+          val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse("")
           val r = writeTemplates(templatesRoot,
                                  templates,
                                  parameters,
