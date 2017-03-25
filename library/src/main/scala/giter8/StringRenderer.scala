@@ -48,7 +48,6 @@ package giter8 {
     class StringRenderingError(message: String) extends RuntimeException(message)
     case class ParameterNotFoundError(parameter: String)
         extends StringRenderingError(s"""Parameter "$parameter" not found""")
-
     case class IncorrectFormatError(format: String) extends StringRenderingError(s"""Format "$format" is invalid""")
 
     def formatString(value: String, formatName: String): String = formatName match {

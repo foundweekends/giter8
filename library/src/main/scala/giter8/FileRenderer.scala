@@ -27,7 +27,7 @@ import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUti
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 
-import scala.util.{Failure, Try}
+import scala.util.{Failure, Success, Try}
 
 object FileRenderer {
   case class FileRenderingError(file: String, message: String) extends RuntimeException(s"File: $file, $message")
@@ -47,11 +47,15 @@ object FileRenderer {
 
   private def copyExecutableAttribute(in: File, out: File) = if (in.canExecute) out.setExecutable(true)
 
-  private def renderFileImpl(in: File, out: File, parameters: Map[String, String]): Try[Unit] = Try {
-    val templateBody        = FileUtils.readFileToString(in, "UTF-8")
-    val renderedFileContent = StringRenderer.render(templateBody, parameters).get
-    FileUtils.writeStringToFile(out, renderedFileContent, UTF_8)
-    copyFileAttributes(in, out)
+  private def renderFileImpl(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
+    Try(FileUtils.readFileToString(in, "UTF-8")).flatMap { templateBody =>
+      StringRenderer.render(templateBody, parameters) flatMap { content =>
+        Try {
+          FileUtils.writeStringToFile(out, content, UTF_8)
+          copyFileAttributes(in, out)
+        }
+      }
+    }
   }
 
   private def copyFileAttributes(in: File, out: File): Unit =
