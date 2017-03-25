@@ -17,6 +17,7 @@
 
 package giter8
 
+import java.io.File
 import scala.util.parsing.combinator._
 import scala.xml.{NodeSeq, XML}
 
@@ -33,6 +34,17 @@ object Maven extends JavaTokenParsers with MavenHelper {
 
   private def unapply(value: String): Option[(String, String, Option[String])] =
     Some(parse(spec, value)).filter { _.successful }.map { _.get }
+
+  private def mavenRepo(): Option[String] = {
+    val home = Option(System.getProperty("G8_HOME")).map(new File(_)).getOrElse(
+      new File(System.getProperty("user.home"), ".g8")
+    )
+    val mvnRepo = new File(home + "/mvnrepo")
+    if(!home.exists() || !mvnRepo.exists()) None
+    else {
+      scala.io.Source.fromFile(mvnRepo).getLines().find(!_.trim.isEmpty)
+    }
+  }
 
   private def latestVersion(
     org: String,

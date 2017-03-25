@@ -31,30 +31,36 @@ import scala.collection.JavaConverters._
 class Git(gitInteractor: GitInteractor) {
   import Git._
 
-  def clone(repository: GitRepository, branch: Option[String], destination: File): Try[Unit] = repository match {
-    case remote: Remote => cloneWithGivenOrDefaultBranch(remote.url, branch, destination)
-    case local: Local => branch match {
+  def clone(repository: GitRepository, ref: Option[Ref], destination: File): Try[Unit] = repository match {
+    case remote: Remote => cloneWithGivenRefOrDefaultBranch(remote.url, ref, destination)
+    case local: Local => ref match {
       // for file:// repositories with no named branch, just do a file copy (assume current branch)
       case None => copy(new File(local.path), destination)
-      case Some(_) => cloneWithGivenOrDefaultBranch(local.path, branch, destination)
+      case Some(_) => cloneWithGivenRefOrDefaultBranch(local.path, ref, destination)
     }
-    case github: GitHub => cloneWithGivenOrDefaultBranch(github.publicUrl, branch, destination) recoverWith {
+    case github: GitHub => cloneWithGivenRefOrDefaultBranch(github.publicUrl, ref, destination) recoverWith {
       case _: TransportError =>
         cleanDir(destination)
-        cloneWithGivenOrDefaultBranch(github.privateUrl, branch, destination)
+        cloneWithGivenRefOrDefaultBranch(github.privateUrl, ref, destination)
     }
   }
 
-  private def cloneWithGivenOrDefaultBranch(url: String, branch: Option[String], dest: File): Try[Unit] = branch match {
+  private def cloneWithGivenRefOrDefaultBranch(url: String, ref: Option[Ref], dest: File): Try[Unit] = ref match {
     case None => gitInteractor.cloneRepository(url, dest) flatMap { _ =>
       gitInteractor.getDefaultBranch(dest) flatMap { branch =>
         gitInteractor.checkoutBranch(dest, branch)
       }
     }
-    case Some(br) => gitInteractor.getRemoteBranches(url) flatMap { remoteBranches =>
+    case Some(Branch(br)) => gitInteractor.getRemoteBranches(url) flatMap { remoteBranches =>
       if (!remoteBranches.contains(br)) Failure(NoBranchError(br))
       else gitInteractor.cloneRepository(url, dest) flatMap { _ =>
         gitInteractor.checkoutBranch(dest, br)
+      }
+    }
+    case Some(Tag(t)) => gitInteractor.getRemoteTags(url) flatMap { remoteTags =>
+      if (!remoteTags.contains(t)) Failure(NoTagError(t))
+      else gitInteractor.cloneRepository(url, dest) flatMap { _ =>
+        gitInteractor.checkoutTag(dest, t)
       }
     }
   }
@@ -83,4 +89,6 @@ class Git(gitInteractor: GitInteractor) {
 object Git {
   case class CloneError(message: String) extends RuntimeException(message)
   case class NoBranchError(branchName: String) extends RuntimeException(s"No branch $branchName")
+  case class NoTagError(tagName: String) extends RuntimeException(s"No tag $tagName")
 }
+

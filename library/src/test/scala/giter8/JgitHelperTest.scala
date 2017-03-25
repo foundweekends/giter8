@@ -24,12 +24,12 @@ class MockRenderer extends TemplateRenderer {
 
 class MockGit extends Git(null) {
   var repository: GitRepository = _
-  var branch: Option[String] = _
+  var ref: Option[Ref] = _
   var dest: File = _
 
-  override def clone(repository: GitRepository, branch: Option[String], dest: File): Try[Unit] = {
+  override def clone(repository: GitRepository, ref: Option[Ref], dest: File): Try[Unit] = {
     this.repository = repository
-    this.branch = branch
+    this.ref = ref
     Success(())
   }
 }
@@ -43,27 +43,27 @@ class JgitHelperTest extends FlatSpec with Matchers {
   }
 
   "JGitHelper" should "clone repo with correct URL and branch" in {
-    case class TestCase(config: Config, repository: GitRepository, branch: Option[String])
+    case class TestCase(config: Config, repository: GitRepository, ref: Option[Ref])
     val testCases: Seq[TestCase] = Seq(
       TestCase(
-        Config("file:///foo", branch = Some("baz")),
+        Config("file:///foo", ref = Some(Branch("baz"))),
         Local("/foo"),
-        Some("baz")),
+        Some(Branch("baz"))),
       TestCase(
-        Config("https://github.com/foo/bar.g8.git", branch = None),
+        Config("https://github.com/foo/bar.g8.git", ref = None),
         Remote("https://github.com/foo/bar.g8.git"),
         None),
       TestCase(
-        Config("foo/bar", branch = Some("baz")),
+        Config("foo/bar", ref = Some(Tag("baz"))),
         GitHub("foo", "bar"),
-        Some("baz"))
+        Some(Tag("baz")))
     )
 
     testCases foreach { testCase =>
       new TestFixture {
         helper.run(testCase.config, Seq.empty, new File("."))
         git.repository shouldBe testCase.repository
-        git.branch shouldBe testCase.branch
+        git.ref shouldBe testCase.ref
       }
     }
   }
