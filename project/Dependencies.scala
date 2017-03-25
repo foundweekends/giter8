@@ -4,11 +4,11 @@ object Dependencies {
   val scalasti  = "org.clapper" %% "scalasti" % "2.1.2"
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll (
-      ExclusionRule("org.apache.commons", "commons-compress"),
-      ExclusionRule("classworlds", "classworlds"),
-      ExclusionRule("org.tukaani", "xz"),
-      ExclusionRule("junit", "junit")
-    )
+    ExclusionRule("org.apache.commons", "commons-compress"),
+    ExclusionRule("classworlds", "classworlds"),
+    ExclusionRule("org.tukaani", "xz"),
+    ExclusionRule("junit", "junit")
+  )
   // Picking jgit used by sbt-git
   // https://github.com/eclipse/jgit/blob/v3.7.0.201502260915-r/pom.xml
   // This uses httpclient 4.1
@@ -25,4 +25,6 @@ object Dependencies {
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "1.0.5"
   val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.5"
   val logback          = "ch.qos.logback" % "logback-classic" % "1.1.7"
+  val jsr305           = "com.google.code.findbugs" % "jsr305" % "3.0.1"
+  val slf4jSimple      = "org.slf4j" % "slf4j-simple" % "1.7.12"
 }
