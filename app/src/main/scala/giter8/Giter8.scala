@@ -20,7 +20,7 @@ package giter8
 import java.io.File
 import java.util.logging.{Level, Logger}
 
-import giter8.Giter8.applyTemplate
+import giter8.Giter8Engine.applyTemplate
 import org.apache.commons.io.FileUtils
 
 import scala.util.{Failure, Success, Try}
@@ -38,8 +38,8 @@ case class Config(repo: String,
 
 class Exit(val code: Int) extends xsbti.Exit
 
-class Giter8App extends xsbti.AppMain {
-  import Giter8App._
+class Giter8 extends xsbti.AppMain {
+  import Giter8._
 
   Logger.getLogger("giter8.Giter8App").setLevel(Level.SEVERE)
 
@@ -81,7 +81,7 @@ class Giter8App extends xsbti.AppMain {
   }
 }
 
-object Giter8App {
+object Giter8 {
   private val home = Option(System.getProperty("G8_HOME")) match {
     case Some(path) => new File(path)
     case None       => new File(System.getProperty("user.home"), ".g8")
@@ -100,6 +100,9 @@ object Giter8App {
        |
        |Apply template from a remote branch
        |    g8 foundweekends/giter8 -b some-branch
+       |
+       |Apply template from a remote tag
+       |    g8 foundweekends/giter8 -t some-tag
        |
        |Apply template from a directory that exists in the repo
        |    g8 foundweekends/giter8 -d some-directory/template
@@ -144,7 +147,7 @@ object Giter8App {
 
   /** Main-class runner just for testing from sbt*/
   def main(args: Array[String]): Unit = {
-    val giter8 = new Giter8App
+    val giter8 = new Giter8
     System.exit(giter8.run(args))
   }
 }

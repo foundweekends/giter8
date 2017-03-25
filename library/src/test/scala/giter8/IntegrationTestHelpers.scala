@@ -9,7 +9,7 @@ import scala.util.{Failure, Success}
 
 trait IntegrationTestHelpers {
   def checkGeneratedProject(template: File, expected: File, actual: File): Unit = {
-    Giter8.applyTemplate(template, None, actual, Map.empty, interactive = false) match {
+    Giter8Engine.applyTemplate(template, None, actual, Map.empty, interactive = false) match {
       case Success(_)   => compareDirectories(actual, expected)
       case Failure(err) => fail(err)
     }

@@ -25,7 +25,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 import scala.io.Source
 import scala.util.{Success, Try}
 
-object Giter8 {
+object Giter8Engine {
   import FileDsl._
 
   val defaultHttpClient = new HttpClient {

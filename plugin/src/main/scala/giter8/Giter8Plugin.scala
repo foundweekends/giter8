@@ -61,7 +61,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     g8Properties := {
       val resolver = PropertyResolverChain(
         FilePropertyResolver((g8PropertyFiles in g8).value: _*),
-        MavenPropertyResolver(Giter8.defaultHttpClient)
+        MavenPropertyResolver(Giter8Engine.defaultHttpClient)
       )
       resolver.resolve(Map.empty).getOrElse(Map.empty)
     },
@@ -122,5 +122,5 @@ object Giter8Plugin extends sbt.AutoPlugin {
   }
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = baseGiter8Settings ++ scriptedSettings ++ inConfig(Test)(
-      giter8TestSettings)
+    giter8TestSettings)
 }
