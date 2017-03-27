@@ -35,7 +35,7 @@ class Exit(val code: Int) extends xsbti.Exit
 class Giter8 extends xsbti.AppMain {
   import Giter8._
 
-  Logger.getLogger("giter8.Giter8App").setLevel(Level.SEVERE)
+  Logger.getLogger("giter8.Giter8").setLevel(Level.SEVERE)
 
   private val git          = new Git(JGitInteractor)
   private val giter8Engine = Giter8Engine(ApacheHttpClient)
