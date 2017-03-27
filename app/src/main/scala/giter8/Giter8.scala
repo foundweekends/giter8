@@ -17,7 +17,7 @@
 
 package giter8
 
-import java.io.File
+import java.io.{File, FileNotFoundException}
 import java.util.logging.{Level, Logger}
 
 import org.apache.commons.io.FileUtils
@@ -27,6 +27,7 @@ import scala.util.{Failure, Success, Try}
 case class Config(repo: String,
                   ref: Option[Ref]          = None,
                   forceOverwrite: Boolean   = false,
+                  output: Option[String]    = None,
                   directory: Option[String] = None)
 
 class Exit(val code: Int) extends xsbti.Exit
@@ -53,23 +54,7 @@ class Giter8 extends xsbti.AppMain {
       return 1
     }
 
-    val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
-
-    val result = for {
-      repository <- GitRepository.fromString(config.repo)
-      _          <- git.clone(repository, config.ref, tempdir)
-      parameters <- Try(Util.parseArguments(parameters))
-      res <- giter8Engine.applyTemplate(tempdir,
-                                        config.directory,
-                                        new File("."),
-                                        parameters,
-                                        interactive = true,
-                                        force       = config.forceOverwrite)
-    } yield res
-
-    if (tempdir.exists) FileUtils.forceDelete(tempdir)
-
-    result match {
+    run(parameters, config) match {
       case Success(s) =>
         println(s)
         0
@@ -77,6 +62,34 @@ class Giter8 extends xsbti.AppMain {
         println(e.getMessage)
         1
     }
+  }
+
+  def run(parameters: Array[String], config: Config): Try[String] = {
+    val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
+
+    val result = for {
+      repository <- GitRepository.fromString(config.repo)
+      _          <- git.clone(repository, config.ref, tempdir)
+      parameters <- Try(Util.parseArguments(parameters))
+      out        <- getOutputDirectory(config.output)
+      res <- giter8Engine.applyTemplate(tempdir,
+                                        config.directory,
+                                        outputDirectory = out,
+                                        parameters,
+                                        interactive = true,
+                                        force       = config.forceOverwrite)
+    } yield res
+
+    if (tempdir.exists) FileUtils.forceDelete(tempdir)
+    result
+  }
+
+  private def getOutputDirectory(output: Option[String]): Try[File] = output match {
+    case None => Success(new File("."))
+    case Some(dir) =>
+      val out = new File(dir)
+      if (out.exists() && out.isDirectory) Success(out)
+      else Failure(new FileNotFoundException(dir))
   }
 }
 
@@ -133,6 +146,11 @@ object Giter8 {
 
     opt[String]('d', "directory").text("Resolve a template within a given directory").action { (d, config) =>
       config.copy(directory = Some(d))
+    }
+
+    opt[String]('o', "output").text("Directory to put rendered template to (default: current directory)").action {
+      (o, config) =>
+        config.copy(output = Some(o))
     }
 
     opt[Unit]('f', "force").text("Force overwrite of any existing files in output directory").action { (_, config) =>
