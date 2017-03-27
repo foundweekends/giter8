@@ -28,6 +28,10 @@ import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 
+sealed trait Ref
+case class Tag(name: String) extends Ref
+case class Branch(name: String) extends Ref
+
 class Git(gitInteractor: GitInteractor) {
   import Git._
 

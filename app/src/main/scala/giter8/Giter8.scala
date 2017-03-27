@@ -24,10 +24,6 @@ import org.apache.commons.io.FileUtils
 
 import scala.util.{Failure, Success, Try}
 
-sealed trait Ref
-case class Tag(name: String) extends Ref
-case class Branch(name: String) extends Ref
-
 case class Config(repo: String,
                   ref: Option[Ref]          = None,
                   forceOverwrite: Boolean   = false,
