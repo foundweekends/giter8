@@ -27,14 +27,14 @@ class Giter8 extends xsbti.AppMain {
     new Exit(Giter8.run(config.arguments))
 
   /** Runner shared my main-class runner */
-  def run(args: Array[String]): Int = {
+  def run(args: Array[String], baseDirectory: File): Int = {
     val helper = new JgitHelper(new Git(new JGitInteractor), G8TemplateRenderer)
     val result = (args.partition { s =>
       G8.Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
         parser.parse(options, Config("")).map { config =>
-          helper.run(config, params, new File("."))
+          helper.run(config, params, baseDirectory)
         }.getOrElse(Left(""))
       case _ => Left(parser.usage)
     })
@@ -47,6 +47,8 @@ class Giter8 extends xsbti.AppMain {
       0
     })
   }
+
+  def run(args: Array[String]):Int = run(args, (new File(".")).getAbsoluteFile)
 
   val parser = new scopt.OptionParser[Config]("giter8") {
     head("g8", giter8.BuildInfo.version)
