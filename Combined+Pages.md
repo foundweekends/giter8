@@ -438,4 +438,24 @@ about conscript on its [official page].
 Before you install giter8 with conscript, you need to ensure, that
 conscript directory has higher precedence than default installation path.
 
-You can either delete existing version of giter8, or change `
+You can either delete existing version of giter8, or change `PATH` variable such that 
+`~/.conscript/bin` is before.
+
+#### To install local version:
+
+- Change `g8version` in `build.sbt` i.e. by adding `"-SNAPSHOT"`;
+- Run `publishLocal` from sbt;
+- From a shell session run `cs --local foundweekends/giter8/<YOUR_VERSION>`. 
+  Use the version number you just wrote in `build.sbt`.
+
+#### To refresh:
+
+- Run `publishLocal` from sbt again;
+- From a shell session run `cs --clean-boot`.
+
+#### To get back to normal version:
+
+From a shell session run `cs foundweekends/g8`.
+
+[official page]: https://github.com/foundweekends/conscript
+[conscript]: http://www.foundweekends.org/conscript/
