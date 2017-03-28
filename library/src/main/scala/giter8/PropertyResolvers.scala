@@ -19,6 +19,7 @@ package giter8
 
 import java.io.{File, FileInputStream}
 import java.util.Properties
+import java.util.logging.Logger
 
 import giter8.StringRenderer.ParameterNotFoundError
 
@@ -75,6 +76,8 @@ case class PropertyResolverChain(propertyResolvers: PropertyResolver*) extends P
 case class FilePropertyResolver(files: File*) extends PropertyResolver {
   import PropertyResolver._
 
+  private val log = Logger.getLogger("giter8.FilePropertyResolver")
+
   override protected def resolveImpl(old: Map[String, String]): Try[Map[String, String]] = {
     files.foldLeft(Try(old)) {
       case (properties, file) =>
@@ -95,7 +98,21 @@ case class FilePropertyResolver(files: File*) extends PropertyResolver {
     var result = mutable.Map.empty[String, String]
     properties.stringPropertyNames.asScala.foreach { name =>
       if (result.contains(name)) throw DuplicatePropertyError(name)
-      result += name -> properties.getProperty(name)
+
+      val value = properties.getProperty(name)
+
+      // Workaround for https://github.com/foundweekends/giter8/issues/164.
+      // We notify user about deprecated call to implicit.ly.
+      val LsCall = """ls\((.*),(.*)\)""".r
+      value match {
+        case LsCall(group, artifact) =>
+          log.warning(
+            s"ls() function is deprecated. " +
+              s"Use maven() function to get latest version of ${group.trim}#${artifact.trim}.")
+        case _ => ()
+      }
+
+      result += name -> value
     }
     result.toMap
   }
@@ -111,7 +128,15 @@ object InteractivePropertyResolver extends PropertyResolver {
     old.foreach {
       case (name, value) =>
         if (name != "verbatim" || name != "description") {
-          println(s"$name [$value]: ")
+
+          // Workaround for https://github.com/foundweekends/giter8/issues/164.
+          // We ask user to enter dependency version manually.
+          val LsCall = """ls\((.*),(.*)\)""".r
+          value match {
+            case LsCall(group, artifact) =>
+              println(s"$name [Please, enter the ${group.trim}#${artifact.trim} version]: ")
+            case _ => println(s"$name [$value]: ")
+          }
           Console.flush() // Gotta flush for Windows console!
           Option(Console.readLine()) match {
             case Some(in) if in.trim.nonEmpty => result += name -> in.trim
