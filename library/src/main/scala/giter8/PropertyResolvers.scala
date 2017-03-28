@@ -101,7 +101,7 @@ case class FilePropertyResolver(files: File*) extends PropertyResolver {
 
       val value = properties.getProperty(name)
 
-      // Workaround for https://github.com/foundweekends/giter8/issues/164.
+      // Workaround for https://github.com/foundweekends/giter8/issues/170.
       // We notify user about deprecated call to implicit.ly.
       val LsCall = """ls\((.*),(.*)\)""".r
       value match {
@@ -129,7 +129,7 @@ object InteractivePropertyResolver extends PropertyResolver {
       case (name, value) =>
         if (name != "verbatim" || name != "description") {
 
-          // Workaround for https://github.com/foundweekends/giter8/issues/164.
+          // Workaround for https://github.com/foundweekends/giter8/issues/170.
           // We ask user to enter dependency version manually.
           val LsCall = """ls\((.*),(.*)\)""".r
           value match {
