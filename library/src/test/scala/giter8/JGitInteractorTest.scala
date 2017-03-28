@@ -5,19 +5,16 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.{Git => JGit}
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers, TryValues}
-import G8._
 
 import scala.collection.JavaConverters._
 
-class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with TryValues {
-  import TestFileHelpers._
+class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with TryValues with TestFileHelpers {
+  import FileDsl._
+  import JGitInteractor._
 
   var remoteRepository: File = _
-  var interactor: JGitInteractor = _
 
   before {
-    interactor = new JGitInteractor
-
     remoteRepository = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
     JGit.init().setDirectory(remoteRepository).call()
 
@@ -30,7 +27,7 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
   }
 
   "JGitInteractor" should "clone the remote repository" in tempDirectory { localRepository =>
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
 
     localRepository.branch shouldBe "master"
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
@@ -43,7 +40,7 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
       remoteRepository.checkout(branch, createBranch = true)
     }
 
-    interactor.getRemoteBranches(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs branches :+ "master"
+    getRemoteBranches(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs branches :+ "master"
   }
 
   it should "retrieve tag list from remote repository" in {
@@ -55,7 +52,7 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
       remoteRepository.tag(tag)
     }
 
-    interactor.getRemoteTags(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs tags
+    JGitInteractor.getRemoteTags(remoteRepository.getAbsolutePath).success.value should contain theSameElementsAs tags
   }
 
   it should "checkout repository to given branch" in tempDirectory { localRepository =>
@@ -65,8 +62,8 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
     "in new branch" >> (remoteRepository / "test.txt")
     remoteRepository.commit("Create new branch")
 
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
-    interactor.checkoutBranch(localRepository, "firstBranch") shouldBe 'success
+    cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    checkoutBranch(localRepository, "firstBranch") shouldBe 'success
 
     localRepository.branch shouldBe "firstBranch"
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
@@ -78,8 +75,8 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
     "after tag" >> (remoteRepository / "test.txt")
     remoteRepository.commit("Commit after tag")
 
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
-    interactor.checkoutTag(localRepository, "v1.0.0") shouldBe 'success
+    JGitInteractor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    JGitInteractor.checkoutTag(localRepository, "v1.0.0") shouldBe 'success
 
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
   }
@@ -87,8 +84,8 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
   it should "not fail if checkout existing branch" in tempDirectory { localRepository =>
     remoteRepository.checkout("master")
 
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
-    interactor.checkoutBranch(localRepository, "master") shouldBe 'success
+    cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    checkoutBranch(localRepository, "master") shouldBe 'success
 
     localRepository.branch shouldBe "master"
   }
@@ -104,8 +101,8 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
 
     remoteRepository.checkout("firstBranch")
 
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository)
-    interactor.getDefaultBranch(localRepository).success.value shouldBe "firstBranch"
+    cloneRepository(remoteRepository.getAbsolutePath, localRepository)
+    getDefaultBranch(localRepository).success.value shouldBe "firstBranch"
   }
 
   implicit class RichRepository(repository: File) {

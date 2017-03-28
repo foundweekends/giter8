@@ -24,45 +24,56 @@ import giter8.GitRepository.{GitHub, Local, Remote}
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.TrueFileFilter
 
+import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 import scala.util.{Failure, Try}
-import scala.collection.JavaConverters._
+
+sealed trait Ref
+case class Tag(name: String) extends Ref
+case class Branch(name: String) extends Ref
 
 class Git(gitInteractor: GitInteractor) {
   import Git._
 
   def clone(repository: GitRepository, ref: Option[Ref], destination: File): Try[Unit] = repository match {
     case remote: Remote => cloneWithGivenRefOrDefaultBranch(remote.url, ref, destination)
-    case local: Local => ref match {
-      // for file:// repositories with no named branch, just do a file copy (assume current branch)
-      case None => copy(new File(local.path), destination)
-      case Some(_) => cloneWithGivenRefOrDefaultBranch(local.path, ref, destination)
-    }
-    case github: GitHub => cloneWithGivenRefOrDefaultBranch(github.publicUrl, ref, destination) recoverWith {
-      case _: TransportError =>
-        cleanDir(destination)
-        cloneWithGivenRefOrDefaultBranch(github.privateUrl, ref, destination)
-    }
+    case local: Local =>
+      ref match {
+        // for file:// repositories with no named branch, just do a file copy (assume current branch)
+        case None    => copy(new File(local.path), destination)
+        case Some(_) => cloneWithGivenRefOrDefaultBranch(local.path, ref, destination)
+      }
+    case github: GitHub =>
+      cloneWithGivenRefOrDefaultBranch(github.publicUrl, ref, destination) recoverWith {
+        case _: TransportError =>
+          cleanDir(destination)
+          cloneWithGivenRefOrDefaultBranch(github.privateUrl, ref, destination)
+      }
   }
 
   private def cloneWithGivenRefOrDefaultBranch(url: String, ref: Option[Ref], dest: File): Try[Unit] = ref match {
-    case None => gitInteractor.cloneRepository(url, dest) flatMap { _ =>
-      gitInteractor.getDefaultBranch(dest) flatMap { branch =>
-        gitInteractor.checkoutBranch(dest, branch)
+    case None =>
+      gitInteractor.cloneRepository(url, dest) flatMap { _ =>
+        gitInteractor.getDefaultBranch(dest) flatMap { branch =>
+          gitInteractor.checkoutBranch(dest, branch)
+        }
       }
-    }
-    case Some(Branch(br)) => gitInteractor.getRemoteBranches(url) flatMap { remoteBranches =>
-      if (!remoteBranches.contains(br)) Failure(NoBranchError(br))
-      else gitInteractor.cloneRepository(url, dest) flatMap { _ =>
-        gitInteractor.checkoutBranch(dest, br)
+    case Some(Branch(br)) =>
+      gitInteractor.getRemoteBranches(url) flatMap { remoteBranches =>
+        if (!remoteBranches.contains(br)) Failure(NoBranchError(br))
+        else
+          gitInteractor.cloneRepository(url, dest) flatMap { _ =>
+            gitInteractor.checkoutBranch(dest, br)
+          }
       }
-    }
-    case Some(Tag(t)) => gitInteractor.getRemoteTags(url) flatMap { remoteTags =>
-      if (!remoteTags.contains(t)) Failure(NoTagError(t))
-      else gitInteractor.cloneRepository(url, dest) flatMap { _ =>
-        gitInteractor.checkoutTag(dest, t)
+    case Some(Tag(t)) =>
+      gitInteractor.getRemoteTags(url) flatMap { remoteTags =>
+        if (!remoteTags.contains(t)) Failure(NoTagError(t))
+        else
+          gitInteractor.cloneRepository(url, dest) flatMap { _ =>
+            gitInteractor.checkoutTag(dest, t)
+          }
       }
-    }
   }
 
   // Protected for testing: see GitTest.scala
@@ -76,12 +87,11 @@ class Git(gitInteractor: GitInteractor) {
   }
 
   private def copyExecutableAttribute(fromDir: File, toDir: File): Unit = {
-    val files = FileUtils.iterateFiles(fromDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE).asScala
+    val files       = FileUtils.iterateFiles(fromDir, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE).asScala
     val executables = files.filter(_.canExecute)
-    executables foreach {
-      file =>
-        val relativePath = fromDir.toURI.relativize(file.toURI).getPath
-        new File(toDir, relativePath).setExecutable(true)
+    executables foreach { file =>
+      val relativePath = fromDir.toURI.relativize(file.toURI).getPath
+      new File(toDir, relativePath).setExecutable(true)
     }
   }
 }
@@ -91,4 +101,3 @@ object Git {
   case class NoBranchError(branchName: String) extends RuntimeException(s"No branch $branchName")
   case class NoTagError(tagName: String) extends RuntimeException(s"No tag $tagName")
 }
-

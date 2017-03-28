@@ -52,8 +52,8 @@ object ConsoleCredentialsProvider extends CredentialsProvider {
   def askYesNo(prompt: String): Boolean = {
     System.console.readLine("%s: ", prompt).trim.toLowerCase match {
       case "yes" => true
-      case "no" => false
-      case _ => askYesNo(prompt)
+      case "no"  => false
+      case _     => askYesNo(prompt)
     }
   }
 }

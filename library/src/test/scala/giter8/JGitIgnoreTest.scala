@@ -12,7 +12,7 @@ class JGitIgnoreTest extends FlatSpec with Matchers {
 
   it can "be created from InputStream" in {
     val patterns = Seq(".test")
-    val stream = new ByteArrayInputStream(patterns.mkString("\n").getBytes())
+    val stream   = new ByteArrayInputStream(patterns.mkString("\n").getBytes())
     JGitIgnore(stream).getPatterns should contain theSameElementsAs patterns
   }
 

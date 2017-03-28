@@ -7,4 +7,3 @@ TaskKey[Unit]("writeInvalidFile") := {
 ScriptedPlugin.scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
   a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
 )
-
