@@ -134,8 +134,8 @@ object InteractivePropertyResolver extends PropertyResolver {
           val LsCall = """ls\((.*),(.*)\)""".r
           value match {
             case LsCall(group, artifact) =>
-              println(s"$name [Please, enter the ${group.trim}#${artifact.trim} version]: ")
-            case _ => println(s"$name [$value]: ")
+              print(s"$name [Please, enter the ${group.trim}#${artifact.trim} version]: ")
+            case _ => print(s"$name [$value]: ")
           }
           Console.flush() // Gotta flush for Windows console!
           Option(Console.readLine()) match {
