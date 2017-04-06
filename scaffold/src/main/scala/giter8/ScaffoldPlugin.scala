@@ -54,7 +54,8 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
     val folder       = g8ScaffoldTemplatesDirectory.value
     val log          = streams.value.log
     val giter8Engine = Giter8Engine(ApacheHttpClient)
-    giter8Engine.applyTemplate(folder / name, None, baseDirectory.value, Util.parseArguments(args), interactive = true) match {
+    val arguments    = Util.parseArguments(args)
+    giter8Engine.applyTemplate(folder / name, None, baseDirectory.value, arguments, interactive = arguments.isEmpty) match {
       case Success(s) => log.info(s"Template '$name' applied")
       case Failure(e) => log.error(e.getMessage)
     }

@@ -76,7 +76,7 @@ class Giter8 extends xsbti.AppMain {
                                         config.directory,
                                         outputDirectory = out,
                                         parameters,
-                                        interactive = true,
+                                        interactive = parameters.isEmpty,
                                         force       = config.forceOverwrite)
     } yield res
 
