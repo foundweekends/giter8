@@ -112,7 +112,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     g8Test := scriptedTask.evaluated
   )
 
-  private def applyTemplate(out: File, props: Map[String, String], template: Template): Try[String] = {
+  private def applyTemplate(out: File, props: Map[String, String], template: Template): Try[Unit] = {
     IO.delete(out)
     for {
       packageDir <- Success(props.get("name").map(FormatFunctions.normalize).getOrElse("."))

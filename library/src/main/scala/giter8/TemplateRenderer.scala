@@ -30,12 +30,14 @@ object TemplateRenderer {
              templateFiles: Seq[File],
              outputDirectory: File,
              parameters: Map[String, String],
-             force: Boolean): Try[String] = {
+             force: Boolean): Try[Unit] = {
 
-    templateFiles.foreach { file =>
-      writeTemplateFile(templateRoot, file, parameters, outputDirectory, force)
+    for (file <- templateFiles) {
+      val result = writeTemplateFile(templateRoot, file, parameters, outputDirectory, force)
+      if (result.isFailure) return result
     }
-    Success(s"Template applied in ${outputDirectory.toString}")
+
+    Success(())
   }
 
   def copyScaffolds(scaffoldsRoot: Option[File], scaffoldsFiles: Seq[File], outputDirectory: File): Try[Unit] = Try {

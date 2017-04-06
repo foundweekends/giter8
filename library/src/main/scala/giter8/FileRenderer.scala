@@ -32,37 +32,52 @@ import scala.util.{Failure, Success, Try}
 object FileRenderer {
   case class FileRenderingError(file: String, message: String) extends RuntimeException(s"File: $file, $message")
 
-  def renderFile(in: File, out: File, parameters: Map[String, String]): Try[Unit] = Try {
-    out.getParentFile.mkdirs()
-    if (verbatim(out, parameters)) FileUtils.copyFile(in, out)
-    else
+  def renderFile(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
+    for {
+      _   <- Try(out.getParentFile.mkdirs())
+      _   <- copyOrRender(in, out, parameters)
+      _   <- copyExecutableAttribute(in, out)
+      res <- copyFileAttributes(in, out)
+    } yield ()
+  }
+
+  private def copyOrRender(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
+    if (verbatim(out, parameters)) Try(FileUtils.copyFile(in, out))
+    else {
       renderFileImpl(in, out, parameters) recoverWith {
+        //        case e: MalformedInputException             => Try(FileUtils.copyFile(in, out))
         case e: StringRenderer.StringRenderingError =>
           // add the current file to the exception for debugging purposes
           Failure(FileRenderingError(in.getAbsolutePath, e.getMessage))
-        case e: MalformedInputException => Try(FileUtils.copyFile(in, out))
-      }
-    copyExecutableAttribute(in, out)
-  }
-
-  private def copyExecutableAttribute(in: File, out: File) = if (in.canExecute) out.setExecutable(true)
-
-  private def renderFileImpl(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
-    Try(FileUtils.readFileToString(in, "UTF-8")).flatMap { templateBody =>
-      StringRenderer.render(templateBody, parameters) flatMap { content =>
-        Try {
-          FileUtils.writeStringToFile(out, content, UTF_8)
-          copyFileAttributes(in, out)
-        }
       }
     }
   }
 
-  private def copyFileAttributes(in: File, out: File): Unit =
+  private def copyExecutableAttribute(in: File, out: File): Try[Unit] = Try {
+    if (in.canExecute) out.setExecutable(true)
+  }
+
+  private def renderFileImpl(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
+    for {
+      templateBody <- Try(FileUtils.readFileToString(in, "UTF-8"))
+      content <- {
+
+        val res = StringRenderer.render(templateBody, parameters)
+        res
+      }
+      res <- Try {
+        FileUtils.writeStringToFile(out, content, UTF_8)
+        copyFileAttributes(in, out)
+      }
+    } yield res
+  }
+
+  private def copyFileAttributes(in: File, out: File): Try[Unit] = Try {
     Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
       case None       => // PlexusIoResourceAttributes is not available for some OS'es such as windows
       case Some(attr) => ArchiveEntryUtils.chmod(out, attr.getOctalMode, new ConsoleLogger(Logger.LEVEL_ERROR, ""))
     }
+  }
 
   private[giter8] def verbatim(file: File, parameters: Map[String, String]): Boolean =
     parameters.get("verbatim") match {

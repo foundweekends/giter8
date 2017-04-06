@@ -47,7 +47,7 @@ case class Giter8Engine(httpClient: HttpClient = ApacheHttpClient) {
                     outputDirectory: File,
                     additionalProperties: Map[String, String],
                     interactive: Boolean = false,
-                    force: Boolean       = false): Try[String] =
+                    force: Boolean       = false): Try[Unit] =
     for {
       templateDirectory <- Try(new File(templateDirectory, templatePath.getOrElse("")))
       template          <- Try(Template(templateDirectory))

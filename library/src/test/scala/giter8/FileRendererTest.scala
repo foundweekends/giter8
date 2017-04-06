@@ -1,16 +1,17 @@
 package giter8
 
+import giter8.TemplateRenderer.render
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers, TryValues}
 
-class FileRendererTest extends FlatSpec with Matchers with TestFileHelpers with FileContentMatchers {
+class FileRendererTest extends FlatSpec with Matchers with TestFileHelpers with FileContentMatchers with TryValues {
   import FileDsl._
   import FileRenderer._
 
   "FileRenderer" should "render files" in tempDirectory { temp =>
     "$name$" >> (temp / "in")
 
-    renderFile(temp / "in", temp / "out", Map("name" -> "foo"))
+    renderFile(temp / "in", temp / "out", Map("name" -> "foo")).success
 
     temp / "out" should exist
     temp / "out" should haveContents("foo")
@@ -21,8 +22,8 @@ class FileRendererTest extends FlatSpec with Matchers with TestFileHelpers with 
     "$foo$" >> (temp / "in2.txt")
 
     val parameters = Map("verbatim" -> "out1 *.txt")
-    renderFile(temp / "in1", temp / "out1", parameters)
-    renderFile(temp / "in2.txt", temp / "out2.txt", parameters)
+    renderFile(temp / "in1", temp / "out1", parameters).success
+    renderFile(temp / "in2.txt", temp / "out2.txt", parameters).success
 
     temp / "out1" should exist
     temp / "out1" should haveContents("$name$")
@@ -35,10 +36,17 @@ class FileRendererTest extends FlatSpec with Matchers with TestFileHelpers with 
     "foo" >> (temp / "in")
     (temp / "in").setExecutable(true)
 
-    renderFile(temp / "in", temp / "out", Map.empty)
+    renderFile(temp / "in", temp / "out", Map.empty).success
 
     temp / "out" should exist
     (temp / "out").canExecute shouldBe true
+  }
+
+  it should "return an error if" in tempDirectory { temp =>
+    "$foo$" >> (temp / "foo.txt")
+
+    val failure = renderFile(temp / "foo.txt", temp / "out" / "foo.txt", Map.empty).failure
+    failure.exception shouldBe a[FileRenderingError]
   }
 
   it should "copy file attributes" in tempDirectory { temp =>
