@@ -54,4 +54,36 @@ class TemplateTest extends FlatSpec with Matchers with TestFileHelpers {
       temp / "template" / "foo.txt"
     )
   }
+
+  it should "find all properties in all template files" in tempDirectory { temp =>
+    "$foo$" >> (temp / "template" / "simple.txt")
+
+    "$bar;format=\"Camel\"$" >> (temp / "template" / "with_format.txt")
+    "$baz;format=\"Foo,bar\"$" >> (temp / "template" / "with_two_formats.txt")
+
+    "$one$ some text $two$" >> (temp / "template" / "two_params.txt")
+    "$three;format=\"foo\"$ some text $four;format=\"foo\"$" >> (temp / "template" / "two_params_with_format.txt")
+
+    "$файл_with_AllWordChars$" >> (temp / "template" / "unicode.txt")
+
+    val template = Template(temp / "template")
+    template.properties should contain theSameElementsAs Seq(
+      "foo",
+      "one",
+      "two",
+      "three",
+      "four",
+      "bar",
+      "baz",
+      "файл_with_AllWordChars"
+    )
+  }
+
+  it should "collect properties without duplicates" in tempDirectory { temp =>
+    "$foo$ some text $foo$" >> (temp / "template" / "simple.txt")
+
+    val template = Template(temp / "template")
+    template.properties should contain theSameElementsAs Seq("foo")
+  }
+
 }

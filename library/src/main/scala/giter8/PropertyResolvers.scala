@@ -118,7 +118,7 @@ case class FilePropertyResolver(files: File*) extends PropertyResolver {
   }
 }
 
-object InteractivePropertyResolver extends PropertyResolver {
+case class InteractivePropertyResolver(templateProperties: Set[String]) extends PropertyResolver {
   override protected def resolveImpl(old: Map[String, String]): Try[Map[String, String]] = Try {
     old.get("description").foreach { description =>
       println(description + "\n")
@@ -128,23 +128,31 @@ object InteractivePropertyResolver extends PropertyResolver {
     old.foreach {
       case (name, value) =>
         if (name != "verbatim" || name != "description") {
-
-          // Workaround for https://github.com/foundweekends/giter8/issues/170.
-          // We ask user to enter dependency version manually.
-          val LsCall = """ls\((.*),(.*)\)""".r
-          value match {
-            case LsCall(group, artifact) =>
-              print(s"$name [Please, enter the ${group.trim}#${artifact.trim} version]: ")
-            case _ => print(s"$name [$value]: ")
-          }
-          Console.flush() // Gotta flush for Windows console!
-          Option(Console.readLine()) match {
-            case Some(in) if in.trim.nonEmpty => result += name -> in.trim
-            case _                            => result += name -> value
-          }
+          result += name -> askProperty(name, value)
         }
     }
+
+    val unresolvedProperties = templateProperties.diff(result.keySet)
+    unresolvedProperties.foreach { name =>
+      result += name -> askProperty(name, "")
+    }
+
     result.toMap
+  }
+
+  private def askProperty(name: String, value: String): String = {
+    // Workaround for https://github.com/foundweekends/giter8/issues/170.
+    // We ask user to enter dependency version manually.
+    val LsCall = """ls\((.*),(.*)\)""".r
+    value match {
+      case LsCall(group, artifact) => print(s"$name [Please, enter the ${group.trim}#${artifact.trim} version]: ")
+      case _                       => print(s"$name [$value]: ")
+    }
+    Console.flush() // Gotta flush for Windows console!
+    Option(Console.readLine()) match {
+      case Some(in) if in.trim.nonEmpty => in.trim
+      case _                            => value
+    }
   }
 }
 
