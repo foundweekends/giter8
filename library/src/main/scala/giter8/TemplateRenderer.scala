@@ -25,6 +25,7 @@ import org.stringtemplate.v4.compiler.STException
 import scala.util.{Failure, Success, Try}
 
 object TemplateRenderer {
+  import Util.relativePath
 
   def render(templateRoot: File,
              templateFiles: Seq[File],
@@ -78,11 +79,5 @@ object TemplateRenderer {
     }
 
     new File(toPath, StringRenderer.render(FormatFunctions.formatize(relative), params).get)
-  }
-
-  private def relativePath(from: File, to: File): String = {
-    val fromUri = from.toURI
-    val toUti   = to.toURI
-    fromUri.relativize(toUti).getPath
   }
 }

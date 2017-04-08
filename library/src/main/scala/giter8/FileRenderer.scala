@@ -60,11 +60,7 @@ object FileRenderer {
   private def renderFileImpl(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
     for {
       templateBody <- Try(FileUtils.readFileToString(in, "UTF-8"))
-      content <- {
-
-        val res = StringRenderer.render(templateBody, parameters)
-        res
-      }
+      content      <- StringRenderer.render(templateBody, parameters)
       res <- Try {
         FileUtils.writeStringToFile(out, content, UTF_8)
         copyFileAttributes(in, out)
