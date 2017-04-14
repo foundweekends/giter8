@@ -18,18 +18,31 @@
 package giter8
 
 import java.io.File
+import java.nio.charset.MalformedInputException
+import java.util.logging.{Level, Logger}
 
 import giter8.Template.files
 
+import scala.io.Source
+import scala.util.{Failure, Success, Try}
+
 class Template private (baseDirectory: File, val root: File, val scaffoldsRoot: Option[File]) {
   import FileDsl._
+
+  private val log = Logger.getLogger("giter8.Template")
+
+  private val PropertyMatcher = """\$([^\;\$]*)(;format=\"[^\$\"]*\")?\$""".r
 
   private lazy val metaDir     = baseDirectory / "project"
   private lazy val gitFiles    = files(baseDirectory / ".git").toSet
   private lazy val pluginFiles = baseAndMeta("giter8.sbt", "g8.sbt")
   private lazy val metadata    = baseAndMeta("activator.properties", "template.properties")
   private lazy val testFiles   = baseAndMeta("test", "giter8.test", "g8.test")
-  private lazy val properties  = Set(root / "default.properties", baseDirectory / "project" / "default.properties")
+
+  private lazy val possiblePropertyFiles = Set(
+    root / "default.properties",
+    baseDirectory / "project" / "default.properties"
+  )
 
   private lazy val ignores: Option[JGitIgnore] = {
     val gitignoreFile: File = files(root / ".gitignore").head
@@ -38,7 +51,7 @@ class Template private (baseDirectory: File, val root: File, val scaffoldsRoot: 
 
   val scaffoldsFiles: Seq[File] = scaffoldsRoot.map(files).getOrElse(Seq.empty)
 
-  val (propertyFiles, templateFiles) = files(root)
+  lazy val (propertyFiles, templateFiles) = files(root)
     .filterNot(isIgnored)
     .filterNot(gitFiles)
     .filterNot(pluginFiles)
@@ -47,7 +60,24 @@ class Template private (baseDirectory: File, val root: File, val scaffoldsRoot: 
     .filterNot(isTargetDir)
     .filterNot(_.isDirectory)
     .filterNot(scaffoldsFiles.toSet)
-    .partition(properties)
+    .partition(possiblePropertyFiles)
+
+  val properties: Set[String] = findProperties(templateFiles)
+
+  private def findProperties(templateFiles: Stream[File]): Set[String] = templateFiles.flatMap(findProperties).toSet
+
+  private def findProperties(file: File): Seq[String] = {
+    Try(Source.fromFile(file).getLines.toSeq) match {
+      case Failure(e: MalformedInputException) => Seq.empty
+      case Failure(e) =>
+        log.warning(s"Unable to read the file ${Util.relativePath(baseDirectory, file)}: ${e.getMessage}")
+        Seq.empty
+      case Success(lines) =>
+        lines.flatMap { line =>
+          PropertyMatcher.findAllMatchIn(line).map(_.group(1))
+        }
+    }
+  }
 
   private def baseAndMeta(xs: String*): Set[File] = xs.toSet flatMap { x: String =>
     Set(baseDirectory / x, metaDir / x)

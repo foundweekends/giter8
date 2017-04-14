@@ -17,6 +17,8 @@
 
 package giter8
 
+import java.io.File
+
 object Util {
 
   def parseArguments(args: Seq[String]): Map[String, String] = {
@@ -25,5 +27,11 @@ object Util {
       case param(k, v) => k -> v
     }
     pairs.toMap
+  }
+
+  def relativePath(from: File, to: File): String = {
+    val fromUri = from.toURI
+    val toUti   = to.toURI
+    fromUri.relativize(toUti).getPath
   }
 }

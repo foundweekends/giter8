@@ -76,12 +76,12 @@ class Giter8 extends xsbti.AppMain {
                                         config.directory,
                                         outputDirectory = out,
                                         parameters,
-                                        interactive = true,
+                                        interactive = parameters.isEmpty,
                                         force       = config.forceOverwrite)
     } yield res
 
     if (tempdir.exists) FileUtils.forceDelete(tempdir)
-    result
+    result.map(_ => s"Template applied to ${config.output.getOrElse(".")}")
   }
 
   private def getOutputDirectory(output: Option[String]): Try[File] = output match {

@@ -25,17 +25,20 @@ import org.stringtemplate.v4.compiler.STException
 import scala.util.{Failure, Success, Try}
 
 object TemplateRenderer {
+  import Util.relativePath
 
   def render(templateRoot: File,
              templateFiles: Seq[File],
              outputDirectory: File,
              parameters: Map[String, String],
-             force: Boolean): Try[String] = {
+             force: Boolean): Try[Unit] = {
 
-    templateFiles.foreach { file =>
-      writeTemplateFile(templateRoot, file, parameters, outputDirectory, force)
+    for (file <- templateFiles) {
+      val result = writeTemplateFile(templateRoot, file, parameters, outputDirectory, force)
+      if (result.isFailure) return result
     }
-    Success(s"Template applied in ${outputDirectory.toString}")
+
+    Success(())
   }
 
   def copyScaffolds(scaffoldsRoot: Option[File], scaffoldsFiles: Seq[File], outputDirectory: File): Try[Unit] = Try {
@@ -76,11 +79,5 @@ object TemplateRenderer {
     }
 
     new File(toPath, StringRenderer.render(FormatFunctions.formatize(relative), params).get)
-  }
-
-  private def relativePath(from: File, to: File): String = {
-    val fromUri = from.toURI
-    val toUti   = to.toURI
-    fromUri.relativize(toUti).getPath
   }
 }

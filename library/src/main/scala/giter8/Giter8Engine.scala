@@ -47,25 +47,29 @@ case class Giter8Engine(httpClient: HttpClient = ApacheHttpClient) {
                     outputDirectory: File,
                     additionalProperties: Map[String, String],
                     interactive: Boolean = false,
-                    force: Boolean       = false): Try[String] =
+                    force: Boolean       = false): Try[Unit] =
     for {
       templateDirectory <- Try(new File(templateDirectory, templatePath.getOrElse("")))
       template          <- Try(Template(templateDirectory))
-      propertyResolver  <- makePropertyResolver(template.propertyFiles, additionalProperties, interactive)
-      parameters        <- propertyResolver.resolve(Map.empty)
-      packageDir        <- Success(parameters.get("name").map(FormatFunctions.normalize).getOrElse(""))
-      out               <- Try(outputDirectory / packageDir)
-      res               <- TemplateRenderer.render(template.root, template.templateFiles, out, parameters, force)
-      _                 <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
+      propertyResolver <- makePropertyResolver(template.propertyFiles,
+                                               template.properties,
+                                               additionalProperties,
+                                               interactive)
+      parameters <- propertyResolver.resolve(Map.empty)
+      packageDir <- Success(parameters.get("name").map(FormatFunctions.normalize).getOrElse(""))
+      out        <- Try(outputDirectory / packageDir)
+      res        <- TemplateRenderer.render(template.root, template.templateFiles, out, parameters, force)
+      _          <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
     } yield res
 
   private def makePropertyResolver(propertyFiles: Seq[File],
+                                   templateProperties: Set[String],
                                    additionalProperties: Map[String, String],
                                    interactive: Boolean) = Success {
     val resolvers = Seq(FilePropertyResolver(propertyFiles: _*),
                         MavenPropertyResolver(httpClient),
                         StaticPropertyResolver(additionalProperties))
-    if (interactive) PropertyResolverChain(resolvers :+ InteractivePropertyResolver: _*)
+    if (interactive) PropertyResolverChain(resolvers :+ InteractivePropertyResolver(templateProperties): _*)
     else PropertyResolverChain(resolvers: _*)
   }
 }

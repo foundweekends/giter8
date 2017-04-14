@@ -115,7 +115,7 @@ class StringRendererTest extends FlatSpec with Matchers with TryValues {
     "$foo;format=\"snake-case\"$" withParameters Map("foo" -> "with-dash") shouldBe formattedAs("with_dash")
   }
 
-  it can "package" in {
+  it can "make package name" in {
     "$foo;format=\"packaged\"$" withParameters Map("foo" -> "com.example") shouldBe formattedAs("com/example")
 
     "$foo;format=\"package-dir\"$" withParameters Map("foo" -> "com.example.foo") shouldBe
@@ -152,7 +152,7 @@ object StringRendererTest {
             matches                  = actual == right,
             rawNegatedFailureMessage = s""""${left.body}" was formatted as "$right"""",
             rawFailureMessage = s""""${left.body}" should be formatted as "$right" with """ +
-                s"""${formatParameters(left.parameters)}, but got "$actual".""".stripMargin
+              s"""${formatParameters(left.parameters)}, but got "$actual".""".stripMargin
           )
         case Failure(e) =>
           MatchResult(

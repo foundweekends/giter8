@@ -1,15 +1,21 @@
 package giter8
 
-import org.scalatest.{FlatSpec, Matchers}
+import giter8.FileRenderer.FileRenderingError
+import org.scalatest.{FlatSpec, Matchers, TryValues}
 
-class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers with FileContentMatchers {
+class TemplateRendererTest
+    extends FlatSpec
+    with Matchers
+    with TestFileHelpers
+    with FileContentMatchers
+    with TryValues {
   import TemplateRenderer._
   import FileDsl._
 
   "TemplateRenderer" should "render template" in tempDirectory { temp =>
     "$foo$" >> (temp / "foo.txt")
 
-    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = false)
+    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = false).success
 
     temp / "out" / "foo.txt" should exist
     temp / "out" / "foo.txt" should haveContents("bar")
@@ -20,7 +26,7 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
     "$baz$" >> (temp / "B" / "baz.txt")
 
     val templateFiles = Seq(temp / "A" / "foo.txt", temp / "B" / "baz.txt")
-    render(temp, templateFiles, temp / "out", Map("foo" -> "bar", "baz" -> "quux"), force = false)
+    render(temp, templateFiles, temp / "out", Map("foo" -> "bar", "baz" -> "quux"), force = false).success
 
     temp / "out" / "A" / "foo.txt" should exist
     temp / "out" / "A" / "foo.txt" should haveContents("bar")
@@ -36,7 +42,7 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
            Seq(temp / "$package$" / "foo.txt"),
            temp / "out",
            Map("foo" -> "bar", "package" -> "com.example"),
-           force = false)
+           force = false).success
 
     temp / "out" / "com" / "example" / "foo.txt" should exist
     temp / "out" / "com" / "example" / "foo.txt" should haveContents("bar")
@@ -48,7 +54,7 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
 
     val scaffoldsFiles = Seq(temp / "scaffolds" / "A" / "a.txt", temp / "scaffolds" / "B" / "b.txt")
 
-    copyScaffolds(Some(temp / "scaffolds"), scaffoldsFiles, temp / "out" / ".g8")
+    copyScaffolds(Some(temp / "scaffolds"), scaffoldsFiles, temp / "out" / ".g8").success
 
     temp / "out" / ".g8" / "A" / "a.txt" should exist
     temp / "out" / ".g8" / "B" / "b.txt" should exist
@@ -58,7 +64,7 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
     "$foo$" >> (temp / "foo.txt")
     "old content" >> (temp / "out" / "foo.txt")
 
-    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = false)
+    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = false).success
 
     temp / "out" / "foo.txt" should exist
     temp / "out" / "foo.txt" should haveContents("old content")
@@ -68,9 +74,16 @@ class TemplateRendererTest extends FlatSpec with Matchers with TestFileHelpers w
     "$foo$" >> (temp / "foo.txt")
     "old content" >> (temp / "out" / "foo.txt")
 
-    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = true)
+    render(temp, Seq(temp / "foo.txt"), temp / "out", Map("foo" -> "bar"), force = true).success
 
     temp / "out" / "foo.txt" should exist
     temp / "out" / "foo.txt" should haveContents("bar")
+  }
+
+  it should "return an error if there are unspecified values" in tempDirectory { temp =>
+    "$foo$" >> (temp / "foo.txt")
+
+    val failure = render(temp, Seq(temp / "foo.txt"), temp / "out", Map.empty, force = false).failure
+    failure.exception shouldBe a[FileRenderingError]
   }
 }
