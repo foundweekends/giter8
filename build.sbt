@@ -1,7 +1,7 @@
 import Dependencies._
 import sbt.Def
 
-lazy val g8version = "0.8.0"
+lazy val g8version = "0.8.1-SNAPSHOT"
 
 lazy val commonScriptedSettings = scriptedSettings ++ Seq(
   scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
