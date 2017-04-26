@@ -1,7 +1,7 @@
 Giter8
 ======
 
-[![Build Status](https://travis-ci.org/foundweekends/giter8.svg?branch=0.7.x)](https://travis-ci.org/foundweekends/giter8)
+[![Build Status](https://travis-ci.org/foundweekends/giter8.svg?branch=0.8.x)](https://travis-ci.org/foundweekends/giter8)
 
 Giter8 is a command line tool to generate files and directories from
 templates published on github or any other Git repository.
