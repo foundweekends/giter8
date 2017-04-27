@@ -79,12 +79,27 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       checkGeneratedProject(template, expected, actual)
   }
 
-  it should "create symbolic links from template" in testCase {
+  it should "create symbolic links from template root" in testCase {
     case (template, expected, actual) =>
       touch(template / "A" / "foo.txt")
       symLink(template / "B", template / "A")
       "I am foo.txt" >> (template / "foo.txt")
       symLink(template / "bar.txt", template / "foo.txt")
+
+      touch(expected / "A" / "foo.txt")
+      symLink(expected / "B", expected / "A")
+      "I am foo.txt" >> (expected / "foo.txt")
+      symLink(expected / "bar.txt", expected / "foo.txt")
+
+      checkGeneratedProject(template, expected, actual)
+  }
+
+  it should "create symbolic links from src template" in testCase {
+    case (template, expected, actual) =>
+      touch(template / "src" / "main" / "g8" / "A" / "foo.txt")
+      symLink(template / "src" / "main" / "g8" / "B", template / "src" / "main" / "g8" / "A")
+      "I am foo.txt" >> (template / "src" / "main" / "g8" / "foo.txt")
+      symLink(template / "src" / "main" / "g8" / "bar.txt", template / "src" / "main" / "g8" / "foo.txt")
 
       touch(expected / "A" / "foo.txt")
       symLink(expected / "B", expected / "A")
