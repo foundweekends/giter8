@@ -18,7 +18,6 @@
 package giter8
 
 import java.io.File
-import java.nio.charset.MalformedInputException
 
 import org.apache.commons.io.Charsets.UTF_8
 import org.apache.commons.io.FileUtils
@@ -27,23 +26,31 @@ import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUti
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
 
 object FileRenderer {
+  import Util._
   case class FileRenderingError(file: String, message: String) extends RuntimeException(s"File: $file, $message")
 
   def renderFile(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
     for {
-      _   <- Try(out.getParentFile.mkdirs())
+      _   <- makeOrLinkFolder(in.getParentFile, out.getParentFile)
       _   <- copyOrRender(in, out, parameters)
       _   <- copyExecutableAttribute(in, out)
       res <- copyFileAttributes(in, out)
     } yield ()
   }
 
+  private def makeOrLinkFolder(in: File, out: File) = Try {
+    if (isSymbolicLink(in)) link(in, out) else out.mkdirs()
+  }
+
   private def copyOrRender(in: File, out: File, parameters: Map[String, String]): Try[Unit] = {
-    if (verbatim(out, parameters)) Try(FileUtils.copyFile(in, out))
-    else {
+    if (isSymbolicLink(in)) {
+      link(in, out)
+    } else if (verbatim(out, parameters)) {
+      Try(FileUtils.copyFile(in, out))
+    } else {
       renderFileImpl(in, out, parameters) recoverWith {
         //        case e: MalformedInputException             => Try(FileUtils.copyFile(in, out))
         case e: StringRenderer.StringRenderingError =>

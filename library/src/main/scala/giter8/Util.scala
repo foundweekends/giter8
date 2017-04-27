@@ -18,6 +18,13 @@
 package giter8
 
 import java.io.File
+import java.nio.file.Files
+
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.TrueFileFilter
+
+import scala.collection.JavaConverters._
+import scala.util.Try
 
 object Util {
 
@@ -33,5 +40,30 @@ object Util {
     val fromUri = from.toURI
     val toUti   = to.toURI
     fromUri.relativize(toUti).getPath
+  }
+
+  def listFilesAndDirsWithSymbolicLinks(folder: File): Seq[File] = {
+    val files = FileUtils.iterateFilesAndDirs(folder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE).asScala.toSeq
+    listFilesAndDirsWithSymbolicLinks(folder, files)
+  }
+
+  def listFilesAndDirsWithSymbolicLinks(folder: File, files: Seq[File]): Seq[File] = {
+    def nonSymbolicFirst(a: File, b: File) = isSymbolicLink(a) < isSymbolicLink(b)
+    files.sortWith(nonSymbolicFirst)
+  }
+
+  def hasSymbolicParent(f: File, topFolder: File): Boolean = {
+    if (f.equals(topFolder)) false
+    else if (isSymbolicLink(f)) true
+    else hasSymbolicParent(f.getParentFile, topFolder)
+  }
+
+  def isSymbolicLink(file: File): Boolean = Files.isSymbolicLink(file.toPath)
+
+  def link(in: File, out: File) = Try {
+    val inTargetPath = Files.readSymbolicLink(in.toPath)
+    val outTarget = new File(out.getParentFile.getAbsolutePath, inTargetPath.toFile.getName)
+    Files.createSymbolicLink(out.toPath, outTarget.toPath)
+    ()
   }
 }

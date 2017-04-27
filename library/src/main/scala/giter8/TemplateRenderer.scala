@@ -25,7 +25,7 @@ import org.stringtemplate.v4.compiler.STException
 import scala.util.{Failure, Success, Try}
 
 object TemplateRenderer {
-  import Util.relativePath
+  import Util._
 
   def render(templateRoot: File,
              templateFiles: Seq[File],
@@ -33,7 +33,7 @@ object TemplateRenderer {
              parameters: Map[String, String],
              force: Boolean): Try[Unit] = {
 
-    for (file <- templateFiles) {
+    for (file <- listFilesAndDirsWithSymbolicLinks(templateRoot, templateFiles)) {
       val result = writeTemplateFile(templateRoot, file, parameters, outputDirectory, force)
       if (result.isFailure) return result
     }

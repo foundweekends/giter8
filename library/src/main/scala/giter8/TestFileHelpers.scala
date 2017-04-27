@@ -18,6 +18,7 @@ package giter8
  */
 
 import java.io.{File, PrintWriter}
+import java.nio.file.Files
 
 import org.apache.commons.io.FileUtils
 
@@ -38,6 +39,10 @@ trait TestFileHelpers {
   def touch(file: File): Unit = if (!file.exists) {
     file.getParentFile.mkdirs()
     file.createNewFile()
+  }
+
+  def symLink(link: File, target: File): Unit = if(!link.exists()) {
+    Files.createSymbolicLink(link.toPath, target.toPath)
   }
 
   implicit class WriteableString(s: String) {
