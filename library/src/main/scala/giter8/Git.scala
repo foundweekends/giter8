@@ -77,7 +77,7 @@ class Git(gitInteractor: GitInteractor) {
   }
 
   // Protected for testing: see GitTest.scala
-  protected def cleanDir(dir: File): Unit = dir.listFiles().foreach(_.delete())
+  protected def cleanDir(dir: File): Unit = FileUtils.cleanDirectory(dir)
 
   // Protected for testing: see GitTest.scala
   protected def copy(from: File, to: File): Try[Unit] = Try {
