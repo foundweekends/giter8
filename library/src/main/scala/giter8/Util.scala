@@ -18,10 +18,10 @@
 package giter8
 
 import java.io.File
-import java.nio.file.Files
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.TrueFileFilter
+import org.codehaus.plexus.components.io.attributes.SymlinkUtils
 
 import scala.collection.JavaConverters._
 import scala.util.Try
@@ -58,12 +58,12 @@ object Util {
     else hasSymbolicParent(f.getParentFile, topFolder)
   }
 
-  def isSymbolicLink(file: File): Boolean = Files.isSymbolicLink(file.toPath)
+  def isSymbolicLink(f: File): Boolean = FileUtils.isSymlink(f)
 
   def link(in: File, out: File) = Try {
-    val inTargetPath = Files.readSymbolicLink(in.toPath)
-    val outTarget = new File(out.getParentFile.getAbsolutePath, inTargetPath.toFile.getName)
-    Files.createSymbolicLink(out.toPath, outTarget.toPath)
+    val inTargetPath = SymlinkUtils.readSymbolicLink(in)
+    val outTarget = new File(out.getParentFile.getAbsolutePath, inTargetPath.getName)
+    SymlinkUtils.createSymbolicLink(out, outTarget)
     ()
   }
 }

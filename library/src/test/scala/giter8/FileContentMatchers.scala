@@ -1,7 +1,6 @@
 package giter8
 
 import java.io.File
-import java.nio.file.Files
 
 import org.scalatest.matchers.{MatchResult, Matcher}
 
@@ -23,7 +22,7 @@ trait FileContentMatchers {
   def beSymbolicLink(): Matcher[File] = new Matcher[File] {
     override def apply(left: File): MatchResult = {
       MatchResult(
-        matches = Files.isSymbolicLink(left.toPath),
+        matches = Util.isSymbolicLink(left),
         rawFailureMessage =
           s"File ${left.getAbsolutePath} is not a symbolic link",
         rawNegatedFailureMessage = s"${left.getAbsolutePath} is a symbolic link"
