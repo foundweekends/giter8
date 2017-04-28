@@ -42,6 +42,7 @@ trait TestFileHelpers {
   }
 
   def symLink(link: File, target: File): Unit = if(!link.exists()) {
+    if (target.isFile && !link.getParentFile.exists()) link.getParentFile.mkdirs()
     SymlinkUtils.createSymbolicLink(link, target)
   }
 

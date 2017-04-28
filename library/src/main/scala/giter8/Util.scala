@@ -38,8 +38,8 @@ object Util {
 
   def relativePath(from: File, to: File): String = {
     val fromUri = from.toURI
-    val toUti   = to.toURI
-    fromUri.relativize(toUti).getPath
+    val toUri   = to.toURI
+    fromUri.relativize(toUri).getPath
   }
 
   def listFilesAndDirsWithSymbolicLinks(folder: File): Seq[File] = {

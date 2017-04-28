@@ -1,4 +1,4 @@
-import sbt.{ExclusionRule, _}
+import sbt._
 
 object Dependencies {
   val scalasti  = "org.clapper" %% "scalasti" % "2.1.2"
@@ -10,14 +10,10 @@ object Dependencies {
     ExclusionRule("junit", "junit")
   )
   // Picking jgit used by sbt-git
-  // https://github.com/eclipse/jgit/blob/v4.5.0.201609210915-r/pom.xml
-  // This uses httpclient 4.3.6
-  // http://hc.apache.org/httpcomponents-client-4.3.x/
-  val jgit             = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "4.5.0.201609210915-r" excludeAll (
-    ExclusionRule("javax.jms", "jms"),
-    ExclusionRule("com.sun.jdmk", "jmxtools"),
-    ExclusionRule("com.sun.jmx", "jmxri")
-  )
+  // https://github.com/eclipse/jgit/blob/v3.7.0.201502260915-r/pom.xml
+  // This uses httpclient 4.1
+  // http://hc.apache.org/httpcomponents-client-4.2.x/
+  val jgit             = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "3.7.0.201502260915-r"
   val scopt            = "com.github.scopt" %% "scopt" % "3.5.0"
   val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.13.4"
   val scalatest        = "org.scalatest" %% "scalatest" % "3.0.1"

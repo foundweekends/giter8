@@ -67,15 +67,15 @@ class FileRendererTest extends FlatSpec with Matchers with TestFileHelpers with 
   }
 
   it should "handle symbolic links" in tempDirectory { temp =>
-    "$name$" >> (temp / "in")
-    symLink(temp / "in_link", temp / "in")
+    "$name$" >> (temp / "template" / "in")
+    symLink(temp / "template" / "in_link", temp / "template" / "in")
 
-    renderFile(temp / "in", temp / "out", Map("name" -> "foo")).success
-    renderFile(temp / "in_link", temp / "out_link", Map("name" -> "foo")).success
+    renderFile(temp / "template" / "in", temp / "output" / "in", Map("name" -> "foo")).success
+    renderFile(temp / "template" / "in_link", temp / "output" / "in_link", Map("name" -> "foo")).success
 
-    temp / "out" should exist
-    temp / "out" should haveContents("foo")
-    temp / "in_link" should beSymbolicLink()
-    temp / "out_link" should beSymbolicLink()
+    temp / "output" / "in" should exist
+    temp / "output" / "in" should haveContents("foo")
+    temp / "output" / "in" shouldNot beSymbolicLink()
+    temp / "output" / "in_link" should beSymbolicLink()
   }
 }
