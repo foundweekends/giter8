@@ -23,8 +23,20 @@ package giter8 {
 
   import scala.util.{Failure, Success, Try}
 
+  case class RenderOptions(token: Char) {
+    val rgx: String = token match {
+      case '$' => "\\$"
+      case _ => new String(Array(token))
+    }
+
+    val formatSource = s"""${rgx}(\\w+)__(\\w+)${rgx}"""
+    val formatTarget = s"""${rgx}$$1;format="$$2"${rgx}"""
+    val propertyMatcher = s"""${rgx}([^\\;${rgx}]*)(;format=\\"[^${rgx}\"]*\\")?${rgx}"""
+  }
+
   object FormatFunctions {
-    def formatize(s: String): String = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
+    lazy val renderOpts = StringRenderer.options
+    def formatize(s: String): String = s.replaceAll(renderOpts.formatSource, renderOpts.formatTarget)
 
     def decapitalize(s: String): String = if (s.isEmpty) s else s(0).toLower + s.substring(1)
     def startCase(s: String): String    = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
@@ -44,6 +56,14 @@ package giter8 {
 
   object StringRenderer {
     import FormatFunctions._
+
+    val options: RenderOptions = {
+      val token: Char = Option(System.getProperty("g8token")) match {
+        case Some(str) if (str.length > 0) => str.charAt(0)
+        case _ => '$'
+      }
+      RenderOptions(token)
+    }
 
     class StringRenderingError(message: String) extends RuntimeException(message)
     case class ParameterNotFoundError(parameter: String)
@@ -68,7 +88,7 @@ package giter8 {
     }
 
     def render(body: String, parameters: Map[String, String]): Try[String] = {
-      val group = STGroup('$', '$')
+      val group = STGroup(options.token, options.token)
       var error: Option[Throwable] = None
       group.nativeGroup.setListener(new ErrorListener(e => error = Some(e)))
       group.registerRenderer(new StringRenderer)

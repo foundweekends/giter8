@@ -75,8 +75,23 @@ object FileRenderer {
     }
   }
 
+  val verbatimKey = "verbatim"
+
+  private[giter8] def verbatimFunction(propResolver: PropertyResolver): File => Boolean = {
+    val verbatimValue: Option[String] = propResolver.resolve(Map.empty) match {
+      case Failure(_) => None
+      case Success(map) => map.get(verbatimKey)
+    }
+    { file: File =>
+      verbatim(file, verbatimValue)
+    }
+  }
+
   private[giter8] def verbatim(file: File, parameters: Map[String, String]): Boolean =
-    parameters.get("verbatim") match {
+    verbatim(file, parameters.get(verbatimKey))
+
+  private[giter8] def verbatim(file: File, verbatimValue: Option[String]): Boolean =
+    verbatimValue match {
       case None => false
       case Some(patterns) =>
         patterns.split(' ').exists { pattern =>

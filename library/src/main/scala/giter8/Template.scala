@@ -31,7 +31,7 @@ class Template private (baseDirectory: File, val root: File, val scaffoldsRoot: 
 
   private val log = Logger.getLogger("giter8.Template")
 
-  private val PropertyMatcher = """\$([^\;\$]*)(;format=\"[^\$\"]*\")?\$""".r
+  private val PropertyMatcher = StringRenderer.options.propertyMatcher.r
 
   private lazy val metaDir     = baseDirectory / "project"
   private lazy val gitFiles    = files(baseDirectory / ".git").toSet
@@ -51,7 +51,13 @@ class Template private (baseDirectory: File, val root: File, val scaffoldsRoot: 
 
   val scaffoldsFiles: Seq[File] = scaffoldsRoot.map(files).getOrElse(Seq.empty)
 
-  lazy val (propertyFiles, templateFiles) = files(root)
+  lazy val propertyFiles = possiblePropertyFiles.toList.filter(f => f.exists())
+
+  lazy val isVerbatim = FileRenderer.verbatimFunction(new FilePropertyResolver(propertyFiles:_*))
+
+  //lazy val (propertyFiles, templateFiles) =
+  lazy val (_, templateFiles) = files(root)
+    .filterNot(isVerbatim)
     .filterNot(isIgnored)
     .filterNot(gitFiles)
     .filterNot(pluginFiles)
