@@ -23,9 +23,9 @@ import java.util.logging.Logger
 
 import giter8.StringRenderer.ParameterNotFoundError
 
+import scala.collection.JavaConverters._
 import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
-import scala.collection.JavaConverters._
 
 trait PropertyResolver {
   protected def resolveImpl(old: Map[String, String]): Try[Map[String, String]]

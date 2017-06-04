@@ -18,7 +18,6 @@
 package giter8
 
 import java.io.File
-import java.nio.charset.MalformedInputException
 
 import org.apache.commons.io.Charsets.UTF_8
 import org.apache.commons.io.FileUtils
@@ -27,7 +26,7 @@ import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUti
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
 
 object FileRenderer {
   case class FileRenderingError(file: String, message: String) extends RuntimeException(s"File: $file, $message")

@@ -22,8 +22,8 @@ import org.scalatest.{FlatSpec, Matchers, TryValues}
 import scala.util.{Failure, Success}
 
 class StringRendererTest extends FlatSpec with Matchers with TryValues {
-  import StringRendererTest._
   import StringRenderer._
+  import StringRendererTest._
 
   "StringRenderer" should "substitute parameters with correct values" in {
     "$foo$" withParameters Map("foo" -> "bar") shouldBe formattedAs("bar")

@@ -1,6 +1,5 @@
 package giter8
 
-import giter8.TemplateRenderer.render
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.scalatest.{FlatSpec, Matchers, TryValues}
 

@@ -9,8 +9,8 @@ class TemplateRendererTest
     with TestFileHelpers
     with FileContentMatchers
     with TryValues {
-  import TemplateRenderer._
   import FileDsl._
+  import TemplateRenderer._
 
   "TemplateRenderer" should "render template" in tempDirectory { temp =>
     "$foo$" >> (temp / "foo.txt")
