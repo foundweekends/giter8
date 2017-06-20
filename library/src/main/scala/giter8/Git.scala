@@ -47,7 +47,11 @@ class Git(gitInteractor: GitInteractor) {
       cloneWithGivenRefOrDefaultBranch(github.publicUrl, ref, destination) recoverWith {
         case _: TransportError =>
           cleanDir(destination)
-          cloneWithGivenRefOrDefaultBranch(github.privateUrl, ref, destination)
+          cloneWithGivenRefOrDefaultBranch(github.privateUrl, ref, destination) recoverWith {
+            case _: TransportError =>
+              cleanDir(destination)
+              cloneWithGivenRefOrDefaultBranch(github.httpsUrl, ref, destination)
+          }
       }
   }
 
