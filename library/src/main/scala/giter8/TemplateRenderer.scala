@@ -22,9 +22,11 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 import org.stringtemplate.v4.compiler.STException
 
+import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 object TemplateRenderer {
+
   import Util.relativePath
 
   def render(templateRoot: File,
@@ -48,6 +50,18 @@ object TemplateRenderer {
         val out  = new File(outputDirectory, name)
         FileUtils.copyFile(file, out)
       }
+    }
+  }
+
+  def showReadMe(path: File) = {
+    if (!path.exists()) Success(())
+
+    val readmeG8 = new File(path, "README.g8")
+    Try {
+      println()
+      Source.fromFile(readmeG8, "UTF-8").getLines.foreach(println)
+      println()
+      readmeG8.delete()
     }
   }
 

@@ -59,6 +59,7 @@ case class Giter8Engine(httpClient: HttpClient = ApacheHttpClient) {
       packageDir <- Success(parameters.get("name").map(FormatFunctions.normalize).getOrElse(""))
       out        <- Try(outputDirectory / packageDir)
       res        <- TemplateRenderer.render(template.root, template.templateFiles, out, parameters, force)
+      _          <- TemplateRenderer.showReadMe(out)
       _          <- TemplateRenderer.copyScaffolds(template.scaffoldsRoot, template.scaffoldsFiles, out / ".g8")
     } yield res
 
