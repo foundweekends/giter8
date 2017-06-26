@@ -53,15 +53,17 @@ object TemplateRenderer {
     }
   }
 
-  def showReadMe(path: File) = {
-    if (!path.exists()) Success(())
-
+  def showReadMe(path: File): Try[Unit] = {
     val readmeG8 = new File(path, "README.g8")
-    Try {
+
+    if (!readmeG8.exists()) Success(())
+    else Try[Unit] {
       println()
       Source.fromFile(readmeG8, "UTF-8").getLines.foreach(println)
       println()
       readmeG8.delete()
+    } recover {
+      case _ => ()
     }
   }
 
