@@ -1,6 +1,6 @@
 import Dependencies._
 
-val g8version = "0.7.3-SNAPSHOT"
+val g8version = "0.9.0-SNAPSHOT"
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
