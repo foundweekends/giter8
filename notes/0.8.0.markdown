@@ -1,0 +1,18 @@
+
+### enhancements
+
+- Adds back git tag support. #267 by @foxmk
+- Adds `-d some-directory/template` option for templates in a subdirectory. #269 by @lachatak
+- Adds support to configure Maven repository location using file `$G8_HOME/mvnrepo`. #271 by @konopski
+- Adds optional `baseDirectory` parameter to `run`. #278 by @cunei
+- Adds support to look for only the stable version from Maven Central e.g. `maven(org.scalatest, scalatest_2.12, stable)`. #275 by @ssanj
+
+### improvements and fixes
+
+- Refactoring work by @foxmk and @xuwei-k
+- Fixes Giter8 not picking up GitHub default branch. #263 by @foxmk
+- Restores `-f` flag. #277 by @foxmk
+
+### notes
+
+Special thanks to the contributors for making this release a success. According to `git shortlog -sn --no-merges v0.7.2..0.8.x`, compared to 0.7.2, there were 66 (non-merge) commits, by seven contributors: Artyom Artemyev, Kenji Yoshida, Sanjiv Sahayam, Antonio Cunei, Krisztian Lachata, Eugene Yokota, and Lukasz Konopski. Thank you!

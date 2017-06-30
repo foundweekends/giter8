@@ -1,0 +1,12 @@
+0.9.0 rolls back refactoring changes that went into 0.8.0 since it introduced many regressions.
+
+### improvements
+
+- Clone from GitHub defaults to HTTPS instead of `git://`. #313 by @eed3si9n
+
+### fixes
+
+- Fixes escaped `$` in properties not getting respected. #288
+- Fixes `g8Test` not having effect in sbt-giter8 0.8.0. #292
+- Fixes built-in properties like `verbatim` not getting filtered out from prompt. #299
+- Fixes order of parameters is not preserved in 0.8.0. #298
