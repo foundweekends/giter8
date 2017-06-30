@@ -412,7 +412,7 @@ object G8 {
       }
       .foreach {
         case (in, out) =>
-          if (out.exists) {
+          if (out.exists && !forceOverwrite) {
             println("Skipping existing file: %s" format out.toString)
           } else {
             out.getParentFile.mkdirs()
