@@ -86,12 +86,12 @@ object Giter8Plugin extends sbt.AutoPlugin {
   )
 
   lazy val giter8TestSettings: Seq[Def.Setting[_]] = scriptedSettings ++ Seq(
-      g8Test in Test := { scriptedTask.evaluated },
-      aggregate in (Test, g8Test) := false,
-      scriptedDependencies := {
+    g8Test in Test := { scriptedTask.evaluated },
+    aggregate in (Test, g8Test) := false,
+    scriptedDependencies := {
       val x = (g8 in Test).value
     },
-      g8 in Test := {
+    g8 in Test := {
       val base  = (unmanagedSourceDirectories in (Compile, g8)).value
       val srcs  = (sources in (Compile, g8)).value
       val out   = (target in (Test, g8)).value
@@ -107,9 +107,9 @@ object Giter8Plugin extends sbt.AutoPlugin {
       else IO.write(script, """>test""")
       retval :+ script
     },
-      sbtTestDirectory := { target.value / "sbt-test" },
-      target in (Test, g8) := { sbtTestDirectory.value / name.value / "scripted" },
-      g8TestScript := {
+    sbtTestDirectory := { target.value / "sbt-test" },
+    target in (Test, g8) := { sbtTestDirectory.value / name.value / "scripted" },
+    g8TestScript := {
       val dir     = (sourceDirectory in Test).value
       val metadir = (baseDirectory in LocalRootProject).value / "project"
       val file0   = dir / "g8" / "test"
@@ -121,8 +121,8 @@ object Giter8Plugin extends sbt.AutoPlugin {
                        metadir / "g8.test")
       files.find(_.exists).getOrElse(file0)
     },
-      scriptedBufferLog in (Test, g8) := true
-    )
+    scriptedBufferLog in (Test, g8) := true
+  )
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
 }
