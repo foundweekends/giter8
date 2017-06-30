@@ -27,7 +27,7 @@ object GitRepository {
   case class Remote(url: String) extends GitRepository
 
   case class GitHub(user: String, repo: String) extends GitRepository {
-    def publicUrl: String  = s"git://github.com/$user/$repo.g8.git"
+    def publicUrl: String  = s"https://github.com/$user/$repo.g8.git"
     def privateUrl: String = s"git@github.com:$user/$repo.g8.git"
   }
 
