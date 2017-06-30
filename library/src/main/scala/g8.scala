@@ -44,10 +44,10 @@ object G8 {
   }
 
   /**
-    * A function which will return the resolved value of a property given the properties resolved thus far.
-    * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
-    * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
-    */
+   * A function which will return the resolved value of a property given the properties resolved thus far.
+   * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
+   * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
+   */
   type ValueF = ResolvedProperties => String
 
   // Called from JgitHelper
@@ -290,13 +290,13 @@ object G8 {
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
   /** transforms any maven() property operations to the latest
-    * version number reported by that service. */
+   * version number reported by that service. */
   def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
     Maven.lookup(props)
 
   /**
-    * Extract params, template files, and scaffolding folder based on the conventionnal project structure
-    */
+   * Extract params, template files, and scaffolding folder based on the conventionnal project structure
+   */
   private[giter8] def fetchInfo(
       baseDirectory: File,
       templatePaths: List[Path],

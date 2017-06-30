@@ -21,15 +21,15 @@ object TravisSitePlugin extends sbt.AutoPlugin {
   import autoImport._
 
   override lazy val projectSettings = ghpages.settings ++ Seq(
-      sourceDirectory in Pamflet := { baseDirectory.value / "docs" },
-      // GitKeys.gitBranch in ghkeys.updatedRepository := Some("gh-pages"),
-      // This task is responsible for updating the master branch on some temp dir.
-      // On the branch there are files that was generated in some other ways such as:
-      // - CNAME file
-      //
-      // This task's job is to call "git rm" on files and directories that this project owns
-      // and then copy over the newly generated files.
-      ghkeys.synchLocal := {
+    sourceDirectory in Pamflet := { baseDirectory.value / "docs" },
+    // GitKeys.gitBranch in ghkeys.updatedRepository := Some("gh-pages"),
+    // This task is responsible for updating the master branch on some temp dir.
+    // On the branch there are files that was generated in some other ways such as:
+    // - CNAME file
+    //
+    // This task's job is to call "git rm" on files and directories that this project owns
+    // and then copy over the newly generated files.
+    ghkeys.synchLocal := {
       // sync the generated site
       val repo = ghkeys.updatedRepository.value
       val s    = streams.value
@@ -42,15 +42,15 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       IO.copy(mappings)
       repo
     },
-      // https://gist.github.com/domenic/ec8b0fc8ab45f39403dd
-      // 1. generate a new SSH key: `ssh-keygen -t rsa -b 4096 -C "foo@example.com"` and
-      //    name it ~/.ssh/yourprojectname_deploy_rsa
-      // 2. add the public key ~/.ssh/yourprojectname_deploy_rsa.pub to github: https://github.com/foo/bar/settings/keys
-      // 3. copy the private key ~/.ssh/yourprojectname_deploy_rsa to ./deploy_rsa
-      // 4. encrypt the token: `travis encrypt-file deploy_rsa`
-      // 5. remove the private key ./deploy_rsa
-      // 4. rename it to deploy_rsa.enc
-      pushSiteIfChanged := (Def.taskDyn {
+    // https://gist.github.com/domenic/ec8b0fc8ab45f39403dd
+    // 1. generate a new SSH key: `ssh-keygen -t rsa -b 4096 -C "foo@example.com"` and
+    //    name it ~/.ssh/yourprojectname_deploy_rsa
+    // 2. add the public key ~/.ssh/yourprojectname_deploy_rsa.pub to github: https://github.com/foo/bar/settings/keys
+    // 3. copy the private key ~/.ssh/yourprojectname_deploy_rsa to ./deploy_rsa
+    // 4. encrypt the token: `travis encrypt-file deploy_rsa`
+    // 5. remove the private key ./deploy_rsa
+    // 4. rename it to deploy_rsa.enc
+    pushSiteIfChanged := (Def.taskDyn {
       val repo    = baseDirectory.value
       val r       = GitKeys.gitRunner.value
       val s       = streams.value
@@ -58,8 +58,8 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       if (changed) ghkeys.pushSite
       else Def.task {}
     }).value,
-      git.remoteRepo := s"git@github.com:${siteGithubRepo.value}.git"
-    )
+    git.remoteRepo := s"git@github.com:${siteGithubRepo.value}.git"
+  )
 
   def gitRemoveFiles(dir: File, files: List[File], git: GitRunner, s: TaskStreams): Unit = {
     if (!files.isEmpty)

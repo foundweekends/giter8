@@ -33,7 +33,7 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
       </metadata>
 
     val loc = "https://repo1.maven.org/maven2/org/scala-lang/scala-libary/maven-metadata.xml"
-    Maven.findLatestVersion(loc, xml).right.value should be ("2.12.1")
+    Maven.findLatestVersion(loc, xml).right.value should be("2.12.1")
   }
 
   it should "return an error when the latest version is not found" in {
@@ -44,7 +44,7 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
       </metadata>
 
     val loc = "https://repo1.maven.org/maven2/org/scala-lang/scala-libary/maven-metadata.xml"
-    Maven.findLatestVersion(loc, xml).left.value should be (
+    Maven.findLatestVersion(loc, xml).left.value should be(
       s"Found metadata at $loc but can't extract latest version"
     )
   }
@@ -69,8 +69,8 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
           </versioning>
       </metadata>
 
-      val loc = "https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/maven-metadata.xml"
-      Maven.findLatestStableVersion(loc, xml).right.value should be ("3.0.1")
+    val loc = "https://repo1.maven.org/maven2/org/scalatest/scalatest_2.12/maven-metadata.xml"
+    Maven.findLatestStableVersion(loc, xml).right.value should be("3.0.1")
   }
 
   it should "return the latest version if the latest version is stable" in {
@@ -91,8 +91,8 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
       </versioning>
       </metadata>
 
-      val loc = "https://repo1.maven.org/maven2/org/scalacheck/scalacheck_2.12/maven-metadata.xml"
-      Maven.findLatestStableVersion(loc, xml).right.value should be ("1.13.5")
+    val loc = "https://repo1.maven.org/maven2/org/scalacheck/scalacheck_2.12/maven-metadata.xml"
+    Maven.findLatestStableVersion(loc, xml).right.value should be("1.13.5")
   }
 
   it should "return an error if the latest stable version is not found" in {
@@ -114,9 +114,9 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
       </versioning>
       </metadata>
 
-      val loc = "https://repo1.maven.org/maven2/org/scalaz/scalaz-concurrent_2.12/maven-metadata.xml"
-      Maven.findLatestStableVersion(loc, xml).left.value should be (
-        s"Could not find latest stable version at $loc"
-      )
+    val loc = "https://repo1.maven.org/maven2/org/scalaz/scalaz-concurrent_2.12/maven-metadata.xml"
+    Maven.findLatestStableVersion(loc, xml).left.value should be(
+      s"Could not find latest stable version at $loc"
+    )
   }
 }
