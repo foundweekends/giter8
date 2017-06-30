@@ -9,7 +9,7 @@ lazy val commonScriptedSettings = scriptedSettings ++ Seq(
   ),
   scriptedBufferLog := false,
   scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-  scripted := ScriptedPlugin.scripted.dependsOn(publishLocal in library).evaluated,
+  scripted := ScriptedPlugin.scripted.dependsOn(publishLocal in rendering).evaluated,
   test in Test := scripted.toTask("").value
 )
 
@@ -24,7 +24,7 @@ lazy val scala211libraryDependencies = Def.setting {
 lazy val root = (project in file("."))
   .enablePlugins(NoPublish)
   .enablePlugins(TravisSitePlugin)
-  .aggregate(app, library, scaffold, plugin)
+  .aggregate(app, rendering, resolving, scaffold, plugin)
   .settings(
     inThisBuild(
       Seq(
@@ -60,7 +60,7 @@ lazy val app = (project in file("app"))
   .enablePlugins(ConscriptPlugin)
   .enablePlugins(SonatypePublish)
   .enablePlugins(BuildInfoPlugin)
-  .dependsOn(library)
+  .dependsOn(resolving, rendering)
   .settings(
     name := "giter8",
     description := "Command line tool to apply templates defined on github",
@@ -80,7 +80,7 @@ lazy val app = (project in file("app"))
 
 lazy val scaffold = (project in file("scaffold"))
   .enablePlugins(BintrayPublish)
-  .dependsOn(library)
+  .dependsOn(rendering)
   .settings(commonScriptedSettings)
   .settings(
     name := "sbt-giter8-scaffold",
@@ -91,7 +91,7 @@ lazy val scaffold = (project in file("scaffold"))
 
 lazy val plugin = (project in file("plugin"))
   .enablePlugins(BintrayPublish)
-  .dependsOn(library)
+  .dependsOn(rendering)
   .settings(commonScriptedSettings)
   .settings(
     name := "sbt-giter8",
@@ -104,19 +104,41 @@ lazy val plugin = (project in file("plugin"))
     )
   )
 
-lazy val library = (project in file("library"))
+lazy val rendering = (project in file("rendering"))
   .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
   .settings(
-    name := "giter8-library",
-    description := "Shared library for Giter8 app and plugin",
+    name := "giter8-rendering",
+    description := "Functionality for rendering templates, used within Giter8 app and plugin",
     excludeFilter in (Test, unmanagedResources) := ".DS_Store",
     unmanagedResourceDirectories in Test += file("examples"),
     crossScalaVersions := List(scala210, scala211, scala212),
     libraryDependencies ++= scala211libraryDependencies.value,
     libraryDependencies ++= Seq(
       jsr305 % Compile,
+      jgit,
       scalasti,
+      commonsIo,
+      plexusArchiver,
+      scalacheck % Test,
+      scalatest % Test,
+      scalamock % Test,
+      slf4jSimple % Test
+    )
+  )
+
+lazy val resolving = (project in file("resolving"))
+  .disablePlugins(BintrayPlugin)
+  .enablePlugins(SonatypePublish)
+  .settings(
+    name := "giter8-resolving",
+    description := "Functionality to resolve templates, used within Giter8 app and plugin",
+    excludeFilter in (Test, unmanagedResources) := ".DS_Store",
+    unmanagedResourceDirectories in Test += file("examples"),
+    crossScalaVersions := List(scala210, scala211, scala212),
+    libraryDependencies ++= scala211libraryDependencies.value,
+    libraryDependencies ++= Seq(
+      jsr305 % Compile,
       jgit,
       commonsIo,
       plexusArchiver,

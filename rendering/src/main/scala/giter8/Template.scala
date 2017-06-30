@@ -19,7 +19,7 @@ package giter8
 
 import java.io.File
 import java.nio.charset.MalformedInputException
-import java.util.logging.{Level, Logger}
+import java.util.logging.Logger
 
 import giter8.Template.files
 

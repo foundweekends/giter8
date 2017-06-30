@@ -18,7 +18,6 @@
 package giter8 {
 
   import org.clapper.scalasti.{AttributeRenderer, STErrorListener, STGroup, STHelper}
-  import org.stringtemplate.v4.compiler.STException
   import org.stringtemplate.v4.misc.{ErrorType, STMessage}
 
   import scala.util.{Failure, Success, Try}
