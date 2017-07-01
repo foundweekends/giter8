@@ -286,7 +286,16 @@ to try out your changes before you open a pull request. This is how you do it.
 about conscript on its [official page].
 </p><h4 id="Fixing+%3A">Fixing <code>PATH</code>:<a href="#Fixing+%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>Before you install giter8 with conscript, you need to ensure, that
 conscript directory has higher precedence than default installation path.
-</p><p>You can either delete existing version of giter8, or change `</p>
+</p><p>You can either delete existing version of giter8, or change <code>PATH</code> variable such that 
+<code>~/.conscript/bin</code> is before.
+</p><h4 id="To+install+local+version%3A">To install local version:<a href="#To+install+local+version%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><ul><li>Change <code>g8version</code> in <code>build.sbt</code> i.e. by adding <code>&quot;-SNAPSHOT&quot;</code>;
+</li><li>Run <code>publishLocal</code> from sbt;
+</li><li>From a shell session run <code>cs --local foundweekends/giter8/&lt;YOUR_VERSION&gt;</code>. 
+Use the version number you just wrote in <code>build.sbt</code>.
+</li></ul><h4 id="To+refresh%3A">To refresh:<a href="#To+refresh%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><ul><li>Run <code>publishLocal</code> from sbt again;
+</li><li>From a shell session run <code>cs --clean-boot</code>.
+</li></ul><h4 id="To+get+back+to+normal+version%3A">To get back to normal version:<a href="#To+get+back+to+normal+version%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>From a shell session run <code>cs foundweekends/giter8</code>.
+</p>
           </div>
         </div>
         <div class="header">
