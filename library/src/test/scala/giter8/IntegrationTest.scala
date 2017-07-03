@@ -96,6 +96,14 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       checkGeneratedProject(template, expected, actual)
   }
 
+  it should "read default.properties with description parameter from root directory" in testCase {
+    case (template, expected, actual) =>
+      "foo = bar\ndescription = my description" >> (template / "src" / "main" / "g8" / "default.properties")
+      "$foo$ $description$" >> (template / "src" / "main" / "g8" / "foo.txt")
+      "bar my description" >> (expected / "foo.txt")
+      checkGeneratedProject(template, expected, actual)
+  }
+
   it should "create directory with project name" in testCase {
     case (template, expected, actual) =>
       "name = My awesome Project" >> (template / "src" / "main" / "g8" / "default.properties")
