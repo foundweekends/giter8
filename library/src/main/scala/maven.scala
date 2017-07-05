@@ -19,7 +19,7 @@ package giter8
 
 import java.io.File
 import scala.util.parsing.combinator._
-import scala.xml.{NodeSeq, XML}
+import scala.xml.NodeSeq
 
 /**
   * Parse `maven-metadata.xml`

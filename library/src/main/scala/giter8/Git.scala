@@ -24,7 +24,6 @@ import giter8.GitRepository.{GitHub, Local, Remote}
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.TrueFileFilter
 
-import scala.language.implicitConversions
 import scala.util.{Failure, Try}
 import scala.collection.JavaConverters._
 
