@@ -51,6 +51,15 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
   private val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
+  private def buildFailure(t: Throwable): String = {
+    def buildFailureList(t: Throwable): List[String] = t match {
+      case null => List[String]()
+      case _ => t.getMessage :: buildFailureList(t.getCause)
+    }
+
+    buildFailureList(t).mkString(": ")
+  }
+
   /** Clean temporary directory used for git cloning */
   def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDelete(tempdir)
 
@@ -59,7 +68,7 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
       repository <- GitRepository.fromString(config.repo)
       baseDir <- gitInteractor.clone(repository, config.ref, tempdir) match {
         case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
-        case Failure(e) => Left(e.getMessage)
+        case Failure(e) => Left(buildFailure(e))
       }
       renderedTemplate <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
     } yield renderedTemplate
