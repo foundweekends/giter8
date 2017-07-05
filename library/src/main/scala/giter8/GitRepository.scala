@@ -47,7 +47,7 @@ object GitRepository {
     val NativeUrl: Regex = "^(git[@|://].*)$".r
     val HttpsUrl: Regex  = "^(https://.*)$".r
     val HttpUrl: Regex   = "^(http://.*)$".r
-    val SshUrl: Regex    = "^(ssh://.*)$".r
+    val SshUrl: Regex    = "^ssh://(.*)$".r
   }
 
 }
