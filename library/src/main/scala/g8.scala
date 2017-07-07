@@ -164,7 +164,7 @@ object G8 {
       globMatch(file, s.split(' ').toSeq)
     } getOrElse { false }
   private def globMatch(file: File, patterns: Seq[String]): Boolean =
-    patterns exists { globRegex(_).findFirstIn(file.getName).isDefined }
+    patterns exists { globRegex(_).findFirstIn(file.getPath).isDefined }
   private def globRegex(pattern: String) =
     "^%s$"
       .format(pattern flatMap {
