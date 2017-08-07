@@ -17,25 +17,22 @@
 
 package giter8
 
-import java.io.{File, FileInputStream, InputStream}
-import java.nio.charset.MalformedInputException
-import java.security.SecureRandom
-import java.util.{Locale, Properties}
-
+import java.io.{File, InputStream}
+import java.util.Properties
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
-import org.clapper.scalasti.{STErrorListener, STGroup, STHelper}
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
 import org.stringtemplate.v4.misc.STMessage
-
 import scala.collection.mutable
-import scala.util.control.Exception.{allCatch, catching}
+import scala.util.control.Exception.{catching, allCatch}
 
 object G8 {
+  import org.clapper.scalasti.{STGroup, STHelper, STErrorListener}
+
   /** Properties in the order they were created/defined */
   type OrderedProperties = List[(String, String)]
 
@@ -213,7 +210,7 @@ object G8 {
   def normalize(s: String)    = hyphenate(s.toLowerCase)
   def snakeCase(s: String)    = s.replaceAll("""[\s\.\-]+""", "_")
   def packageDir(s: String)   = s.replace(".", System.getProperty("file.separator"))
-  def addRandomId(s: String)  = s + "-" + new java.math.BigInteger(256, new SecureRandom).toString(32)
+  def addRandomId(s: String)  = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
 
   val Param = """^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
@@ -309,6 +306,7 @@ object G8 {
       baseDirectory: File,
       templatePaths: List[Path],
       scaffoldPaths: List[Path]): Either[String, (UnresolvedProperties, Stream[File], File, Option[File])] = {
+    import java.io.FileInputStream
     val templatesRoot  = templateRoot(baseDirectory, templatePaths)
     val fs             = templateFiles(templatesRoot, baseDirectory)
     val metaDir        = baseDirectory / "project"
@@ -414,6 +412,7 @@ object G8 {
                      // isScaffolding: Boolean,
                      forceOverwrite: Boolean): Either[String, String] = {
 
+    import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
 
     templates
@@ -512,7 +511,7 @@ class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
   import G8._
   def toString(value: String): String = value
 
-  override def toString(value: String, formatName: String, locale: Locale): String = {
+  override def toString(value: String, formatName: String, locale: java.util.Locale): String = {
     if (formatName == null)
       value
     else {
