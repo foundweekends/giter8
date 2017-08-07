@@ -17,24 +17,32 @@
 
 package giter8
 
-import java.io.File
+import java.io.{File, FileInputStream, InputStream}
+import java.nio.charset.MalformedInputException
+import java.security.SecureRandom
+import java.util.{Locale, Properties}
+
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
+import org.clapper.scalasti.{STErrorListener, STGroup, STHelper}
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
 import org.stringtemplate.v4.misc.STMessage
-import scala.util.control.Exception.{catching, allCatch}
+
+import scala.collection.mutable
+import scala.util.control.Exception.{allCatch, catching}
 
 object G8 {
-  import org.clapper.scalasti.{STGroup, STHelper, STErrorListener}
-
   /** Properties in the order they were created/defined */
   type OrderedProperties = List[(String, String)]
-  object OrderedProperties {
-    val empty = List.empty[(String, String)]
+
+  /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
+  type UnresolvedProperties = List[(String, ValueF)]
+  object UnresolvedProperties {
+    val empty = List.empty[(String, ValueF)]
   }
 
   /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input, ready for insertion into template */
@@ -104,8 +112,14 @@ object G8 {
     val group = STGroup('$', '$')
     group.nativeGroup.setListener(new STErrorHandler)
     group.registerRenderer(renderer)
+
+    val attributes = resolved mapValues { attr =>
+      if (isBoolean(attr)) isTruthy(attr)
+      else attr
+    }
+
     STHelper(group, default)
-      .setAttributes(resolved)
+      .setAttributes(attributes)
       .render()
   }
 
@@ -127,12 +141,6 @@ object G8 {
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
   case class DefaultValueF(default: String) extends ValueF {
     override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
-  }
-
-  /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
-  type UnresolvedProperties = List[(String, ValueF)]
-  object UnresolvedProperties {
-    val empty = List.empty[(String, ValueF)]
   }
 
   private val renderer = new StringRenderer
@@ -205,7 +213,7 @@ object G8 {
   def normalize(s: String)    = hyphenate(s.toLowerCase)
   def snakeCase(s: String)    = s.replaceAll("""[\s\.\-]+""", "_")
   def packageDir(s: String)   = s.replace(".", System.getProperty("file.separator"))
-  def addRandomId(s: String)  = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
+  def addRandomId(s: String)  = s + "-" + new java.math.BigInteger(256, new SecureRandom).toString(32)
 
   val Param = """^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
@@ -301,7 +309,6 @@ object G8 {
       baseDirectory: File,
       templatePaths: List[Path],
       scaffoldPaths: List[Path]): Either[String, (UnresolvedProperties, Stream[File], File, Option[File])] = {
-    import java.io.FileInputStream
     val templatesRoot  = templateRoot(baseDirectory, templatePaths)
     val fs             = templateFiles(templatesRoot, baseDirectory)
     val metaDir        = baseDirectory / "project"
@@ -382,7 +389,13 @@ object G8 {
               k -> f(resolved)
             else {
               val default = f(resolved)
-              printf("%s [%s]: ", k, default)
+
+              val message = if (isBoolean(default)) {
+                if (isTruthy(default)) "Y/n"
+                else "y/N"
+              } else default
+
+              printf("%s [%s]: ", k, message)
               Console.flush() // Gotta flush for Windows console!
               val in = Console.readLine().trim
               (k, if (in.isEmpty) default else in)
@@ -401,7 +414,6 @@ object G8 {
                      // isScaffolding: Boolean,
                      forceOverwrite: Boolean): Either[String, String] = {
 
-    import java.nio.charset.MalformedInputException
     val renderer = new StringRenderer
 
     templates
@@ -462,35 +474,45 @@ object G8 {
     }
   }
 
-  def readProps(stm: java.io.InputStream): G8.OrderedProperties = {
-    val p = new LinkedListProperties
-    p.load(stm)
-    stm.close()
-    (OrderedProperties.empty /: p.keyList) { (l, k) =>
-      l :+ (k -> p.getProperty(k))
+  def readProps(stm: InputStream): G8.OrderedProperties = {
+    // Overrides java.util.Properties to return properties back in the order they were specified
+    val properties = new Properties {
+      val parameters = mutable.MutableList.empty[(String, String)]
+
+      override def put(key: Object, value: Object) = {
+        val k = key.toString
+        val v = value.toString
+
+        parameters += k -> v
+        super.put(k, v)
+      }
+    }
+
+    try {
+      properties.load(stm)
+      properties.parameters.toList
+    } finally {
+      stm.close()
     }
   }
+
+  private val truthy = Set("y", "yes", "true")
+  private val falsy = Set("n", "no", "false")
+  private val booleans = truthy ++ falsy
+
+  private def isBoolean(s: String) = booleans contains s.toLowerCase
+  private def isTruthy(s: String) = truthy contains s.toLowerCase
 }
 
 case class Path(paths: List[String]) {
   def /(child: String): Path = copy(paths = paths ::: List(child))
 }
 
-/** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */
-private[giter8] class LinkedListProperties extends java.util.Properties {
-  var keyList = List.empty[String]
-
-  override def put(k: Object, v: Object) = {
-    keyList = keyList :+ k.toString
-    super.put(k, v)
-  }
-}
-
 class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
   import G8._
   def toString(value: String): String = value
 
-  override def toString(value: String, formatName: String, locale: java.util.Locale): String = {
+  override def toString(value: String, formatName: String, locale: Locale): String = {
     if (formatName == null)
       value
     else {
