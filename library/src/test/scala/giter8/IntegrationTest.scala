@@ -96,6 +96,17 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       checkGeneratedProject(template, expected, actual)
   }
 
+  it should "handle booleans" in testCase {
+    case (template, expected, actual) =>
+      """foo = bar
+        |show = yes
+        |hide = false
+      """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
+      "$foo$ $if(show)$now you see me$endif$$if(hide)$now you don't$endif$" >> (template / "src" / "main" / "g8" / "foo.txt")
+      "bar now you see me" >> (expected / "foo.txt")
+      checkGeneratedProject(template, expected, actual)
+  }
+
   it should "create directory with project name" in testCase {
     case (template, expected, actual) =>
       "name = My awesome Project" >> (template / "src" / "main" / "g8" / "default.properties")
