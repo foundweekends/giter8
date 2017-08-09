@@ -110,9 +110,9 @@ object G8 {
     group.nativeGroup.setListener(new STErrorHandler)
     group.registerRenderer(renderer)
 
-    val attributes = resolved mapValues { attr =>
-      if (isBoolean(attr)) isTruthy(attr)
-      else attr
+    val attributes = resolved ++ resolved.collect {
+      case (k, v) if isBoolean(v) =>
+        companionField(k) -> isTruthy(v)
     }
 
     STHelper(group, default)
@@ -393,7 +393,7 @@ object G8 {
                 else "y/N"
               } else default
 
-              printf("%s [%s]: ", k, message)
+              print(s"$k [$message]: ")
               Console.flush() // Gotta flush for Windows console!
               val in = Console.readLine().trim
               (k, if (in.isEmpty) default else in)
@@ -501,6 +501,7 @@ object G8 {
 
   private def isBoolean(s: String) = booleans contains s.toLowerCase
   private def isTruthy(s: String) = truthy contains s.toLowerCase
+  private def companionField(s: String) = s"__$s"
 }
 
 case class Path(paths: List[String]) {

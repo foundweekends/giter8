@@ -98,12 +98,12 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
 
   it should "handle booleans" in testCase {
     case (template, expected, actual) =>
-      """foo = bar
+      """foo = now you
         |show = yes
         |hide = false
       """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
-      "$foo$ $if(show)$now you see me$endif$$if(hide)$now you don't$endif$" >> (template / "src" / "main" / "g8" / "foo.txt")
-      "bar now you see me" >> (expected / "foo.txt")
+      "$show$, $foo$ $if(__show)$see me$endif$$if(__hide)$don't$endif$" >> (template / "src" / "main" / "g8" / "foo.txt")
+      "yes, now you see me" >> (expected / "foo.txt")
       checkGeneratedProject(template, expected, actual)
   }
 
