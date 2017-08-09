@@ -387,11 +387,7 @@ object G8 {
               k -> f(resolved)
             else {
               val default = f(resolved)
-
-              val message = if (isBoolean(default)) {
-                if (isTruthy(default)) "Y/n"
-                else "y/N"
-              } else default
+              val message = Booleans.get(default).map(_.message).getOrElse(default)
 
               print(s"$k [$message]: ")
               Console.flush() // Gotta flush for Windows console!
@@ -495,12 +491,22 @@ object G8 {
     }
   }
 
-  private val truthy = Set("y", "yes", "true")
-  private val falsy = Set("n", "no", "false")
-  private val booleans = truthy ++ falsy
+  private case class Booleans(value: Boolean, message: String)
+  private object Booleans {
+    private val booleans = Map(
+      "y" -> Booleans(true, "Y/n"),
+      "yes" -> Booleans(true, "YES/no"),
+      "true" -> Booleans(true, "TRUE/false"),
+      "n" -> Booleans(false, "y/N"),
+      "no" -> Booleans(false, "yes/NO"),
+      "false" -> Booleans(false, "true/FALSE")
+    )
 
-  private def isBoolean(s: String) = booleans contains s.toLowerCase
-  private def isTruthy(s: String) = truthy contains s.toLowerCase
+    def get(s: String): Option[Booleans] = booleans.get(s.toLowerCase)
+  }
+
+  private def isBoolean(s: String) = Booleans.get(s).isDefined
+  private def isTruthy(s: String) = Booleans.get(s) exists (_.value)
   private def companionField(s: String) = s"__$s"
 }
 
