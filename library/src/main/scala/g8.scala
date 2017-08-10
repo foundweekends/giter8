@@ -111,7 +111,7 @@ object G8 {
     group.registerRenderer(renderer)
 
     val attributes = resolved ++ resolved.collect {
-      case (k, v) if isBoolean(v) =>
+      case (k, v) if isBoolean(v) && !resolved.contains(companionField(k)) =>
         companionField(k) -> isTruthy(v)
     }
 
@@ -387,7 +387,7 @@ object G8 {
               k -> f(resolved)
             else {
               val default = f(resolved)
-              val message = Booleans.get(default).map(_.message).getOrElse(default)
+              val message = Booleans.get(default).fold(default)(_.message)
 
               print(s"$k [$message]: ")
               Console.flush() // Gotta flush for Windows console!
