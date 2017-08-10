@@ -17,7 +17,8 @@
 
 package giter8
 
-import java.io.File
+import java.io.{File, InputStream}
+import java.util.Properties
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
 import org.codehaus.plexus.logging.Logger
@@ -26,6 +27,7 @@ import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
 import org.stringtemplate.v4.misc.STMessage
+import scala.collection.mutable
 import scala.util.control.Exception.{catching, allCatch}
 
 object G8 {
@@ -33,8 +35,11 @@ object G8 {
 
   /** Properties in the order they were created/defined */
   type OrderedProperties = List[(String, String)]
-  object OrderedProperties {
-    val empty = List.empty[(String, String)]
+
+  /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
+  type UnresolvedProperties = List[(String, ValueF)]
+  object UnresolvedProperties {
+    val empty = List.empty[(String, ValueF)]
   }
 
   /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input, ready for insertion into template */
@@ -104,8 +109,14 @@ object G8 {
     val group = STGroup('$', '$')
     group.nativeGroup.setListener(new STErrorHandler)
     group.registerRenderer(renderer)
+
+    val attributes = resolved ++ resolved.collect {
+      case (k, v) if isBoolean(v) && !resolved.contains(companionField(k)) =>
+        companionField(k) -> isTruthy(v)
+    }
+
     STHelper(group, default)
-      .setAttributes(resolved)
+      .setAttributes(attributes)
       .render()
   }
 
@@ -127,12 +138,6 @@ object G8 {
   /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
   case class DefaultValueF(default: String) extends ValueF {
     override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
-  }
-
-  /** Properties which have not been resolved. I.e., ValueF() has not been evaluated */
-  type UnresolvedProperties = List[(String, ValueF)]
-  object UnresolvedProperties {
-    val empty = List.empty[(String, ValueF)]
   }
 
   private val renderer = new StringRenderer
@@ -382,7 +387,9 @@ object G8 {
               k -> f(resolved)
             else {
               val default = f(resolved)
-              printf("%s [%s]: ", k, default)
+              val message = Booleans.get(default).fold(default)(_.message)
+
+              print(s"$k [$message]: ")
               Console.flush() // Gotta flush for Windows console!
               val in = Console.readLine().trim
               (k, if (in.isEmpty) default else in)
@@ -462,28 +469,49 @@ object G8 {
     }
   }
 
-  def readProps(stm: java.io.InputStream): G8.OrderedProperties = {
-    val p = new LinkedListProperties
-    p.load(stm)
-    stm.close()
-    (OrderedProperties.empty /: p.keyList) { (l, k) =>
-      l :+ (k -> p.getProperty(k))
+  def readProps(stm: InputStream): G8.OrderedProperties = {
+    // Overrides java.util.Properties to return properties back in the order they were specified
+    val properties = new Properties {
+      val parameters = mutable.MutableList.empty[(String, String)]
+
+      override def put(key: Object, value: Object) = {
+        val k = key.toString
+        val v = value.toString
+
+        parameters += k -> v
+        super.put(k, v)
+      }
+    }
+
+    try {
+      properties.load(stm)
+      properties.parameters.toList
+    } finally {
+      stm.close()
     }
   }
+
+  private case class Booleans(value: Boolean, message: String)
+  private object Booleans {
+    private val booleans = Map(
+      "y" -> Booleans(true, "Y/n"),
+      "yes" -> Booleans(true, "YES/no"),
+      "true" -> Booleans(true, "TRUE/false"),
+      "n" -> Booleans(false, "y/N"),
+      "no" -> Booleans(false, "yes/NO"),
+      "false" -> Booleans(false, "true/FALSE")
+    )
+
+    def get(s: String): Option[Booleans] = booleans.get(s.toLowerCase)
+  }
+
+  private def isBoolean(s: String) = Booleans.get(s).isDefined
+  private def isTruthy(s: String) = Booleans.get(s) exists (_.value)
+  private def companionField(s: String) = s"__$s"
 }
 
 case class Path(paths: List[String]) {
   def /(child: String): Path = copy(paths = paths ::: List(child))
-}
-
-/** Hacked override of java.util.Properties for the sake of getting the properties in the order they are specified in the file */
-private[giter8] class LinkedListProperties extends java.util.Properties {
-  var keyList = List.empty[String]
-
-  override def put(k: Object, v: Object) = {
-    keyList = keyList :+ k.toString
-    super.put(k, v)
-  }
 }
 
 class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
