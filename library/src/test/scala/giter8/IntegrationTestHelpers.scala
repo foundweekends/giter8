@@ -2,7 +2,7 @@ package giter8
 
 import java.io.{File, InputStream}
 
-import org.scalatest.Assertions.fail
+import org.scalatest.Assertions._
 
 import scala.io.Source
 
