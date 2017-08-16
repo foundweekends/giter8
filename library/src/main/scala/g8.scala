@@ -110,7 +110,7 @@ object G8 {
     group.nativeGroup.setListener(new STErrorHandler)
     group.registerRenderer(renderer)
 
-    val attributes = resolved mapValues Truthy.apply
+    val attributes = resolved mapValues AugmentedString.apply
 
     STHelper(group, default)
       .setAttributes(attributes)
@@ -137,7 +137,7 @@ object G8 {
     override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
   }
 
-  private val renderer = new StringRenderer
+  private val renderer = new AugmentedStringRenderer
 
   def write(in: File, out: File, parameters: Map[String, String] /*, append: Boolean*/ ): Unit =
     try {
@@ -374,7 +374,7 @@ object G8 {
     }
 
     val fixed    = Set("verbatim")
-    val renderer = new StringRenderer
+    val renderer = new AugmentedStringRenderer
 
     others
       .foldLeft(ResolvedProperties.empty) {
@@ -406,7 +406,7 @@ object G8 {
                      forceOverwrite: Boolean): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
-    val renderer = new StringRenderer
+    val renderer = new AugmentedStringRenderer
 
     templates
       .map { in =>
@@ -493,16 +493,17 @@ case class Path(paths: List[String]) {
   def /(child: String): Path = copy(paths = paths ::: List(child))
 }
 
-class StringRenderer extends org.clapper.scalasti.AttributeRenderer[String] {
+class AugmentedStringRenderer extends org.clapper.scalasti.AttributeRenderer[AugmentedString] {
   import G8._
   def toString(value: String): String = value
 
-  override def toString(value: String, formatName: String, locale: java.util.Locale): String = {
-    if (formatName == null)
-      value
+  override def toString(value: AugmentedString, formatName: String, locale: java.util.Locale): String = {
+    val str = value.toString
+
+    if (formatName == null) str
     else {
       val formats = formatName.split(",").map(_.trim)
-      formats.foldLeft(value)(format)
+      formats.foldLeft(str)(format)
     }
   }
 

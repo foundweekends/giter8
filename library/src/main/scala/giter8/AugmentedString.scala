@@ -17,20 +17,12 @@
 
 package giter8
 
-object Truthy {
-  private case class Booleans(value: Boolean, message: String)
+case class AugmentedString(value: String) {
+  override def toString: String = value
 
-  private val booleans = Map(
-    "y" -> Booleans(true, "Y/n"),
-    "yes" -> Booleans(true, "YES/no"),
-    "true" -> Booleans(true, "TRUE/false"),
-    "n" -> Booleans(false, "y/N"),
-    "no" -> Booleans(false, "yes/NO"),
-    "false" -> Booleans(false, "true/FALSE")
-  )
+  def isTruthy: Boolean = Truthy.isTruthy(value)
 
-  private def get(s: String) = booleans.get(s.toLowerCase)
-
-  def getMessage(s: String): String = get(s).fold(s)(_.message)
-  def isTruthy(s: String) = get(s) exists (_.value)
+  /* Properties inherited from java.lang.String */
+  def getBytes: Array[Byte] = value.getBytes
+  def isEmpty: Boolean = value.isEmpty
 }
