@@ -190,6 +190,21 @@ project_url [https://github.com/n8han/my-proj]:
 developer_url [https://github.com/n8han]:
 ```
 
+### Conditionals
+
+All fields have a property `truthy` to be used in [conditionals][conditionals]:
+`"y"`, `"yes"`, and `"true"` evaluate to `true`; anything else evaluates to `false`.
+
+```
+scala212 = yes
+scala211 = no
+```
+
+```
+scalaVersion := "2.10.6"```
+
+[conditionals]: https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals
+
 ### name field
 
 The `name` field, if defined, is treated specially by Giter8. It is
