@@ -88,12 +88,12 @@ object G8 {
   def apply(fromMapping: Seq[(File, String)], toPath: File, parameters: Map[String, String]): Seq[File] =
     fromMapping filter { !_._1.isDirectory } flatMap {
       case (in, relative) =>
-        apply(in, expandPath(relative, toPath, parameters), parameters)
+        apply(in, expandPath(relative, toPath, parameters), toPath, parameters)
     }
 
-  def apply(in: File, out: File, parameters: Map[String, String]) = {
+  def apply(in: File, out: File, base: File, parameters: Map[String, String]) = {
     try {
-      if (verbatim(in, parameters)) FileUtils.copyFile(in, out)
+      if (verbatim(out, parameters, base)) FileUtils.copyFile(in, out)
       else {
         write(in, out, parameters /*, false*/ )
       }
@@ -164,21 +164,17 @@ object G8 {
   def write(out: File, template: String, parameters: Map[String, String] /*, append: Boolean = false*/ ): Unit =
     FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8 /*, append*/ )
 
-  def verbatim(file: File, parameters: Map[String, String]): Boolean =
-    parameters.get("verbatim") map { s =>
-      globMatch(file, s.split(' ').toSeq)
-    } getOrElse { false }
-  private def globMatch(file: File, patterns: Seq[String]): Boolean =
-    patterns exists { globRegex(_).findFirstIn(file.getPath).isDefined }
-  private def globRegex(pattern: String) =
-    "^%s$"
-      .format(pattern flatMap {
-        case '*' => """.*"""
-        case '?' => """."""
-        case '.' => """\."""
-        case x   => x.toString
-      })
-      .r
+  def verbatim(file: File, parameters: Map[String, String], base: File = new File(".")): Boolean = {
+
+    val rules = JGitIgnore(
+      parameters
+      .get("verbatim").toSeq
+      .flatMap(_.split(' ').toSeq): _*
+    )
+
+    rules.isIgnored(file, base)
+  }
+
   def expandPath(relative: String, toPath: File, parameters: Map[String, String]): File =
     try {
       val fileParams = Map(parameters.toSeq map {
@@ -449,7 +445,7 @@ object G8 {
             println("Skipping existing file: %s" format out.toString)
           } else {
             out.getParentFile.mkdirs()
-            if (G8.verbatim(out, parameters))
+            if (G8.verbatim(in, parameters, tmpl))
               FileUtils.copyFile(in, out)
             else {
               catching(classOf[MalformedInputException])

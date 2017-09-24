@@ -182,6 +182,23 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       checkGeneratedProject(template, expected, actual)
   }
 
+  it should "not try to render files which match verbatim rules" in testCase {
+    case (template, expected, actual) =>
+      """
+        |verbatim = foo bar.bar baz/ !foo.bar"
+        |test = foo
+      """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
+      Seq(template / "src" / "main" / "g8", expected).foreach {
+        base =>
+          "$test" >> (base / "foo")
+          "$test" >> (base / "baz" / "spoon")
+          "$test" >> (base / "bar.bar")
+      }
+      "$test$" >> (template / "src" / "main" / "g8" / "foo.bar")
+      "foo" >> (expected / "foo.bar")
+      checkGeneratedProject(template, expected, actual)
+  }
+
   private def testCase(test: (File, File, File) => Unit): Unit = {
     tempDirectory { tmp =>
       val templateDir = mkdir(tmp / "template")

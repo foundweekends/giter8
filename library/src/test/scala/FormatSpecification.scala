@@ -62,7 +62,7 @@ object FormatSpecification extends Properties("Format") {
       val in  = tempDir / "in.txt"
       val out = tempDir / "out.txt"
       IO.write(in, inContent, IO.utf8)
-      G8(in, out, ps)
+      G8(in, out, tempDir, ps)
       val outContent = IO.read(out, IO.utf8)
       // println(outContent)
       outContent
