@@ -1,0 +1,30 @@
+### conditionals
+
+Starting Giter8 0.10.0, all fields have a property named `truthy` to be used in [conditional expressions][conditionals].
+`"y"`, `"yes"`, and `"true"` evaluate to `true`; anything else evaluates to `false`.
+
+```
+$if(scala212.truthy)$
+scalaVersion := "2.12.3"
+$elseif(scala211.truthy)$
+scalaVersion := "2.11.11"
+$else$
+scalaVersion := "2.10.6"
+$endif$
+```
+
+### verbatim arguments uses gitignore
+
+Giter8 0.10.0 supports `.gitignore` format for the `verbatim` field, such as `/foo/**/*.html`.
+
+#324 by @iPomme and #341 by @wolfendale
+
+### improvements and fixes
+
+- Code up keep by @xuwei-k and @Philippus
+
+### notes
+
+Special thanks to the contributors for making this release a success. According to `git shortlog -sn --no-merges v0.9.0...master`, compared to 0.9.0, there were 13 (non-merge) commits, by nine contributors: Kenji Yoshida (xuwei-k), Marconi Lanna, Michael Wolfendale, Artyom Artemyev, Philippus Baalman, Sanjiv Sahayam, Nicolas Jorand, Eugene Yokota, and Matt Kantor. Thank you!
+
+  [conditionals]: https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals
