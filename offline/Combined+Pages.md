@@ -136,7 +136,7 @@ This template is distributed without any warranty. See <http://creativecommons.o
 The g8 runtime looks for templates in two locations in a given Github project:
 
 - If the `src/main/g8` directory is present it uses `src/main/g8` (`src` layout)
-- If it does not exist, then the root directory is used root layout)
+- If it does not exist, then the root directory is used (root layout)
 
 ### src layout
 
@@ -192,7 +192,7 @@ developer_url [https://github.com/n8han]:
 
 ### Conditionals
 
-All fields have a property `truthy` to be used in [conditionals][conditionals]:
+All fields have a property named `truthy` to be used in [conditional expressions][conditionals].
 `"y"`, `"yes"`, and `"true"` evaluate to `true`; anything else evaluates to `false`.
 
 ```
@@ -200,8 +200,17 @@ scala212 = yes
 scala211 = no
 ```
 
-```
-scalaVersion := "2.10.6"```
+These could be used in a template as follows:
+
+<pre>
+$if(scala212.truthy)$
+scalaVersion := "2.12.3"
+$elseif(scala211.truthy)$
+scalaVersion := "2.11.11"
+$else$
+scalaVersion := "2.10.6"
+$endif$
+</pre>
 
 [conditionals]: https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals
 

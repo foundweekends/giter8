@@ -140,57 +140,47 @@ project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
 github_id [githubber]: n8han
 project_url [https://github.com/n8han/my-proj]:
 developer_url [https://github.com/n8han]:
-</code></pre><h3 id="Conditionals">Conditionals<a href="#Conditionals" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>All fields have a property <code>truthy</code> to be used in [conditionals][conditionals]:
+</code></pre><h3 id="Conditionals">Conditionals<a href="#Conditionals" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>All fields have a property named <code>truthy</code> to be used in <a href="https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals">conditional expressions</a>.
 <code>&quot;y&quot;</code>, <code>&quot;yes&quot;</code>, and <code>&quot;true&quot;</code> evaluate to <code>true</code>; anything else evaluates to <code>false</code>.
 </p><pre><code class="">scala212 = yes
 scala211 = no
-</code></pre><pre><code class="">scalaVersion := &quot;2.10.6&quot;```
-
-[conditionals]: https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals
-
-### name field
-
-The `name` field, if defined, is treated specially by Giter8. It is
+</code></pre><p>These could be used in a template as follows:
+</p><pre>
+$if(scala212.truthy)$
+scalaVersion := "2.12.3"
+$elseif(scala211.truthy)$
+scalaVersion := "2.11.11"
+$else$
+scalaVersion := "2.10.6"
+$endif$
+</pre><h3 id="name+field">name field<a href="#name+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>name</code> field, if defined, is treated specially by Giter8. It is
 assumed to be the name of a project being created, so the g8 runtime
 creates a directory based off that name (with spaces and capitals
 replaced) that will contain the template output. If no name field is
-specified in the template, `g8`'s output goes to the user's current
+specified in the template, <code>g8</code>’s output goes to the user’s current
 working directory. In both cases, directories nested under the
-template's source directory are reproduced in its output. File and
+template’s source directory are reproduced in its output. File and
 directory names also participate in template expansion, e.g.
-
-    src/main/g8/src/main/scala/$classname$.scala
-
-### package field
-
-The `package` field, if defined, is assumed to be the package name
-of the user's source. A directory named `$package$` expands out to
-package directory structure. For example, `net.databinder` becomes
-`net/databinder`.
-
-### verbatim field
-
-The `verbatim` field, if defined, is assumed to be the space delimited
-list of file patterns such as `*.html *.js`. Files matching `verbatim`
+</p><pre><code>src/main/g8/src/main/scala/$classname$.scala
+</code></pre><h3 id="package+field">package field<a href="#package+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>package</code> field, if defined, is assumed to be the package name
+of the user’s source. A directory named <code>$package$</code> expands out to
+package directory structure. For example, <code>net.databinder</code> becomes
+<code>net/databinder</code>.
+</p><h3 id="verbatim+field">verbatim field<a href="#verbatim+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>verbatim</code> field, if defined, is assumed to be the space delimited
+list of file patterns such as <code>*.html *.js</code>. Files matching <code>verbatim</code>
 pattern are excluded from string template processing.
-
-### Maven properties
-
-*maven properties* tell Giter8 to query the Central Maven Repository.
+</p><h3 id="Maven+properties">Maven properties<a href="#Maven+properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><em>maven properties</em> tell Giter8 to query the Central Maven Repository.
 Instead of supplying a particular version (and having to update
 the template with every release), specify a library and giter8 will
 set the value to the latest version according to Maven Central.
-
-The property value format is `maven(groupId, artifactId)`.
+</p><p>The property value format is <code>maven(groupId, artifactId)</code>.
 Keep in mind that Scala projects are typically published with a
 Scala version identifier in the artifact id. So for the Unfiltered
 library, we could refer to the latest version as follows:
-
-</code></pre><p>name = My Template Project
+</p><pre><code class="">name = My Template Project
 description = Creates a giter8 project template.
-unfiltered<em>version = maven(ws.unfiltered, unfiltered</em>2.11)
-```
-</p><p>To only use the latest stable release (excluding Milestone builds,
+unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
+</code></pre><p>To only use the latest stable release (excluding Milestone builds,
 Release candidates etc) specify a “stable” value in the
 property value format <code>maven(groupId, artifactId, stable)</code>.
 To use the latest stable version for the Scalatest library
