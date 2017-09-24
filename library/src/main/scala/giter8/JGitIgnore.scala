@@ -18,32 +18,65 @@
 package giter8
 
 import java.io.{File, InputStream}
+import java.net.URI
 
 import org.eclipse.jgit.ignore.FastIgnoreRule
 
 import scala.io.Source
 
-class JGitIgnore(patterns: Seq[String]) {
+case class JGitIgnore(patterns: String*) {
+
+  private lazy val ignoreRules: Seq[FastIgnoreRule] =
+    patterns.map(new FastIgnoreRule(_))
+
   def getPatterns: Seq[String] = patterns
 
-  def isIgnored(path: String): Boolean = {
-    val ignoreRules = patterns.map(new FastIgnoreRule(_))
-    ignoreRules.exists { rule =>
-      rule.getResult && rule.isMatch(path, false)
-    }
+  /**
+    * This method uses a manual precedence implementation for rules.
+    *
+    * The last rule to match a path will be used to determine if it is ignored.
+    *
+    * It is recommended to pass a `relativeTo` file to avoid matching against
+    * absolute paths.
+    *
+    * @param uri
+    * @param isDir
+    * @param relativeTo a file which the subject path with be resolved relative to.
+    * @return whether or not the file should be ignored
+    */
+  def isIgnored(uri: URI, isDir: Boolean = false, relativeTo: Option[URI] = None): Boolean = {
+
+    val path = relativeTo.map {
+      _.relativize(uri)
+    }.getOrElse(uri).getPath
+
+    ignoreRules.filter(_.isMatch(path, isDir)).lastOption.exists(_.getResult)
   }
+
+  def isIgnored(file: File, relativeTo: File): Boolean =
+    isIgnored(file.toURI, file.isDirectory, Some(relativeTo.toURI))
+
+  def ++(other: JGitIgnore): JGitIgnore =
+    JGitIgnore(patterns ++ other.patterns: _*)
 }
 
 object JGitIgnore {
-  def apply(patterns: Seq[String]): JGitIgnore = new JGitIgnore(patterns)
 
   def apply(in: InputStream): JGitIgnore = {
     val patterns = Source.fromInputStream(in).getLines().toIndexedSeq
-    new JGitIgnore(patterns)
+    new JGitIgnore(patterns: _*)
   }
 
   def apply(file: File): JGitIgnore = {
-    val patterns = Source.fromFile(file).getLines().filterNot(_.startsWith("#")).filterNot(_.trim.isEmpty).toIndexedSeq
-    new JGitIgnore(patterns)
+    val patterns = Source.fromFile(file).getLines.filterNot(_.startsWith("#")).filterNot(_.trim.isEmpty).toIndexedSeq
+    JGitIgnore(patterns: _*)
+  }
+
+  def fromFiles(files: File*): JGitIgnore = {
+    val patterns: IndexedSeq[String] = files.foldLeft[IndexedSeq[String]](IndexedSeq.empty) {
+      case (m, file) =>
+        m ++ Source.fromFile(file).getLines().filterNot(_.startsWith("#")).filterNot(_.trim.isEmpty).toIndexedSeq
+    }
+    JGitIgnore(patterns: _*)
   }
 }

@@ -19,6 +19,7 @@ package giter8
 
 import java.io.{File, InputStream}
 import java.util.Properties
+
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
 import org.codehaus.plexus.logging.Logger
@@ -27,8 +28,10 @@ import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
 import org.stringtemplate.v4.misc.STMessage
+
 import scala.collection.mutable
-import scala.util.control.Exception.{catching, allCatch}
+import scala.util.Try
+import scala.util.control.Exception.{allCatch, catching}
 
 object G8 {
   import org.clapper.scalasti.{STGroup, STHelper, STErrorListener}
@@ -145,7 +148,7 @@ object G8 {
         case Some(attr) =>
           val mode = attr.getOctalMode
           write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
-          util.Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
+          Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
         case None =>
           // PlexusIoResourceAttributes is not available for some OS'es such as windows
           write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
@@ -218,9 +221,12 @@ object G8 {
   def path(path: String): Path = Path(List(path))
 
   private[giter8] def getFiles(filter: File => Boolean)(f: File): Stream[File] =
-    if (f.isDirectory) f.listFiles().toStream.filter(filter).flatMap(getFiles(filter))
+    if (f.isDirectory) f.listFiles().toStream.withFilter(filter).flatMap(getFiles(filter))
     else if (filter(f)) Stream(f)
     else Stream()
+
+  private[giter8] def getFiles(f: File): Stream[File] =
+    getFiles(_ => true)(f)
 
   /** Select the root template directory from the given relative paths. */
   def templateRoot(baseDirectory: File, templatePaths: List[Path]): File =
@@ -232,26 +238,49 @@ object G8 {
 
   /** Extract template files under the first matching relative templatePaths under the baseDirectory. */
   def templateFiles(root: File, baseDirectory: File): Stream[File] = {
-    val gitFiles      = getFiles(_ => true)(baseDirectory / ".git").toSet
-    val scaffoldFiles = getFiles(_ => true)(baseDirectory / "src" / "main" / "scaffolds").toSet
-    val metaDir       = baseDirectory / "project"
-    def baseAndMeta(xs: String*): Set[File] =
-      xs.toSet flatMap { x: String =>
-        Set(baseDirectory / x, metaDir / x)
+
+    val gitignoreFile: File  = root / ".gitignore"
+    val g8IgnoreFile: File   = baseDirectory / ".g8ignore"
+
+    val g8Ignores: JGitIgnore = {
+
+      lazy val defaults: JGitIgnore = JGitIgnore(
+        ".git",
+        "giter8.sbt", "project/giter8.sbt",
+        "g8.sbt", "project/g8.sbt",
+        "activator.properties", "project/activator.properties",
+        "template.properties", "project/template.properties",
+        "test", "!test/", "project/test", "!project/test/",
+        "giter8.test", "project/giter8.test",
+        "g8.test", "project/g8.test",
+        "target/",
+        "**/target/"
+      )
+
+      if (g8IgnoreFile.exists) {
+        JGitIgnore(g8IgnoreFile)
+      } else {
+        defaults
       }
-    val pluginFiles = baseAndMeta("giter8.sbt", "g8.sbt")
-    val metadata    = baseAndMeta("activator.properties", "template.properties")
-    val testFiles   = baseAndMeta("test", "giter8.test", "g8.test")
-    // .git and other files
-    val skipFiles: Set[File] = gitFiles ++ pluginFiles ++ metadata ++ testFiles
-    val gitignoreFile: File  = getFiles(_ => true)(root / ".gitignore").head
-    val ignores              = if (gitignoreFile.exists) Some(JGitIgnore(gitignoreFile)) else None
-    val xs = getFiles(x => {
-      val p         = x.toURI.toASCIIString
-      val isIgnored = ignores.isDefined && ignores.get.isIgnored(p)
-      !isIgnored && !skipFiles(x) && !p.stripPrefix(baseDirectory.toURI.toASCIIString).contains("target/")
-    })(root)
-    xs
+    }
+
+    val gitIgnores: Option[JGitIgnore] =
+      Some(gitignoreFile)
+        .withFilter(_.exists)
+        .map(JGitIgnore.apply)
+
+    /**
+      * The list of ignore rules. Rules in `.g8ignore` will
+      * override those in `.gitignore`
+      */
+    val ignores = gitIgnores.map(_ ++ g8Ignores).getOrElse(g8Ignores)
+
+    def fileFilter(file: File): Boolean = {
+      val isIgnored = ignores.isIgnored(file, root)
+      !(isIgnored || file == g8IgnoreFile)
+    }
+
+    getFiles(fileFilter _)(root)
   }
 
   private[giter8] def applyT(
