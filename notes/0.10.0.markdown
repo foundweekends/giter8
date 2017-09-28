@@ -13,6 +13,8 @@ scalaVersion := "2.10.6"
 $endif$
 ```
 
+#332 by @marconilanna
+
 ### verbatim arguments uses gitignore
 
 Giter8 0.10.0 supports `.gitignore` format for the `verbatim` field, such as `/foo/**/*.html`.
