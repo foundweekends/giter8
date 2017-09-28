@@ -29,10 +29,18 @@ case class Tag(name: String) extends Ref
 
 case class Branch(name: String) extends Ref
 
-case class Config(repo: String,
-                  ref: Option[Ref]          = None,
-                  forceOverwrite: Boolean   = false,
-                  directory: Option[String] = None)
+sealed trait Mode
+case object Launch extends Mode
+case object Run extends Mode
+
+case class Config(
+                   repo: String,
+                   ref: Option[Ref]          = None,
+                   forceOverwrite: Boolean   = false,
+                   directory: Option[String] = None,
+                   version: Option[String]   = None,
+                   mode: Mode                = Launch
+                 )
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 

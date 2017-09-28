@@ -19,6 +19,10 @@ package giter8
 
 import java.io.File
 
+import scopt.OptionParser
+
+import scala.util.{Failure, Success}
+
 class Giter8 extends xsbti.AppMain {
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
@@ -28,20 +32,27 @@ class Giter8 extends xsbti.AppMain {
 
   /** Runner shared my main-class runner */
   def run(args: Array[String], baseDirectory: File): Int = {
-    val helper = new JgitHelper(new Git(new JGitInteractor), G8TemplateRenderer)
-    val result = (args.partition { s =>
+    val result = args.partition { s =>
       G8.Param.pattern.matcher(s).matches
     } match {
       case (params, options) =>
         parser
           .parse(options, Config(""))
-          .map { config =>
-            helper.run(config, params, baseDirectory)
+          .map {
+            case config if config.mode == Launch =>
+              Launcher.launch(config.repo, config.version, args) match {
+                case Success(msg) => Right(msg)
+                case Failure(e) => Left(e.getMessage)
+              }
+            case config =>
+              val helper = new JgitHelper(new Git(new JGitInteractor), G8TemplateRenderer)
+              val result = helper.run(config, params, baseDirectory)
+              helper.cleanup()
+              result
           }
           .getOrElse(Left(""))
       case _ => Left(parser.usage)
-    })
-    helper.cleanup()
+    }
     result.fold({ (error: String) =>
       System.err.println(s"\n$error\n")
       1
@@ -53,27 +64,40 @@ class Giter8 extends xsbti.AppMain {
 
   def run(args: Array[String]):Int = run(args, (new File(".")).getAbsoluteFile)
 
-  val parser = new scopt.OptionParser[Config]("giter8") {
+  val parser: OptionParser[Config] = new scopt.OptionParser[Config]("giter8") {
+
     head("g8", giter8.BuildInfo.version)
-    // cmd("search") action { (_, config) =>
-    //   config.copy(search = true)
-    // } text("Search for templates on github")
+
     arg[String]("<template>") action { (repo, config) =>
       config.copy(repo = repo)
-    } text ("git or file URL, or github user/repo")
+    } text "git or file URL, or github user/repo"
+
     opt[String]('b', "branch") action { (b, config) =>
       config.copy(ref = Some(Branch(b)))
-    } text ("Resolve a template within a given branch")
+    } text "Resolve a template within a given branch"
+
     opt[String]('t', "tag") action { (t, config) =>
       config.copy(ref = Some(Tag(t)))
-    } text ("Resolve a template within a given branch")
+    } text "Resolve a template within a given branch"
+
     opt[String]('d', "directory") action { (d, config) =>
       config.copy(directory = Some(d))
-    } text ("Resolve a template within a given directory")
+    } text "Resolve a template within a given directory"
+
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
-    } text ("Force overwrite of any existing files in output directory")
+    } text "Force overwrite of any existing files in output directory"
+
+    opt[Unit]('r', "run") action { (_, config) =>
+      config.copy(mode = Run)
+    }
+
+    opt[String]("g8Version") action { (version, config) =>
+      config.copy(mode = Launch, version = Some(version))
+    }
+
     version("version").text("Display version number")
+
     note("""  --paramname=paramval  Set given parameter value and bypass interaction
       |
       |EXAMPLES

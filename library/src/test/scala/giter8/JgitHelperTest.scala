@@ -92,7 +92,7 @@ class JgitHelperTest extends FlatSpec with Matchers {
   }
 
   it should "pass directory to renderer" in new TestFixture {
-    helper.run(Config("foo/bar", None, forceOverwrite = true, Some("directory/template")), Seq.empty, new File(""))
+    helper.run(Config("foo/bar", None, forceOverwrite = true, directory = Some("directory/template")), Seq.empty, new File(""))
     renderer.baseDirectory.getAbsolutePath().endsWith("directory/template") shouldBe true
   }
 }
