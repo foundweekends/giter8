@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils
 
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
+import scalaj.http.Http
 
 object Launcher {
 
@@ -89,19 +90,49 @@ object Launcher {
   }
 
   /**
-    * Currently we use Conscript's version of the `sbt-launch.jar` to
-    * launch the new instance of giter8.
+    * If Conscript is installed, we can use its launch jar
     */
-  private lazy val conscriptHome: Try[String] = sys.env.get("CONSCRIPT_HOME")
-    .map(Success.apply)
-    .getOrElse {
-      Failure(new RuntimeException("Conscript must be installed - WIP"))
+  private lazy val conscriptHome: Option[File] =
+    sys.env.get("CONSCRIPT_HOME").map(p => new File(p))
+
+  /**
+    * Allow overriding the location of the launch jar
+    */
+  private lazy val launchJarProp: Option[File] =
+    sys.env.get("SBT_LAUNCH_JAR").map(p => new File(p))
+
+  /**
+    * Fallback for if no launch jar is configured. Downloads the jar from
+    * Maven Central and caches it in a temp directory.
+    */
+  private lazy val mavenLaunchJar: Try[File] = {
+
+    val file = new File(System.getProperty("java.io.tmpdir")) / "giter8-launcher" / "launcher-1.0.1.jar"
+
+    println("Locating launcher")
+    if (file.exists) {
+      println("Found cached launcher")
+      Success(file)
+    } else {
+      println("Fetching launcher from Maven Central")
+      val response = Http("https://repo1.maven.org/maven2/org/scala-sbt/launcher/1.0.1/launcher-1.0.1.jar").asBytes
+      if (response.code == 200) {
+        Try {
+          FileUtils.writeByteArrayToFile(file, response.body)
+          println("Successfully retrieved launcher from Maven Central")
+          file
+        }
+      } else {
+        Failure(new RuntimeException(s"Request to retrieve `sbt-launcher` failed: ${response.code}"))
+      }
     }
+  }
 
   /**
     * Use JAVA_HOME as a default location for finding a java executable.
     */
-  private lazy val javaHome: Try[Option[String]] = Success(sys.env.get("JAVA_HOME"))
+  private lazy val javaHome: Option[String] =
+    sys.env.get("JAVA_HOME")
 
   private implicit class OptTry[A](a: Try[Option[A]]) {
 
@@ -159,6 +190,12 @@ object Launcher {
         result
     }
 
+  private lazy val sbtLaunchJar: Try[File] = {
+    (launchJarProp orElse conscriptHome.map(_ / "sbt-launch.jar"))
+      .map(Success.apply)
+      .getOrElse(mavenLaunchJar)
+  }
+
   /**
     * Creates another JVM process running Conscript's `sbt-launch.jar` with the resolved
     * `launchconfig`
@@ -166,19 +203,17 @@ object Launcher {
     * This downloads the version of giter8 for that launchconfig and passes on
     * the arguments that this process was created with (minus some filtered args)
     *
-    * @param csHome
+    * @param launchJar
     * @param lc
     * @param args
     * @param v
-    * @param jHome
     * @return
     */
   private def fetchAndRun(
-                           csHome: String,
+                           launchJar: File,
                            lc: String,
                            args: Array[String],
-                           v: Option[String],
-                           jHome: Option[String] = None
+                           v: Option[String]
                          ): Try[String] =
     withTempdir {
       base =>
@@ -190,14 +225,15 @@ object Launcher {
 
         /**
           *  Attempt to use JAVA_HOME to find a java executable, if
-          *  no JAVA_HOME is defined, fall back to PATH
+          *  no JAVA_HOME is defined, use `java.home` of the current JVM
           */
-        val java = jHome.map(j => s"$j/bin/java").getOrElse("java")
+        val java: String =
+          (new File(javaHome getOrElse System.getProperty("java.home")) / "bin" / "java").getPath
 
         println(s"Fetching Giter8 ${v.getOrElse("LATEST")}")
 
         // TODO add "-r" flag for versions >= when this is released, as otherwise we may end up in a loop
-        val command = Seq(java, "-jar", s"$csHome/sbt-launch.jar", s"@$lcFile" /*, "-r" */) ++ filteredArgs(args)
+        val command = Seq(java, "-jar", launchJar.getPath, s"@${lcFile.getPath}" /*, "-r" */) ++ filteredArgs(args)
         //        val command = Seq(java, "-jar", s"$csHome/sbt-launch.jar", s"@$lcFile", "-r") ++ filteredArgs(args)
 
         val exit = command.run(BasicIO.standard(true)).exitValue()
@@ -211,11 +247,10 @@ object Launcher {
 
   def launch(template: String, g8Version: Option[String], args: Array[String]): Try[String] =
     for {
-      jHome  <- javaHome
-      csHome <- conscriptHome
+      lJar   <- sbtLaunchJar
       v      <- version(g8Version, template)
       lc     <- launchConfig(v)
-      result <- fetchAndRun(csHome, lc, args, v, jHome)
+      result <- fetchAndRun(lJar, lc, args, v)
     } yield result
 }
 
