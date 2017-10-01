@@ -19,6 +19,7 @@ package giter8
 
 import java.io.File
 
+import giter8.launcher.Launcher
 import scopt.OptionParser
 
 import scala.util.{Failure, Success}
@@ -39,7 +40,7 @@ class Giter8 extends xsbti.AppMain {
         parser
           .parse(options, Config(""))
           .map {
-            case config if config.mode == Launch =>
+            case config if config.mode == Launch && !isForked =>
               Launcher.launch(config.repo, config.version, args) match {
                 case Success(msg) => Right(msg)
                 case Failure(e) => Left(e.getMessage)
@@ -62,7 +63,7 @@ class Giter8 extends xsbti.AppMain {
     })
   }
 
-  def run(args: Array[String]):Int = run(args, (new File(".")).getAbsoluteFile)
+  def run(args: Array[String]):Int = run(args, new File(".").getAbsoluteFile)
 
   val parser: OptionParser[Config] = new scopt.OptionParser[Config]("giter8") {
 
@@ -123,6 +124,20 @@ class Giter8 extends xsbti.AppMain {
       |Apply given name parameter and use defaults for all others.
       |    g8 foundweekends/giter8 --name=template-test""".stripMargin)
   }
+
+  /**
+    * Checks a system property which the launcher sets to `true` when
+    * it launches the new Giter8 instance, this will stop the launcher
+    * from recursively starting new instances forever.
+    *
+    * This is a system property instead of command argument so that
+    * previous versions of giter8 won't complain about an unknown
+    * parameter.
+    *
+    * @return
+    */
+  private def isForked: Boolean =
+    sys.env.get("GITER8_FORKED").exists(_ == "true")
 }
 
 class Exit(val code: Int) extends xsbti.Exit
