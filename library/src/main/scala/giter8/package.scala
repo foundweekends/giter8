@@ -1,3 +1,5 @@
+import java.io.File
+
 import scala.util.Try
 
 /*
@@ -21,19 +23,15 @@ package object giter8 {
 
   type VersionE = Either[String, String]
 
+  def file(path: String): File = new File(path)
+  def path(path: String): Path = Path(List(path))
+
   implicit class OptTry[A](a: Try[Option[A]]) {
     def or(b: Try[Option[A]]): Try[Option[A]] =
       a.flatMap {
         unwrapped =>
           if (unwrapped.isDefined) a else b
       }
-  }
-
-  implicit class Tap[A](a: A) {
-    def tap[B](block: A => B): A = {
-      block(a)
-      a
-    }
   }
 }
 

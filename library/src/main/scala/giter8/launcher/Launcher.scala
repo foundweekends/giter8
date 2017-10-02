@@ -3,40 +3,23 @@ package giter8.launcher
 import java.io.{File, FileInputStream}
 import java.util.Properties
 
-import giter8.{TempDir, _}
-import org.apache.commons.io.FileUtils
+import giter8.G8.RichFile
+import giter8.{Git, JGitInteractor, SystemPaths, TempDir, VersionNumber}
 
-import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
 object Launcher extends TempDir {
 
-  import giter8.G8.RichFile
-  import giter8.OptTry
-
-  private val git = new Git(new JGitInteractor())
+  private lazy val git = new Git(new JGitInteractor())
 
   /**
-    * Use JAVA_HOME as a default location for finding a java executable. If
-    * it isn't set fall back to the `java.home` of the current JVM
-    */
-  private lazy val javaHome: String =
-    sys.env.getOrElse("JAVA_HOME", System.getProperty("java.home"))
-
-  /**
-    * Resolves the version of giter8 to be launched.
+    * Looks up the `giter8.version` property from the template
     *
-    * If `g8Version` is defined, that will be used. Otherwise, we clone
-    * the template repo and look for a `giter8.version` property in `project/build.properties`
-    *
-    * Returns `None` if we can't find a version from either of these
-    *
-    * @param g8Version
     * @param template
     * @return
     */
-  private def version(g8Version: Option[String], template: String): Try[Option[VersionNumber]] =
-    Try(g8Version.map(VersionNumber.apply)) or git.withRepo(template) {
+  private def templateVersion(template: String): Try[Option[VersionNumber]] =
+    git.withRepo(template) {
       base =>
         Try {
           val properties: Properties = {
@@ -53,26 +36,30 @@ object Launcher extends TempDir {
     }.flatten
 
   /**
-    * Retrieves the launch config of a specific tagged version of Giter8,
-    * if `version` is undefined, we attempt to retrieve the latest version
+    * Resolves the version from `giter8.version` system property
+    */
+  private lazy val propertyVersion: Try[Option[VersionNumber]] =
+    Success(sys.env.get("giter8.version").map(VersionNumber.apply))
+
+  /**
+    * Resolves the version of giter8 to be launched.
     *
-    * NOTE: It seems that the version number in some of the launchconfigs
-    * does not match the release version. (I think that this is due to 0.8.0 being
-    * reverted, so it shouldn't be a problem)
+    * Precedence:
+    *   `--g8Version` command line argument
+    *   Looks up the `giter8.version` property from the template project
+    *   `giter8.version` system property
     *
-    * e.g. https://github.com/foundweekends/giter8/blob/v0.9.0/src/main/conscript/g8/launchconfig#L2
+    * Returns `None` if we can't find a version from either of these
     *
-    * @param version
+    * @param g8Version
+    * @param template
     * @return
     */
-  private def launchConfig(version: Option[VersionNumber]): Try[String] =
-    git.withRepo("https://github.com/foundweekends/giter8", version.map(_.toString)) {
-      base =>
-        val lcFile = base / "src" / "main" / "conscript" / "g8" / "launchconfig"
-        val result: String = Source.fromFile(lcFile).getLines.mkString("\r\n")
-        println(s"LaunchConfig resolved for version: ${version.getOrElse("LATEST")}")
-        result
-    }
+  private def version(g8Version: Option[String], template: String): Try[Option[VersionNumber]] = {
+    Try(g8Version.map(VersionNumber.apply)) or
+      templateVersion(template) or
+      propertyVersion
+  }
 
   /**
     * Creates another JVM process running the `sbt-launcher` jar with the resolved
@@ -89,7 +76,7 @@ object Launcher extends TempDir {
     */
   private def fetchAndRun(
                            launchJar: File,
-                           lc: String,
+                           lc: File,
                            args: Array[String],
                            v: Option[VersionNumber]
                          ): Try[String] =
@@ -98,18 +85,15 @@ object Launcher extends TempDir {
 
         import scala.sys.process._
 
-        val lcFile: File = base / "launchconfig"
-        FileUtils.write(lcFile, lc)
-
         val java: File =
-          new File(javaHome) / "bin" / "java"
+          SystemPaths.javaHome / "bin" / "java"
 
         println(s"Fetching Giter8 ${v.getOrElse("LATEST")}")
 
         val command = Seq(
           java.getPath, "-DGITER8_FORKED=true", "-jar",
           launchJar.getPath,
-          "@" + lcFile.getPath
+          "@" + lc.getPath
         ) ++ args
 
         val exit = command.run(BasicIO.standard(connectInput = true)).exitValue()
@@ -125,7 +109,7 @@ object Launcher extends TempDir {
     for {
       lJar   <- SbtLaunchJar.get
       v      <- version(g8Version, template)
-      lc     <- launchConfig(v)
+      lc     <- SbtLaunchConfig.get(v)
       result <- fetchAndRun(lJar, lc, args, v)
     } yield result
 }
