@@ -60,7 +60,7 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
   private val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
   /** Clean temporary directory used for git cloning */
-  def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDelete(tempdir)
+  def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDeleteOnExit(tempdir)
 
   def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] =
     for {

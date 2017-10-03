@@ -79,7 +79,7 @@ class Giter8 extends xsbti.AppMain {
 
     opt[String]('t', "tag") action { (t, config) =>
       config.copy(ref = Some(Tag(t)))
-    } text "Resolve a template within a given branch"
+    } text "Resolve a template within a given tag"
 
     opt[String]('d', "directory") action { (d, config) =>
       config.copy(directory = Some(d))
