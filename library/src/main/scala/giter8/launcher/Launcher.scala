@@ -93,7 +93,7 @@ object Launcher extends TempDir {
         val command = Seq(
           java.getPath, "-DGITER8_FORKED=true", "-jar",
           launchJar.getPath,
-          "@" + lc.getPath
+          "@" + lc.toURI
         ) ++ args
 
         val exit = command.run(BasicIO.standard(connectInput = true)).exitValue()

@@ -23,7 +23,7 @@ trait TempDir {
     val file   = tempdir
     val result = Try(block(file))
 
-    if (file.exists) FileUtils.forceDelete(file)
+    if (file.exists) FileUtils.forceDeleteOnExit(file)
 
     result
   }

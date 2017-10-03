@@ -89,7 +89,7 @@ object SbtLaunchJar {
         }.flatten match {
           case failure @ Failure(e) =>
             e.printStackTrace()
-            FileUtils.forceDelete(file)
+            FileUtils.forceDeleteOnExit(file)
             failure
           case tried => tried
         }
