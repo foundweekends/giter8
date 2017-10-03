@@ -29,10 +29,18 @@ case class Tag(name: String) extends Ref
 
 case class Branch(name: String) extends Ref
 
-case class Config(repo: String,
-                  ref: Option[Ref]          = None,
-                  forceOverwrite: Boolean   = false,
-                  directory: Option[String] = None)
+sealed trait Mode
+case object Launch extends Mode
+case object Run extends Mode
+
+case class Config(
+                   repo: String,
+                   ref: Option[Ref]          = None,
+                   forceOverwrite: Boolean   = false,
+                   directory: Option[String] = None,
+                   version: Option[String]   = None,
+                   mode: Mode                = Launch
+                 )
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
@@ -52,7 +60,7 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
   private val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
   /** Clean temporary directory used for git cloning */
-  def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDelete(tempdir)
+  def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDeleteOnExit(tempdir)
 
   def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] =
     for {
