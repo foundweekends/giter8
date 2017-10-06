@@ -85,6 +85,10 @@ class Giter8 extends xsbti.AppMain {
       config.copy(directory = Some(d))
     } text "Resolve a template within a given directory"
 
+    opt[String]('o', "out") action { (o, config) =>
+      config.copy(out = Some(o))
+    }
+
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
     } text "Force overwrite of any existing files in output directory"

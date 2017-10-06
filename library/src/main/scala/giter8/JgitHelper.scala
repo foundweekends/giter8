@@ -39,7 +39,8 @@ case class Config(
                    forceOverwrite: Boolean   = false,
                    directory: Option[String] = None,
                    version: Option[String]   = None,
-                   mode: Mode                = Launch
+                   mode: Mode                = Launch,
+                   out: Option[String]       = None
                  )
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
@@ -69,7 +70,8 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
         case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
         case Failure(e) => Left(e.getMessage)
       }
-      renderedTemplate <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
+      out: Either[File, File] = config.out.map(f => Right(file(f))).getOrElse(Left(outDirectory))
+      renderedTemplate <- templateRenderer.render(baseDir, out, arguments, config.forceOverwrite)
     } yield renderedTemplate
 
 }

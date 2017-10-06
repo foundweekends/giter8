@@ -60,7 +60,7 @@ object G8 {
 
   // Called from JgitHelper
   def fromDirectory(baseDirectory: File,
-                    outputDirectory: File,
+                    outputDirectory: Either[File, File],
                     arguments: Seq[String],
                     forceOverwrite: Boolean): Either[String, String] =
     applyT(
@@ -75,7 +75,7 @@ object G8 {
 
   // Called from ScaffoldPlugin
   def fromDirectoryRaw(baseDirectory: File,
-                       outputDirectory: File,
+                       outputDirectory: Either[File, File],
                        arguments: Seq[String],
                        forceOverwrite: Boolean): Either[String, String] =
     applyT((file: File) => fetchInfo(file, List(Path(Nil)), Nil))(baseDirectory,
@@ -282,7 +282,7 @@ object G8 {
       // isScaffolding: Boolean = false
   )(
       tmpl: File,
-      outputFolder: File,
+      outputFolder: Either[File, File],
       arguments: Seq[String]  = Nil,
       forceOverwrite: Boolean = false
   ): Either[String, String] =
@@ -293,7 +293,11 @@ object G8 {
             interact(defaults)
           }
 
-          val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse("")
+          val base: File = outputFolder match {
+            case Left(f) => f / parameters.get("name").map(G8.normalize).getOrElse("")
+            case Right(f) => f
+          }
+
           val r = writeTemplates(templatesRoot,
                                  templates,
                                  parameters,
