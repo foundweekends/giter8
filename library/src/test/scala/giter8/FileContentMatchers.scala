@@ -18,4 +18,15 @@ trait FileContentMatchers {
       )
     }
   }
+
+  def beSymbolicLink(): Matcher[File] = new Matcher[File] {
+    override def apply(left: File): MatchResult = {
+      MatchResult(
+        matches = Util.isSymbolicLink(left),
+        rawFailureMessage =
+          s"File ${left.getAbsolutePath} is not a symbolic link",
+        rawNegatedFailureMessage = s"${left.getAbsolutePath} is a symbolic link"
+      )
+    }
+  }
 }

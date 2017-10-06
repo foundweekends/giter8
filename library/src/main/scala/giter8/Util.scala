@@ -19,6 +19,13 @@ package giter8
 
 import java.io.File
 
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.filefilter.TrueFileFilter
+import org.codehaus.plexus.components.io.attributes.SymlinkUtils
+
+import scala.collection.JavaConverters._
+import scala.util.Try
+
 object Util {
 
   def parseArguments(args: Seq[String]): Map[String, String] = {
@@ -31,7 +38,32 @@ object Util {
 
   def relativePath(from: File, to: File): String = {
     val fromUri = from.toURI
-    val toUti   = to.toURI
-    fromUri.relativize(toUti).getPath
+    val toUri   = to.toURI
+    fromUri.relativize(toUri).getPath
+  }
+
+  def listFilesAndDirsWithSymbolicLinks(folder: File): Seq[File] = {
+    val files = FileUtils.iterateFilesAndDirs(folder, TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE).asScala.toSeq
+    listFilesAndDirsWithSymbolicLinks(folder, files)
+  }
+
+  def listFilesAndDirsWithSymbolicLinks(folder: File, files: Seq[File]): Seq[File] = {
+    def nonSymbolicFirst(a: File, b: File) = isSymbolicLink(a) < isSymbolicLink(b)
+    files.sortWith(nonSymbolicFirst)
+  }
+
+  def hasSymbolicParent(f: File, topFolder: File): Boolean = {
+    if (f.equals(topFolder)) false
+    else if (isSymbolicLink(f)) true
+    else hasSymbolicParent(f.getParentFile, topFolder)
+  }
+
+  def isSymbolicLink(f: File): Boolean = FileUtils.isSymlink(f)
+
+  def link(in: File, out: File) = Try {
+    val inTargetPath = SymlinkUtils.readSymbolicLink(in)
+    val outTarget = new File(out.getParentFile.getAbsolutePath, inTargetPath.getName)
+    SymlinkUtils.createSymbolicLink(out, outTarget)
+    ()
   }
 }

@@ -77,13 +77,30 @@ class Git(gitInteractor: GitInteractor) {
   }
 
   // Protected for testing: see GitTest.scala
-  protected def cleanDir(dir: File): Unit = dir.listFiles().foreach(_.delete())
+  protected def cleanDir(dir: File): Unit = FileUtils.cleanDirectory(dir)
 
   // Protected for testing: see GitTest.scala
   protected def copy(from: File, to: File): Try[Unit] = Try {
     if (!from.isDirectory) throw CloneError("Not a readable directory: " + from.getAbsolutePath)
-    FileUtils.copyDirectory(from, to)
+    copyFolder(from, to)
     copyExecutableAttribute(from, to)
+  }
+
+  private def copyFolder(from: File, to: File) = {
+    import Util._
+
+    val fromAbsPath = from.getAbsolutePath
+    val toAbsPath = to.getAbsolutePath
+
+    val files = listFilesAndDirsWithSymbolicLinks(from)
+    files foreach { file =>
+      val outFile = new File(file.getAbsolutePath.replace(fromAbsPath, toAbsPath))
+      if (isSymbolicLink(file)) {
+        link(file, outFile)
+      } else if (!file.isDirectory() && !hasSymbolicParent(file, from)) {
+        FileUtils.copyFile(file, outFile)
+      }
+    }
   }
 
   private def copyExecutableAttribute(fromDir: File, toDir: File): Unit = {

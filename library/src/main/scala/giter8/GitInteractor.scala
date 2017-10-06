@@ -43,14 +43,18 @@ object GitInteractor {
 object JGitInteractor extends GitInteractor {
   CredentialsProvider.setDefault(ConsoleCredentialsProvider)
 
-  override def cloneRepository(url: String, dest: File): Try[Unit] = Try {
-    JGit
-      .cloneRepository()
-      .setURI(url)
-      .setDirectory(dest)
-      .setCredentialsProvider(ConsoleCredentialsProvider)
-      .call()
-      .close()
+  override def cloneRepository(url: String, dest: File): Try[Unit] = {
+    Try(
+      JGit
+        .cloneRepository()
+        .setURI(url)
+        .setDirectory(dest)
+        .setCredentialsProvider(ConsoleCredentialsProvider)
+        .call()
+        .close()
+    ).recoverWith{
+      case e: TransportException => Failure(TransportError(e.getMessage))
+    }
   }
 
   override def getRemoteBranches(url: String): Try[Seq[String]] = {

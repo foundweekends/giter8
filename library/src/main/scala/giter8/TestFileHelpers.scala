@@ -20,6 +20,7 @@ package giter8
 import java.io.{File, PrintWriter}
 
 import org.apache.commons.io.FileUtils
+import org.codehaus.plexus.components.io.attributes.SymlinkUtils
 
 trait TestFileHelpers {
   def tempDirectory(code: File => Unit): Unit = {
@@ -38,6 +39,11 @@ trait TestFileHelpers {
   def touch(file: File): Unit = if (!file.exists) {
     file.getParentFile.mkdirs()
     file.createNewFile()
+  }
+
+  def symLink(link: File, target: File): Unit = if(!link.exists()) {
+    if (target.isFile && !link.getParentFile.exists()) link.getParentFile.mkdirs()
+    SymlinkUtils.createSymbolicLink(link, target)
   }
 
   implicit class WriteableString(s: String) {
