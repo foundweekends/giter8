@@ -59,29 +59,36 @@ object G8 {
   type ValueF = ResolvedProperties => String
 
   // Called from JgitHelper
-  def fromDirectory(baseDirectory: File,
-                    outputDirectory: Either[File, File],
-                    arguments: Seq[String],
-                    forceOverwrite: Boolean): Either[String, String] =
+  def fromDirectory(
+                     baseDirectory: File,
+                     workingDirectory: File,
+                     arguments: Seq[String],
+                     forceOverwrite: Boolean,
+                     outputDirectory: Option[File]
+                   ): Either[String, String] =
     applyT(
       (file: File) =>
         fetchInfo(file: File,
                   defaultTemplatePaths,
                   List(path("src") / "main" / "scaffolds", path("project") / "src" / "main" / "scaffolds")))(
       baseDirectory,
-      outputDirectory,
+      workingDirectory,
       arguments,
-      forceOverwrite)
+      forceOverwrite,
+      outputDirectory)
 
   // Called from ScaffoldPlugin
   def fromDirectoryRaw(baseDirectory: File,
-                       outputDirectory: Either[File, File],
+                       outputDirectory: File,
                        arguments: Seq[String],
                        forceOverwrite: Boolean): Either[String, String] =
-    applyT((file: File) => fetchInfo(file, List(Path(Nil)), Nil))(baseDirectory,
-                                                                  outputDirectory,
-                                                                  arguments,
-                                                                  forceOverwrite)
+    applyT((file: File) => fetchInfo(file, List(Path(Nil)), Nil))(
+      baseDirectory,
+      outputDirectory,
+      arguments,
+      forceOverwrite,
+      None
+    )
 
   val defaultTemplatePaths: List[Path] = List(path("src") / "main" / "g8", Path(Nil))
 
@@ -282,9 +289,10 @@ object G8 {
       // isScaffolding: Boolean = false
   )(
       tmpl: File,
-      outputFolder: Either[File, File],
+      workingDirectory: File,
       arguments: Seq[String]  = Nil,
-      forceOverwrite: Boolean = false
+      forceOverwrite: Boolean = false,
+      outputDirectory: Option[File]
   ): Either[String, String] =
     try {
       fetch(tmpl).right.flatMap {
@@ -293,10 +301,9 @@ object G8 {
             interact(defaults)
           }
 
-          val base: File = outputFolder match {
-            case Left(f) => f / parameters.get("name").map(G8.normalize).getOrElse("")
-            case Right(f) => f
-          }
+          val base: File = outputDirectory.orElse {
+            parameters.get("name").map(workingDirectory / G8.normalize(_))
+          }.getOrElse(workingDirectory)
 
           val r = writeTemplates(templatesRoot,
                                  templates,

@@ -9,18 +9,22 @@ import scala.util.{Success, Try}
 
 class MockRenderer extends TemplateRenderer {
   var baseDirectory: File                 = _
-  var outputDirectory: Either[File, File] = _
+  var workingDirectory: File              = _
   var arguments: Seq[String]              = _
   var forceOverwrite: Boolean             = _
+  var outputDirectory: Option[File]       = _
 
   override def render(baseDirectory: File,
-                      outputDirectory: Either[File, File],
+                      workingDirectory: File,
                       arguments: Seq[String],
-                      forceOverwrite: Boolean): Either[String, String] = {
-    this.baseDirectory   = baseDirectory
-    this.outputDirectory = outputDirectory
-    this.arguments       = arguments
-    this.forceOverwrite  = forceOverwrite
+                      forceOverwrite: Boolean,
+                      outputDirectory: Option[File]
+                     ): Either[String, String] = {
+    this.baseDirectory    = baseDirectory
+    this.workingDirectory = workingDirectory
+    this.arguments        = arguments
+    this.forceOverwrite   = forceOverwrite
+    this.outputDirectory  = outputDirectory
     Right("OK")
   }
 }
@@ -37,7 +41,7 @@ class MockGit extends Git(null) {
   }
 }
 
-class JgitHelperTest extends FlatSpec with Matchers with EitherValues {
+class JgitHelperTest extends FlatSpec with Matchers {
 
   trait TestFixture {
     val git      = new MockGit
@@ -81,7 +85,7 @@ class JgitHelperTest extends FlatSpec with Matchers with EitherValues {
     testCases foreach { outputDir =>
       new TestFixture {
         helper.run(Config("foo/bar", None), Seq.empty, outputDir)
-        renderer.outputDirectory.left.value shouldBe outputDir
+        renderer.workingDirectory shouldBe outputDir
       }
     }
   }

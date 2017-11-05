@@ -50,7 +50,7 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
     Def.inputTask {
       val (name, args) = parser.parsed
       val folder       = g8ScaffoldTemplatesDirectory.value
-      G8.fromDirectoryRaw(folder / name, Left(baseDirectory.value), args, false)
+      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, false)
         .fold(
           e => sys.error(e),
           r => println("Success :)")

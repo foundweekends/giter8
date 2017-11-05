@@ -41,7 +41,6 @@ lazy val root = (project in file("."))
 lazy val app = (project in file("app"))
   .disablePlugins(BintrayPlugin)
   .enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish)
-//  .enablePlugins(BuildInfoPlugin, SonatypePublish)
   .dependsOn(lib)
   .settings(
     description := "Command line tool to apply templates defined on github",
