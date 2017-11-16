@@ -1,22 +1,39 @@
-language: scala
-
 sudo: false
-
-script:
-- jdk_switcher use openjdk6 && sbt "++ 2.10.6" "test:compile"
-- jdk_switcher use oraclejdk8 && sbt "so test"
 
 jdk:
   - oraclejdk8
 
+sudo: required
+
+os: linux
+dist: trusty
+jdk: oraclejdk8
+language: scala
+
+env:
+  matrix:
+    - SBT_VERSION=0.13.16
+    - SBT_VERSION=1.0.2
+
 before_script:
- - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -XX:MaxPermSize=256m -Xss2m -Dfile.encoding=UTF-8"
+ - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
+
+script:
+  - sbt "-no-colors" "^^ $SBT_VERSION" ";plugin/scripted;scaffold/scripted;lib/test"
 
 after_success:
 - export SBT_GHPAGES_COMMIT_MESSAGE="updated site https://github.com/foundweekends/giter8/commit/${TRAVIS_COMMIT}"
-- if [[ "${TRAVIS_PULL_REQUEST}" == "false" && "${TRAVIS_BRANCH}" == "master" && "${TRAVIS_REPO_SLUG}" == "foundweekends/giter8" ]]; then export PUBLISH_SITE=true; fi
-- test "${PUBLISH_SITE}" == "true" && eval "$(ssh-agent -s)" #start the ssh agent
-- test "${PUBLISH_SITE}" == "true" && openssl aes-256-cbc -K $encrypted_e5f9765ae931_key -iv $encrypted_e5f9765ae931_iv -in deploy_rsa.enc -out deploy_rsa -d
-- test "${PUBLISH_SITE}" == "true" && chmod 600 deploy_rsa
-- test "${PUBLISH_SITE}" == "true" && ssh-add deploy_rsa
-- test "${PUBLISH_SITE}" == "true" && sbt pushSiteIfChanged
+- > 
+  if [[ "${TRAVIS_PULL_REQUEST}" == "false" && \
+        "${TRAVIS_BRANCH}" == "master" && \
+        "${TRAVIS_REPO_SLUG}" == "foundweekends/giter8" ]]; then
+    export PUBLISH_SITE=true;
+    eval "$(ssh-agent -s)" #start the ssh agent
+    openssl aes-256-cbc \
+      -K $encrypted_e5f9765ae931_key \
+      -iv $encrypted_e5f9765ae931_iv \
+      -in deploy_rsa.enc -out deploy_rsa -d
+    chmod 600 deploy_rsa
+    ssh-add deploy_rsa
+    sbt pushSiteIfChanged
+  fi

@@ -18,16 +18,18 @@
 package giter8
 
 import sbt._
-import ScriptedPlugin._
+import sbt.Path.relativeTo
+import SBTCompat._
 
 object Giter8Plugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
   override val trigger  = allRequirements
 
   import Keys._
-  import scala.io.Source
 
   object autoImport {
+    object g8ScriptedCompat extends ScriptedCompat
+
     lazy val g8               = taskKey[Seq[File]]("Apply default parameters to input templates and write to output.")
     lazy val g8PropertiesFile = settingKey[File]("g8-properties-file")
     lazy val g8Properties     = taskKey[Map[String, String]]("g8-properties")
@@ -85,42 +87,43 @@ object Giter8Plugin extends sbt.AutoPlugin {
     }
   )
 
-  lazy val giter8TestSettings: Seq[Def.Setting[_]] = scriptedSettings ++ Seq(
+  lazy val giter8TestSettings: Seq[Def.Setting[_]] = SBTCompat.scriptedSettings ++ 
+    Seq(
       g8Test in Test := { scriptedTask.evaluated },
       aggregate in (Test, g8Test) := false,
       scriptedDependencies := {
-      val x = (g8 in Test).value
-    },
+        val x = (g8 in Test).value
+      },
       g8 in Test := {
-      val base  = (unmanagedSourceDirectories in (Compile, g8)).value
-      val srcs  = (sources in (Compile, g8)).value
-      val out   = (target in (Test, g8)).value
-      val props = (g8Properties in (Test, g8)).value
-      val ts    = (g8TestScript in (Test, g8)).value
-      val s     = streams.value
-      IO.delete(out)
-      val retval = G8(srcs pair relativeTo(base), out, props)
+        val base  = (unmanagedSourceDirectories in (Compile, g8)).value
+        val srcs  = (sources in (Compile, g8)).value
+        val out   = (target in (Test, g8)).value
+        val props = (g8Properties in (Test, g8)).value
+        val ts    = (g8TestScript in (Test, g8)).value
+        val s     = streams.value
+        IO.delete(out)
+        val retval = G8(srcs pair relativeTo(base), out, props)
 
-      // copy test script or generate one
-      val script = new File(out, "test")
-      if (ts.exists) IO.copyFile(ts, script)
-      else IO.write(script, """>test""")
-      retval :+ script
-    },
+        // copy test script or generate one
+        val script = new File(out, "test")
+        if (ts.exists) IO.copyFile(ts, script)
+        else IO.write(script, """>test""")
+        retval :+ script
+      },
       sbtTestDirectory := { target.value / "sbt-test" },
       target in (Test, g8) := { sbtTestDirectory.value / name.value / "scripted" },
       g8TestScript := {
-      val dir     = (sourceDirectory in Test).value
-      val metadir = (baseDirectory in LocalRootProject).value / "project"
-      val file0   = dir / "g8" / "test"
-      val files = List(file0,
-                       dir / "g8" / "giter8.test",
-                       dir / "g8" / "g8.test",
-                       metadir / "test",
-                       metadir / "giter8.test",
-                       metadir / "g8.test")
-      files.find(_.exists).getOrElse(file0)
-    },
+        val dir     = (sourceDirectory in Test).value
+        val metadir = (baseDirectory in LocalRootProject).value / "project"
+        val file0   = dir / "g8" / "test"
+        val files = List(file0,
+                         dir / "g8" / "giter8.test",
+                         dir / "g8" / "g8.test",
+                         metadir / "test",
+                         metadir / "giter8.test",
+                         metadir / "g8.test")
+        files.find(_.exists).getOrElse(file0)
+      },
       scriptedBufferLog in (Test, g8) := true
     )
 
