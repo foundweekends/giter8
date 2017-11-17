@@ -1,4 +1,5 @@
 import Dependencies._
+import CrossVersion.partialVersion
 
 val g8version = "0.10.1-SNAPSHOT"
 
@@ -11,7 +12,7 @@ lazy val root = (project in file("."))
       List(
         organization := "org.foundweekends.giter8",
         version := g8version,
-        scalaVersion := "2.10.6",
+        scalaVersion := scala210,
         organizationName := "foundweekends",
         organizationHomepage := Some(url("http://foundweekends.org/")),
         scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint", "-Xfuture"),
@@ -41,7 +42,6 @@ lazy val root = (project in file("."))
 lazy val app = (project in file("app"))
   .disablePlugins(BintrayPlugin)
   .enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish)
-//  .enablePlugins(BuildInfoPlugin, SonatypePublish)
   .dependsOn(lib)
   .settings(
     description := "Command line tool to apply templates defined on github",
@@ -55,14 +55,28 @@ lazy val app = (project in file("app"))
     buildInfoPackage := "giter8"
   )
 
+lazy val crossSbt = Seq(
+  crossSbtVersions := List("0.13.16", "1.0.2"),
+  scalaVersion := {
+    val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
+    partialVersion(crossSbtVersion) match {
+      case Some((0, 13)) => scala210
+      case Some((1, _)) => scala212
+      case _ =>
+        throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 0.13.x or 1.X)")
+    }
+  }
+)
+
 lazy val scaffold = (project in file("scaffold"))
   .enablePlugins(BintrayPublish)
   .dependsOn(lib)
+  .settings(crossSbt)
   .settings(
     name := "sbt-giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
-    crossScalaVersions := List(scala210),
+    crossScalaVersions := List(scala210, scala212),
     scriptedSettings,
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
@@ -80,12 +94,13 @@ lazy val scaffold = (project in file("scaffold"))
 lazy val plugin = (project in file("plugin"))
   .enablePlugins(BintrayPublish)
   .dependsOn(lib)
+  .settings(crossSbt)
   .settings(
     name := "sbt-giter8",
     scriptedSettings,
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
-    crossScalaVersions := List(scala210),
+    crossScalaVersions := List(scala210, scala212),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
@@ -95,7 +110,21 @@ lazy val plugin = (project in file("plugin"))
     scripted := ScriptedPlugin.scripted
       .dependsOn(publishLocal in lib)
       .evaluated,
-    libraryDependencies += ("org.scala-sbt" % "scripted-plugin" % sbtVersion.value),
+    libraryDependencies += {
+      val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
+
+      val artifact = 
+        partialVersion(crossSbtVersion) match {
+          case Some((0, 13)) =>
+            "org.scala-sbt" % "scripted-plugin"
+          case Some((1, _)) =>
+            "org.scala-sbt" %% "scripted-plugin"
+          case _ =>
+            throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 0.13.x or 1.X)")
+        }
+
+      artifact % crossSbtVersion
+    },
     test in Test := {
       scripted.toTask("").value
     }
@@ -104,6 +133,7 @@ lazy val plugin = (project in file("plugin"))
 lazy val lib = (project in file("library"))
   .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
+  .settings(crossSbt)
   .settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",
