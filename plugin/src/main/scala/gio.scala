@@ -19,7 +19,7 @@ package giter8
 
 object GIO {
 
-  def readProps(stm: java.io.InputStream) = {
+  def readProps(stm: java.io.InputStream): Map[String, String] = {
     import scala.collection.JavaConverters._
     val p = new java.util.Properties
     p.load(stm)
