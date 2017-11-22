@@ -13,7 +13,11 @@ object Dependencies {
   // https://github.com/eclipse/jgit/blob/v3.7.0.201502260915-r/pom.xml
   // This uses httpclient 4.1
   // http://hc.apache.org/httpcomponents-client-4.2.x/
-  val jgit             = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "3.7.0.201502260915-r"
+  val jgit             = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "4.9.0.201710071750-r" excludeAll (
+    ExclusionRule("javax.jms", "jms"),
+    ExclusionRule("com.sun.jdmk", "jmxtools"),
+    ExclusionRule("com.sun.jmx", "jmxri")
+  )
   val scopt            = "com.github.scopt" %% "scopt" % "3.7.0"
   val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.13.5"
   val scalatest        = "org.scalatest" %% "scalatest" % "3.0.5"
