@@ -207,7 +207,8 @@ object G8 {
   def snakeCase(s: String)    = s.replaceAll("""[\s\.\-]+""", "_")
   def packageDir(s: String)   = s.replace(".", System.getProperty("file.separator"))
   def addRandomId(s: String)  = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
-
+  def projectName(s: String)  = if (s.contains("-")) "`" + s + "`" else s
+  
   val Param = """^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
     def /(child: String): File = new File(file, child)
