@@ -307,7 +307,7 @@ object G8 {
       }
     } catch {
       case e: STException =>
-        Left(s"Exiting due to error in the template\n${e.getMessage}")
+        Left(s"Exiting due to error in the template: ${tmpl}\n${e.getMessage}")
       case t: Throwable =>
         Left("Unknown exception: " + t.getMessage)
     }
