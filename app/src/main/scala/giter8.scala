@@ -65,7 +65,7 @@ class Giter8 extends xsbti.AppMain {
 
   def run(args: Array[String]):Int = run(args, new File(".").getAbsoluteFile)
 
-  val parser: OptionParser[Config] = new scopt.OptionParser[Config]("giter8") {
+  val parser: OptionParser[Config] = new scopt.OptionParser[Config]("g8") {
 
     head("g8", giter8.BuildInfo.version)
 
