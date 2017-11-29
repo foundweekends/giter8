@@ -1,14 +1,16 @@
 import sbt._
 import Keys._
 
-import com.typesafe.sbt.SbtGhPages.{ghpages, GhPagesKeys => ghkeys}
+import com.typesafe.sbt.sbtghpages.GhpagesPlugin
+import com.typesafe.sbt.sbtghpages.GhpagesPlugin.autoImport._
 import com.typesafe.sbt.SbtGit.{git, GitKeys}
 import com.typesafe.sbt.git.GitRunner
 import com.typesafe.sbt.site.pamflet.PamfletPlugin
 import com.typesafe.sbt.site.SitePlugin
 
 object TravisSitePlugin extends sbt.AutoPlugin {
-  override def requires = PamfletPlugin
+  override def requires = PamfletPlugin && GhpagesPlugin
+
   import PamfletPlugin.autoImport._
   import SitePlugin.autoImport._
 
@@ -20,18 +22,18 @@ object TravisSitePlugin extends sbt.AutoPlugin {
 
   import autoImport._
 
-  override lazy val projectSettings = ghpages.settings ++ Seq(
+  override lazy val projectSettings = Seq(
       sourceDirectory in Pamflet := { baseDirectory.value / "docs" },
-      // GitKeys.gitBranch in ghkeys.updatedRepository := Some("gh-pages"),
+      // ghpagesBranch in ghpagesUpdatedRepository := Some("gh-pages"),
       // This task is responsible for updating the master branch on some temp dir.
       // On the branch there are files that was generated in some other ways such as:
       // - CNAME file
       //
       // This task's job is to call "git rm" on files and directories that this project owns
       // and then copy over the newly generated files.
-      ghkeys.synchLocal := {
+      ghpagesSynchLocal := {
       // sync the generated site
-      val repo = ghkeys.updatedRepository.value
+      val repo = ghpagesUpdatedRepository.value
       val s    = streams.value
       val r    = GitKeys.gitRunner.value
       gitConfig(repo, siteEmail.value, r, s.log)
@@ -55,7 +57,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       val r       = GitKeys.gitRunner.value
       val s       = streams.value
       val changed = gitDocsChanged(repo, r, s.log)
-      if (changed) ghkeys.pushSite
+      if (changed) ghpagesPushSite
       else Def.task {}
     }).value,
       git.remoteRepo := s"git@github.com:${siteGithubRepo.value}.git"
