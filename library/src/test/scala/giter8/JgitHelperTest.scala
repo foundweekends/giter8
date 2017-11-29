@@ -3,24 +3,28 @@ package giter8
 import java.io.File
 
 import giter8.GitRepository.{GitHub, Local, Remote}
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{EitherValues, FlatSpec, Matchers}
 
 import scala.util.{Success, Try}
 
 class MockRenderer extends TemplateRenderer {
-  var baseDirectory: File     = _
-  var outputDirectory: File   = _
-  var arguments: Seq[String]  = _
-  var forceOverwrite: Boolean = _
+  var baseDirectory: File                 = _
+  var workingDirectory: File              = _
+  var arguments: Seq[String]              = _
+  var forceOverwrite: Boolean             = _
+  var outputDirectory: Option[File]       = _
 
   override def render(baseDirectory: File,
-                      outputDirectory: File,
+                      workingDirectory: File,
                       arguments: Seq[String],
-                      forceOverwrite: Boolean): Either[String, String] = {
-    this.baseDirectory   = baseDirectory
-    this.outputDirectory = outputDirectory
-    this.arguments       = arguments
-    this.forceOverwrite  = forceOverwrite
+                      forceOverwrite: Boolean,
+                      outputDirectory: Option[File]
+                     ): Either[String, String] = {
+    this.baseDirectory    = baseDirectory
+    this.workingDirectory = workingDirectory
+    this.arguments        = arguments
+    this.forceOverwrite   = forceOverwrite
+    this.outputDirectory  = outputDirectory
     Right("OK")
   }
 }
@@ -81,7 +85,7 @@ class JgitHelperTest extends FlatSpec with Matchers {
     testCases foreach { outputDir =>
       new TestFixture {
         helper.run(Config("foo/bar", None), Seq.empty, outputDir)
-        renderer.outputDirectory shouldBe outputDir
+        renderer.workingDirectory shouldBe outputDir
       }
     }
   }

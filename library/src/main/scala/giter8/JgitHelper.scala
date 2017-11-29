@@ -39,7 +39,8 @@ case class Config(
                    forceOverwrite: Boolean   = false,
                    directory: Option[String] = None,
                    version: Option[String]   = None,
-                   mode: Mode                = Launch
+                   mode: Mode                = Launch,
+                   out: Option[String]       = None
                  )
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
@@ -62,14 +63,15 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
   /** Clean temporary directory used for git cloning */
   def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDeleteOnExit(tempdir)
 
-  def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] =
+  def run(config: Config, arguments: Seq[String], workingDirectory: File): Either[String, String] =
     for {
       repository <- GitRepository.fromString(config.repo)
       baseDir <- gitInteractor.clone(repository, config.ref, tempdir) match {
         case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
         case Failure(e) => Left(e.getMessage)
       }
-      renderedTemplate <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
+      out: Option[File] = config.out.map(file)
+      renderedTemplate <- templateRenderer.render(baseDir, workingDirectory, arguments, config.forceOverwrite, out)
     } yield renderedTemplate
 
 }

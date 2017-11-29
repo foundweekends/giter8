@@ -9,7 +9,7 @@ import scala.io.Source
 trait IntegrationTestHelpers {
   def checkGeneratedProject(template: File, expected: File, actual: File): Unit = {
     Console.withIn(InfiniteLineBreaks) {
-      G8.fromDirectory(template, actual, Seq.empty, forceOverwrite = false) match {
+      G8.fromDirectory(template, actual, Seq.empty, forceOverwrite = false, None) match {
         case Right(_)  => compareDirectories(actual, expected)
         case Left(err) => fail(err)
       }
