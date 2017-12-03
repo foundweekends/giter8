@@ -56,7 +56,7 @@ lazy val app = (project in file("app"))
   )
 
 lazy val crossSbt = Seq(
-  crossSbtVersions := List("0.13.16", "1.0.2"),
+  crossSbtVersions := List("0.13.16", "1.0.4"),
   scalaVersion := {
     val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
     partialVersion(crossSbtVersion) match {

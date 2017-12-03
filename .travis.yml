@@ -13,7 +13,7 @@ language: scala
 env:
   matrix:
     - SBT_VERSION=0.13.16
-    - SBT_VERSION=1.0.2
+    - SBT_VERSION=1.0.4
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
