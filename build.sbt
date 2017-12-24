@@ -61,7 +61,7 @@ lazy val crossSbt = Seq(
     val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
     partialVersion(crossSbtVersion) match {
       case Some((0, 13)) => scala210
-      case Some((1, _)) => scala212
+      case Some((1, _))  => scala212
       case _ =>
         throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 0.13.x or 1.X)")
     }
@@ -113,7 +113,7 @@ lazy val plugin = (project in file("plugin"))
     libraryDependencies += {
       val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
 
-      val artifact = 
+      val artifact =
         partialVersion(crossSbtVersion) match {
           case Some((0, 13)) =>
             "org.scala-sbt" % "scripted-plugin"

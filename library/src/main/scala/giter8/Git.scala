@@ -102,22 +102,20 @@ class Git(gitInteractor: GitInteractor) extends TempDir {
     * @tparam A
     * @return
     */
-  def withRepo[A](repo: String, tag: Option[String])(block: File => A): Try[A] = withTempdir {
-    file =>
-
-      val ref = tag.map {
-        v =>
-          if (v startsWith "v") Tag(v) else Tag(s"v$v")
+  def withRepo[A](repo: String, tag: Option[String])(block: File => A): Try[A] =
+    withTempdir { file =>
+      val ref = tag.map { v =>
+        if (v startsWith "v") Tag(v) else Tag(s"v$v")
       }
 
       for {
         repository <- GitRepository.fromString(repo) match {
-          case Right(r) => Success(r)
+          case Right(r)  => Success(r)
           case Left(msg) => Failure(new RuntimeException(msg))
         }
-        _          <- clone(repository, ref, file)
+        _ <- clone(repository, ref, file)
       } yield block(file)
-  }.flatten
+    }.flatten
 
   def withRepo[A](repo: String)(block: File => A): Try[A] =
     withRepo(repo, None)(block)

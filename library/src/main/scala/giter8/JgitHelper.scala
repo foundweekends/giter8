@@ -34,14 +34,14 @@ case object Launch extends Mode
 case object Run extends Mode
 
 case class Config(
-                   repo: String,
-                   ref: Option[Ref]          = None,
-                   forceOverwrite: Boolean   = false,
-                   directory: Option[String] = None,
-                   version: Option[String]   = None,
-                   mode: Mode                = Launch,
-                   out: Option[String]       = None
-                 )
+    repo: String,
+    ref: Option[Ref]          = None,
+    forceOverwrite: Boolean   = false,
+    directory: Option[String] = None,
+    version: Option[String]   = None,
+    mode: Mode                = Launch,
+    out: Option[String]       = None
+)
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 

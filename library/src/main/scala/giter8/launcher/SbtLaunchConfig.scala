@@ -39,16 +39,16 @@ object SbtLaunchConfig {
     */
   private def remoteVersion(version: Option[VersionNumber]): Try[File] = {
     val versionString = version.map(_.toString)
-    git.withRepo("https://github.com/foundweekends/giter8", versionString) {
-      base =>
-        val file = base / "src" / "main" / "conscript" / "g8" / "launchconfig"
+    git
+      .withRepo("https://github.com/foundweekends/giter8", versionString) { base =>
+        val file    = base / "src" / "main" / "conscript" / "g8" / "launchconfig"
         val outFile = SystemPaths.launchConfigBase / versionString.getOrElse("LATEST")
-        Try(FileUtils.copyFile(file, outFile)).map {
-          _ =>
-            println(s"Found remote launchconfig for version: ${version.getOrElse("LATEST")}")
-            outFile
+        Try(FileUtils.copyFile(file, outFile)).map { _ =>
+          println(s"Found remote launchconfig for version: ${version.getOrElse("LATEST")}")
+          outFile
         }
-    }.flatten
+      }
+      .flatten
   }
 
   /**

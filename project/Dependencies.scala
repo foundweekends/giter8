@@ -4,11 +4,11 @@ object Dependencies {
   val scalasti  = "org.clapper" %% "scalasti" % "2.1.2"
   val commonsIo = "commons-io" % "commons-io" % "2.4"
   val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll (
-      ExclusionRule("org.apache.commons", "commons-compress"),
-      ExclusionRule("classworlds", "classworlds"),
-      ExclusionRule("org.tukaani", "xz"),
-      ExclusionRule("junit", "junit")
-    )
+    ExclusionRule("org.apache.commons", "commons-compress"),
+    ExclusionRule("classworlds", "classworlds"),
+    ExclusionRule("org.tukaani", "xz"),
+    ExclusionRule("junit", "junit")
+  )
   // Picking jgit used by sbt-git
   // https://github.com/eclipse/jgit/blob/v3.7.0.201502260915-r/pom.xml
   // This uses httpclient 4.1

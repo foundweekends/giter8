@@ -28,10 +28,8 @@ package object giter8 {
 
   implicit class OptTry[A](a: Try[Option[A]]) {
     def or(b: Try[Option[A]]): Try[Option[A]] =
-      a.flatMap {
-        unwrapped =>
-          if (unwrapped.isDefined) a else b
+      a.flatMap { unwrapped =>
+        if (unwrapped.isDefined) a else b
       }
   }
 }
-

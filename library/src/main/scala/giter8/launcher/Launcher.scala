@@ -19,8 +19,8 @@ object Launcher extends TempDir {
     * @return
     */
   private def templateVersion(template: String): Try[Option[VersionNumber]] =
-    git.withRepo(template) {
-      base =>
+    git
+      .withRepo(template) { base =>
         Try {
           val properties: Properties = {
             val p = new Properties()
@@ -29,11 +29,11 @@ object Launcher extends TempDir {
           }
           val result: Option[String] = Option(properties.getProperty("giter8.version"))
           result
-        }.flatMap {
-          string =>
-            Try(string.map(VersionNumber.apply))
+        }.flatMap { string =>
+          Try(string.map(VersionNumber.apply))
         }
-    }.flatten
+      }
+      .flatten
 
   /**
     * Resolves the version from `giter8.version` system property
@@ -75,34 +75,34 @@ object Launcher extends TempDir {
     * @return
     */
   private def fetchAndRun(
-                           launchJar: File,
-                           lc: File,
-                           args: Array[String],
-                           v: Option[VersionNumber]
-                         ): Try[String] =
-    withTempdir {
-      base =>
+      launchJar: File,
+      lc: File,
+      args: Array[String],
+      v: Option[VersionNumber]
+  ): Try[String] =
+    withTempdir { base =>
+      import scala.sys.process._
 
-        import scala.sys.process._
+      val java: File =
+        SystemPaths.javaHome / "bin" / "java"
 
-        val java: File =
-          SystemPaths.javaHome / "bin" / "java"
+      println(s"Fetching Giter8 ${v.getOrElse("LATEST")}")
 
-        println(s"Fetching Giter8 ${v.getOrElse("LATEST")}")
+      val command = Seq(
+        java.getPath,
+        "-DGITER8_FORKED=true",
+        "-jar",
+        launchJar.getPath,
+        "@" + lc.toURI
+      ) ++ args
 
-        val command = Seq(
-          java.getPath, "-DGITER8_FORKED=true", "-jar",
-          launchJar.getPath,
-          "@" + lc.toURI
-        ) ++ args
+      val exit = command.run(BasicIO.standard(connectInput = true)).exitValue()
 
-        val exit = command.run(BasicIO.standard(connectInput = true)).exitValue()
-
-        if (exit == 0) {
-          Success("Success!")
-        } else {
-          Failure(new RuntimeException(s"Failure, exit code: $exit"))
-        }
+      if (exit == 0) {
+        Success("Success!")
+      } else {
+        Failure(new RuntimeException(s"Failure, exit code: $exit"))
+      }
     }.flatten
 
   def launch(template: String, g8Version: Option[String], args: Array[String]): Try[String] =
@@ -113,4 +113,3 @@ object Launcher extends TempDir {
       result <- fetchAndRun(lJar, lc, args, v)
     } yield result
 }
-

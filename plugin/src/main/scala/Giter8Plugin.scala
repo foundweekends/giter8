@@ -87,7 +87,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     }
   )
 
-  lazy val giter8TestSettings: Seq[Def.Setting[_]] = SBTCompat.scriptedSettings ++ 
+  lazy val giter8TestSettings: Seq[Def.Setting[_]] = SBTCompat.scriptedSettings ++
     Seq(
       g8Test in Test := { scriptedTask.evaluated },
       aggregate in (Test, g8Test) := false,
