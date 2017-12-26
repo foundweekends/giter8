@@ -32,5 +32,5 @@ object Truthy {
   private def get(s: String) = booleans.get(s.toLowerCase)
 
   def getMessage(s: String): String = get(s).fold(s)(_.message)
-  def isTruthy(s: String) = get(s) exists (_.value)
+  def isTruthy(s: String)           = get(s) exists (_.value)
 }

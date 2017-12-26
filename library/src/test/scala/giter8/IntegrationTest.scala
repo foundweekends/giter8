@@ -147,36 +147,39 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
 
   it should "allow .g8ignore to take precedence over .gitignore" in testCase {
     case (template, expected, actual) =>
-      "*"           >> (template / "src" / "main" / "g8" / ".gitignore")
-      "*"           >> (expected / ".gitignore")
+      "*" >> (template / "src" / "main" / "g8" / ".gitignore")
+      "*" >> (expected / ".gitignore")
       "!.gitignore" >> (template / ".g8ignore")
       checkGeneratedProject(template, expected, actual)
   }
 
   it should "not ignore default files if .g8ignore is present" in testCase {
     case (template, expected, actual) =>
-
       val fileList = Seq(
-        "giter8.sbt", "g8.sbt", "activator.properties", "template.properties", "test", "g8.test", "giter8.test"
+        "giter8.sbt",
+        "g8.sbt",
+        "activator.properties",
+        "template.properties",
+        "test",
+        "g8.test",
+        "giter8.test"
       )
 
       touch(template / ".g8ignore")
       touch(template / "target" / "test")
       touch(template / ".git" / "foo")
 
-      fileList.foreach {
-        file =>
-          touch(template / file)
-          touch(template / "project" / file)
+      fileList.foreach { file =>
+        touch(template / file)
+        touch(template / "project" / file)
       }
 
       touch(expected / "target" / "test")
       touch(expected / ".git" / "foo")
 
-      fileList.foreach {
-        file =>
-          touch(expected / file)
-          touch(expected / "project" / file)
+      fileList.foreach { file =>
+        touch(expected / file)
+        touch(expected / "project" / file)
       }
 
       checkGeneratedProject(template, expected, actual)
@@ -188,11 +191,10 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
         |verbatim = foo bar.bar baz/ !foo.bar"
         |test = foo
       """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
-      Seq(template / "src" / "main" / "g8", expected).foreach {
-        base =>
-          "$test" >> (base / "foo")
-          "$test" >> (base / "baz" / "spoon")
-          "$test" >> (base / "bar.bar")
+      Seq(template / "src" / "main" / "g8", expected).foreach { base =>
+        "$test" >> (base / "foo")
+        "$test" >> (base / "baz" / "spoon")
+        "$test" >> (base / "bar.bar")
       }
       "$test$" >> (template / "src" / "main" / "g8" / "foo.bar")
       "foo" >> (expected / "foo.bar")

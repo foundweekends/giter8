@@ -46,9 +46,12 @@ case class JGitIgnore(patterns: String*) {
     */
   def isIgnored(uri: URI, isDir: Boolean = false, relativeTo: Option[URI] = None): Boolean = {
 
-    val path = relativeTo.map {
-      _.relativize(uri)
-    }.getOrElse(uri).getPath
+    val path = relativeTo
+      .map {
+        _.relativize(uri)
+      }
+      .getOrElse(uri)
+      .getPath
 
     ignoreRules.filter(_.isMatch(path, isDir)).lastOption.exists(_.getResult)
   }

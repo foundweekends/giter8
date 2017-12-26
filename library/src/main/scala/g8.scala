@@ -60,12 +60,12 @@ object G8 {
 
   // Called from JgitHelper
   def fromDirectory(
-                     baseDirectory: File,
-                     workingDirectory: File,
-                     arguments: Seq[String],
-                     forceOverwrite: Boolean,
-                     outputDirectory: Option[File]
-                   ): Either[String, String] =
+      baseDirectory: File,
+      workingDirectory: File,
+      arguments: Seq[String],
+      forceOverwrite: Boolean,
+      outputDirectory: Option[File]
+  ): Either[String, String] =
     applyT(
       (file: File) =>
         fetchInfo(file: File,
@@ -175,8 +175,9 @@ object G8 {
 
     val rules = JGitIgnore(
       parameters
-      .get("verbatim").toSeq
-      .flatMap(_.split(' ').toSeq): _*
+        .get("verbatim")
+        .toSeq
+        .flatMap(_.split(' ').toSeq): _*
     )
 
     rules.isIgnored(file, base)
@@ -240,20 +241,29 @@ object G8 {
   /** Extract template files under the first matching relative templatePaths under the baseDirectory. */
   def templateFiles(root: File, baseDirectory: File): Stream[File] = {
 
-    val gitignoreFile: File  = root / ".gitignore"
-    val g8IgnoreFile: File   = baseDirectory / ".g8ignore"
+    val gitignoreFile: File = root / ".gitignore"
+    val g8IgnoreFile: File  = baseDirectory / ".g8ignore"
 
     val g8Ignores: JGitIgnore = {
 
       lazy val defaults: JGitIgnore = JGitIgnore(
         ".git",
-        "giter8.sbt", "project/giter8.sbt",
-        "g8.sbt", "project/g8.sbt",
-        "activator.properties", "project/activator.properties",
-        "template.properties", "project/template.properties",
-        "test", "!test/", "project/test", "!project/test/",
-        "giter8.test", "project/giter8.test",
-        "g8.test", "project/g8.test",
+        "giter8.sbt",
+        "project/giter8.sbt",
+        "g8.sbt",
+        "project/g8.sbt",
+        "activator.properties",
+        "project/activator.properties",
+        "template.properties",
+        "project/template.properties",
+        "test",
+        "!test/",
+        "project/test",
+        "!project/test/",
+        "giter8.test",
+        "project/giter8.test",
+        "g8.test",
+        "project/g8.test",
         "target/",
         "**/target/"
       )
@@ -301,9 +311,11 @@ object G8 {
             interact(defaults)
           }
 
-          val base: File = outputDirectory.orElse {
-            parameters.get("name").map(workingDirectory / G8.normalize(_))
-          }.getOrElse(workingDirectory)
+          val base: File = outputDirectory
+            .orElse {
+              parameters.get("name").map(workingDirectory / G8.normalize(_))
+            }
+            .getOrElse(workingDirectory)
 
           val r = writeTemplates(templatesRoot,
                                  templates,

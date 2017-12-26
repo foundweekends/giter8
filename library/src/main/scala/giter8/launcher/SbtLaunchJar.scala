@@ -33,14 +33,12 @@ object SbtLaunchJar {
     * @return
     */
   private def getRemoteSum(url: String): Try[String] = {
-    Gigahorse.withHttp(Gigahorse.config) {
-      http =>
+    Gigahorse.withHttp(Gigahorse.config) { http =>
+      val request  = Gigahorse.url(url + ".sha1").get
+      val response = http.run(request).map(_.bodyAsString)
 
-        val request = Gigahorse.url(url + ".sha1").get
-        val response = http.run(request).map(_.bodyAsString)
-
-        // TODO?: Configurable timeout
-        Try(Await.result(response, 1.minute))
+      // TODO?: Configurable timeout
+      Try(Await.result(response, 1.minute))
     }
   }
 
@@ -63,36 +61,35 @@ object SbtLaunchJar {
     * @return
     */
   private def fetchJar(url: String, file: File, checksum: Option[String] = None): Try[File] = {
-    Gigahorse.withHttp(Gigahorse.config) {
-      http =>
-
-        checksum.map(Success.apply).getOrElse(getRemoteSum(url)).flatMap {
-          remoteSum =>
-
-            FileUtils.touch(file)
-            println("Fetching remote jar...")
-            val request = Gigahorse.url(url).get
-            val response = http.run(request).map {
-              r =>
-                val bytes = r.bodyAsByteBuffer.array
-                val localSum = sha1sum(bytes)
-                if (localSum == remoteSum) {
-                  println("Downloaded jar is valid!")
-                  Try(FileUtils.writeByteArrayToFile(file, bytes))
-                    .map(_ => file)
-                } else {
-                  Failure(new RuntimeException("Downloaded jar is invalid... exiting"))
-                }
+    Gigahorse.withHttp(Gigahorse.config) { http =>
+      checksum
+        .map(Success.apply)
+        .getOrElse(getRemoteSum(url))
+        .flatMap { remoteSum =>
+          FileUtils.touch(file)
+          println("Fetching remote jar...")
+          val request = Gigahorse.url(url).get
+          val response = http.run(request).map { r =>
+            val bytes    = r.bodyAsByteBuffer.array
+            val localSum = sha1sum(bytes)
+            if (localSum == remoteSum) {
+              println("Downloaded jar is valid!")
+              Try(FileUtils.writeByteArrayToFile(file, bytes))
+                .map(_ => file)
+            } else {
+              Failure(new RuntimeException("Downloaded jar is invalid... exiting"))
             }
+          }
 
-            Try(Await.result(response, 10.minutes))
-        }.flatten match {
-          case failure @ Failure(e) =>
-            e.printStackTrace()
-            FileUtils.forceDeleteOnExit(file)
-            failure
-          case tried => tried
+          Try(Await.result(response, 10.minutes))
         }
+        .flatten match {
+        case failure @ Failure(e) =>
+          e.printStackTrace()
+          FileUtils.forceDeleteOnExit(file)
+          failure
+        case tried => tried
+      }
     }
   }
 
@@ -105,24 +102,21 @@ object SbtLaunchJar {
     */
   private def fetchAndCacheJar(url: String, file: File): Try[File] = {
 
-    getRemoteSum(url).flatMap {
-      remoteSum =>
-
-        if (file.exists) {
-          println("Found cached jar")
-          getLocalSum(file).flatMap {
-            localSum =>
-              if (localSum == remoteSum) {
-                println("Cached jar is valid!")
-                Success(file)
-              } else {
-                println("Cached jar is invalid...")
-                fetchJar(url, file, Some(remoteSum))
-              }
+    getRemoteSum(url).flatMap { remoteSum =>
+      if (file.exists) {
+        println("Found cached jar")
+        getLocalSum(file).flatMap { localSum =>
+          if (localSum == remoteSum) {
+            println("Cached jar is valid!")
+            Success(file)
+          } else {
+            println("Cached jar is invalid...")
+            fetchJar(url, file, Some(remoteSum))
           }
-        } else {
-          fetchJar(url, file, Some(remoteSum))
         }
+      } else {
+        fetchJar(url, file, Some(remoteSum))
+      }
     }
   }
 

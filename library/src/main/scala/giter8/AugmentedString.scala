@@ -24,5 +24,5 @@ case class AugmentedString(value: String) {
 
   /* Properties inherited from java.lang.String */
   def getBytes: Array[Byte] = value.getBytes
-  def isEmpty: Boolean = value.isEmpty
+  def isEmpty: Boolean      = value.isEmpty
 }

@@ -43,7 +43,7 @@ class Giter8 extends xsbti.AppMain {
             case config if config.mode == Launch && !isForked =>
               Launcher.launch(config.repo, config.version, args) match {
                 case Success(msg) => Right(msg)
-                case Failure(e) => Left(e.getMessage)
+                case Failure(e)   => Left(e.getMessage)
               }
             case config =>
               val helper = new JgitHelper(new Git(new JGitInteractor), G8TemplateRenderer)
@@ -63,7 +63,7 @@ class Giter8 extends xsbti.AppMain {
     })
   }
 
-  def run(args: Array[String]):Int = run(args, new File(".").getAbsoluteFile)
+  def run(args: Array[String]): Int = run(args, new File(".").getAbsoluteFile)
 
   val parser: OptionParser[Config] = new scopt.OptionParser[Config]("g8") {
 

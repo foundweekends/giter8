@@ -20,7 +20,8 @@ object SystemPaths {
 
   private def getSystemPath(property: String, default: File): File = {
     sys.env
-      .get(property).map(file)
+      .get(property)
+      .map(file)
       .getOrElse(default)
   }
 

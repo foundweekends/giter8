@@ -19,10 +19,7 @@ package giter8
 
 //This class has been copied from the SBT 0.13 codebase:
 //https://github.com/sbt/sbt/blob/0.13/ivy/src/main/scala/sbt/VersionNumber.scala
-final class VersionNumber private[giter8] (
-    val numbers: Seq[Long],
-    val tags: Seq[String],
-    val extras: Seq[String]) {
+final class VersionNumber private[giter8] (val numbers: Seq[Long], val tags: Seq[String], val extras: Seq[String]) {
 
   def _1: Option[Long] = get(0)
   def _2: Option[Long] = get(1)
@@ -63,11 +60,12 @@ final class VersionNumber private[giter8] (
 }
 
 object VersionNumber {
+
   /**
-   * @param numbers numbers delimited by a dot.
-   * @param tags string prefixed by a dash.
-   * @param any other strings at the end.
-   */
+    * @param numbers numbers delimited by a dot.
+    * @param tags string prefixed by a dash.
+    * @param any other strings at the end.
+    */
   def apply(numbers: Seq[Long], tags: Seq[String], extras: Seq[String]): VersionNumber =
     new VersionNumber(numbers, tags, extras)
 
@@ -126,7 +124,7 @@ object VersionNumber {
 
       @scala.annotation.tailrec
       def sortVersions(versions: Seq[(Long, Long)]): Int = versions match {
-        case Seq((x, y), t@_*) =>
+        case Seq((x, y), t @ _ *) =>
           if (x > y) -1 else if (y > x) 1 else sortVersions(t)
         case _ => 0
       }

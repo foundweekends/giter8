@@ -29,71 +29,78 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
     str <- Gen.listOfN(n, genChar)
   } yield str.mkString
 
-  private def genVersionNumber: Gen[VersionNumber] = for {
-    n       <- Gen.choose(3, 4)
-    numbers <- Gen.listOfN(n, Gen.choose(0, 1000L))
-    t       <- Gen.choose(1, 3)
-    o       <- Gen.choose(1, 3)
-    tags    <- Gen.listOfN(t, defaultGenStr)
-    extras  <- Gen.listOfN(o, defaultGenStr)
-  } yield VersionNumber(numbers, tags, extras)
+  private def genVersionNumber: Gen[VersionNumber] =
+    for {
+      n       <- Gen.choose(3, 4)
+      numbers <- Gen.listOfN(n, Gen.choose(0, 1000L))
+      t       <- Gen.choose(1, 3)
+      o       <- Gen.choose(1, 3)
+      tags    <- Gen.listOfN(t, defaultGenStr)
+      extras  <- Gen.listOfN(o, defaultGenStr)
+    } yield VersionNumber(numbers, tags, extras)
 
-  private def genVersionNumbers: Gen[Seq[VersionNumber]] = for {
-    n        <- Gen.choose(1, 5)
-    versions <- Gen.listOfN(n, genVersionNumber)
-  } yield versions
+  private def genVersionNumbers: Gen[Seq[VersionNumber]] =
+    for {
+      n        <- Gen.choose(1, 5)
+      versions <- Gen.listOfN(n, genVersionNumber)
+    } yield versions
 
-  private def genSameMajorVersionNumbers: Gen[Seq[VersionNumber]] = for {
-    major          <- Gen.choose(0, 1000L)
-    variations     <- Gen.choose(1, 5)
-    versionNumbers <- fixedPrefixVersionNumbers(major)
-  } yield versionNumbers
+  private def genSameMajorVersionNumbers: Gen[Seq[VersionNumber]] =
+    for {
+      major          <- Gen.choose(0, 1000L)
+      variations     <- Gen.choose(1, 5)
+      versionNumbers <- fixedPrefixVersionNumbers(major)
+    } yield versionNumbers
 
-  private def genSameMajorAndMinorVersionNumbers: Gen[Seq[VersionNumber]] = for {
-    major          <- Gen.choose(0, 1000L)
-    minor          <- Gen.choose(0, 1000L)
-    versionNumbers <- fixedPrefixVersionNumbers(major, minor)
-  } yield versionNumbers
+  private def genSameMajorAndMinorVersionNumbers: Gen[Seq[VersionNumber]] =
+    for {
+      major          <- Gen.choose(0, 1000L)
+      minor          <- Gen.choose(0, 1000L)
+      versionNumbers <- fixedPrefixVersionNumbers(major, minor)
+    } yield versionNumbers
 
-  private def genSameMajorAndMinorAndPatchVersionNumbers: Gen[Seq[VersionNumber]] = for {
-    major          <- Gen.choose(0, 1000L)
-    minor          <- Gen.choose(0, 1000L)
-    patch          <- Gen.choose(0, 1000L)
-    versionNumbers <- fixedPrefixVersionNumbers(major, minor, patch)
-  } yield versionNumbers
+  private def genSameMajorAndMinorAndPatchVersionNumbers: Gen[Seq[VersionNumber]] =
+    for {
+      major          <- Gen.choose(0, 1000L)
+      minor          <- Gen.choose(0, 1000L)
+      patch          <- Gen.choose(0, 1000L)
+      versionNumbers <- fixedPrefixVersionNumbers(major, minor, patch)
+    } yield versionNumbers
 
-  private def genSameMajorAndMinorAndPatchAndOtherVersionNumbers: Gen[Seq[VersionNumber]] = for {
-    major          <- Gen.choose(0, 1000L)
-    minor          <- Gen.choose(0, 1000L)
-    patch          <- Gen.choose(0, 1000L)
-    other          <- Gen.choose(0, 1000L)
-    versionNumbers <- fixedPrefixVersionNumbers(major, minor, patch, other)
-  } yield versionNumbers
+  private def genSameMajorAndMinorAndPatchAndOtherVersionNumbers: Gen[Seq[VersionNumber]] =
+    for {
+      major          <- Gen.choose(0, 1000L)
+      minor          <- Gen.choose(0, 1000L)
+      patch          <- Gen.choose(0, 1000L)
+      other          <- Gen.choose(0, 1000L)
+      versionNumbers <- fixedPrefixVersionNumbers(major, minor, patch, other)
+    } yield versionNumbers
 
   private def genEmptyVersionNumber: Gen[VersionNumber] = Gen.const(VersionNumber(Seq(), Seq(), Seq()))
 
+  private def fixedPrefixVersionNumbers(prefix: Long*): Gen[Seq[VersionNumber]] =
+    for {
+      variations <- Gen.choose(1, 5)
+      versionNumbers <- Gen.listOfN(variations, genVersionNumber.map { vn =>
+        VersionNumber(
+          numbers = prefix.toSeq ++: vn.numbers.drop(prefix.length),
+          tags    = vn.tags,
+          extras  = vn.extras
+        )
+      })
+    } yield versionNumbers
 
-  private def fixedPrefixVersionNumbers(prefix: Long*): Gen[Seq[VersionNumber]] = for {
-    variations     <- Gen.choose(1, 5)
-    versionNumbers <- Gen.listOfN(variations, genVersionNumber.map{ vn =>
-                        VersionNumber(
-                          numbers = prefix.toSeq ++: vn.numbers.drop(prefix.length),
-                          tags    = vn.tags,
-                          extras  = vn.extras
-                        )
-                      })
-  } yield versionNumbers
-
-  private def genVersionNumberList: Gen[Seq[VersionNumber]] = for {
-    versions <- Gen.frequency(
-                  (2, genVersionNumbers),
-                  (2, genSameMajorVersionNumbers),
-                  (2, genSameMajorAndMinorVersionNumbers),
-                  (2, genSameMajorAndMinorAndPatchVersionNumbers),
-                  (2, genSameMajorAndMinorAndPatchAndOtherVersionNumbers),
-                  (1, genEmptyVersionNumber.map(Seq(_)))
-                )
-  } yield versions
+  private def genVersionNumberList: Gen[Seq[VersionNumber]] =
+    for {
+      versions <- Gen.frequency(
+        (2, genVersionNumbers),
+        (2, genSameMajorVersionNumbers),
+        (2, genSameMajorAndMinorVersionNumbers),
+        (2, genSameMajorAndMinorAndPatchVersionNumbers),
+        (2, genSameMajorAndMinorAndPatchAndOtherVersionNumbers),
+        (1, genEmptyVersionNumber.map(Seq(_)))
+      )
+    } yield versions
 
   property("ordering") = Prop.forAll(genVersionNumberList) { (versions: Seq[VersionNumber]) =>
     if (versions.isEmpty) Prop(true) //support shrinking to empty.
@@ -114,11 +121,14 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
     (sortedMajor == maxMajor) :| s"expected major: ${sortedMajor}, got: ${maxMajor}"
   }
 
-  private def sortedVersionIsOneOfTheSuppliedVersions(sortedVersion: VersionNumber, versions: Seq[VersionNumber]): Prop = {
-    (versions.contains(sortedVersion)) :| s"expected sorted version: ${sortedVersion} to be one of supplied: ${versions}"
+  private def sortedVersionIsOneOfTheSuppliedVersions(sortedVersion: VersionNumber,
+                                                      versions: Seq[VersionNumber]): Prop = {
+    (versions
+      .contains(sortedVersion)) :| s"expected sorted version: ${sortedVersion} to be one of supplied: ${versions}"
   }
 
-  private def reversingAndSortingIsTheSameAsSortingOnce(sortedVersion: VersionNumber, versions: Seq[VersionNumber]): Prop = {
+  private def reversingAndSortingIsTheSameAsSortingOnce(sortedVersion: VersionNumber,
+                                                        versions: Seq[VersionNumber]): Prop = {
     val reverseSortedVersion = versions.reverse.sorted.head
     (sortedVersion.numbers == reverseSortedVersion.numbers) :|
       s"Reversing and sorting should be the same as sorting. Expected version: ${sortedVersion}, but got: ${reverseSortedVersion}"

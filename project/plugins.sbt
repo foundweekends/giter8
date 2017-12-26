@@ -1,1 +1,1 @@
-addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.5.6")
+addSbtPlugin("com.geirsson" % "sbt-scalafmt" % "0.6.8")

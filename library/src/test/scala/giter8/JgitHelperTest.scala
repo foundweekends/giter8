@@ -8,18 +8,17 @@ import org.scalatest.{EitherValues, FlatSpec, Matchers}
 import scala.util.{Success, Try}
 
 class MockRenderer extends TemplateRenderer {
-  var baseDirectory: File                 = _
-  var workingDirectory: File              = _
-  var arguments: Seq[String]              = _
-  var forceOverwrite: Boolean             = _
-  var outputDirectory: Option[File]       = _
+  var baseDirectory: File           = _
+  var workingDirectory: File        = _
+  var arguments: Seq[String]        = _
+  var forceOverwrite: Boolean       = _
+  var outputDirectory: Option[File] = _
 
   override def render(baseDirectory: File,
                       workingDirectory: File,
                       arguments: Seq[String],
                       forceOverwrite: Boolean,
-                      outputDirectory: Option[File]
-                     ): Either[String, String] = {
+                      outputDirectory: Option[File]): Either[String, String] = {
     this.baseDirectory    = baseDirectory
     this.workingDirectory = workingDirectory
     this.arguments        = arguments
@@ -96,7 +95,9 @@ class JgitHelperTest extends FlatSpec with Matchers {
   }
 
   it should "pass directory to renderer" in new TestFixture {
-    helper.run(Config("foo/bar", None, forceOverwrite = true, directory = Some("directory/template")), Seq.empty, new File(""))
+    helper.run(Config("foo/bar", None, forceOverwrite = true, directory = Some("directory/template")),
+               Seq.empty,
+               new File(""))
     renderer.baseDirectory.getAbsolutePath().endsWith("directory/template") shouldBe true
   }
 }

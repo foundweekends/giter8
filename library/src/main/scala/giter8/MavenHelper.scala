@@ -24,9 +24,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 
 // http://hc.apache.org/httpcomponents-client-4.2.x/httpclient/apidocs/
 trait MavenHelper {
-  def fromMaven(org: String,
-                name: String)(
-                process: (String, NodeSeq) => VersionE): VersionE = {
+  def fromMaven(org: String, name: String)(process: (String, NodeSeq) => VersionE): VersionE = {
     val loc = s"https://repo1.maven.org/maven2/${org.replace('.', '/')}/$name/maven-metadata.xml"
     withHttp(loc) { response =>
       val status = response.getStatusLine
@@ -42,17 +40,14 @@ trait MavenHelper {
     }
   }
 
-  def withHttp[A](url: String)(f: HttpResponse => A): A =
-    {
-      val httpClient = new DefaultHttpClient
+  def withHttp[A](url: String)(f: HttpResponse => A): A = {
+    val httpClient = new DefaultHttpClient
+    try {
+      val r        = new HttpGet(url)
+      val response = httpClient.execute(r)
       try {
-        val r = new HttpGet(url)
-        val response = httpClient.execute(r)
-        try {
-          f(response)
-        } finally {
-        }
-      } finally {
-      }
-    }
+        f(response)
+      } finally {}
+    } finally {}
+  }
 }
