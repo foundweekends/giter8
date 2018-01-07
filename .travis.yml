@@ -3,8 +3,6 @@ sudo: false
 jdk:
   - oraclejdk8
 
-sudo: required
-
 os: linux
 dist: trusty
 jdk: oraclejdk8
