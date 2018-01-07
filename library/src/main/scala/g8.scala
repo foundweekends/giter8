@@ -216,7 +216,7 @@ object G8 {
   def packageDir(s: String)   = s.replace(".", System.getProperty("file.separator"))
   def addRandomId(s: String)  = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
 
-  val Param = """^--(\S+)=(.+)$""".r
+  val Param = """(?s)^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
     def /(child: String): File = new File(file, child)
     def /(path: Path): File    = (file /: path.paths) { _ / _ }
