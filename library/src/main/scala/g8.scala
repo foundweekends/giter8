@@ -221,6 +221,7 @@ object G8 {
     def /(child: String): File = new File(file, child)
     def /(path: Path): File    = (file /: path.paths) { _ / _ }
   }
+  def path(path: String): Path = Path(List(path))
 
   private[giter8] def getFiles(filter: File => Boolean)(f: File): Stream[File] =
     if (f.isDirectory) f.listFiles().toStream.withFilter(filter).flatMap(getFiles(filter))
