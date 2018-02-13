@@ -203,7 +203,7 @@ object G8 {
         throw t
     }
 
-  private def formatize(s: String) = s.replaceAll("""\$(\w+)__(\w+)\$""", """\$$1;format="$2"\$""")
+  private def formatize(s: String) = s.replaceAll("""\$(\w+)__([\w,]+)\$""", """\$$1;format="$2"\$""")
 
   def decapitalize(s: String) = if (s.isEmpty) s else s(0).toLower + s.substring(1)
   def startCase(s: String)    = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
