@@ -49,18 +49,15 @@ body.color_scheme-github a.page {
 }
 body.color_scheme-github a.page:hover {
     color: #06c;
-    background: #efefef;
 }
 body.color_scheme-github a.tochead {
     color: black;
 }
 body.color_scheme-github .collap a.tochead:hover {
     color: #06c;
-    background: #efefef;
 }
 body.color_scheme-github a.header-link:hover {
     color: #06c;
-    background: #efefef;
 }
 body.color_scheme-github code.prettyprint span.str {
   color: #dd1144

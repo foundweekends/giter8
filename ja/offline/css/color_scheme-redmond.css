@@ -32,18 +32,15 @@ a.page {
 }
 a.page:hover {
     color: #06c;
-    background: #efefef;
 }
 a.tochead {
     color: black;
 }
 .collap a.tochead:hover {
     color: #06c;
-    background: #efefef;
 }
 a.header-link:hover {
     color: #06c;
-    background: #efefef;
 }
 code.prettyprint span.str {
   color:#080
