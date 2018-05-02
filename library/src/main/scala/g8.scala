@@ -219,7 +219,7 @@ object G8 {
   val Param = """^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
     def /(child: String): File = new File(file, child)
-    def /(path: Path): File    = (file /: path.paths) { _ / _ }
+    def /(path: Path): File    = path.paths.foldLeft(file) { _ / _ }
   }
   def path(path: String): Path = Path(List(path))
 
@@ -381,7 +381,7 @@ object G8 {
 
   def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {
     arguments.headOption.map { _ =>
-      val specified = (ResolvedProperties.empty /: arguments) {
+      val specified = arguments.foldLeft(ResolvedProperties.empty) {
         case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
           map + (key -> value)
         case (map, Param(key, _)) =>
