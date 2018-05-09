@@ -47,7 +47,17 @@ object Giter8Plugin extends sbt.AutoPlugin {
       val props = (g8Properties in g8).value
       val s     = streams.value
       IO.delete(out)
-      G8(srcs pair relativeTo(base), out, props)
+      val retval = G8(srcs pair relativeTo(base), out, props)
+
+      // copy scaffolds
+      val scaffoldsDir = (sourceDirectory in Compile).value / "scaffolds"
+      val scaffolds = if (scaffoldsDir.exists) {
+        val outDir = out / ".g8"
+        IO.copyDirectory(scaffoldsDir, outDir)
+        sbt.Path.allSubpaths(outDir).collect { case (f, _) if f.isFile => f }
+      } else Nil
+
+      retval ++ scaffolds
     },
     aggregate in g8 := false,
     unmanagedSourceDirectories in g8 := {
@@ -104,11 +114,20 @@ object Giter8Plugin extends sbt.AutoPlugin {
         IO.delete(out)
         val retval = G8(srcs pair relativeTo(base), out, props)
 
+        // copy scaffolds
+        val scaffoldsDir = (sourceDirectory in Compile).value / "scaffolds"
+        val scaffolds = if (scaffoldsDir.exists) {
+          val outDir = out / ".g8"
+          IO.copyDirectory(scaffoldsDir, outDir)
+          sbt.Path.allSubpaths(outDir).collect { case (f, _) if f.isFile => f }
+        } else Nil
+
         // copy test script or generate one
         val script = new File(out, "test")
         if (ts.exists) IO.copyFile(ts, script)
         else IO.write(script, """>test""")
-        retval :+ script
+
+        retval ++ scaffolds :+ script
       },
       sbtTestDirectory := { target.value / "sbt-test" },
       target in (Test, g8) := { sbtTestDirectory.value / name.value / "scripted" },
