@@ -1,7 +1,3 @@
-import java.io.File
-
-import scala.util.Try
-
 /*
  * Original implementation (C) 2014-2015 Kenji Yoshida and contributors
  * Adapted and extended in 2016 by foundweekends project
@@ -22,16 +18,4 @@ import scala.util.Try
 package object giter8 {
 
   type VersionE = Either[String, String]
-
-  def file(path: String): File = new File(path)
-  def path(path: String): Path = Path(List(path))
-
-  implicit class OptTry[A](a: Try[Option[A]]) {
-    def or(b: Try[Option[A]]): Try[Option[A]] =
-      a.flatMap {
-        unwrapped =>
-          if (unwrapped.isDefined) a else b
-      }
-  }
 }
-

@@ -4,7 +4,6 @@ import java.io.File
 
 import org.scalatest.{FlatSpec, Matchers}
 
-
 class VerbatimTest extends FlatSpec with Matchers {
 
   "G8" should "ignore file based on extension" in {

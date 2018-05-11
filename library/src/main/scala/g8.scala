@@ -59,29 +59,36 @@ object G8 {
   type ValueF = ResolvedProperties => String
 
   // Called from JgitHelper
-  def fromDirectory(baseDirectory: File,
-                    outputDirectory: File,
-                    arguments: Seq[String],
-                    forceOverwrite: Boolean): Either[String, String] =
+  def fromDirectory(
+      baseDirectory: File,
+      workingDirectory: File,
+      arguments: Seq[String],
+      forceOverwrite: Boolean,
+      outputDirectory: Option[File]
+  ): Either[String, String] =
     applyT(
       (file: File) =>
         fetchInfo(file: File,
                   defaultTemplatePaths,
                   List(path("src") / "main" / "scaffolds", path("project") / "src" / "main" / "scaffolds")))(
       baseDirectory,
-      outputDirectory,
+      workingDirectory,
       arguments,
-      forceOverwrite)
+      forceOverwrite,
+      outputDirectory)
 
   // Called from ScaffoldPlugin
   def fromDirectoryRaw(baseDirectory: File,
                        outputDirectory: File,
                        arguments: Seq[String],
                        forceOverwrite: Boolean): Either[String, String] =
-    applyT((file: File) => fetchInfo(file, List(Path(Nil)), Nil))(baseDirectory,
-                                                                  outputDirectory,
-                                                                  arguments,
-                                                                  forceOverwrite)
+    applyT((file: File) => fetchInfo(file, List(Path(Nil)), Nil))(
+      baseDirectory,
+      outputDirectory,
+      arguments,
+      forceOverwrite,
+      None
+    )
 
   val defaultTemplatePaths: List[Path] = List(path("src") / "main" / "g8", Path(Nil))
 
@@ -168,8 +175,9 @@ object G8 {
 
     val rules = JGitIgnore(
       parameters
-      .get("verbatim").toSeq
-      .flatMap(_.split(' ').toSeq): _*
+        .get("verbatim")
+        .toSeq
+        .flatMap(_.split(' ').toSeq): _*
     )
 
     rules.isIgnored(file, base)
@@ -212,8 +220,9 @@ object G8 {
   val Param = """^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
     def /(child: String): File = new File(file, child)
-    def /(path: Path): File    = (file /: path.paths) { _ / _ }
+    def /(path: Path): File    = path.paths.foldLeft(file) { _ / _ }
   }
+  def path(path: String): Path = Path(List(path))
 
   private[giter8] def getFiles(filter: File => Boolean)(f: File): Stream[File] =
     if (f.isDirectory) f.listFiles().toStream.withFilter(filter).flatMap(getFiles(filter))
@@ -234,20 +243,29 @@ object G8 {
   /** Extract template files under the first matching relative templatePaths under the baseDirectory. */
   def templateFiles(root: File, baseDirectory: File): Stream[File] = {
 
-    val gitignoreFile: File  = root / ".gitignore"
-    val g8IgnoreFile: File   = baseDirectory / ".g8ignore"
+    val gitignoreFile: File = root / ".gitignore"
+    val g8IgnoreFile: File  = baseDirectory / ".g8ignore"
 
     val g8Ignores: JGitIgnore = {
 
       lazy val defaults: JGitIgnore = JGitIgnore(
         ".git",
-        "giter8.sbt", "project/giter8.sbt",
-        "g8.sbt", "project/g8.sbt",
-        "activator.properties", "project/activator.properties",
-        "template.properties", "project/template.properties",
-        "test", "!test/", "project/test", "!project/test/",
-        "giter8.test", "project/giter8.test",
-        "g8.test", "project/g8.test",
+        "giter8.sbt",
+        "project/giter8.sbt",
+        "g8.sbt",
+        "project/g8.sbt",
+        "activator.properties",
+        "project/activator.properties",
+        "template.properties",
+        "project/template.properties",
+        "test",
+        "!test/",
+        "project/test",
+        "!project/test/",
+        "giter8.test",
+        "project/giter8.test",
+        "g8.test",
+        "project/g8.test",
         "target/",
         "**/target/"
       )
@@ -283,9 +301,10 @@ object G8 {
       // isScaffolding: Boolean = false
   )(
       tmpl: File,
-      outputFolder: File,
+      workingDirectory: File,
       arguments: Seq[String]  = Nil,
-      forceOverwrite: Boolean = false
+      forceOverwrite: Boolean = false,
+      outputDirectory: Option[File]
   ): Either[String, String] =
     try {
       fetch(tmpl).right.flatMap {
@@ -294,7 +313,12 @@ object G8 {
             interact(defaults)
           }
 
-          val base = outputFolder / parameters.get("name").map(G8.normalize).getOrElse("")
+          val base: File = outputDirectory
+            .orElse {
+              parameters.get("name").map(workingDirectory / G8.normalize(_))
+            }
+            .getOrElse(workingDirectory)
+
           val r = writeTemplates(templatesRoot,
                                  templates,
                                  parameters,
@@ -308,7 +332,7 @@ object G8 {
       }
     } catch {
       case e: STException =>
-        Left(s"Exiting due to error in the template\n${e.getMessage}")
+        Left(s"Exiting due to error in the template: ${tmpl}\n${e.getMessage}")
       case t: Throwable =>
         Left("Unknown exception: " + t.getMessage)
     }
@@ -358,7 +382,7 @@ object G8 {
 
   def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {
     arguments.headOption.map { _ =>
-      val specified = (ResolvedProperties.empty /: arguments) {
+      val specified = arguments.foldLeft(ResolvedProperties.empty) {
         case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
           map + (key -> value)
         case (map, Param(key, _)) =>

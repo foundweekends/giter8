@@ -24,10 +24,10 @@ import giter8.GitRepository.{GitHub, Local, Remote}
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.filefilter.TrueFileFilter
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
 import scala.collection.JavaConverters._
 
-class Git(gitInteractor: GitInteractor) extends TempDir {
+class Git(gitInteractor: GitInteractor) {
   import Git._
 
   def clone(repository: GitRepository, ref: Option[Ref], destination: File): Try[Unit] = repository match {
@@ -89,38 +89,6 @@ class Git(gitInteractor: GitInteractor) extends TempDir {
       new File(toDir, relativePath).setExecutable(true)
     }
   }
-
-  /**
-    * Clones a repo locally and executes the block, passing a `File` to the base
-    * of the cloned repo.
-    *
-    * Uses a tempdir which is cleaned up after the block runs
-    *
-    * @param repo
-    * @param tag
-    * @param block
-    * @tparam A
-    * @return
-    */
-  def withRepo[A](repo: String, tag: Option[String])(block: File => A): Try[A] = withTempdir {
-    file =>
-
-      val ref = tag.map {
-        v =>
-          if (v startsWith "v") Tag(v) else Tag(s"v$v")
-      }
-
-      for {
-        repository <- GitRepository.fromString(repo) match {
-          case Right(r) => Success(r)
-          case Left(msg) => Failure(new RuntimeException(msg))
-        }
-        _          <- clone(repository, ref, file)
-      } yield block(file)
-  }.flatten
-
-  def withRepo[A](repo: String)(block: File => A): Try[A] =
-    withRepo(repo, None)(block)
 }
 
 object Git {

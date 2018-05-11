@@ -3,8 +3,6 @@ sudo: false
 jdk:
   - oraclejdk8
 
-sudo: required
-
 os: linux
 dist: trusty
 jdk: oraclejdk8
@@ -12,14 +10,14 @@ language: scala
 
 env:
   matrix:
-    - SBT_VERSION=0.13.16
-    - SBT_VERSION=1.0.2
+    - SBT_VERSION=0.13.17
+    - SBT_VERSION=1.0.4
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
 
 script:
-  - sbt "-no-colors" "^^ $SBT_VERSION" ";plugin/scripted;scaffold/scripted;lib/test"
+  - sbt "-no-colors" "^^ $SBT_VERSION" ";scalafmtTest;plugin/scripted;scaffold/scripted;lib/test"
 
 after_success:
 - export SBT_GHPAGES_COMMIT_MESSAGE="updated site https://github.com/foundweekends/giter8/commit/${TRAVIS_COMMIT}"

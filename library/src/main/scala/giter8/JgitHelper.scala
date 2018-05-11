@@ -29,18 +29,13 @@ case class Tag(name: String) extends Ref
 
 case class Branch(name: String) extends Ref
 
-sealed trait Mode
-case object Launch extends Mode
-case object Run extends Mode
-
 case class Config(
-                   repo: String,
-                   ref: Option[Ref]          = None,
-                   forceOverwrite: Boolean   = false,
-                   directory: Option[String] = None,
-                   version: Option[String]   = None,
-                   mode: Mode                = Launch
-                 )
+    repo: String,
+    ref: Option[Ref]          = None,
+    forceOverwrite: Boolean   = false,
+    directory: Option[String] = None,
+    out: Option[String]       = None
+)
 
 class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
 
@@ -60,16 +55,17 @@ class JgitHelper(gitInteractor: Git, templateRenderer: TemplateRenderer) {
   private val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
 
   /** Clean temporary directory used for git cloning */
-  def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDeleteOnExit(tempdir)
+  def cleanup(): Unit = if (tempdir.exists) FileUtils.forceDelete(tempdir)
 
-  def run(config: Config, arguments: Seq[String], outDirectory: File): Either[String, String] =
+  def run(config: Config, arguments: Seq[String], workingDirectory: File): Either[String, String] =
     for {
       repository <- GitRepository.fromString(config.repo)
       baseDir <- gitInteractor.clone(repository, config.ref, tempdir) match {
         case Success(_) => Right(new File(tempdir, config.directory.getOrElse("")))
         case Failure(e) => Left(e.getMessage)
       }
-      renderedTemplate <- templateRenderer.render(baseDir, outDirectory, arguments, config.forceOverwrite)
+      out: Option[File] = config.out.map(new File(_))
+      renderedTemplate <- templateRenderer.render(baseDir, workingDirectory, arguments, config.forceOverwrite, out)
     } yield renderedTemplate
 
 }

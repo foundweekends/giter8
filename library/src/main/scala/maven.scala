@@ -78,8 +78,9 @@ object Maven extends JavaTokenParsers with MavenHelper {
   }
 
   def lsIsGone(artifact: String): VersionE =
-    Left("ls() function is deprecated. " +
-      s"Use maven() function to get latest version of ${artifact.trim}.")
+    Left(
+      "ls() function is deprecated. " +
+        s"Use maven() function to get latest version of ${artifact.trim}.")
 
   def lookup(rawDefaults: G8.OrderedProperties): Either[String, G8.OrderedProperties] = {
     val defaults = rawDefaults.map {

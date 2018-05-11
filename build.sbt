@@ -1,7 +1,7 @@
 import Dependencies._
 import CrossVersion.partialVersion
 
-val g8version = "0.10.1-SNAPSHOT"
+val g8version = "0.11.0-SNAPSHOT"
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
@@ -56,12 +56,12 @@ lazy val app = (project in file("app"))
   )
 
 lazy val crossSbt = Seq(
-  crossSbtVersions := List("0.13.16", "1.0.2"),
+  crossSbtVersions := List("0.13.17", "1.0.4"),
   scalaVersion := {
     val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
     partialVersion(crossSbtVersion) match {
       case Some((0, 13)) => scala210
-      case Some((1, _)) => scala212
+      case Some((1, _))  => scala212
       case _ =>
         throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 0.13.x or 1.X)")
     }
@@ -113,7 +113,7 @@ lazy val plugin = (project in file("plugin"))
     libraryDependencies += {
       val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
 
-      val artifact = 
+      val artifact =
         partialVersion(crossSbtVersion) match {
           case Some((0, 13)) =>
             "org.scala-sbt" % "scripted-plugin"
@@ -143,12 +143,11 @@ lazy val lib = (project in file("library"))
       jgit,
       commonsIo,
       plexusArchiver,
-      gigahorse,
       scalacheck % Test,
       sbtIo % Test,
       scalatest % Test,
       scalamock % Test,
-      "org.slf4j" % "slf4j-simple" % "1.7.12" % Test
+      "org.slf4j" % "slf4j-simple" % "1.7.25" % Test
     ) ++
       (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor >= 11 =>
