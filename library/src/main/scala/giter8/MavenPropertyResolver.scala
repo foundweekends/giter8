@@ -91,12 +91,9 @@ case class MavenPropertyResolver(httpClient: HttpClient) extends PropertyResolve
   }
 
   private def mavenRepo: Option[String] = {
-    val home = Option(System.getProperty("G8_HOME")) match {
-      case None    => new File(System.getProperty("user.home"), ".g8")
-      case Some(f) => new File(f)
-    }
-
-    val mvnRepo = new File(home + "/mvnrepo")
+    val homeStr = System.getProperty("G8_HOME", System.getProperty("user.home") + File.separator + ".g8")
+    val home    = new File(homeStr)
+    val mvnRepo = new File(homeStr + File.separator + "mvnrepo")
     if (!home.exists() || !mvnRepo.exists()) None
     else {
       scala.io.Source.fromFile(mvnRepo).getLines().find(!_.trim.isEmpty)
