@@ -3,6 +3,11 @@ import CrossVersion.partialVersion
 
 val g8version = "0.11.0-SNAPSHOT"
 
+val javaVmArgs: List[String] = {
+  import scala.collection.JavaConverters._
+  java.lang.management.ManagementFactory.getRuntimeMXBean.getInputArguments.asScala.toList
+}
+
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
@@ -78,7 +83,7 @@ lazy val scaffold = (project in file("scaffold"))
     sbtPlugin := true,
     crossScalaVersions := List(scala210, scala212),
     scriptedSettings,
-    scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
+    scriptedLaunchOpts ++= javaVmArgs.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
     ),
     scriptedBufferLog := false,
@@ -102,7 +107,7 @@ lazy val plugin = (project in file("plugin"))
     sbtPlugin := true,
     crossScalaVersions := List(scala210, scala212),
     resolvers += Resolver.typesafeIvyRepo("releases"),
-    scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
+    scriptedLaunchOpts ++= javaVmArgs.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
     ),
     scriptedBufferLog := false,
