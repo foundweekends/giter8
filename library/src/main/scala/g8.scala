@@ -217,7 +217,7 @@ object G8 {
   def addRandomId(s: String)     = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
   def scalaIdentifier(s: String) = if (s.contains("-")) "`" + s + "`" else s
 
-  val Param = """^--(\S+)=(.+)$""".r
+  val Param = """(?s)^--(\S+)=(.+)$""".r
   implicit class RichFile(file: File) {
     def /(child: String): File = new File(file, child)
     def /(path: Path): File    = path.paths.foldLeft(file) { _ / _ }
