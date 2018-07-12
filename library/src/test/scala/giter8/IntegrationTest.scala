@@ -201,6 +201,16 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       checkGeneratedProject(template, expected, actual)
   }
 
+  it should "apply multiple filters to files and directories" in testCase {
+    case (template, expected, actual) =>
+      """
+        | test = Foo Bar
+      """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
+      """$test;format="lower,word"$""" >> (template / "src" / "main" / "g8" / """$test__lower,word$""" / """$test__lower,word$""")
+      "foobar" >> (expected / "foobar" / "foobar")
+      checkGeneratedProject(template, expected, actual)
+  }
+
   private def testCase(test: (File, File, File) => Unit): Unit = {
     tempDirectory { tmp =>
       val templateDir = mkdir(tmp / "template")
