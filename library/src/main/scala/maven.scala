@@ -36,12 +36,9 @@ object Maven extends JavaTokenParsers with MavenHelper {
     Some(parse(spec, value)).filter { _.successful }.map { _.get }
 
   private def mavenRepo(): Option[String] = {
-    val home = Option(System.getProperty("G8_HOME"))
-      .map(new File(_))
-      .getOrElse(
-        new File(System.getProperty("user.home"), ".g8")
-      )
-    val mvnRepo = new File(home + "/mvnrepo")
+    val homeStr = System.getProperty("G8_HOME", System.getProperty("user.home") + File.separator + ".g8")
+    val home    = new File(homeStr)
+    val mvnRepo = new File(homeStr + File.separator + "mvnrepo")
     if (!home.exists() || !mvnRepo.exists()) None
     else {
       scala.io.Source.fromFile(mvnRepo).getLines().find(!_.trim.isEmpty)
