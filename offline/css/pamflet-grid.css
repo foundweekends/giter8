@@ -82,11 +82,9 @@ a.tochead {
 }
 .collap a.tochead:hover {
     color: #06c;
-    background: #efefef;
 }
 a.header-link:hover {
     color: #06c;
-    background: #efefef;
 }
 h1:hover span.header-link-content:before,
 h2:hover span.header-link-content:before,

@@ -153,7 +153,17 @@ scalaVersion := "2.11.11"
 $else$
 scalaVersion := "2.10.6"
 $endif$
-</pre><h3 id="name+field">name field<a href="#name+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>name</code> field, if defined, is treated specially by Giter8. It is
+</pre><p>These could also be used include/exclude files or directories:
+</p><pre><code class="prettyprint lang-bash">src/main/g8
+├── $name__normalize$
+│   ├── $if(jvm.truthy)$jvm$endif$
+│   │   └── src
+│   │       └── main
+│   │           └── scala
+│   │               └── $organization__packaged$
+│   │                   └── $name;format=&quot;Camel&quot;$.scala
+
+</code></pre><h3 id="name+field">name field<a href="#name+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>name</code> field, if defined, is treated specially by Giter8. It is
 assumed to be the name of a project being created, so the g8 runtime
 creates a directory based off that name (with spaces and capitals
 replaced) that will contain the template output. If no name field is
@@ -206,11 +216,13 @@ cap      | capitalize      : uppercase first letter
 decap    | decapitalize    : lowercase first letter
 start    | start-case      : uppercase the first letter of each word
 word     | word-only       : remove all non-word letters (only a-zA-Z0-9_)
+space    | word-space      : replace all non-word letters (only a-zA-Z0-9) with a whitespace
 Camel    | upper-camel     : upper camel case (start-case, word-only)
 camel    | lower-camel     : lower camel case (start-case, word-only, decapitalize)
 hyphen   | hyphenate       : replace spaces with hyphens
 norm     | normalize       : all lowercase with hyphens (lowercase, hyphenate)
 snake    | snake-case      : replace spaces and dots with underscores
+package  | package-naming  : replace spaces with dots
 packaged | package-dir     : replace dots with slashes (net.databinder -&gt; net/databinder)
 random   | generate-random : appends random characters to the given string
 </code></pre><p>A <code>name</code> field with a value of <code>My Project</code> could be rendered in several ways:
