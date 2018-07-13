@@ -18,7 +18,7 @@ Giter8 は、テンプレートフィールドをフォーマットする方法�
     decap    | decapitalize    : 最初の文字を小文字化
     start    | start-case      : 各ワードの最初の文字を大文字化
     word     | word-only       : 非ワード文字の除去 (a-zA-Z0-9_ のみ)
-    words    | words-only      : replace all non-word letters (only a-zA-Z0-9) with a whitespace
+    space    | word-space      : replace all non-word letters (only a-zA-Z0-9) with a whitespace
     Camel    | upper-camel     : 大文字キャメルケース (start-case, word-only)
     camel    | lower-camel     : 小文字キャメルケース (start-case, word-only, decapitalize)
     hyphen   | hyphenate       : 空文字のハイフン化

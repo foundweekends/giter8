@@ -18,7 +18,7 @@ The formatting options are:
     decap    | decapitalize    : lowercase first letter
     start    | start-case      : uppercase the first letter of each word
     word     | word-only       : remove all non-word letters (only a-zA-Z0-9_)
-    words    | words-only      : replace all non-word letters (only a-zA-Z0-9) with a whitespace
+    space    | word-space      : replace all non-word letters (only a-zA-Z0-9) with a whitespace
     Camel    | upper-camel     : upper camel case (start-case, word-only)
     camel    | lower-camel     : lower camel case (start-case, word-only, decapitalize)
     hyphen   | hyphenate       : replace spaces with hyphens

@@ -41,8 +41,8 @@ object FormatSpecification extends Properties("Format") {
   property("formatSnakecase") =
     conversion("""$x;format="snake"$""", Map("x" -> "My-Example-Project")) == "My_Example_Project"
 
-  property("formatWords") =
-    conversion("""$x;format="words"$""", Map("x" -> "Foo-Bar_baz:_:bam")) == "Foo Bar baz bam"
+  property("formatSpace") =
+    conversion("""$x;format="space"$""", Map("x" -> "Foo-Bar_baz:_:bam")) == "Foo Bar baz bam"
 
   property("formatPackageNaming") =
     conversion("""$x;format="package"$""", Map("x" -> "foo bar  baz")) == "foo.bar.baz"
