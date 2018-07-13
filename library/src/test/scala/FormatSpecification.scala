@@ -41,6 +41,12 @@ object FormatSpecification extends Properties("Format") {
   property("formatSnakecase") =
     conversion("""$x;format="snake"$""", Map("x" -> "My-Example-Project")) == "My_Example_Project"
 
+  property("formatSpace") =
+    conversion("""$x;format="space"$""", Map("x" -> "Foo-Bar_baz:_:bam")) == "Foo Bar baz bam"
+
+  property("formatPackageNaming") =
+    conversion("""$x;format="package"$""", Map("x" -> "foo bar  baz")) == "foo.bar.baz"
+
   lazy val hiragana = (0x3041 to 0x3094).toList
 
   lazy val nonDollarChar: Gen[Char] = Gen.oneOf(
