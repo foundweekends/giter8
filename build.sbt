@@ -1,7 +1,7 @@
 import Dependencies._
 import CrossVersion.partialVersion
 
-val g8version = "0.11.0-SNAPSHOT"
+val g8version = "0.11.0"
 
 val javaVmArgs: List[String] = {
   import scala.collection.JavaConverters._
@@ -41,6 +41,7 @@ lazy val root = (project in file("."))
     crossScalaVersions := List(scala210, scala211, scala212),
     siteGithubRepo := "foundweekends/giter8",
     siteEmail := { "eed3si9n" + "@" + "gmail.com" },
+    skip in publish := true,
     customCommands
   )
 
@@ -164,8 +165,17 @@ lazy val lib = (project in file("library"))
 def customCommands: Seq[Setting[_]] = Seq(
   commands += Command.command("release") { state =>
     "clean" ::
-      "so compile" ::
-      "so publishSigned" ::
+      "++2.10.6" ::
+      "lib/publishSigned" ::
+      "app/publishSigned" ::
+      "plugin/publishSigned" ::
+      "scaffold/publishSigned" ::
+      "++2.12.6" ::
+      "^^1.1.6" ::
+      "lib/publishSigned" ::
+      "app/publishSigned" ::
+      "plugin/publishSigned" ::
+      "scaffold/publishSigned" ::
       "reload" ::
       state
   }
