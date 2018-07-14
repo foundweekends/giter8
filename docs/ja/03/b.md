@@ -57,5 +57,5 @@ Github にテンプレートをプッシュすれば即座に実際の g8 ラン
 (プロジェクト名に `.g8` 拡張子を付けるのを忘れないように)
 完成したらテンプレートプロジェクトを [wiki][wiki] に追加して他の Giter8 ユーザが見つけれるようにしよう。
 
-  [scripted]: http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html
+  [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
   [wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates

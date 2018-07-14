@@ -66,5 +66,5 @@ project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
 
-  [scripted]: http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html
+  [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
   [wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
