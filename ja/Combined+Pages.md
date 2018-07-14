@@ -296,7 +296,7 @@ Github ブランチにテンプレートをプッシュする前にちゃんと�
 `project/giter8.sbt` に書き込む:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.11.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.9.0")
 ```
 
 このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
@@ -333,7 +333,7 @@ Giter8 は scaffolding 用の sbt プラグインも提供している。
 以下を `project/scaffold.sbt` に書く:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.11.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.9.0")
 ```
 
 これで sbt シェルから `g8Scaffold` コマンドを使えるようになる。
