@@ -23,8 +23,8 @@ $ sbt new eed3si9n/hello.g8
 
 Giter8 is licensed under Apache 2.0 license
 
-[launcher]: http://www.scala-sbt.org/0.13/docs/Setup.html
-[new]: http://www.scala-sbt.org/0.13/docs/sbt-new-and-Templates.html
+[launcher]: https://www.scala-sbt.org/1.x/docs/Setup.html
+[new]: https://www.scala-sbt.org/1.x/docs/sbt-new-and-Templates.html
 
 
 Setup
@@ -405,7 +405,7 @@ project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
 
-  [scripted]: http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html
+  [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
   [wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
 
 

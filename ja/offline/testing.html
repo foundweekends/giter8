@@ -61,7 +61,7 @@ Github ブランチにテンプレートをプッシュする前にちゃんと�
 </p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.9.0&quot;)
 </code></pre><p>このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
 <code>g8Test</code> というアクションでデフォルトのアウトプットディレクトリ (<code>target/sbt-test</code>)
-内にテンプレートが適用されて、そのプロジェクトに対して<a href="http://www.scala-sbt.org/0.13/docs/Testing-sbt-plugins.html">scriptted test</a> がフォークプロセスで実行される。
+内にテンプレートが適用されて、そのプロジェクトに対して<a href="https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html">scriptted test</a> がフォークプロセスで実行される。
 テストスクリプトは <code>project/giter8.test</code> もしくは <code>src/test/g8/test</code> として提供できる。
 もし無ければ <code>&gt;test</code> が使用される。
 特に sbt プロジェクトを生成するテンプレートはこの方法でテストできるはずだ。
