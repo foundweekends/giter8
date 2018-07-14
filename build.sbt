@@ -11,6 +11,7 @@ val javaVmArgs: List[String] = {
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
+  .disablePlugins(ScriptedPlugin)
   .aggregate(app, lib, scaffold, plugin)
   .settings(
     inThisBuild(
@@ -46,7 +47,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val app = (project in file("app"))
-  .disablePlugins(BintrayPlugin)
+  .disablePlugins(BintrayPlugin, ScriptedPlugin)
   .enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish)
   .dependsOn(lib)
   .settings(
@@ -62,7 +63,7 @@ lazy val app = (project in file("app"))
   )
 
 lazy val crossSbt = Seq(
-  crossSbtVersions := List("0.13.17", "1.0.4"),
+  crossSbtVersions := List("0.13.17", "1.1.6"),
   scalaVersion := {
     val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
     partialVersion(crossSbtVersion) match {
@@ -83,13 +84,12 @@ lazy val scaffold = (project in file("scaffold"))
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
     crossScalaVersions := List(scala210, scala212),
-    scriptedSettings,
     scriptedLaunchOpts ++= javaVmArgs.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
     ),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scripted := ScriptedPlugin.scripted
+    scripted := scripted
       .dependsOn(publishLocal in lib)
       .evaluated,
     test in Test := {
@@ -103,7 +103,6 @@ lazy val plugin = (project in file("plugin"))
   .settings(crossSbt)
   .settings(
     name := "sbt-giter8",
-    scriptedSettings,
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
     crossScalaVersions := List(scala210, scala212),
@@ -113,7 +112,7 @@ lazy val plugin = (project in file("plugin"))
     ),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scripted := ScriptedPlugin.scripted
+    scripted := scripted
       .dependsOn(publishLocal in lib)
       .evaluated,
     libraryDependencies += {
@@ -137,7 +136,7 @@ lazy val plugin = (project in file("plugin"))
   )
 
 lazy val lib = (project in file("library"))
-  .disablePlugins(BintrayPlugin)
+  .disablePlugins(BintrayPlugin, ScriptedPlugin)
   .enablePlugins(SonatypePublish)
   .settings(crossSbt)
   .settings(

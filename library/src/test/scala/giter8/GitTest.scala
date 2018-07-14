@@ -12,8 +12,8 @@ import scala.util.{Failure, Success, Try}
 
 class GitTest extends FlatSpec with Matchers with EitherValues with TryValues with MockFactory {
   trait TestFixture {
-    var directoryWasCleaned = false
-    var directoryWasCopied  = false
+    var directoryWasCleaned           = false
+    var directoryWasCopied            = false
     val interactorMock: GitInteractor = mock[GitInteractor]
 
     val git = new Git(interactorMock) {
