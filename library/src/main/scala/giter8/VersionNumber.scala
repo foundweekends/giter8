@@ -124,7 +124,7 @@ object VersionNumber {
 
       @scala.annotation.tailrec
       def sortVersions(versions: Seq[(Long, Long)]): Int = versions match {
-        case Seq((x, y), t @ _ *) =>
+        case Seq((x, y), t @ _*) =>
           if (x > y) -1 else if (y > x) 1 else sortVersions(t)
         case _ => 0
       }
