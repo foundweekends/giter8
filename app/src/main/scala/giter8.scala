@@ -77,7 +77,7 @@ class Giter8 extends xsbti.AppMain {
 
     opt[String]('o', "out") action { (o, config) =>
       config.copy(out = Some(o))
-    }
+    } text "Output directory"
 
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
@@ -103,6 +103,9 @@ class Giter8 extends xsbti.AppMain {
       |
       |Apply template from a directory that exists in the repo
       |    g8 foundweekends/giter8 -d some-directory/template
+      |
+      |Apply template into an output directory
+      |    g8 foundweekends/giter8 -o output-directory
       |
       |Apply template from a local repo
       |    g8 file://path/to/the/repo
