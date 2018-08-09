@@ -1,8 +1,8 @@
 import sbt._
 
 object Dependencies {
-  val scalasti  = "org.clapper" %% "scalasti" % "2.1.4"
-  val commonsIo = "commons-io" % "commons-io" % "2.6"
+  val stringTemplate = "org.antlr" % "ST4" % "4.0.8"
+  val commonsIo      = "commons-io" % "commons-io" % "2.6"
   val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll (
     ExclusionRule("org.apache.commons", "commons-compress"),
     ExclusionRule("classworlds", "classworlds"),

@@ -18,7 +18,7 @@
 package giter8
 
 import java.io.{File, InputStream}
-import java.util.Properties
+import java.util.{Locale, Properties}
 
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
@@ -34,7 +34,7 @@ import scala.util.Try
 import scala.util.control.Exception.{allCatch, catching}
 
 object G8 {
-  import org.clapper.scalasti.{STGroup, STHelper, STErrorListener}
+  import org.stringtemplate.v4.{AttributeRenderer, ST, STGroup, STErrorListener}
 
   /** Properties in the order they were created/defined */
   type OrderedProperties = List[(String, String)]
@@ -116,15 +116,25 @@ object G8 {
   }
 
   def applyTemplate(default: String, resolved: ResolvedProperties): String = {
-    val group = STGroup('$', '$')
-    group.nativeGroup.setListener(new STErrorHandler)
-    group.registerRenderer(renderer)
+    val group = new STGroup('$', '$')
+    group.setListener(new STErrorHandler)
+    group.registerRenderer(
+      classOf[AugmentedString],
+      new AttributeRenderer {
+        override def toString(o: AnyRef, format: String, locale: Locale) =
+          renderer.toString(o.asInstanceOf[AugmentedString], format, locale)
+      }
+    )
 
     val attributes = resolved mapValues AugmentedString.apply
 
-    STHelper(group, default)
-      .setAttributes(attributes)
-      .render()
+    val st = new ST(group, default)
+
+    attributes.foreach {
+      case (k, v) =>
+        st.add(k, v)
+    }
+    st.render()
   }
 
   class STErrorHandler extends STErrorListener {
@@ -543,11 +553,11 @@ case class Path(paths: List[String]) {
   def /(child: String): Path = copy(paths = paths ::: List(child))
 }
 
-class AugmentedStringRenderer extends org.clapper.scalasti.AttributeRenderer[AugmentedString] {
+class AugmentedStringRenderer {
   import G8._
   def toString(value: String): String = value
 
-  override def toString(value: AugmentedString, formatName: String, locale: java.util.Locale): String = {
+  def toString(value: AugmentedString, formatName: String, locale: java.util.Locale): String = {
     val str = value.toString
 
     if (formatName == null) str
