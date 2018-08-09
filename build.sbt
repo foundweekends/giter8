@@ -144,7 +144,7 @@ lazy val lib = (project in file("library"))
     description := "shared library for app and plugin",
     crossScalaVersions := List(scala210, scala211, scala212),
     libraryDependencies ++= Seq(
-      scalasti,
+      stringTemplate,
       jgit,
       commonsIo,
       plexusArchiver,
