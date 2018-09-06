@@ -24,8 +24,10 @@ import org.apache.http.impl.client.DefaultHttpClient
 
 // http://hc.apache.org/httpcomponents-client-4.2.x/httpclient/apidocs/
 trait MavenHelper {
-  def fromMaven(org: String, name: String)(process: (String, NodeSeq) => VersionE): VersionE = {
-    val loc = s"http://search.maven.org/solrsearch/select?q=g:%22$org%22+AND+a:%22$name%22&rows=10&wt=xml"
+  def fromMaven(org: String, name: String, getVersions: Boolean)(process: (String, NodeSeq) => VersionE): VersionE = {
+    val search = "http://search.maven.org/solrsearch/select"
+    val loc    = s"""$search?q=g:%22$org%22+AND+a:%22$name%22&rows=10&wt=xml${if (getVersions) "&core=gav" else ""}"""
+
     withHttp(loc) { response =>
       val status = response.getStatusLine
       status.getStatusCode match {

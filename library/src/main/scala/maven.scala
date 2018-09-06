@@ -48,12 +48,12 @@ object Maven extends JavaTokenParsers with MavenHelper {
   private def latestVersion(
       org: String,
       name: String
-  ): VersionE = fromMaven(org, name)(findLatestVersion)
+  ): VersionE = fromMaven(org, name, false)(findLatestVersion)
 
   private def latestStableVersion(
       org: String,
       name: String
-  ): VersionE = fromMaven(org, name)(findLatestStableVersion)
+  ): VersionE = fromMaven(org, name, true)(findLatestStableVersion)
 
   private[giter8] def findLatestVersion(loc: String, elem: NodeSeq): VersionE = {
     (elem \ "result" \ "doc" \ "str")
@@ -63,7 +63,7 @@ object Maven extends JavaTokenParsers with MavenHelper {
 
   private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(
       implicit svo: Ordering[VersionNumber]): VersionE = {
-    val versions = (elem \ "result" \ "doc" \ "str").filter(_.attribute("name") == "latestVersion").map(_.text)
+    val versions = (elem \ "result" \ "doc" \ "str").filter(_.attribute("name") == "v").map(_.text)
     val validVersions = versions.collect {
       case VersionNumber.Stable(version) => version
     }
