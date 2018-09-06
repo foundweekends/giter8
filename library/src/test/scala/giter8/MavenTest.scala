@@ -33,7 +33,8 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
         </result>
       </response>
 
-    val loc = "https://search.maven.org/solrsearch/select?q=g:%22org.scala-lang%22+AND+a:%22scala-library%22&rows=20&wt=xml"
+    val loc =
+      "https://search.maven.org/solrsearch/select?q=g:%22org.scala-lang%22+AND+a:%22scala-library%22&rows=20&wt=xml"
     Maven.findLatestVersion(loc, xml).right.value should be("2.13.0-M5")
   }
 
@@ -48,7 +49,8 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
         </result>
       </response>
 
-    val loc = "https://search.maven.org/solrsearch/select?q=g:%22org.scala-lang%22+AND+a:%22scala-library%22&rows=20&wt=xml"
+    val loc =
+      "https://search.maven.org/solrsearch/select?q=g:%22org.scala-lang%22+AND+a:%22scala-library%22&rows=20&wt=xml"
     Maven.findLatestVersion(loc, xml).left.value should be(
       s"Found metadata at $loc but can't extract latest version"
     )
@@ -103,7 +105,8 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
         </result>
       </response>
 
-    val loc = "https://search.maven.org/solrsearch/select?q=g:%22org.scalatest%22+AND+a:%22scalatest_2.12%22&rows=20&wt=xml&core=gav"
+    val loc =
+      "https://search.maven.org/solrsearch/select?q=g:%22org.scalatest%22+AND+a:%22scalatest_2.12%22&rows=20&wt=xml&core=gav"
     Maven.findLatestStableVersion(loc, xml).right.value should be("3.0.5")
   }
 
@@ -145,7 +148,8 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
         </result>
       </response>
 
-    val loc = "https://search.maven.org/solrsearch/select?q=g:%22org.scalacheck%22+AND+a:%22scalacheck_2.12%22&core=gav&rows=20&wt=xml"
+    val loc =
+      "https://search.maven.org/solrsearch/select?q=g:%22org.scalacheck%22+AND+a:%22scalacheck_2.12%22&core=gav&rows=20&wt=xml"
     Maven.findLatestStableVersion(loc, xml).right.value should be("1.14.0")
   }
 
@@ -199,7 +203,8 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
         </result>
       </response>
 
-    val loc = "https://search.maven.org/solrsearch/select?q=g:%22org.scalaz%22+AND+a:%22scalaz-concurrent_2.12%22&rows=20&wt=xml&core=gav"
+    val loc =
+      "https://search.maven.org/solrsearch/select?q=g:%22org.scalaz%22+AND+a:%22scalaz-concurrent_2.12%22&rows=20&wt=xml&core=gav"
     Maven.findLatestStableVersion(loc, xml).left.value should be(
       s"Could not find latest stable version at $loc"
     )
