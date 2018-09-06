@@ -56,52 +56,52 @@ final class MavenTest extends FlatSpec with Matchers with EitherValues {
 
   it should "resolve the latest stable version when the latest version is not stable" in {
     val xml =
-    <response>
-      <result name="response" numFound="21" start="0">
-        <doc>
-          <str name="a">scalatest_2.12</str>
-          <str name="g">org.scalatest</str>
-          <str name="id">org.scalatest:scalatest_2.12:3.0.6-SNAP2</str>
-          <str name="v">3.0.6-SNAP2</str>
-        </doc>
-        <doc>
-          <str name="a">scalatest_2.12</str>
-          <str name="g">org.scalatest</str>
-          <str name="id">org.scalatest:scalatest_2.12:3.0.6-SNAP1</str>
-          <str name="v">3.0.6-SNAP1</str>
-        </doc>
-        <doc>
-          <str name="a">scalatest_2.12</str>
-          <str name="g">org.scalatest</str>
-          <str name="id">org.scalatest:scalatest_2.12:3.0.5-M1</str>
-          <str name="v">3.0.5-M1</str>
-        </doc>
-        <doc>
-          <str name="a">scalatest_2.12</str>
-          <str name="g">org.scalatest</str>
-          <str name="id">org.scalatest:scalatest_2.12:3.0.5</str>
-          <str name="v">3.0.5</str>
-        </doc>
-        <doc>
-          <str name="a">scalatest_2.12</str>
-          <str name="g">org.scalatest</str>
-          <str name="id">org.scalatest:scalatest_2.12:3.2.0-SNAP10</str>
-          <str name="v">3.2.0-SNAP10</str>
-        </doc>
-        <doc>
-          <str name="a">scalatest_2.12</str>
-          <str name="g">org.scalatest</str>
-          <str name="id">org.scalatest:scalatest_2.12:3.1.0-SNAP6</str>
-          <str name="v">3.1.0-SNAP6</str>
-        </doc>
-        <doc>
-          <str name="a">scalatest_2.12</str>
-          <str name="g">org.scalatest</str>
-          <str name="id">org.scalatest:scalatest_2.12:3.0.4</str>
-          <str name="v">3.0.4</str>
-        </doc>
-      </result>
-    </response>
+      <response>
+        <result name="response" numFound="21" start="0">
+          <doc>
+            <str name="a">scalatest_2.12</str>
+            <str name="g">org.scalatest</str>
+            <str name="id">org.scalatest:scalatest_2.12:3.0.6-SNAP2</str>
+            <str name="v">3.0.6-SNAP2</str>
+          </doc>
+          <doc>
+            <str name="a">scalatest_2.12</str>
+            <str name="g">org.scalatest</str>
+            <str name="id">org.scalatest:scalatest_2.12:3.0.6-SNAP1</str>
+            <str name="v">3.0.6-SNAP1</str>
+          </doc>
+          <doc>
+            <str name="a">scalatest_2.12</str>
+            <str name="g">org.scalatest</str>
+            <str name="id">org.scalatest:scalatest_2.12:3.0.5-M1</str>
+            <str name="v">3.0.5-M1</str>
+          </doc>
+          <doc>
+            <str name="a">scalatest_2.12</str>
+            <str name="g">org.scalatest</str>
+            <str name="id">org.scalatest:scalatest_2.12:3.0.5</str>
+            <str name="v">3.0.5</str>
+          </doc>
+          <doc>
+            <str name="a">scalatest_2.12</str>
+            <str name="g">org.scalatest</str>
+            <str name="id">org.scalatest:scalatest_2.12:3.2.0-SNAP10</str>
+            <str name="v">3.2.0-SNAP10</str>
+          </doc>
+          <doc>
+            <str name="a">scalatest_2.12</str>
+            <str name="g">org.scalatest</str>
+            <str name="id">org.scalatest:scalatest_2.12:3.1.0-SNAP6</str>
+            <str name="v">3.1.0-SNAP6</str>
+          </doc>
+          <doc>
+            <str name="a">scalatest_2.12</str>
+            <str name="g">org.scalatest</str>
+            <str name="id">org.scalatest:scalatest_2.12:3.0.4</str>
+            <str name="v">3.0.4</str>
+          </doc>
+        </result>
+      </response>
 
     val loc = "https://search.maven.org/solrsearch/select?q=g:%22org.scalatest%22+AND+a:%22scalatest_2.12%22&rows=20&wt=xml&core=gav"
     Maven.findLatestStableVersion(loc, xml).right.value should be("3.0.5")
