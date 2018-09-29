@@ -21,7 +21,7 @@ object Dependencies {
   val sbtIo            = "org.scala-sbt" %% "io" % "1.1.10"
   val scala210         = "2.10.7"
   val scala211         = "2.11.12"
-  val scala212         = "2.12.6"
+  val scala212         = "2.12.7"
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "1.1.0"
   val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.0"
   val logback          = "ch.qos.logback" % "logback-classic" % "1.2.3"
