@@ -169,7 +169,7 @@ def customCommands: Seq[Setting[_]] = Seq(
       "app/publishSigned" ::
       "plugin/publishSigned" ::
       "scaffold/publishSigned" ::
-      "++2.12.6" ::
+      "++2.12.7" ::
       "^^1.1.6" ::
       "lib/publishSigned" ::
       "app/publishSigned" ::
