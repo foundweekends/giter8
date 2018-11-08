@@ -63,7 +63,7 @@ lazy val app = (project in file("app"))
   )
 
 lazy val crossSbt = Seq(
-  crossSbtVersions := List("0.13.17", "1.1.6"),
+  crossSbtVersions := List(sbt013, sbt1),
   scalaVersion := {
     val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
     partialVersion(crossSbtVersion) match {
@@ -164,13 +164,17 @@ lazy val lib = (project in file("library"))
 def customCommands: Seq[Setting[_]] = Seq(
   commands += Command.command("release") { state =>
     "clean" ::
-      "++2.10.6" ::
+      s"++${scala210}" ::
+      s"^^${sbt013}" ::
       "lib/publishSigned" ::
       "app/publishSigned" ::
       "plugin/publishSigned" ::
       "scaffold/publishSigned" ::
-      "++2.12.7" ::
-      "^^1.1.6" ::
+      s"++${scala211}" ::
+      "app/publishSigned" ::
+      "lib/publishSigned" ::
+      s"++${scala212}" ::
+      s"^^${sbt1}" ::
       "lib/publishSigned" ::
       "app/publishSigned" ::
       "plugin/publishSigned" ::
