@@ -21,6 +21,7 @@ package sbtgiter8
 object SBTCompat extends ScriptedCompat
 
 trait ScriptedCompat {
+  val finalScriptName      = "test.script"
   val scriptedSettings     = sbt.ScriptedPlugin.projectSettings
   val sbtLauncher          = sbt.ScriptedPlugin.autoImport.sbtLauncher
   val sbtTestDirectory     = sbt.ScriptedPlugin.autoImport.sbtTestDirectory
@@ -31,6 +32,6 @@ trait ScriptedCompat {
   val scriptedLaunchOpts   = sbt.ScriptedPlugin.autoImport.scriptedLaunchOpts
   val scriptedRun          = sbt.ScriptedPlugin.autoImport.scriptedRun
   val scriptedSbt          = sbt.ScriptedPlugin.autoImport.scriptedSbt
-  val scriptedTask         = sbt.ScriptedPlugin.scriptedTask
+  val scriptedTask         = sbt.ScriptedPlugin.autoImport.scripted
   val scriptedTests        = sbt.ScriptedPlugin.autoImport.scriptedTests
 }

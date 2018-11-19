@@ -1,3 +1,5 @@
+enablePlugins(ScriptedPlugin)
+
 scriptedBufferLog in (Test, g8) := false
 
 TaskKey[Unit]("writeInvalidFile") := {

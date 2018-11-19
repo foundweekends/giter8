@@ -129,7 +129,9 @@ object Giter8Plugin extends sbt.AutoPlugin {
         } else Nil
 
         // copy test script or generate one
-        val script = new File(out, "test")
+        // the final script should always be called "test.script"
+        // no matter how it was originally called by user
+        val script = new File(out, finalScriptName)
         if (ts.exists) IO.copyFile(ts, script)
         else IO.write(script, """>test""")
 
@@ -141,15 +143,25 @@ object Giter8Plugin extends sbt.AutoPlugin {
         val dir     = (sourceDirectory in Test).value
         val metadir = (baseDirectory in LocalRootProject).value / "project"
         val file0   = dir / "g8" / "test"
-        val files = List(
-          file0,
-          dir / "g8" / "giter8.test",
-          dir / "g8" / "g8.test",
-          metadir / "test",
-          metadir / "giter8.test",
-          metadir / "g8.test"
-        )
-        files.find(_.exists).getOrElse(file0)
+
+        // we should only use file0 if its an exisiting file
+        // if it exists and is a dir we should fallback to test.script
+        val defaultTestScript =
+          if (file0.isDirectory) dir / "g8" / "test.script"
+          else file0
+
+        val files = List(file0,
+                         dir / "g8" / "test.script",
+                         dir / "g8" / "giter8.test",
+                         dir / "g8" / "g8.test",
+                         metadir / "test",
+                         metadir / "test.script",
+                         metadir / "giter8.test",
+                         metadir / "g8.test")
+
+        files
+          .find(_.isFile)
+          .getOrElse(defaultTestScript)
       },
       scriptedBufferLog in (Test, g8) := true
     )
