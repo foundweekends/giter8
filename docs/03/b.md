@@ -67,4 +67,4 @@ runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
 
   [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
-  [wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
+  [wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
