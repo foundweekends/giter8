@@ -48,7 +48,7 @@ Giter8 は OS X のパッケージマネジャーである [Homebrew][] から�
 
     $ brew update && brew install giter8
 
-[Homebrew]: http://brew.sh
+[Homebrew]: https://brew.sh
 
 
 使用方法
@@ -59,8 +59,8 @@ Giter8 は OS X のパッケージマネジャーである [Homebrew][] から�
 
 例えば、[unfiltered/unfiltered.g8][uft] というテンプレートを適用するには以下を実行する:
 
-[uft]: http://github.com/unfiltered/unfiltered.g8
-[wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
+[uft]: https://github.com/unfiltered/unfiltered.g8
+[wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
 
     $ g8 unfiltered/unfiltered.g8
 
@@ -118,7 +118,7 @@ Written in <YEAR> by <AUTHOR NAME> <AUTHOR E-MAIL ADDRESS>
 
 To the extent possible under law, the author(s) have dedicated all copyright and related
 and neighboring rights to this template to the public domain worldwide.
-This template is distributed without any warranty. See <http://creativecommons.org/publicdomain/zero/1.0/>.
+This template is distributed without any warranty. See <https://creativecommons.org/publicdomain/zero/1.0/>.
 ```
 
 ### テンプレートのレイアウト
@@ -154,7 +154,7 @@ Giter8 テンプレートに実際の適用を行うのは [Scalasti][scalasti] 
 といったふうに表記される。
 
 [scalasti]: http://bmc.github.com/scalasti/
-[st]: http://www.stringtemplate.org/
+[st]: https://www.stringtemplate.org/
 
 このテンプレートフィールドは他のフィールドのデフォルト値を定義するのにも使うことができる。
 例えば、ユーザの Github id を使って URL を作ることが可能だ:
@@ -320,7 +320,7 @@ Github にテンプレートをプッシュすれば即座に実際の g8 ラン
 完成したらテンプレートプロジェクトを [wiki][wiki] に追加して他の Giter8 ユーザが見つけれるようにしよう。
 
   [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
-  [wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
+  [wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
 
 
 Scaffolding プラグイン

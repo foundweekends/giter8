@@ -53,7 +53,7 @@ Giter8 is also installable with the OS X package manager [Homebrew][]:
 
     $ brew update && brew install giter8
 
-[Homebrew]: http://brew.sh
+[Homebrew]: https://brew.sh
 
 
 Usage
@@ -64,8 +64,8 @@ suffix `.g8`. We're keeping a [list of templates on the wiki][wiki].
 
 To apply a template, for example, [unfiltered/unfiltered.g8][uft]:
 
-[uft]: http://github.com/unfiltered/unfiltered.g8
-[wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
+[uft]: https://github.com/unfiltered/unfiltered.g8
+[wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
 
     $ g8 unfiltered/unfiltered.g8
 
@@ -128,7 +128,7 @@ Written in <YEAR> by <AUTHOR NAME> <AUTHOR E-MAIL ADDRESS>
 
 To the extent possible under law, the author(s) have dedicated all copyright and related
 and neighboring rights to this template to the public domain worldwide.
-This template is distributed without any warranty. See <http://creativecommons.org/publicdomain/zero/1.0/>.
+This template is distributed without any warranty. See <https://creativecommons.org/publicdomain/zero/1.0/>.
 ```
 
 ### template layout
@@ -168,7 +168,7 @@ might be referenced in the source as:
     class $classname$ {
 
 [scalasti]: http://bmc.github.com/scalasti/
-[st]: http://www.stringtemplate.org/
+[st]: https://www.stringtemplate.org/
 
 The template fields themselves can be utilized to define the defaults
 of other fields.  For instance, you could build some URLs given the
@@ -406,7 +406,7 @@ runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
 
   [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
-  [wiki]: http://github.com/foundweekends/giter8/wiki/giter8-templates
+  [wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
 
 
 Scaffolding plugin

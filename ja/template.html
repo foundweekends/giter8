@@ -55,7 +55,7 @@ Written in &lt;YEAR&gt; by &lt;AUTHOR NAME&gt; &lt;AUTHOR E-MAIL ADDRESS&gt;
 
 To the extent possible under law, the author(s) have dedicated all copyright and related
 and neighboring rights to this template to the public domain worldwide.
-This template is distributed without any warranty. See &lt;http://creativecommons.org/publicdomain/zero/1.0/&gt;.
+This template is distributed without any warranty. See &lt;https://creativecommons.org/publicdomain/zero/1.0/&gt;.
 </code></pre><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">テンプレートのレイアウト<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
 </p><ul><li>もし <code>src/main/g8</code> ディレクトリがあれば、<code>src/main/g8</code> を使う (<code>src</code> レイアウト)
 </li><li>もし無ければ、トップディレクトリがそのまま使われる (root レイアウト)
@@ -68,7 +68,7 @@ This template is distributed without any warranty. See &lt;http://creativecommon
 <code>default.properties</code> という Java プロパティファイルがテンプレートのフィールドとそのデフォルト値を定義する。
 </p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>この <code>default.properties</code> は <code>project/</code> ディレクトリ下、もしくはテンプレートのルートにに置くことが可能だ。
 プロパティは簡単なキーとそれを置換する値のペアから成り立っている。
-</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="http://bmc.github.com/scalasti/">Scalasti</a> でラッピングされた <a href="http://www.stringtemplate.org/">StringTemplate</a> で、
+</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="http://bmc.github.com/scalasti/">Scalasti</a> でラッピングされた <a href="https://www.stringtemplate.org/">StringTemplate</a> で、
 ソースファイル内のテンプレートフィールドは <code>$</code> で囲んで書かれる。具体例で説明すると、<code>classname</code> というフィールドはソース内では
 </p><pre><code>class $classname$ {
 </code></pre><p>といったふうに表記される。

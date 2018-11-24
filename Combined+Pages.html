@@ -64,11 +64,11 @@ parameters. This should download giter8 and its dependencies, then print
 a usage message.
 </p><p>When it’s time to upgrade to a new version of giter8, just run the
 same <code>cs</code> command again.
-</p><p>Giter8 is also installable with the OS X package manager <a href="http://brew.sh">Homebrew</a>:
+</p><p>Giter8 is also installable with the OS X package manager <a href="https://brew.sh">Homebrew</a>:
 </p><pre><code>$ brew update &amp;&amp; brew install giter8
 </code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on github and be named with the
-suffix <code>.g8</code>. We’re keeping a <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
-</p><p>To apply a template, for example, <a href="http://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
+suffix <code>.g8</code>. We’re keeping a <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
+</p><p>To apply a template, for example, <a href="https://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8
 </code></pre><p>Giter8 resolves this to the <code>unfiltered/unfiltered.g8</code>
 repository and queries Github for the project’s template
@@ -106,7 +106,7 @@ Written in &lt;YEAR&gt; by &lt;AUTHOR NAME&gt; &lt;AUTHOR E-MAIL ADDRESS&gt;
 
 To the extent possible under law, the author(s) have dedicated all copyright and related
 and neighboring rights to this template to the public domain worldwide.
-This template is distributed without any warranty. See &lt;http://creativecommons.org/publicdomain/zero/1.0/&gt;.
+This template is distributed without any warranty. See &lt;https://creativecommons.org/publicdomain/zero/1.0/&gt;.
 </code></pre><h3 id="template+layout">template layout<a href="#template+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The g8 runtime looks for templates in two locations in a given Github project:
 </p><ul><li>If the <code>src/main/g8</code> directory is present it uses <code>src/main/g8</code> (<code>src</code> layout)
 </li><li>If it does not exist, then the root directory is used (root layout)
@@ -123,7 +123,7 @@ fields and their default values using the Java properties file format.
 </p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>default.properties</code> file may be placed in <code>project/</code> directory,
 or directly under the root of the template.
 Properties are simple keys and values that replace them.
-</p><p><a href="http://www.stringtemplate.org/">StringTemplate</a>, wrapped by <a href="http://bmc.github.com/scalasti/">Scalasti</a>, is the engine
+</p><p><a href="https://www.stringtemplate.org/">StringTemplate</a>, wrapped by <a href="http://bmc.github.com/scalasti/">Scalasti</a>, is the engine
 that applies Giter8 templates, so template fields in source files are
 bracketed with the <code>$</code> character. For example, a “classname” field
 might be referenced in the source as:
@@ -278,7 +278,7 @@ to the template and write it to the same <code>target/g8</code> directory.
 </p><p>As soon as you push your template to Github (remember to name the
 project with a <code>.g8</code> extension) you can test it with the actual g8
 runtime. When you’re ready, add your template project to the
-<a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">the wiki</a> so other giter8 users can find it.
+<a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">the wiki</a> so other giter8 users can find it.
 </p><h2 id="Scaffolding+plugin">Scaffolding plugin<a href="#Scaffolding+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 supplies an sbt plugin for creating and using scaffolds.
 </p><h3 id="Using+the+scaffold+plugin">Using the scaffold plugin<a href="#Using+the+scaffold+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Add the following lines in <code>project/scaffold.sbt</code>
 </p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.11.0&quot;)

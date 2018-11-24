@@ -59,11 +59,11 @@ Scala を使って実装されていて <a href="https://www.scala-sbt.org/1.x/d
 </code></pre><p>動作を確認するには <code>g8</code> をパラメータなしで実行する。
 Giter8 とその依存ライブラリがダウンロードされて使用方法が表示されるはずだ。
 </p><p>アップグレードするときも同じ <code>cs</code> コマンドを実行すればいい。
-</p><p>Giter8 は OS X のパッケージマネジャーである <a href="http://brew.sh">Homebrew</a> からもインストール可能だ:
+</p><p>Giter8 は OS X のパッケージマネジャーである <a href="https://brew.sh">Homebrew</a> からもインストール可能だ:
 </p><pre><code>$ brew update &amp;&amp; brew install giter8
 </code></pre><h2 id="%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法<a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>テンプレートのレポジトリは Github 上では <code>.g8</code> で終わる名前を使う規約を勝手に作った。
-<a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">Wiki にテンプレートのリスト</a>があるので見てほしい。
-</p><p>例えば、<a href="http://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
+<a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">Wiki にテンプレートのリスト</a>があるので見てほしい。
+</p><p>例えば、<a href="https://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a> というテンプレートを適用するには以下を実行する:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8
 </code></pre><p>Giter8 はこれを Github 上の <code>unfiltered/unfiltered.g8</code>
 というレポジトリだと解決してプロジェクトのテンプレートやパラメータを問い合わせる。
@@ -96,7 +96,7 @@ Written in &lt;YEAR&gt; by &lt;AUTHOR NAME&gt; &lt;AUTHOR E-MAIL ADDRESS&gt;
 
 To the extent possible under law, the author(s) have dedicated all copyright and related
 and neighboring rights to this template to the public domain worldwide.
-This template is distributed without any warranty. See &lt;http://creativecommons.org/publicdomain/zero/1.0/&gt;.
+This template is distributed without any warranty. See &lt;https://creativecommons.org/publicdomain/zero/1.0/&gt;.
 </code></pre><h3 id="%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">テンプレートのレイアウト<a href="#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Github プロジェクトがあるとき、Giter8 ランタイムは以下の 2つのパスにテンプレートを探しに行く:
 </p><ul><li>もし <code>src/main/g8</code> ディレクトリがあれば、<code>src/main/g8</code> を使う (<code>src</code> レイアウト)
 </li><li>もし無ければ、トップディレクトリがそのまま使われる (root レイアウト)
@@ -109,7 +109,7 @@ This template is distributed without any warranty. See &lt;http://creativecommon
 <code>default.properties</code> という Java プロパティファイルがテンプレートのフィールドとそのデフォルト値を定義する。
 </p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>この <code>default.properties</code> は <code>project/</code> ディレクトリ下、もしくはテンプレートのルートにに置くことが可能だ。
 プロパティは簡単なキーとそれを置換する値のペアから成り立っている。
-</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="http://bmc.github.com/scalasti/">Scalasti</a> でラッピングされた <a href="http://www.stringtemplate.org/">StringTemplate</a> で、
+</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="http://bmc.github.com/scalasti/">Scalasti</a> でラッピングされた <a href="https://www.stringtemplate.org/">StringTemplate</a> で、
 ソースファイル内のテンプレートフィールドは <code>$</code> で囲んで書かれる。具体例で説明すると、<code>classname</code> というフィールドはソース内では
 </p><pre><code>class $classname$ {
 </code></pre><p>といったふうに表記される。
@@ -212,7 +212,7 @@ TodaysMenu.html
 <code>target/g8</code> ディレクトリ内にファイルを生成する。
 </p><p>Github にテンプレートをプッシュすれば即座に実際の g8 ランタイムを使ってテストをすることが可能だ。
 (プロジェクト名に <code>.g8</code> 拡張子を付けるのを忘れないように)
-完成したらテンプレートプロジェクトを <a href="http://github.com/foundweekends/giter8/wiki/giter8-templates">wiki</a> に追加して他の Giter8 ユーザが見つけれるようにしよう。
+完成したらテンプレートプロジェクトを <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">wiki</a> に追加して他の Giter8 ユーザが見つけれるようにしよう。
 </p><h2 id="Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3">Scaffolding プラグイン<a href="#Scaffolding+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 は scaffolding 用の sbt プラグインも提供している。
 </p><h3 id="scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8">scaffold プラグインの使用<a href="#scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>以下を <code>project/scaffold.sbt</code> に書く:
 </p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.11.0&quot;)
