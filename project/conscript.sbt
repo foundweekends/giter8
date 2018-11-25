@@ -1,1 +1,1 @@
-addSbtPlugin("org.foundweekends.conscript" % "sbt-conscript" % "0.5.2")
+addSbtPlugin("org.foundweekends.conscript" % "sbt-conscript" % "0.5.3")
