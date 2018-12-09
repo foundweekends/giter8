@@ -21,7 +21,7 @@ object Dependencies {
   val sbtIo            = "org.scala-sbt" %% "io" % "1.2.2"
   val scala210         = "2.10.7"
   val scala211         = "2.11.12"
-  val scala212         = "2.12.7"
+  val scala212         = "2.12.8"
   val sbt1             = "1.1.6"
   val sbt013           = "0.13.17"
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "1.1.0"
