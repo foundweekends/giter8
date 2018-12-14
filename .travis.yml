@@ -9,19 +9,19 @@ language: scala
 
 env:
   matrix:
-    - SBT_VERSION=0.13.17
-    - SBT_VERSION=1.1.6
+    - SCALA_VERSION=2.12.8
+    - SCALA_VERSION=2.10.7
 
 matrix:
   include:
-  - env: SBT_VERSION=1.1.6
+  - env: SCALA_VERSION=2.12.8
     jdk: oraclejdk11
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
 
 script:
-  - sbt "-no-colors" "^^ $SBT_VERSION" ";scalafmtCheck;scalafmtSbtCheck;test:scalafmtCheck;plugin/scripted;scaffold/scripted;lib/test"
+  - sbt "-no-colors" "++$SCALA_VERSION!" ";scalafmtCheck;scalafmtSbtCheck;test:scalafmtCheck;plugin/scripted;scaffold/scripted;lib/test"
 
 after_success:
 - export SBT_GHPAGES_COMMIT_MESSAGE="updated site https://github.com/foundweekends/giter8/commit/${TRAVIS_COMMIT}"

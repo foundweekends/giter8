@@ -19,6 +19,7 @@ package giter8
 
 import sbt._
 import sbt.Path.relativeTo
+import sbtgiter8._
 import SBTCompat._
 
 object Giter8Plugin extends sbt.AutoPlugin {
@@ -45,7 +46,6 @@ object Giter8Plugin extends sbt.AutoPlugin {
       val srcs  = (sources in g8).value
       val out   = (target in g8).value
       val props = (g8Properties in g8).value
-      val s     = streams.value
       IO.delete(out)
       val retval = G8(srcs pair relativeTo(base), out, props)
 
@@ -102,7 +102,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
       g8Test in Test := { scriptedTask.evaluated },
       aggregate in (Test, g8Test) := false,
       scriptedDependencies := {
-        val x = (g8 in Test).value
+        val _ = (g8 in Test).value
       },
       g8 in Test := {
         val base  = (unmanagedSourceDirectories in (Compile, g8)).value
@@ -110,7 +110,6 @@ object Giter8Plugin extends sbt.AutoPlugin {
         val out   = (target in (Test, g8)).value
         val props = (g8Properties in (Test, g8)).value
         val ts    = (g8TestScript in (Test, g8)).value
-        val s     = streams.value
         IO.delete(out)
         val retval = G8(srcs pair relativeTo(base), out, props)
 

@@ -15,9 +15,10 @@
  * limitations under the License.
  */
 
-package giter8
+package sbt
+package sbtgiter8
 
-private[giter8] object SBTCompat extends ScriptedCompat
+object SBTCompat extends ScriptedCompat
 
 trait ScriptedCompat {
   val scriptedSettings     = sbt.ScriptedPlugin.projectSettings
