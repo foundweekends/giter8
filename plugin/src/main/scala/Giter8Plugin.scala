@@ -40,6 +40,11 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
   import autoImport._
 
+  override lazy val globalSettings = Seq(
+    scriptedBufferLog := true,
+    scriptedLaunchOpts := Seq()
+  )
+
   lazy val baseGiter8Settings: Seq[Def.Setting[_]] = Seq(
     g8 := {
       val base  = (unmanagedSourceDirectories in g8).value
