@@ -25,7 +25,7 @@ out: testing.html
 
 ### Giter8Plugin 을 사용
 
-Giter8는, 템플릿테스트를 위한 sbt 플러그인을 제공하고, 이것을 사용하면,
+Giter8는, 템플릿의 테스트를 위한 sbt 플러그인을 제공하고, 이것을 사용하면,
 Github 브랜치에 템플릿을 push 하기전에 테스트를 해볼 수 있습니다.
 위의 가이드대로, `foundweekends/giter8.g8` 템플릿을 사용하고 있다면 이미 구성되어 있습니다.
 
@@ -37,8 +37,8 @@ addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "$version$")
 ```
 
 이 플러그인이 설정된 템플릿 기반 디렉토리에서 sbt 쉘에 들어가면 `g8Test` 라는 액션에서 
-기본 출력 디렉토리 (`target/sbt-test`)에 템플릿이 적용되어 해당 프로젝트에 대해 [scriptted test][scripted] 를 fork 프로세스에서 실행 한다. 
-테스트 스크립트는`project/giter8.test`또는 `src/test/g8/test`로 제공 할 수있다. 만약 없으면 `>test`가 사용됩니다.
+기본 출력 디렉토리 (`target/sbt-test`)에 템플릿이 적용되어 해당 프로젝트에 대해 [scriptted test][scripted] 를 fork된 프로세스에서 실행 한다. 
+테스트 스크립트는`project/giter8.test`또는 `src/test/g8/test`로 제공 할 수있습니다. 만약 없으면 `>test`가 사용됩니다.
 특히 sbt 프로젝트를 생성하는 템플릿은 이 방법으로 테스트 할 수 있을 것입니다.
 
 그럼 sbt 프로젝트 이외의 템플릿은 어떻게 대응 할수 있을까요?
