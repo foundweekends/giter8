@@ -1,0 +1,107 @@
+<!DOCTYPE html SYSTEM "about:legacy-compat">
+<html>
+      <head>
+        <meta charset="utf-8"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <title>Giter8 — 템플릿 필드의 포맷</title>
+        
+        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
+        <!--[if lt IE 8]>
+          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
+        <![endif]-->
+        <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
+        <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-redmond.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
+        <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
+        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/pamflet.js"></script>
+        <script type="text/javascript">
+          Pamflet.page.language = 'ko';
+        </script>
+        <script type="text/javascript" src="../js/prettify/prettify.js"></script><script type="text/javascript" src="../js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="../css/prettify.css"/><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
+        <link rel="stylesheet" href="../css/custom.css" type="text/css" media="screen, projection"/>
+        
+        
+      </head>
+      <body class="color_scheme-github">
+        <a class="page prev nav" href="template.html">
+            <span class="space">&nbsp;</span>
+            <span class="flip arrow">❧</span>
+          </a><a class="page next nav" href="testing.html">
+            <span class="space">&nbsp;</span>
+            <span class="arrow">❧</span>
+          </a>
+        <div class="container contentswrapper">
+          <div class="span-16 prepend-1 append-1 contents">
+            <h3 id="%ED%85%9C%ED%94%8C%EB%A6%BF+%ED%95%84%EB%93%9C%EC%9D%98+%ED%8F%AC%EB%A7%B7">템플릿 필드의 포맷<a href="#%ED%85%9C%ED%94%8C%EB%A6%BF+%ED%95%84%EB%93%9C%EC%9D%98+%ED%8F%AC%EB%A7%B7" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 템플릿 필드를 포맷하는 방법을 몇 가지 준비하고있습니다. 포맷 옵션은 필드를 참조 할 때 지정 가능합니다.
+예를 들어, <code>name</code> 필드를 Upper Camel Case로 포맷하려면,
+</p><pre><code>$name;format=&quot;Camel&quot;$
+</code></pre><p>포맷 옵션:
+</p><pre><code>upper    | uppercase       : 전부 대문자
+lower    | lowercase       : 전부 소문자
+cap      | capitalize      : 최초 첫글자를 대문자화
+decap    | decapitalize    : 최초 첫글자를 소문자화
+start    | start-case      : 각 워드의 최초 문자를 대문자화
+word     | word-only       : a-zA-Z0-9_ 만 허용. 나머지는 전부 소거
+space    | word-space      : a-zA-Z0-9_ 가 아닌 문자는 빈문자(white-space)처리
+Camel    | upper-camel     : 대문자를 카멜케이스 (start-case, word-only)
+camel    | lower-camel     : 소문자를 카멜케이스 (start-case, word-only, decapitalize)
+hyphen   | hyphenate       : 빈문자(white-space)를 하이픈(-) 처리
+norm     | normalize       : 전체문자를 소문자하고 빈문자(white-space)를 하이픈(-)처리 (lowercase, hyphenate)
+snake    | snake-case      : 빈문자(white-space)와 마침표를(.)를 언더스코어(_)처리
+package  | package-naming  : 빈문자(white-space)를 마침표(.)로 변경
+packaged | package-dir     : 마침표(.)를 슬래시(/)로 변경 (net.databinder -&gt; net/databinder)
+random   | generate-random : 랜덤 문자열을 추가
+</code></pre><p><code>name</code> 필드에 <code>My Project</code> 값이 지정된 경우에 어떻게 포맷되는지 봅시다.:
+</p><pre><code>$name$ -&gt; &quot;My Project&quot;
+$name;format=&quot;camel&quot;$ -&gt; &quot;myProject&quot;
+$name;format=&quot;Camel&quot;$ -&gt; &quot;MyProject&quot;
+$name;format=&quot;normalize&quot;$ -&gt; &quot;my-project&quot;
+$name;format=&quot;lower,hyphen&quot;$ -&gt; &quot;my-project&quot;
+</code></pre><p>쉼표로 구분된 여러 형식을 지정할수 있는것에 주목, 이경우 주어진 순서대로 처리됩니다.
+파일이나 디렉토리 이름을 포맷 옵션을 전달하려면 밑줄을 두 개 연결 한 것을 사용합니다.
+예를들면,<code>$organization__packaged$</code> 라는 이름이 붙은 디렉토리는 기본제공 된 <code>package</code>과 마찬가지로
+<code>org.somewhere</code> 를 <code>org/somewhere</code> 로 변환합니다.
+<code>$name__Camel$.scala</code> 라는 이름이 붙은 파일은、<code>name</code>이 <code>awesome project</code> 로 설정되어 있으면
+<code>AwesomeProject.scala</code> 라는 파일을 생성합니다.
+</p><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="testing.html"> 로컬환경에서 템플릿 테스트 </a>                        
+                        <ul class="language-bar">
+        <li><a href="../formatting.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ja/formatting.html"><span class="lang-item lang-ja">日本語</span></a></li><li><a href="../ko/formatting.html"><span class="lang-item lang-ko">한국어</span></a></li>
+      </ul>
+                      </div><div class="tocwrapper show">
+      <a class="tochead nav" style="display: none" href="#toc">❦</a>
+      <a name="toc"></a>
+      <h4 class="toctitle">Contents</h4>
+      <div class="tocbody">
+      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">설치</a></div></li><li><div><a href="usage.html">사용 방법</a></div></li><li><div><a href="template.html">템플릿 생성 방법</a></div><ol class="toc"> <li><div class="current">템플릿 필드의 포맷</div></li><li><div><a href="testing.html">로컬환경에서 템플릿 테스트</a></div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding 플러그인</a></div><ol class="toc">  </ol></li><li><div><a href="contributing.html">기여</a></div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+          </div>
+        </div>
+        <div class="header">
+          <div class="container">
+        <div class="span-16 prepend-1 append-1">
+          <div class="span-16 top nav">
+            <div class="span-16 title">
+              <span>Giter8</span> — 템플릿 필드의 포맷
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="footer">
+          
+        </div>
+        
+        
+      </body>
+    </html>

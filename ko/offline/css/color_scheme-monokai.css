@@ -1,0 +1,109 @@
+body.color_scheme-monokai pre,
+body.color_scheme-monokai code,
+body.color_scheme-monokai tt {
+    font-family: Consolas, 'Liberation Mono', Courier, monospace;
+}
+body.color_scheme-monokai pre {
+    font-size: 80%
+}
+body.color_scheme-monokai {
+    color: #f8f8f2;
+    background: #222222;
+}
+body.color_scheme-monokai h1,
+body.color_scheme-monokai h2,
+body.color_scheme-monokai h3,
+body.color_scheme-monokai h4,
+body.color_scheme-monokai h5,
+body.color_scheme-monokai h6 {
+    color: #f8f8f2
+}
+body.color_scheme-monokai blockquote {
+  color:#cccccc;
+}
+body.color_scheme-monokai div.nav {
+    border-bottom-color: #f8f8f2
+}
+body.color_scheme-monokai div.top.nav {
+    background: #222222;
+}
+body.color_scheme-monokai div.footer div.nav {
+    border-top-color: black;
+}
+body.color_scheme-monokai div.contents {
+    color: #f8f8f2;
+    background: #222222;
+}
+body.color_scheme-monokai div.container {
+    background: #222222;
+}
+body.color_scheme-monokai pre {
+    padding: 0.5em;
+    border: solid 1px #75715e;
+}
+body.color_scheme-monokai a {
+    color: #66d9ef
+}
+body.color_scheme-monokai a:hover {
+    color: #be84ff
+}
+body.color_scheme-monokai a.page {
+    color: #f8f8f2;
+}
+body.color_scheme-monokai a.page:hover {
+    color: #be84ff;
+    background: #444444;
+}
+body.color_scheme-monokai a.tochead {
+    color: #f8f8f2;
+}
+body.color_scheme-monokai .collap a.tochead:hover {
+    color: #be84ff;
+    background: #444444;
+}
+body.color_scheme-monokai a.header-link:hover {
+    color: #be84ff;
+    background: #444444;
+}
+body.color_scheme-monokai code.prettyprint span.str {
+  color: #e6db74;
+}
+body.color_scheme-monokai code.prettyprint span.kwd {
+    color: #f92672;
+    font-weight: bold;
+}
+body.color_scheme-monokai code.prettyprint span.com {
+  color: #75715e;
+}
+body.color_scheme-monokai code.prettyprint span.typ {
+  color: #a6e22e;
+  font-weight: bold;
+}
+body.color_scheme-monokai code.prettyprint span.lit {
+  color: #be84ff;
+}
+body.color_scheme-monokai code.prettyprint span.pun {
+  color: #ffffff;
+  font-weight: bold; 
+}
+body.color_scheme-monokai code.prettyprint span.pln {
+  color: #ffffff
+}
+body.color_scheme-monokai code.prettyprint span.tag {
+  color: #f92672;
+}
+body.color_scheme-monokai code.prettyprint span.atn {
+  color: #a6e22e;
+}
+body.color_scheme-monokai code.prettyprint span.atv {
+  color: #e6db74;
+}
+body.color_scheme-monokai code.prettyprint span.dec {
+  color: #a6e22e;
+}
+body.color_scheme-monokai code.prettyprint span.var {
+  color: #ffffff;
+}
+body.color_scheme-monokai code.prettyprint span.fun {
+  color: #a6e22e;
+}
