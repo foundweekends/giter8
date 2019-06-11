@@ -9,14 +9,14 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.3.1.201904271842-r" excludeAll (
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.3.2.201906051522-r" excludeAll (
     ExclusionRule("javax.jms", "jms"),
     ExclusionRule("com.sun.jdmk", "jmxtools"),
     ExclusionRule("com.sun.jmx", "jmxri")
   )
   val scopt            = "com.github.scopt" %% "scopt" % "3.7.1"
   val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.13.5"
-  val scalatest        = "org.scalatest" %% "scalatest" % "3.0.7"
+  val scalatest        = "org.scalatest" %% "scalatest" % "3.0.8"
   val scalamock        = "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0"
   val sbtIo            = "org.scala-sbt" %% "io" % "1.2.2"
   val scala210         = "2.10.7"
