@@ -1,10 +1,10 @@
 sudo: false
 
 jdk:
-  - oraclejdk8
+  - openjdk8
 
 os: linux
-dist: trusty
+dist: xenial
 language: scala
 
 env:
@@ -15,7 +15,7 @@ env:
 matrix:
   include:
   - env: SBT_VERSION=1.1.6
-    jdk: oraclejdk11
+    jdk: openjdk11
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
