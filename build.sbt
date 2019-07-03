@@ -40,7 +40,7 @@ lazy val root = (project in file("."))
       )),
     name := "giter8",
     crossScalaVersions := List(scala210, scala211, scala212),
-    siteGithubRepo := "foundweekends/giter8",
+    siteGitHubRepo := "foundweekends/giter8",
     siteEmail := { "eed3si9n" + "@" + "gmail.com" },
     skip in publish := true,
     customCommands
@@ -51,7 +51,7 @@ lazy val app = (project in file("app"))
   .enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish)
   .dependsOn(lib)
   .settings(
-    description := "Command line tool to apply templates defined on github",
+    description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
     crossScalaVersions := List(scala210, scala211, scala212),
     sourceDirectory in csRun := {

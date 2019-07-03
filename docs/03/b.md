@@ -33,7 +33,7 @@ detect the changes and automatically recompile.
 ### Using the Giter8Plugin
 
 Giter8 supplies an sbt plugin for testing templates before pushing
-them to a Github branch. If you used the `foundweekends/giter8.g8` template
+them to a GitHub branch. If you used the `foundweekends/giter8.g8` template
 recommended above, it should already be configured.
 
 
@@ -61,7 +61,7 @@ You can still use sbt's shell to test the template. The
 lower level `g8` action will apply default field values
 to the template and write it to the same `target/g8` directory.
 
-As soon as you push your template to Github (remember to name the
+As soon as you push your template to GitHub (remember to name the
 project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.

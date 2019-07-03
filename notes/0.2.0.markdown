@@ -4,7 +4,7 @@ New Features
 
         src/main/g8/src/main/scala/$MainClass$.scala
 
-* Query github for available giter8 templates with `--list` or `-l`, contributed by [softprops][softprops].
+* Query GitHub for available giter8 templates with `--list` or `-l`, contributed by [softprops][softprops].
 
         g8 --list 
 

@@ -1,17 +1,17 @@
 This release includes a [significant refactoring][pull] contributed by
 [Julien Tournay][jto]. Giter8 has until now communicated via the
-github API, being intended for projects hosted on github. This new
-version replaces the github API with the git protocol as its primary
+GitHub API, being intended for projects hosted on GitHub. This new
+version replaces the GitHub API with the git protocol as its primary
 transport.
 
-#### Github compatibility
+#### GitHub compatibility
 
-The use of Github repository references is still fully supported and
+The use of GitHub repository references is still fully supported and
 encouraged. For example, this command
 
     g8 unfiltered/unfiltered
 
-will discover and apply the public template served by github at this
+will discover and apply the public template served by GitHub at this
 address:
 
     git://github.com/unfiltered/unfiltered.g8.git

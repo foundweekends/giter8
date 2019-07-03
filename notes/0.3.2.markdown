@@ -2,7 +2,7 @@
 
 Giter8 templates can now use *ls* to resolve the latest published
 version of a library. Just specify the library name and authoritative
-github account as a property value. For example:
+GitHub account as a property value. For example:
 
     name = My Template Project
     giter8_version = ls(giter8-plugin, n8han)
@@ -24,7 +24,7 @@ can upgrade (or install) giter8 with one [conscript][cs] command:
 
 ### Fixes
 
-* Problem with github credential storage. { [eed3si9n][ee] }
+* Problem with GitHub credential storage. { [eed3si9n][ee] }
 * [Invoking git executable on Windows][30] { [eed3si9n][ee] }
 
 [30]: https://github.com/n8han/giter8/issues/30

@@ -61,7 +61,7 @@ class Giter8 extends xsbti.AppMain {
 
     arg[String]("<template>") action { (repo, config) =>
       config.copy(repo = repo)
-    } text "git or file URL, or github user/repo"
+    } text "git or file URL, or GitHub user/repo"
 
     opt[String]('b', "branch") action { (b, config) =>
       config.copy(ref = Some(Branch(b)))
@@ -89,7 +89,7 @@ class Giter8 extends xsbti.AppMain {
       |
       |EXAMPLES
       |
-      |Apply a template from github
+      |Apply a template from GitHub
       |    g8 foundweekends/giter8
       |
       |Apply using the git URL for the same template

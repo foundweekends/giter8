@@ -1,5 +1,5 @@
 * support for remote templates [with binary files and images](https://github.com/n8han/giter8/pull/14)
-* support for resolving templates hosted on a branch of a github repository
+* support for resolving templates hosted on a branch of a GitHub repository
 
 Example:
 
