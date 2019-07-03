@@ -5,12 +5,7 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <title>Giter8 — Contents in Depth</title>
         
-        <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
-        <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print"/> 
-        <!--[if lt IE 8]>
-          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
-        <![endif]-->
+        <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
         <link rel="stylesheet" href="css/pamflet.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/pamflet-print.css" type="text/css" media="print"/>
         <link rel="stylesheet" href="css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
@@ -18,8 +13,8 @@
         <link rel="stylesheet" href="css/color_scheme-github.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="js/pamflet.js"></script>
         <script type="text/javascript">
           Pamflet.page.language = 'en';
@@ -30,30 +25,27 @@
         
       </head>
       <body class="color_scheme-github">
-        <a class="page prev nav" href="contributing.html">
-            <span class="space">&nbsp;</span>
-            <span class="flip arrow">❧</span>
-          </a><a class="page next nav" href="Combined+Pages.html">
-            <span class="space">&nbsp;</span>
-            <span class="arrow">❧</span>
-          </a>
-        <div class="container contentswrapper">
-          <div class="span-16 prepend-1 append-1 contents">
-            <div class="tocwrapper show">
-      <a class="tochead nav" style="display: none" href="#toc">❦</a>
-      <a name="toc"></a>
-      <h4 class="toctitle">Contents</h4>
-      <div class="tocbody">
-      <div><a href="index.html">Giter8</a></div><ul class="outline"> <li> <a href="index.html#sbt+new+integration">sbt new integration </a> </li><li> <a href="index.html#Credits">Credits </a> </li> </ul><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div><ul class="outline"> <li> <a href="usage.html#Private+Repositories">Private Repositories </a> </li> </ul></li><li><div><a href="template.html">Making your own templates</a></div><ul class="outline"> <li> <a href="template.html#Use+CC0+1.0+for+template+licensing">Use CC0 1.0 for template licensing </a> </li><li> <a href="template.html#template+layout">template layout </a> </li><li> <a href="template.html#src+layout">src layout </a> </li><li> <a href="template.html#default.properties">default.properties </a> </li><li> <a href="template.html#Conditionals">Conditionals </a> </li><li> <a href="template.html#name+field">name field </a> </li><li> <a href="template.html#package+field">package field </a> </li><li> <a href="template.html#verbatim+field">verbatim field </a> </li><li> <a href="template.html#Maven+properties">Maven properties </a> </li><li> <a href="template.html#root+layout">root layout </a> </li> </ul><ol class="toc"> <li><div><a href="formatting.html">Formatting template fields</a></div></li><li><div><a href="testing.html">Testing templates locally</a></div><ul class="outline"> <li> <a href="testing.html#Using+the+Giter8Plugin">Using the Giter8Plugin </a> </li> </ul></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding plugin</a></div><ul class="outline"> <li> <a href="scaffolding.html#Using+the+scaffold+plugin">Using the scaffold plugin </a> </li><li> <a href="scaffolding.html#Creating+a+scaffold">Creating a scaffold </a> </li> </ul><ol class="toc">  </ol></li><li><div><a href="contributing.html">Contributing</a></div><ul class="outline"> <li> <a href="contributing.html#Installing+local+version+of+giter8">Installing local version of giter8 </a>
+        <div class="container-fluid contentswrapper h-100">
+          <div class="row minh-100">
+          <div class="col-md-4 col-xl-3 leftcolumn">&nbsp;</div><div class="col-md-8 col-xs-9">
+                  <div class="rightcolmn contents">
+                    <div class="tocwrapper">
+        
+        <div class="tocbody show" id="toc">
+        <h4 class="toctitle">Contents</h4>
+        <div><a href="index.html">Giter8</a></div><ul class="outline"><li> <a href="index.html#sbt+new+integration">sbt new integration </a> </li><li> <a href="index.html#Credits">Credits </a> </li></ul><ol class="toc"> <li><div><a href="setup.html">Setup</a></div></li><li><div><a href="usage.html">Usage</a></div><ul class="outline"><li> <a href="usage.html#Private+Repositories">Private Repositories </a> </li></ul></li><li><div><a href="template.html">Making your own templates</a></div><ul class="outline"><li> <a href="template.html#Use+CC0+1.0+for+template+licensing">Use CC0 1.0 for template licensing </a> </li><li> <a href="template.html#template+layout">template layout </a> </li><li> <a href="template.html#src+layout">src layout </a> </li><li> <a href="template.html#default.properties">default.properties </a> </li><li> <a href="template.html#Conditionals">Conditionals </a> </li><li> <a href="template.html#name+field">name field </a> </li><li> <a href="template.html#package+field">package field </a> </li><li> <a href="template.html#verbatim+field">verbatim field </a> </li><li> <a href="template.html#Maven+properties">Maven properties </a> </li><li> <a href="template.html#root+layout">root layout </a> </li></ul><ol class="toc"> <li><div><a href="formatting.html">Formatting template fields</a></div></li><li><div><a href="testing.html">Testing templates locally</a></div><ul class="outline"><li> <a href="testing.html#Using+the+Giter8Plugin">Using the Giter8Plugin </a> </li></ul></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding plugin</a></div><ul class="outline"><li> <a href="scaffolding.html#Using+the+scaffold+plugin">Using the scaffold plugin </a> </li><li> <a href="scaffolding.html#Creating+a+scaffold">Creating a scaffold </a> </li></ul><ol class="toc">  </ol></li><li><div><a href="contributing.html">Contributing</a></div><ul class="outline"><li> <a href="contributing.html#Installing+local+version+of+giter8">Installing local version of giter8 </a>
               <ul class="outline"> <li> <a href="contributing.html#Fixing++PATH+%3A">Fixing  PATH : </a> </li><li> <a href="contributing.html#To+install+local+version%3A">To install local version: </a> </li><li> <a href="contributing.html#To+refresh%3A">To refresh: </a> </li><li> <a href="contributing.html#To+get+back+to+normal+version%3A">To get back to normal version: </a> </li> </ul>
-            </li> </ul></li><li class="generated"><div class="current">Contents in Depth</div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
-          </div>
+            </li></ul></li><li class="generated"><div class="current">Contents in Depth</div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div>
+      </div>
+                  </div>
+                </div>
+          </div> <!-- row -->
         </div>
         <div class="header">
-          <div class="container">
-        <div class="span-16 prepend-1 append-1">
-          <div class="span-16 top nav">
-            <div class="span-16 title">
+          <div class="container-fluid top nav">
+        <div class="row justify-content-md-center w-100">
+          <div class="col-md-auto">
+            <div class="title">
               <span>Giter8</span> — Contents in Depth
             </div>
           </div>

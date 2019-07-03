@@ -3,7 +3,7 @@ Giter8
 ======
 
 Giter8 is a command line tool to generate files and directories from
-templates published on Github or any other git repository.
+templates published on GitHub or any other git repository.
 It's implemented in Scala and runs through the
 [sbt launcher][launcher], but it can produce
 output for any purpose.
@@ -59,7 +59,7 @@ Giter8 is also installable with the OS X package manager [Homebrew][]:
 Usage
 -----
 
-Template repositories must reside on github and be named with the
+Template repositories must reside on GitHub and be named with the
 suffix `.g8`. We're keeping a [list of templates on the wiki][wiki].
 
 To apply a template, for example, [unfiltered/unfiltered.g8][uft]:
@@ -70,7 +70,7 @@ To apply a template, for example, [unfiltered/unfiltered.g8][uft]:
     $ g8 unfiltered/unfiltered.g8
 
 Giter8 resolves this to the `unfiltered/unfiltered.g8`
-repository and queries Github for the project's template
+repository and queries GitHub for the project's template
 parameters.
 Alternatively, you can also use a git repository full name
 
@@ -133,7 +133,7 @@ This template is distributed without any warranty. See <https://creativecommons.
 
 ### template layout
 
-The g8 runtime looks for templates in two locations in a given Github project:
+The g8 runtime looks for templates in two locations in a given GitHub project:
 
 - If the `src/main/g8` directory is present it uses `src/main/g8` (`src` layout)
 - If it does not exist, then the root directory is used (root layout)
@@ -143,7 +143,7 @@ The g8 runtime looks for templates in two locations in a given Github project:
 This src layout is recommended so that it is easy for the template
 itself to be an sbt project. That way,
 an sbt plugin can be employed to locally test templates before pushing
-changes to github.
+changes to GitHub.
 
 The easy way to start a new template project is with a Giter8 template
 made expressly for that purpose:
@@ -172,7 +172,7 @@ might be referenced in the source as:
 
 The template fields themselves can be utilized to define the defaults
 of other fields.  For instance, you could build some URLs given the
-user's Github id:
+user's GitHub id:
 
 ```
 name = URL Builder
@@ -288,7 +288,7 @@ scalatest_version = maven(org.scalatest, scalatest_2.11, stable)
 ### root layout
 
 There's an experimental layout called root layout,
-which uses the root directory of the Github project as
+which uses the root directory of the GitHub project as
 the root of template.
 
 Since you can no longer include template fields in the files
@@ -372,7 +372,7 @@ detect the changes and automatically recompile.
 ### Using the Giter8Plugin
 
 Giter8 supplies an sbt plugin for testing templates before pushing
-them to a Github branch. If you used the `foundweekends/giter8.g8` template
+them to a GitHub branch. If you used the `foundweekends/giter8.g8` template
 recommended above, it should already be configured.
 
 
@@ -400,7 +400,7 @@ You can still use sbt's shell to test the template. The
 lower level `g8` action will apply default field values
 to the template and write it to the same `target/g8` directory.
 
-As soon as you push your template to Github (remember to name the
+As soon as you push your template to GitHub (remember to name the
 project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
@@ -440,7 +440,7 @@ className [Application]:
 
 ### Creating a scaffold
 
-The g8 runtime looks for scaffolds in the `src/main/scaffolds` in the given Github project.
+The g8 runtime looks for scaffolds in the `src/main/scaffolds` in the given GitHub project.
 Each directory inside `src/main/scaffolds` is a different scaffold, and will be
 accessible in the sbt shell using the directory name. Scaffold directories
 may have a `default.properties` file to define field values, just like

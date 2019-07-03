@@ -1,9 +1,14 @@
 @charset "utf-8";
 
+html {
+    height: 100%;
+}
+
 body {
+    height: 100%;
     overflow-y: scroll;
     padding: 0;
-    font-family: "Warnock Pro", "Goudy Old Style", "Palatino", "Book Antiqua", Georgia, serif;
+    /* font-family: "Warnock Pro", "Goudy Old Style", "Palatino", "Book Antiqua", Georgia, serif; */
 }
 pre, code, tt {
     font-family: 'andale mono', 'lucida console', monospace
@@ -24,26 +29,52 @@ a.page {
     display: block;
     padding: 0 1.5em;
 }
+
 div.header {
     top: 0;
     position: fixed;
     display: block;
     height: 2em;
     width: 100%;
+    background-color: white;
 }
+
 div.footer {
     bottom: 0;
     position: fixed;
     display: block;
     width: 100%;
     height: 2em;
+    background-color: white;
 }
+
 div.contentswrapper {
     padding-top: 2em;       /* height of header */
     padding-bottom: 2em;    /* height of footer */
 }
+div.lefttocwrapper {
+    min-height: 100%;
+}
+div.rightcolumn {
+    padding-left: 4em;
+    padding-right: 4em;
+}
+
 div.contents {
     padding-top: 1.5em;
+    padding-bottom: 4em;
+}
+div.toccolumn {
+    padding-top: 1.5em;
+    padding-bottom: 4em;
+    background-color: #f4f4f4;
+    overflow-y: auto;
+}
+div.leftcolumn {
+    display: block;
+}
+div.minh-100 {
+    min-height: 100%;
 }
 a.page.next {
     right: 0;

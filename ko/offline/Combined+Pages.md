@@ -2,7 +2,7 @@
 Giter8
 ======
 
-Giter8 는, Github을 비롯한 Git 저장소에 게시 된 템플릿 사용하여 파일 및 디렉토리를 생성하기위한 명령 줄 도구입니다.
+Giter8 는, GitHub을 비롯한 Git 저장소에 게시 된 템플릿 사용하여 파일 및 디렉토리를 생성하기위한 명령 줄 도구입니다.
 Scala 를 사용하여 구현되어 있어, [sbt launcher][launcher] 를 사용하여 실행되지만, 그 출력은 어떤 용도로도 사용할 수 있습니다.
 
 ### sbt new 와의 통합
@@ -54,7 +54,7 @@ Giter8 는 OS X 의 패키지 매니져인 [Homebrew][] 를 통해서도 설치�
 사용 방법
 -------
 
-템플릿 리포지토리는 Github 상에서는 `.g8` 로 확장자가 끝나도록 규약을 만들었습니다.
+템플릿 리포지토리는 GitHub 상에서는 `.g8` 로 확장자가 끝나도록 규약을 만들었습니다.
 [Wiki에 등록된 템플릿 목록][wiki] 를 통해 관리하고 있습니다.
 
 예를들면 [unfiltered/unfiltered.g8][uft] 라는 템플릿을 적용하기 위해서는 다음을 실행합니다.
@@ -89,6 +89,7 @@ Giter8에서는 이것을 `unfiltered/unfiltered.g8` 라는 리포지토리로 �
 
 Giter8 는 Git과 마찬가지로, ssh 키를 사용하여, 개인 개인 리포지토리에 엑세스 할수 있습니다.
 
+
   [CC0]: https://creativecommons.org/publicdomain/zero/1.0/
 
 템플릿 생성 방법
@@ -114,13 +115,13 @@ This template is distributed without any warranty. See <https://creativecommons.
 
 ### 템플릿의 레이아웃
 
-Github 프로젝트가 있을때, Giter8 런타임은 다음의 두가지 경로로 템플릿을 찾아 이동합니다
+GitHub 프로젝트가 있을때, Giter8 런타임은 다음의 두가지 경로로 템플릿을 찾아 이동합니다
 - 만약 `src/main/g8` 디렉토리가 있으면, `src/main/g8` 을 사용됩니다. (`src` 레이아웃)
 - 만약 없으면, 상위디렉토리가 그대로 사용됩니다. (root 레이아웃)
 
 ### src 레이아웃
 템플릿 자체가 sbt 프로젝트인 것이 쉽기 때문에 기본적으로 src 레이아웃이 권장됩니다.
-이 방법을 사용하면 sbt 플러그인을 사용하여 로컬 환경에서 템플릿을 테스트하고 Github에 push 할 수있게 됩니다.
+이 방법을 사용하면 sbt 플러그인을 사용하여 로컬 환경에서 템플릿을 테스트하고 GitHub에 push 할 수있게 됩니다.
 새 템플릿 프로젝트를 시작하는 가장 쉬운 방법은 제공되는 전용 Giter8 템플릿을 사용하는 것입니다.
 
     $ g8 foundweekends/giter8.g8
@@ -144,7 +145,7 @@ Giter8 템플릿에 실제 적용하는 것은 [Scalasti][scalasti] 로 테이�
 [st]: https://www.stringtemplate.org/
 
 이 템플릿 필드는 다른 필드의 기본값을 정의하는데에도 사용할 수 있습니다.
-예를 들어, 사용자의 Github ID 를 사용하여, URL을 만드는것이 가능합니다.
+예를 들어, 사용자의 GitHub ID 를 사용하여, URL을 만드는것이 가능합니다.
 
 ```
 name = URL Builder
@@ -197,7 +198,7 @@ unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
 
 ### root 레이아웃
 
-실험적인 레이아웃으로 root 레이아웃이라는 것이 있고, 이것은 Github 프로젝트의 루트 디렉토리를 템플릿의 루트로 사용 합니다.
+실험적인 레이아웃으로 root 레이아웃이라는 것이 있고, 이것은 GitHub 프로젝트의 루트 디렉토리를 템플릿의 루트로 사용 합니다.
 그러나, 이 방법도 `project` 안에 템플릿 필드를 사용할 수 없게되므로 적용 범위는 매우 제한되어 있습니다. 
 sbt 빌드는없는 템플릿이나 필드가 없는 템플릿에 도움이 될지도 모릅니다.
 
@@ -267,7 +268,7 @@ Giter8 템플릿 필드를 포맷하는 방법을 몇 가지 준비하고있습�
 ### Giter8Plugin 을 사용
 
 Giter8는, 템플릿의 테스트를 위한 sbt 플러그인을 제공하고, 이것을 사용하면,
-Github 브랜치에 템플릿을 push 하기전에 테스트를 해볼 수 있습니다.
+GitHub 브랜치에 템플릿을 push 하기전에 테스트를 해볼 수 있습니다.
 위의 가이드대로, `foundweekends/giter8.g8` 템플릿을 사용하고 있다면 이미 구성되어 있습니다.
 
 이미 사용하고 있는 템플릿을 현재 플러그인으로 업그레이드 하기위해서는 
@@ -290,7 +291,7 @@ addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.11.0")
 그래도 sbt 쉘을 사용하여 템플릿을 테스트하는 것이 가능합니다.
 `g8`라는 액션을 사용하면 기본 필드 값을 템플릿에 적용하여 `target/g8`디렉토리에 파일을 생성합니다.
 
-Github에 템플릿을 push 하면 즉시 실제  런타임을 사용하여 테스트를하는 것이 가능합니다. 
+GitHub에 템플릿을 push 하면 즉시 실제  런타임을 사용하여 테스트를하는 것이 가능합니다. 
 (프로젝트 이름에 `.g8` 확장자를 잊지 않도록) 완성되면 템플릿 프로젝트 [wiki][wiki] 에 추가하여
 다른 Giter8 사용자가 발견되도록 하여야 합니다.
 
@@ -328,7 +329,7 @@ className [Application]:
 
 ### scaffold 를 만드는 방법
 
-g8 런타임은 Github 프로젝트가 있을 때, `src/main/scaffolds` 이하의 scaffold 를 찾습니다.
+g8 런타임은 GitHub 프로젝트가 있을 때, `src/main/scaffolds` 이하의 scaffold 를 찾습니다.
 `src/main/scaffolds` 안의 각 디렉토리는 각개의 scaffold 로서, 디렉토리명에 따라, 
 sbt 쉘에서 엑세스 가능합니다. 일반적으로 템플릿과 마찬가지로, scaffold 디렉토리에, `default.properties`파일을 두고
 필드값을 정의하는것이 가능합니다. 여기에서도 `name` 은 특별한 필드명으로서,
@@ -348,6 +349,7 @@ drwxr-xr-x   4 jtournay  staff   136B Aug  6 03:21 model
 ```
 
 이를 이용하여 임의의 sbt 프로젝트가있을 때 .g8디렉토리를 만들기위한 자신의 scaffold를 만드는 것도 가능합니다.
+
 
 기여
 -----

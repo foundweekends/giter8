@@ -5,12 +5,7 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <title>Giter8 — 기여</title>
         
-        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
-        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
-        <!--[if lt IE 8]>
-          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
-        <![endif]-->
+        <link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css"/>
         <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
         <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
@@ -18,8 +13,8 @@
         <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="../js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="../js/pamflet.js"></script>
         <script type="text/javascript">
           Pamflet.page.language = 'ko';
@@ -32,16 +27,20 @@
         
       </head>
       <body class="color_scheme-github">
-        <a class="page prev nav" href="scaffolding.html">
-            <span class="space">&nbsp;</span>
-            <span class="flip arrow">❧</span>
-          </a><a class="page next nav" href="Contents+in+Depth.html">
-            <span class="space">&nbsp;</span>
-            <span class="arrow">❧</span>
-          </a>
-        <div class="container contentswrapper">
-          <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="%EA%B8%B0%EC%97%AC">기여<a href="#%EA%B8%B0%EC%97%AC" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="giter8+%EB%A1%9C%EC%BB%AC%EB%B2%84%EC%A0%BC+%EC%84%A4%EC%B9%98">giter8 로컬버젼 설치<a href="#giter8+%EB%A1%9C%EC%BB%AC%EB%B2%84%EC%A0%BC+%EC%84%A4%EC%B9%98" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>로컬에서 giter8 작업을 할 때 pull 요청을 하기 전에 
+        <div class="container-fluid contentswrapper h-100">
+          <div class="row minh-100">
+          <div class="col-md-4 col-xl-3 toccolumn leftcolumn">
+                  <div class="lefttocwrapper">
+      <div class="tocwrapper">
+        
+        <div class="tocbody show" id="toc">
+        
+        <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">설치</a></div></li><li><div><a href="usage.html">사용 방법</a></div></li><li><div><a href="template.html">템플릿 생성 방법</a></div><ol class="toc"> <li><div><a href="formatting.html">템플릿 필드의 포맷</a></div></li><li><div><a href="testing.html">로컬환경에서 템플릿 테스트</a></div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding 플러그인</a></div><ol class="toc">  </ol></li><li><div class="current">기여</div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div>
+      </div>
+      </div>
+                </div><div class="col-md-8 col-xs-9">
+                  <div class="rightcolumn contents">
+                  <h2 id="%EA%B8%B0%EC%97%AC">기여<a href="#%EA%B8%B0%EC%97%AC" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="giter8+%EB%A1%9C%EC%BB%AC%EB%B2%84%EC%A0%BC+%EC%84%A4%EC%B9%98">giter8 로컬버젼 설치<a href="#giter8+%EB%A1%9C%EC%BB%AC%EB%B2%84%EC%A0%BC+%EC%84%A4%EC%B9%98" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>로컬에서 giter8 작업을 할 때 pull 요청을 하기 전에 
 변경 사항을 시험해보기를 원할 것입니다. 아래 방법을 참고하세요.
 </p><p>Giter8은 배포를 위해 [conscript] 를 사용합니다.  [공식페이지]에서 conscript에 대한 상세 정보를 확인 할 수 있습니다.
 </p><h4 id="Fixing+%3A">Fixing <code>PATH</code>:<a href="#Fixing+%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>conscript와 함께 giter8을 설치하기 전에 conscript 디렉토리가 기본 설치 경로보다 우선 순위가 높아야 합니다.
@@ -52,23 +51,24 @@
 </li></ul><h4 id="%EA%B0%B1%EC%8B%A0%3A">갱신:<a href="#%EA%B0%B1%EC%8B%A0%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><ul><li><code>publishLocal</code> 실행;
 </li><li>쉘에서 <code>cs --clean-boot</code>. 실행
 </li></ul><h4 id="%EC%9D%BC%EB%B0%98+%EB%B2%84%EC%A0%BC%EC%9C%BC%EB%A1%9C+%EB%B3%80%EA%B2%BD%3A">일반 버젼으로 변경:<a href="#%EC%9D%BC%EB%B0%98+%EB%B2%84%EC%A0%BC%EC%9C%BC%EB%A1%9C+%EB%B3%80%EA%B2%BD%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>쉘에서 <code>cs foundweekends/giter8</code>. 실행
-</p><div class="bottom nav end span-16">
-                        <ul class="language-bar">
-        <li><a href="../contributing.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ko/contributing.html"><span class="lang-item lang-ko">한국어</span></a></li>
-      </ul>
-                      </div><div class="tocwrapper show">
-      <a class="tochead nav" style="display: none" href="#toc">❦</a>
-      <a name="toc"></a>
-      <h4 class="toctitle">Contents</h4>
-      <div class="tocbody">
-      <div><a href="index.html">Giter8</a></div><ol class="toc"> <li><div><a href="setup.html">설치</a></div></li><li><div><a href="usage.html">사용 방법</a></div></li><li><div><a href="template.html">템플릿 생성 방법</a></div><ol class="toc"> <li><div><a href="formatting.html">템플릿 필드의 포맷</a></div></li><li><div><a href="testing.html">로컬환경에서 템플릿 테스트</a></div></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding 플러그인</a></div><ol class="toc">  </ol></li><li><div class="current">기여</div></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
-          </div>
+</p><div class="bottom nav end row">
+                <div class="row w-100">
+        <div class="col-md-auto ml-auto">
+          <ul class="language-bar">
+            <li><a href="../contributing.html"><span class="lang-item lang-en">English</span></a></li><li><a href="../ko/contributing.html"><span class="lang-item lang-ko">한국어</span></a></li>
+          </ul>
+        </div>
+      </div>
+              </div>
+                  </div>
+                </div>
+          </div> <!-- row -->
         </div>
         <div class="header">
-          <div class="container">
-        <div class="span-16 prepend-1 append-1">
-          <div class="span-16 top nav">
-            <div class="span-16 title">
+          <div class="container-fluid top nav">
+        <div class="row justify-content-md-center w-100">
+          <div class="col-md-auto">
+            <div class="title">
               <span>Giter8</span> — 기여
             </div>
           </div>

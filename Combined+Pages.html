@@ -5,12 +5,7 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <title>Giter8 — Combined Pages</title>
         
-        <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
-        <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <link rel="stylesheet" href="css/blueprint/print.css" type="text/css" media="print"/> 
-        <!--[if lt IE 8]>
-          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
-        <![endif]-->
+        <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
         <link rel="stylesheet" href="css/pamflet.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/pamflet-print.css" type="text/css" media="print"/>
         <link rel="stylesheet" href="css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
@@ -18,8 +13,8 @@
         <link rel="stylesheet" href="css/color_scheme-github.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <script type="text/javascript" src="js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="js/pamflet.js"></script>
         <script type="text/javascript">
           Pamflet.page.language = 'en';
@@ -32,19 +27,17 @@
         
       </head>
       <body class="color_scheme-github">
-        <a class="page prev nav" href="Contents+in+Depth.html">
-            <span class="space">&nbsp;</span>
-            <span class="flip arrow">❧</span>
-          </a>
-        <div class="container contentswrapper">
-          <div class="span-16 prepend-1 append-1 contents">
-            <div class="tocwrapper show">
-      <a class="tochead nav" style="display: none" href="#toc">❦</a>
-      <a name="toc"></a>
-      <h4 class="toctitle">Contents</h4>
-      <div class="tocbody">
-      <div><a href="#Giter8">Giter8</a></div><ol class="toc"> <li><div><a href="#Setup">Setup</a></div></li><li><div><a href="#Usage">Usage</a></div></li><li><div><a href="#Making+your+own+templates">Making your own templates</a></div><ol class="toc"> <li><div><a href="#Formatting+template+fields">Formatting template fields</a></div></li><li><div><a href="#Testing+templates+locally">Testing templates locally</a></div></li> </ol></li><li><div><a href="#Scaffolding+plugin">Scaffolding plugin</a></div><ol class="toc">  </ol></li><li><div><a href="#Contributing">Contributing</a></div></li> </ol></div></div><h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 is a command line tool to generate files and directories from
-templates published on Github or any other git repository.
+        <div class="container-fluid contentswrapper h-100">
+          <div class="row minh-100">
+          <div class="col-md-4 col-xl-3 leftcolumn">&nbsp;</div><div class="col-md-8 col-xs-9">
+                  <div class="rightcolmn contents">
+                    <div class="tocwrapper">
+        
+        <div class="tocbody show" id="toc">
+        <h4 class="toctitle">Contents</h4>
+        <div><a href="#Giter8">Giter8</a></div><ol class="toc"> <li><div><a href="#Setup">Setup</a></div></li><li><div><a href="#Usage">Usage</a></div></li><li><div><a href="#Making+your+own+templates">Making your own templates</a></div><ol class="toc"> <li><div><a href="#Formatting+template+fields">Formatting template fields</a></div></li><li><div><a href="#Testing+templates+locally">Testing templates locally</a></div></li> </ol></li><li><div><a href="#Scaffolding+plugin">Scaffolding plugin</a></div><ol class="toc">  </ol></li><li><div><a href="#Contributing">Contributing</a></div></li> </ol></div>
+      </div><h1 id="Giter8">Giter8<a href="#Giter8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>Giter8 is a command line tool to generate files and directories from
+templates published on GitHub or any other git repository.
 It’s implemented in Scala and runs through the
 <a href="https://www.scala-sbt.org/1.x/docs/Setup.html">sbt launcher</a>, but it can produce
 output for any purpose.
@@ -66,12 +59,12 @@ a usage message.
 same <code>cs</code> command again.
 </p><p>Giter8 is also installable with the OS X package manager <a href="https://brew.sh">Homebrew</a>:
 </p><pre><code>$ brew update &amp;&amp; brew install giter8
-</code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on github and be named with the
+</code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on GitHub and be named with the
 suffix <code>.g8</code>. We’re keeping a <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
 </p><p>To apply a template, for example, <a href="https://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8
 </code></pre><p>Giter8 resolves this to the <code>unfiltered/unfiltered.g8</code>
-repository and queries Github for the project’s template
+repository and queries GitHub for the project’s template
 parameters.
 Alternatively, you can also use a git repository full name
 </p><pre><code>$ g8 https://github.com/unfiltered/unfiltered.g8.git
@@ -107,13 +100,13 @@ Written in &lt;YEAR&gt; by &lt;AUTHOR NAME&gt; &lt;AUTHOR E-MAIL ADDRESS&gt;
 To the extent possible under law, the author(s) have dedicated all copyright and related
 and neighboring rights to this template to the public domain worldwide.
 This template is distributed without any warranty. See &lt;https://creativecommons.org/publicdomain/zero/1.0/&gt;.
-</code></pre><h3 id="template+layout">template layout<a href="#template+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The g8 runtime looks for templates in two locations in a given Github project:
+</code></pre><h3 id="template+layout">template layout<a href="#template+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The g8 runtime looks for templates in two locations in a given GitHub project:
 </p><ul><li>If the <code>src/main/g8</code> directory is present it uses <code>src/main/g8</code> (<code>src</code> layout)
 </li><li>If it does not exist, then the root directory is used (root layout)
 </li></ul><h3 id="src+layout">src layout<a href="#src+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>This src layout is recommended so that it is easy for the template
 itself to be an sbt project. That way,
 an sbt plugin can be employed to locally test templates before pushing
-changes to github.
+changes to GitHub.
 </p><p>The easy way to start a new template project is with a Giter8 template
 made expressly for that purpose:
 </p><pre><code>$ g8 foundweekends/giter8.g8
@@ -130,7 +123,7 @@ might be referenced in the source as:
 </p><pre><code>class $classname$ {
 </code></pre><p>The template fields themselves can be utilized to define the defaults
 of other fields.  For instance, you could build some URLs given the
-user’s Github id:
+user’s GitHub id:
 </p><pre><code class="">name = URL Builder
 github_id=githubber
 developer_url=https://github.com/$github_id$
@@ -199,7 +192,7 @@ we could refer to it as follows:
 description = Creates a giter8 project template.
 scalatest_version = maven(org.scalatest, scalatest_2.11, stable)
 </code></pre><h3 id="root+layout">root layout<a href="#root+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There’s an experimental layout called root layout,
-which uses the root directory of the Github project as
+which uses the root directory of the GitHub project as
 the root of template.
 </p><p>Since you can no longer include template fields in the files
 under <code>project</code> its application is very limited.
@@ -257,7 +250,7 @@ original terminal:
 </code></pre><p>Your <code>uftest</code> sbt session, waiting with the <code>~ compile</code> command, will
 detect the changes and automatically recompile.
 </p><h3 id="Using+the+Giter8Plugin">Using the Giter8Plugin<a href="#Using+the+Giter8Plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 supplies an sbt plugin for testing templates before pushing
-them to a Github branch. If you used the <code>foundweekends/giter8.g8</code> template
+them to a GitHub branch. If you used the <code>foundweekends/giter8.g8</code> template
 recommended above, it should already be configured.
 </p><p>If you need to upgrade an existing template project to the current plugin, you can
 add it as a source dependency in <code>project/giter8.sbt</code>:
@@ -275,7 +268,7 @@ TodaysMenu.html
 </code></pre><p>You can still use sbt’s shell to test the template. The
 lower level <code>g8</code> action will apply default field values
 to the template and write it to the same <code>target/g8</code> directory.
-</p><p>As soon as you push your template to Github (remember to name the
+</p><p>As soon as you push your template to GitHub (remember to name the
 project with a <code>.g8</code> extension) you can test it with the actual g8
 runtime. When you’re ready, add your template project to the
 <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">the wiki</a> so other giter8 users can find it.
@@ -289,7 +282,7 @@ controller   global       model
 </code></pre><p>The template plugin will prompt each property that needed to complete the scaffolding process:
 </p><pre><code class="">&gt; g8Scaffold controller
 className [Application]:
-</code></pre><h3 id="Creating+a+scaffold">Creating a scaffold<a href="#Creating+a+scaffold" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The g8 runtime looks for scaffolds in the <code>src/main/scaffolds</code> in the given Github project.
+</code></pre><h3 id="Creating+a+scaffold">Creating a scaffold<a href="#Creating+a+scaffold" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The g8 runtime looks for scaffolds in the <code>src/main/scaffolds</code> in the given GitHub project.
 Each directory inside <code>src/main/scaffolds</code> is a different scaffold, and will be
 accessible in the sbt shell using the directory name. Scaffold directories
 may have a <code>default.properties</code> file to define field values, just like
@@ -321,13 +314,15 @@ Use the version number you just wrote in <code>build.sbt</code>.
 </li><li>From a shell session run <code>cs --clean-boot</code>.
 </li></ul><h4 id="To+get+back+to+normal+version%3A">To get back to normal version:<a href="#To+get+back+to+normal+version%3A" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>From a shell session run <code>cs foundweekends/giter8</code>.
 </p>
-          </div>
+                  </div>
+                </div>
+          </div> <!-- row -->
         </div>
         <div class="header">
-          <div class="container">
-        <div class="span-16 prepend-1 append-1">
-          <div class="span-16 top nav">
-            <div class="span-16 title">
+          <div class="container-fluid top nav">
+        <div class="row justify-content-md-center w-100">
+          <div class="col-md-auto">
+            <div class="title">
               <span>Giter8</span> — Combined Pages
             </div>
           </div>

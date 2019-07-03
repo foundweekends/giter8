@@ -2,14 +2,14 @@
 
 body {
     font-size: 100%;
-    font-family: Georgia, serif;
+    /* font-family: Georgia, serif; */
     padding: 0 1em;
 }
 h1,h2,h3,h4,h5, .title {
     text-rendering: optimizeLegibility;
 }
 pre, code, tt {
-    font-family: monospace
+    font-family: SFMono-Regular, Consolas, monospace
 }
 div.nav {
     border-bottom: black solid 1px;
@@ -35,8 +35,15 @@ div.bottom.nav.end {
     padding-bottom: 0;
 }
 div.bottom.nav span.arrow {
-    margin: 0 .5em;
+    margin: 0 .5em 0 0;
 }
+div.arrowitem {
+    float: left;
+}
+div.arrowitem span.arrow {
+    font-size: 2em;
+}
+
 div.footer div.nav {
     border-bottom: none;
     border-top: black solid 1px;
@@ -69,6 +76,12 @@ ol.toc li.generated {
     list-style-type: circle;
     font-style: italic;
 }
+div.tocbody a {
+    color: #202020;
+}
+ol.toc a {
+    color: #202020;
+}
 ul.outline {
     font-style: italic;
     list-style-type: circle;
@@ -91,5 +104,8 @@ div.highlight-outer {
     display: none;
 }
 div.highlight-memu {
+    display: none;
+}
+div.leftcolumn {
     display: none;
 }

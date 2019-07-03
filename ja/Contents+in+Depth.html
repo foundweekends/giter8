@@ -5,12 +5,7 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <title>Giter8 — Contents in Depth</title>
         
-        <link rel="stylesheet" href="../css/blueprint/screen.css" type="text/css" media="screen, projection"/>
-        <link rel="stylesheet" href="../css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <link rel="stylesheet" href="../css/blueprint/print.css" type="text/css" media="print"/> 
-        <!--[if lt IE 8]>
-          <link rel="stylesheet" href={ relativeBase + "css/blueprint/ie.css" } type="text/css" media="screen, projection"/>
-        <![endif]-->
+        <link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css"/>
         <link rel="stylesheet" href="../css/pamflet.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/pamflet-print.css" type="text/css" media="print"/>
         <link rel="stylesheet" href="../css/pamflet-grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
@@ -18,8 +13,8 @@
         <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <script type="text/javascript" src="../js/jquery-1.6.2.min.js"></script>
-        <script type="text/javascript" src="../js/jquery.collapse.js"></script>
+        <script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="../js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="../js/pamflet.js"></script>
         <script type="text/javascript">
           Pamflet.page.language = 'ja';
@@ -30,28 +25,25 @@
         
       </head>
       <body class="color_scheme-github">
-        <a class="page prev nav" href="scaffolding.html">
-            <span class="space">&nbsp;</span>
-            <span class="flip arrow">❧</span>
-          </a><a class="page next nav" href="Combined+Pages.html">
-            <span class="space">&nbsp;</span>
-            <span class="arrow">❧</span>
-          </a>
-        <div class="container contentswrapper">
-          <div class="span-16 prepend-1 append-1 contents">
-            <div class="tocwrapper show">
-      <a class="tochead nav" style="display: none" href="#toc">❦</a>
-      <a name="toc"></a>
-      <h4 class="toctitle">Contents</h4>
-      <div class="tocbody">
-      <div><a href="index.html">Giter8</a></div><ul class="outline"> <li> <a href="index.html#sbt+new+%E3%81%A8%E3%81%AE%E7%B5%B1%E5%90%88">sbt new との統合 </a> </li><li> <a href="index.html#%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88">クレジット </a> </li> </ul><ol class="toc"> <li><div><a href="setup.html">セットアップ</a></div></li><li><div><a href="usage.html">使用方法</a></div><ul class="outline"> <li> <a href="usage.html#%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA">プライベートリポジトリ </a> </li> </ul></li><li><div><a href="template.html">テンプレートの作り方</a></div><ul class="outline"> <li> <a href="template.html#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86">テンプレートのライセンスは CC0 1.0 を使う </a> </li><li> <a href="template.html#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">テンプレートのレイアウト </a> </li><li> <a href="template.html#src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">src レイアウト </a> </li><li> <a href="template.html#default.properties">default.properties </a> </li><li> <a href="template.html#name+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">name フィールド </a> </li><li> <a href="template.html#package+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">package フィールド </a> </li><li> <a href="template.html#verbatim+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">verbatim フィールド </a> </li><li> <a href="template.html#Maven+%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3">Maven プロパティ </a> </li><li> <a href="template.html#root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">root レイアウト </a> </li> </ul><ol class="toc"> <li><div><a href="formatting.html">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="testing.html">ローカル環境でのテンプレートのテスト</a></div><ul class="outline"> <li> <a href="testing.html#Giter8Plugin+%E3%82%92%E4%BD%BF%E3%81%86">Giter8Plugin を使う </a> </li> </ul></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding プラグイン</a></div><ul class="outline"> <li> <a href="scaffolding.html#scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8">scaffold プラグインの使用 </a> </li><li> <a href="scaffolding.html#scaffold+%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">scaffold の作り方 </a> </li> </ul><ol class="toc">  </ol></li><li class="generated"><div class="current">Contents in Depth</div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
-          </div>
+        <div class="container-fluid contentswrapper h-100">
+          <div class="row minh-100">
+          <div class="col-md-4 col-xl-3 leftcolumn">&nbsp;</div><div class="col-md-8 col-xs-9">
+                  <div class="rightcolmn contents">
+                    <div class="tocwrapper">
+        
+        <div class="tocbody show" id="toc">
+        <h4 class="toctitle">Contents</h4>
+        <div><a href="index.html">Giter8</a></div><ul class="outline"><li> <a href="index.html#sbt+new+%E3%81%A8%E3%81%AE%E7%B5%B1%E5%90%88">sbt new との統合 </a> </li><li> <a href="index.html#%E3%82%AF%E3%83%AC%E3%82%B8%E3%83%83%E3%83%88">クレジット </a> </li></ul><ol class="toc"> <li><div><a href="setup.html">セットアップ</a></div></li><li><div><a href="usage.html">使用方法</a></div><ul class="outline"><li> <a href="usage.html#%E3%83%97%E3%83%A9%E3%82%A4%E3%83%99%E3%83%BC%E3%83%88%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA">プライベートリポジトリ </a> </li></ul></li><li><div><a href="template.html">テンプレートの作り方</a></div><ul class="outline"><li> <a href="template.html#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%A9%E3%82%A4%E3%82%BB%E3%83%B3%E3%82%B9%E3%81%AF+CC0+1.0+%E3%82%92%E4%BD%BF%E3%81%86">テンプレートのライセンスは CC0 1.0 を使う </a> </li><li> <a href="template.html#%E3%83%86%E3%83%B3%E3%83%97%E3%83%AC%E3%83%BC%E3%83%88%E3%81%AE%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">テンプレートのレイアウト </a> </li><li> <a href="template.html#src+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">src レイアウト </a> </li><li> <a href="template.html#default.properties">default.properties </a> </li><li> <a href="template.html#name+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">name フィールド </a> </li><li> <a href="template.html#package+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">package フィールド </a> </li><li> <a href="template.html#verbatim+%E3%83%95%E3%82%A3%E3%83%BC%E3%83%AB%E3%83%89">verbatim フィールド </a> </li><li> <a href="template.html#Maven+%E3%83%97%E3%83%AD%E3%83%91%E3%83%86%E3%82%A3">Maven プロパティ </a> </li><li> <a href="template.html#root+%E3%83%AC%E3%82%A4%E3%82%A2%E3%82%A6%E3%83%88">root レイアウト </a> </li></ul><ol class="toc"> <li><div><a href="formatting.html">テンプレートフィールドのフォーマット</a></div></li><li><div><a href="testing.html">ローカル環境でのテンプレートのテスト</a></div><ul class="outline"><li> <a href="testing.html#Giter8Plugin+%E3%82%92%E4%BD%BF%E3%81%86">Giter8Plugin を使う </a> </li></ul></li> </ol></li><li><div><a href="scaffolding.html">Scaffolding プラグイン</a></div><ul class="outline"><li> <a href="scaffolding.html#scaffold+%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3%E3%81%AE%E4%BD%BF%E7%94%A8">scaffold プラグインの使用 </a> </li><li> <a href="scaffolding.html#scaffold+%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9">scaffold の作り方 </a> </li></ul><ol class="toc">  </ol></li><li class="generated"><div class="current">Contents in Depth</div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div>
+      </div>
+                  </div>
+                </div>
+          </div> <!-- row -->
         </div>
         <div class="header">
-          <div class="container">
-        <div class="span-16 prepend-1 append-1">
-          <div class="span-16 top nav">
-            <div class="span-16 title">
+          <div class="container-fluid top nav">
+        <div class="row justify-content-md-center w-100">
+          <div class="col-md-auto">
+            <div class="title">
               <span>Giter8</span> — Contents in Depth
             </div>
           </div>
