@@ -16,7 +16,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
 
   object autoImport {
     lazy val pushSiteIfChanged = taskKey[Unit]("push the site if changed")
-    lazy val siteGithubRepo    = settingKey[String]("")
+    lazy val siteGitHubRepo    = settingKey[String]("")
     lazy val siteEmail         = settingKey[String]("")
   }
 
@@ -47,7 +47,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
     // https://gist.github.com/domenic/ec8b0fc8ab45f39403dd
     // 1. generate a new SSH key: `ssh-keygen -t rsa -b 4096 -C "foo@example.com"` and
     //    name it ~/.ssh/yourprojectname_deploy_rsa
-    // 2. add the public key ~/.ssh/yourprojectname_deploy_rsa.pub to github: https://github.com/foo/bar/settings/keys
+    // 2. add the public key ~/.ssh/yourprojectname_deploy_rsa.pub to GitHub: https://github.com/foo/bar/settings/keys
     // 3. copy the private key ~/.ssh/yourprojectname_deploy_rsa to ./deploy_rsa
     // 4. encrypt the token: `travis encrypt-file deploy_rsa`
     // 5. remove the private key ./deploy_rsa
@@ -60,7 +60,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       if (changed) ghpagesPushSite
       else Def.task {}
     }).value,
-    git.remoteRepo := s"git@github.com:${siteGithubRepo.value}.git"
+    git.remoteRepo := s"git@github.com:${siteGitHubRepo.value}.git"
   )
 
   def gitRemoveFiles(dir: File, files: List[File], git: GitRunner, s: TaskStreams): Unit = {

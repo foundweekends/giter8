@@ -1,4 +1,4 @@
-This release adds a `search` command which uses the github API to
+This release adds a `search` command which uses the GitHub API to
 search for repositories containing the given string, and ending with
 ".g8". Contributed by hadesgames in [PR #128][128].
 

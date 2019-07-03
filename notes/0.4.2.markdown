@@ -1,6 +1,6 @@
 ### Obligatory Upgrade
 
-Because github is [terminating its v2 APIs][gh] on May 1, 2012 and
+Because GitHub is [terminating its v2 APIs][gh] on May 1, 2012 and
 these are used by all earlier versions of giter8, you must upgrade in
 order to continue using the software.
 

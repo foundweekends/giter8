@@ -87,7 +87,7 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
     assert(directoryWasCopied, "Local repository should be copied if no branch was given")
   }
 
-  it should "retry cloning Github repository with given branch if clone with public URL is failed" in new TestFixture {
+  it should "retry cloning GitHub repository with given branch if clone with public URL is failed" in new TestFixture {
     val repository  = GitHub("foo", "bar")
     val branch      = Some(Branch("someBranch"))
     val destination = new File(".")
@@ -102,7 +102,7 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
     assert(directoryWasCleaned, "Target directory should be cleaned")
   }
 
-  it should "retry cloning Github repository with default branch if clone with public URL is failed" in new TestFixture {
+  it should "retry cloning GitHub repository with default branch if clone with public URL is failed" in new TestFixture {
     val repository  = GitHub("foo", "bar")
     val branch      = None
     val destination = new File(".")

@@ -1,7 +1,7 @@
-This release improves support for github OAuth. The previous release
+This release improves support for GitHub OAuth. The previous release
 did not request the proper scope for private repositories. If you
 already obtained a token, or wish to switch from name and password
-auth, then run g8 with your github name and password separated by
+auth, then run g8 with your GitHub name and password separated by
 a `:` character:
 
 [private]: https://github.com/n8han/conscript/issues/39
@@ -10,7 +10,7 @@ a `:` character:
 
 If successful, this command stores an access token in `~/.g8/config`
 which is used for all future `g8` invocations. You can revoke tokens
-at any time in your [github account settings][tokens].
+at any time in your [GitHub account settings][tokens].
 
 [tokens]: https://github.com/settings/applications
 
