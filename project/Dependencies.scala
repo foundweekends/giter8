@@ -22,7 +22,7 @@ object Dependencies {
   val scala210         = "2.10.7"
   val scala211         = "2.11.12"
   val scala212         = "2.12.8"
-  val sbt1             = "1.1.6"
+  val sbt1             = "1.2.8"
   val sbt013           = "0.13.17"
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "1.1.0"
   val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.0"

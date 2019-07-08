@@ -76,7 +76,7 @@ lazy val crossSbt = Seq(
 )
 
 lazy val scaffold = (project in file("scaffold"))
-  .enablePlugins(BintrayPublish)
+  .enablePlugins(SbtPlugin, BintrayPublish, ScriptedPlugin)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
@@ -98,7 +98,7 @@ lazy val scaffold = (project in file("scaffold"))
   )
 
 lazy val plugin = (project in file("plugin"))
-  .enablePlugins(BintrayPublish)
+  .enablePlugins(SbtPlugin, BintrayPublish, ScriptedPlugin)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(

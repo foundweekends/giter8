@@ -19,7 +19,8 @@ package giter8
 
 import sbt._
 import sbt.Path.relativeTo
-import SBTCompat._
+import sbt.sbtgiter8.{SBTCompat, ScriptedCompat}
+import sbt.sbtgiter8.SBTCompat._
 
 object Giter8Plugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
@@ -38,6 +39,11 @@ object Giter8Plugin extends sbt.AutoPlugin {
   }
 
   import autoImport._
+
+  override lazy val globalSettings = Seq(
+    scriptedBufferLog := true,
+    scriptedLaunchOpts := Seq()
+  )
 
   lazy val baseGiter8Settings: Seq[Def.Setting[_]] = Seq(
     g8 := {
