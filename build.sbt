@@ -51,7 +51,7 @@ lazy val app = (project in file("app"))
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
-    crossScalaVersions := List(scala210, scala211, scala212),
+    crossScalaVersions := List(scala212, scala213),
     sourceDirectory in csRun := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
     },
@@ -61,14 +61,13 @@ lazy val app = (project in file("app"))
   )
 
 lazy val crossSbt = Seq(
-  crossSbtVersions := List(sbt013, sbt1),
+  crossSbtVersions := List(sbt1),
   scalaVersion := {
     val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
     partialVersion(crossSbtVersion) match {
-      case Some((0, 13)) => scala210
       case Some((1, _))  => scala212
       case _ =>
-        throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 0.13.x or 1.X)")
+        throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 1.X)")
     }
   }
 )
@@ -81,7 +80,7 @@ lazy val scaffold = (project in file("scaffold"))
     name := "sbt-giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
-    crossScalaVersions := List(scala210, scala212),
+    crossScalaVersions := List(scala212),
     scriptedLaunchOpts ++= javaVmArgs.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
     ),
@@ -103,7 +102,7 @@ lazy val plugin = (project in file("plugin"))
     name := "sbt-giter8",
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
-    crossScalaVersions := List(scala210, scala212),
+    crossScalaVersions := List(scala212),
     resolvers += Resolver.typesafeIvyRepo("releases"),
     scriptedLaunchOpts ++= javaVmArgs.filter(
       a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
@@ -118,12 +117,10 @@ lazy val plugin = (project in file("plugin"))
 
       val artifact =
         partialVersion(crossSbtVersion) match {
-          case Some((0, 13)) =>
-            "org.scala-sbt" % "scripted-plugin"
           case Some((1, _)) =>
             "org.scala-sbt" %% "scripted-plugin"
           case _ =>
-            throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 0.13.x or 1.X)")
+            throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 1.X)")
         }
 
       artifact % crossSbtVersion
@@ -140,7 +137,7 @@ lazy val lib = (project in file("library"))
   .settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",
-    crossScalaVersions := List(scala210, scala211, scala212),
+    crossScalaVersions := List(scala212, scala213),
     libraryDependencies ++= Seq(
       stringTemplate,
       jgit,
@@ -162,13 +159,7 @@ lazy val lib = (project in file("library"))
 def customCommands: Seq[Setting[_]] = Seq(
   commands += Command.command("release") { state =>
     "clean" ::
-      s"++${scala210}" ::
-      s"^^${sbt013}" ::
-      "lib/publishSigned" ::
-      "app/publishSigned" ::
-      "plugin/publishSigned" ::
-      "scaffold/publishSigned" ::
-      s"++${scala211}" ::
+      s"++${scala213}" ::
       "app/publishSigned" ::
       "lib/publishSigned" ::
       s"++${scala212}" ::

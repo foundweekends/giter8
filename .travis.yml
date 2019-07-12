@@ -9,9 +9,9 @@ matrix:
   - env: SBT_VERSION=1.2.8
     jdk: openjdk8
     scripted: sbt "-no-colors" "^^ $SBT_VERSION" ";scalafmtCheckAll;plugin/scripted;scaffold/scripted;lib/test;app/compile"
-  - env: SBT_VERSION=0.13.18
-    jdk: openjdk8
-    scripted: sbt "-no-colors" "^^ $SBT_VERSION" ";plugin/scripted;scaffold/scripted;lib/test;app/compile"
+  - name: "Scala 2.13"
+    script:
+    - sbt "++ 2.13.0" app/test lib/test
   - env: SBT_VERSION=1.1.6
     jdk: openjdk11
     scripted: sbt "-no-colors" "^^ $SBT_VERSION" ";plugin/scripted;scaffold/scripted;lib/test;app/compile"

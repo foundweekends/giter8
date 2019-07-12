@@ -451,7 +451,7 @@ object G8 {
 
               print(s"$k [$message]: ")
               Console.flush() // Gotta flush for Windows console!
-              val in = Console.readLine().trim
+              val in = scala.io.StdIn.readLine().trim
               (k, if (in.isEmpty) default else in)
             }
           )
