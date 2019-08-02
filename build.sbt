@@ -8,41 +8,39 @@ val javaVmArgs: List[String] = {
   java.lang.management.ManagementFactory.getRuntimeMXBean.getInputArguments.asScala.toList
 }
 
+ThisBuild / organization := "org.foundweekends.giter8"
+ThisBuild / version := g8version
+ThisBuild / scalaVersion := scala212
+ThisBuild / organizationName := "foundweekends"
+ThisBuild / organizationHomepage := Some(url("http://foundweekends.org/"))
+ThisBuild / scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint", "-Xfuture")
+ThisBuild / publishArtifact in (Compile, packageBin) := true
+ThisBuild / homepage := Some(url("http://www.foundweekends.org/giter8/"))
+ThisBuild / publishMavenStyle := true
+ThisBuild / publishTo :=
+  Some("releases" at
+    "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+ThisBuild / publishArtifact in Test := false
+ThisBuild / parallelExecution in Test := false
+ThisBuild / licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+ThisBuild / developers := List(
+  Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han")),
+  Developer("eed3si9n", "Eugene Yokota", "@eed3si9n", url("https://github.com/eed3si9n"))
+)
+ThisBuild / scmInfo := Some(
+  ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
+
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
   .disablePlugins(ScriptedPlugin)
   .aggregate(app, lib, scaffold, plugin)
   .settings(
-    inThisBuild(
-      List(
-        organization := "org.foundweekends.giter8",
-        version := g8version,
-        scalaVersion := scala210,
-        organizationName := "foundweekends",
-        organizationHomepage := Some(url("http://foundweekends.org/")),
-        scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint", "-Xfuture"),
-        publishArtifact in (Compile, packageBin) := true,
-        homepage := Some(url("http://www.foundweekends.org/giter8/")),
-        publishMavenStyle := true,
-        publishTo :=
-          Some("releases" at
-            "https://oss.sonatype.org/service/local/staging/deploy/maven2"),
-        publishArtifact in Test := false,
-        parallelExecution in Test := false,
-        licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-        developers := List(
-          Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han")),
-          Developer("eed3si9n", "Eugene Yokota", "@eed3si9n", url("https://github.com/eed3si9n"))
-        ),
-        scmInfo := Some(
-          ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
-      )),
     name := "giter8",
-    crossScalaVersions := List(scala210, scala211, scala212),
+    crossScalaVersions := Nil,
     siteGitHubRepo := "foundweekends/giter8",
     siteEmail := { "eed3si9n" + "@" + "gmail.com" },
-    skip in publish := true,
+    publish / skip := true,
     customCommands
   )
 
