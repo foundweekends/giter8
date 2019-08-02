@@ -121,14 +121,18 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
     (sortedMajor == maxMajor) :| s"expected major: ${sortedMajor}, got: ${maxMajor}"
   }
 
-  private def sortedVersionIsOneOfTheSuppliedVersions(sortedVersion: VersionNumber,
-                                                      versions: Seq[VersionNumber]): Prop = {
+  private def sortedVersionIsOneOfTheSuppliedVersions(
+      sortedVersion: VersionNumber,
+      versions: Seq[VersionNumber]
+  ): Prop = {
     (versions
       .contains(sortedVersion)) :| s"expected sorted version: ${sortedVersion} to be one of supplied: ${versions}"
   }
 
-  private def reversingAndSortingIsTheSameAsSortingOnce(sortedVersion: VersionNumber,
-                                                        versions: Seq[VersionNumber]): Prop = {
+  private def reversingAndSortingIsTheSameAsSortingOnce(
+      sortedVersion: VersionNumber,
+      versions: Seq[VersionNumber]
+  ): Prop = {
     val reverseSortedVersion = versions.reverse.sorted.head
     (sortedVersion.numbers == reverseSortedVersion.numbers) :|
       s"Reversing and sorting should be the same as sorting. Expected version: ${sortedVersion}, but got: ${reverseSortedVersion}"

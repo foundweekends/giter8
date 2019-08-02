@@ -1,31 +1,27 @@
-sudo: false
-
-jdk:
-  - openjdk8
-
 os: linux
 dist: xenial
 language: scala
 
-env:
-  matrix:
-    - SBT_VERSION=0.13.17
-    - SBT_VERSION=1.1.6
+jdk: openjdk8
 
 matrix:
   include:
+  - env: SBT_VERSION=1.2.8
+    jdk: openjdk8
+    scripted: sbt "-no-colors" "^^ $SBT_VERSION" ";scalafmtCheckAll;plugin/scripted;scaffold/scripted;lib/test;app/compile"
+  - env: SBT_VERSION=0.13.18
+    jdk: openjdk8
+    scripted: sbt "-no-colors" "^^ $SBT_VERSION" ";plugin/scripted;scaffold/scripted;lib/test;app/compile"
   - env: SBT_VERSION=1.1.6
     jdk: openjdk11
+    scripted: sbt "-no-colors" "^^ $SBT_VERSION" ";plugin/scripted;scaffold/scripted;lib/test;app/compile"
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
 
-script:
-  - sbt "-no-colors" "^^ $SBT_VERSION" ";scalafmtCheck;scalafmtSbtCheck;test:scalafmtCheck;plugin/scripted;scaffold/scripted;lib/test"
-
 after_success:
 - export SBT_GHPAGES_COMMIT_MESSAGE="updated site https://github.com/foundweekends/giter8/commit/${TRAVIS_COMMIT}"
-- > 
+- >
   if [[ "${TRAVIS_PULL_REQUEST}" == "false" && \
         "${TRAVIS_BRANCH}" == "master" && \
         "${TRAVIS_REPO_SLUG}" == "foundweekends/giter8" ]]; then

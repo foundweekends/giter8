@@ -68,20 +68,20 @@ object G8 {
   ): Either[String, String] =
     applyT(
       (file: File) =>
-        fetchInfo(file: File,
-                  defaultTemplatePaths,
-                  List(path("src") / "main" / "scaffolds", path("project") / "src" / "main" / "scaffolds")))(
-      baseDirectory,
-      workingDirectory,
-      arguments,
-      forceOverwrite,
-      outputDirectory)
+        fetchInfo(
+          file: File,
+          defaultTemplatePaths,
+          List(path("src") / "main" / "scaffolds", path("project") / "src" / "main" / "scaffolds")
+        )
+    )(baseDirectory, workingDirectory, arguments, forceOverwrite, outputDirectory)
 
   // Called from ScaffoldPlugin
-  def fromDirectoryRaw(baseDirectory: File,
-                       outputDirectory: File,
-                       arguments: Seq[String],
-                       forceOverwrite: Boolean): Either[String, String] =
+  def fromDirectoryRaw(
+      baseDirectory: File,
+      outputDirectory: File,
+      arguments: Seq[String],
+      forceOverwrite: Boolean
+  ): Either[String, String] =
     applyT((file: File) => fetchInfo(file, List(Path(Nil)), Nil))(
       baseDirectory,
       outputDirectory,
@@ -331,11 +331,13 @@ object G8 {
             }
             .getOrElse(workingDirectory)
 
-          val r = writeTemplates(templatesRoot,
-                                 templates,
-                                 parameters,
-                                 base, // isScaffolding,
-                                 forceOverwrite)
+          val r = writeTemplates(
+            templatesRoot,
+            templates,
+            parameters,
+            base, // isScaffolding,
+            forceOverwrite
+          )
           for {
             _    <- r.right
             root <- scaffoldsRoot
@@ -362,7 +364,8 @@ object G8 {
   private[giter8] def fetchInfo(
       baseDirectory: File,
       templatePaths: List[Path],
-      scaffoldPaths: List[Path]): Either[String, (UnresolvedProperties, Stream[File], File, Option[File])] = {
+      scaffoldPaths: List[Path]
+  ): Either[String, (UnresolvedProperties, Stream[File], File, Option[File])] = {
     import java.io.FileInputStream
     val templatesRoot  = templateRoot(baseDirectory, templatePaths)
     val fs             = templateFiles(templatesRoot, baseDirectory)
@@ -458,12 +461,14 @@ object G8 {
 
   private def relativize(in: File, from: File): String = from.toURI().relativize(in.toURI).getPath
 
-  def writeTemplates(tmpl: File,
-                     templates: Iterable[File],
-                     parameters: Map[String, String],
-                     base: File,
-                     // isScaffolding: Boolean,
-                     forceOverwrite: Boolean): Either[String, String] = {
+  def writeTemplates(
+      tmpl: File,
+      templates: Iterable[File],
+      parameters: Map[String, String],
+      base: File,
+      // isScaffolding: Boolean,
+      forceOverwrite: Boolean
+  ): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
     val renderer = new AugmentedStringRenderer

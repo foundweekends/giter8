@@ -50,7 +50,8 @@ object FormatSpecification extends Properties("Format") {
   lazy val hiragana = (0x3041 to 0x3094).toList
 
   lazy val nonDollarChar: Gen[Char] = Gen.oneOf(
-    ((0x20 to 0xff).toList ::: hiragana).filter(x => Character.isDefined(x) && x != 0x24 && x != 0x5c).map(_.toChar))
+    ((0x20 to 0xff).toList ::: hiragana).filter(x => Character.isDefined(x) && x != 0x24 && x != 0x5c).map(_.toChar)
+  )
 
   lazy val nonDollar: Gen[String] = Gen.sized { size =>
     Gen.listOfN(size, nonDollarChar).map(_.mkString)
