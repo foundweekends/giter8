@@ -62,7 +62,8 @@ object Maven extends JavaTokenParsers with MavenHelper {
   }
 
   private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(
-      implicit svo: Ordering[VersionNumber]): VersionE = {
+      implicit svo: Ordering[VersionNumber]
+  ): VersionE = {
     val versions = (elem \ "result" \ "doc" \ "str").collect {
       case x if x.attribute("name").map(_.text) == Some("v") => x.text
     }
@@ -75,7 +76,8 @@ object Maven extends JavaTokenParsers with MavenHelper {
   def lsIsGone(artifact: String): VersionE =
     Left(
       "ls() function is deprecated. " +
-        s"Use maven() function to get latest version of ${artifact.trim}.")
+        s"Use maven() function to get latest version of ${artifact.trim}."
+    )
 
   def lookup(rawDefaults: G8.OrderedProperties): Either[String, G8.OrderedProperties] = {
     val defaults = rawDefaults.map {

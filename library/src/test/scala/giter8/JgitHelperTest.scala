@@ -14,11 +14,13 @@ class MockRenderer extends TemplateRenderer {
   var forceOverwrite: Boolean       = _
   var outputDirectory: Option[File] = _
 
-  override def render(baseDirectory: File,
-                      workingDirectory: File,
-                      arguments: Seq[String],
-                      forceOverwrite: Boolean,
-                      outputDirectory: Option[File]): Either[String, String] = {
+  override def render(
+      baseDirectory: File,
+      workingDirectory: File,
+      arguments: Seq[String],
+      forceOverwrite: Boolean,
+      outputDirectory: Option[File]
+  ): Either[String, String] = {
     this.baseDirectory    = baseDirectory
     this.workingDirectory = workingDirectory
     this.arguments        = arguments
@@ -51,10 +53,12 @@ class JgitHelperTest extends FlatSpec with Matchers {
   "JGitHelper" should "clone repo with correct URL and branch" in {
     case class TestCase(config: Config, repository: GitRepository, ref: Option[Ref])
     val testCases: Seq[TestCase] = Seq(
-      TestCase(Config("file:///foo", ref                       = Some(Branch("baz"))), Local("/foo"), Some(Branch("baz"))),
-      TestCase(Config("https://github.com/foo/bar.g8.git", ref = None),
-               Remote("https://github.com/foo/bar.g8.git"),
-               None),
+      TestCase(Config("file:///foo", ref = Some(Branch("baz"))), Local("/foo"), Some(Branch("baz"))),
+      TestCase(
+        Config("https://github.com/foo/bar.g8.git", ref = None),
+        Remote("https://github.com/foo/bar.g8.git"),
+        None
+      ),
       TestCase(Config("foo/bar", ref = Some(Tag("baz"))), GitHub("foo", "bar"), Some(Tag("baz")))
     )
 
@@ -95,9 +99,11 @@ class JgitHelperTest extends FlatSpec with Matchers {
   }
 
   it should "pass directory to renderer" in new TestFixture {
-    helper.run(Config("foo/bar", None, forceOverwrite = true, directory = Some("directory/template")),
-               Seq.empty,
-               new File(""))
+    helper.run(
+      Config("foo/bar", None, forceOverwrite = true, directory = Some("directory/template")),
+      Seq.empty,
+      new File("")
+    )
     renderer.baseDirectory.getAbsolutePath().endsWith("directory/template") shouldBe true
   }
 }

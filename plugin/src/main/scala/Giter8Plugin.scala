@@ -141,12 +141,14 @@ object Giter8Plugin extends sbt.AutoPlugin {
         val dir     = (sourceDirectory in Test).value
         val metadir = (baseDirectory in LocalRootProject).value / "project"
         val file0   = dir / "g8" / "test"
-        val files = List(file0,
-                         dir / "g8" / "giter8.test",
-                         dir / "g8" / "g8.test",
-                         metadir / "test",
-                         metadir / "giter8.test",
-                         metadir / "g8.test")
+        val files = List(
+          file0,
+          dir / "g8" / "giter8.test",
+          dir / "g8" / "g8.test",
+          metadir / "test",
+          metadir / "giter8.test",
+          metadir / "g8.test"
+        )
         files.find(_.exists).getOrElse(file0)
       },
       scriptedBufferLog in (Test, g8) := true
