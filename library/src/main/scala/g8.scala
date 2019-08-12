@@ -534,7 +534,7 @@ object G8 {
   def readProps(stm: InputStream): G8.OrderedProperties = {
     // Overrides java.util.Properties to return properties back in the order they were specified
     val properties = new Properties {
-      val parameters = mutable.MutableList.empty[(String, String)]
+      val parameters = mutable.ListBuffer.empty[(String, String)]
 
       override def put(key: Object, value: Object) = {
         val k = key.toString
