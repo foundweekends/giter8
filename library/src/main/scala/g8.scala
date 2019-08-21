@@ -95,7 +95,10 @@ object G8 {
   def apply(fromMapping: Seq[(File, String)], toPath: File, parameters: Map[String, String]): Seq[File] =
     fromMapping filter { !_._1.isDirectory } flatMap {
       case (in, relative) =>
-        apply(in, expandPath(relative, toPath, parameters), toPath, parameters)
+        expandPath(relative, toPath, parameters) match {
+          case None      => Seq()
+          case Some(out) => apply(in, out, toPath, parameters)
+        }
     }
 
   def apply(in: File, out: File, base: File, parameters: Map[String, String]) = {
@@ -193,18 +196,25 @@ object G8 {
     rules.isIgnored(file, base)
   }
 
-  def expandPath(relative: String, toPath: File, parameters: Map[String, String]): File =
+  def expandPath(relative: String, toPath: File, parameters: Map[String, String]): Option[File] =
     try {
+      val fileSeparator = System.getProperty("file.separator")
       val fileParams = Map(parameters.toSeq map {
         case (k, v) if k == "package" =>
-          (k, v.replaceAll("""\.""", System.getProperty("file.separator") match {
+          (k, v.replaceAll("""\.""", fileSeparator match {
             case "\\" => "\\\\"
             case sep  => sep
           }))
         case x => x
       }: _*)
 
-      new File(toPath, applyTemplate(formatize(relative), fileParams))
+      val ignored = relative
+        .split(fileSeparator)
+        .map(part => applyTemplate(formatize(part), fileParams))
+        .exists(_.isEmpty)
+
+      if (ignored) None
+      else Some(new File(toPath, applyTemplate(formatize(relative), fileParams)))
     } catch {
       case e: STException =>
         // add the current relative path to the exception for debugging purposes
@@ -475,34 +485,39 @@ object G8 {
 
     templates
       .map { in =>
-        val name = relativize(in, tmpl)
-        val out  = G8.expandPath(name, base, parameters)
-        (in, out)
+        val name      = relativize(in, tmpl)
+        val optionOut = G8.expandPath(name, base, parameters)
+        (in, optionOut)
       }
       .foreach {
-        case (in, out) =>
-          if (out.exists && !forceOverwrite) {
-            println("Skipping existing file: %s" format out.toString)
-          } else {
-            out.getParentFile.mkdirs()
-            if (G8.verbatim(in, parameters, tmpl))
-              FileUtils.copyFile(in, out)
-            else {
-              catching(classOf[MalformedInputException])
-                .opt {
-                  Some(G8.write(in, out, parameters /*, append = existingScaffoldingAction.getOrElse(false)*/ ))
-                }
-                .getOrElse {
-                  // if (existingScaffoldingAction.getOrElse(false)) {
-                  //   val existing = FileUtils.readFileToString(in, UTF_8)
-                  //   FileUtils.write(out, existing, UTF_8, true)
-                  // } else {
+        case (in, optionOut) =>
+          optionOut match {
+            case None => println("Skipping ignored file: %s" format in.toString)
+            case Some(out) => {
+              if (out.exists && !forceOverwrite) {
+                println("Skipping existing file: %s" format out.toString)
+              } else {
+                out.getParentFile.mkdirs()
+                if (G8.verbatim(in, parameters, tmpl))
                   FileUtils.copyFile(in, out)
-                  // }
+                else {
+                  catching(classOf[MalformedInputException])
+                    .opt {
+                      Some(G8.write(in, out, parameters /*, append = existingScaffoldingAction.getOrElse(false)*/ ))
+                    }
+                    .getOrElse {
+                      // if (existingScaffoldingAction.getOrElse(false)) {
+                      //   val existing = FileUtils.readFileToString(in, UTF_8)
+                      //   FileUtils.write(out, existing, UTF_8, true)
+                      // } else {
+                      FileUtils.copyFile(in, out)
+                      // }
+                    }
                 }
-            }
-            if (in.canExecute) {
-              out.setExecutable(true)
+                if (in.canExecute) {
+                  out.setExecutable(true)
+                }
+              }
             }
           }
       }
