@@ -113,6 +113,14 @@ $endif$
 │   │               └── $organization__packaged$
 │   │                   └── $name;format=&quot;Camel&quot;$.scala
 
+</code></pre><p>If you want to skip a directory from the path, but keep all nested directories and files, use <code>.</code> as the name of the directory. For example the next template:
+</p><pre><code class="">src/main/g8
+├── parent_folder
+│   ├── $if(cond.truthy)$skip_folder$else$.$endif$
+|   |   └── child_file
+</code></pre><p>will be processed to
+</p><pre><code class="">├── parent_folder
+|   └── child_file
 </code></pre><h3 id="name+field">name field<a href="#name+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>name</code> field, if defined, is treated specially by Giter8. It is
 assumed to be the name of a project being created, so the g8 runtime
 creates a directory based off that name (with spaces and capitals

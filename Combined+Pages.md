@@ -227,6 +227,22 @@ src/main/g8
 
 ```
 
+If you want to skip a directory from the path, but keep all nested directories and files, use `.` as the name of the directory. For example the next template:
+
+```
+src/main/g8
+├── parent_folder
+│   ├── $if(cond.truthy)$skip_folder$else$.$endif$
+|   |   └── child_file
+```
+
+will be processed to
+
+```
+├── parent_folder
+|   └── child_file
+```
+
 [conditionals]: https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals
 
 ### name field
