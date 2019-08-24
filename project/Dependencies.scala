@@ -9,7 +9,7 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.4.0.201906121030-r" excludeAll (
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.4.2.201908231537-r" excludeAll (
     ExclusionRule("javax.jms", "jms"),
     ExclusionRule("com.sun.jdmk", "jmxtools"),
     ExclusionRule("com.sun.jmx", "jmxri")
