@@ -1,3 +1,6 @@
+
+enablePlugins(ScriptedPlugin)
+
 scriptedBufferLog in (Test, g8) := false
 
 val javaVmArgs: List[String] = {

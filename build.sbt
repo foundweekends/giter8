@@ -33,7 +33,6 @@ ThisBuild / scmInfo := Some(
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
-  .disablePlugins(ScriptedPlugin)
   .aggregate(app, lib, scaffold, plugin)
   .settings(
     name := "giter8",
@@ -45,7 +44,7 @@ lazy val root = (project in file("."))
   )
 
 lazy val app = (project in file("app"))
-  .disablePlugins(BintrayPlugin, ScriptedPlugin)
+  .disablePlugins(BintrayPlugin)
   .enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish)
   .dependsOn(lib)
   .settings(
@@ -131,7 +130,7 @@ lazy val plugin = (project in file("plugin"))
   )
 
 lazy val lib = (project in file("library"))
-  .disablePlugins(BintrayPlugin, ScriptedPlugin)
+  .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
   .settings(crossSbt)
   .settings(
