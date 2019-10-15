@@ -145,6 +145,7 @@ lazy val lib = (project in file("library"))
       jgit,
       commonsIo,
       plexusArchiver,
+      atto,
       scalacheck % Test,
       sbtIo % Test,
       scalatest % Test,
