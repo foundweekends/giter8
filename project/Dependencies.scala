@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val stringTemplate = "org.antlr" % "ST4" % "4.1"
+  val stringTemplate = "org.antlr" % "ST4" % "4.2"
   val commonsIo      = "commons-io" % "commons-io" % "2.6"
   val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll (
     ExclusionRule("org.apache.commons", "commons-compress"),
@@ -9,7 +9,7 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.4.2.201908231537-r" excludeAll (
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.4.3.201909031940-r" excludeAll (
     ExclusionRule("javax.jms", "jms"),
     ExclusionRule("com.sun.jdmk", "jmxtools"),
     ExclusionRule("com.sun.jmx", "jmxri")
@@ -19,8 +19,8 @@ object Dependencies {
   val scalatest        = "org.scalatest" %% "scalatest" % "3.0.8"
   val scalamock        = "org.scalamock" %% "scalamock" % "4.4.0"
   val sbtIo            = "org.scala-sbt" %% "io" % "1.3.0-M13"
-  val scala212         = "2.12.8"
-  val scala213         = "2.13.0"
+  val scala212         = "2.12.10"
+  val scala213         = "2.13.1"
   val sbt1             = "1.2.8"
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
   val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
