@@ -46,5 +46,5 @@ object Ls {
   }
 
   def unapply(value: String): Option[(String, String)] =
-    Ls.parser.parseOnly(value).option.map(ls => (ls.owner, ls.name))
+    parser.parseOnly(value).option.map(ls => (ls.owner, ls.name))
 }
