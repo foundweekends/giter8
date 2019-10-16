@@ -20,6 +20,8 @@ package giter8
 import java.io.{File, InputStream}
 import java.util.{Locale, Properties}
 
+import atto.Atto._
+import cats.data.NonEmptyList
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.Charsets.UTF_8
 import org.codehaus.plexus.logging.Logger
@@ -57,6 +59,16 @@ object G8 {
     * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
     */
   type ValueF = ResolvedProperties => String
+
+  /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
+  final case class DefaultValueF(default: String) extends ValueF {
+    override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
+  }
+
+  final case class OneOfValueF(possibilities: NonEmptyList[String]) extends ValueF {
+    override def apply(resolved: ResolvedProperties): String =
+      applyTemplate(possibilities.head, resolved)
+  }
 
   // Called from JgitHelper
   def fromDirectory(
@@ -153,11 +165,6 @@ object G8 {
     def internalError(msg: STMessage) = {
       throw new STException(msg.toString, null)
     }
-  }
-
-  /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
-  case class DefaultValueF(default: String) extends ValueF {
-    override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
   }
 
   private val renderer = new AugmentedStringRenderer
@@ -396,7 +403,11 @@ object G8 {
       .map { f =>
         val props       = readProps(new FileInputStream(f))
         val transformed = transformProps(props)
-        transformed.right.map { _.map { case (k, v) => (k, DefaultValueF(v)) } }
+        transformed.right.map { _.map { case (k, v) =>
+          OneOf.parser.parseOnly(v).option
+            .map(of => (k, OneOfValueF(of.possibilities)))
+            .getOrElse((k, DefaultValueF(v)))
+        } }
       }
       .getOrElse(Right(UnresolvedProperties.empty))
 
@@ -405,14 +416,24 @@ object G8 {
     for (parameters <- parametersEither.right) yield (parameters, g8templates, templatesRoot, scaffoldsRoot)
   }
 
-  def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]) = {
+  def consoleParams(defaults: UnresolvedProperties, arguments: Seq[String]): Option[Map[String, String]] = {
     arguments.headOption.map { _ =>
       val specified = arguments.foldLeft(ResolvedProperties.empty) {
-        case (map, Param(key, value)) if defaults.map(_._1).contains(key) =>
-          map + (key -> value)
-        case (map, Param(key, _)) =>
-          println("Ignoring unrecognized parameter: " + key)
-          map
+        case (map, Param(key, value)) =>
+          defaults.filter { case (k, _) => k == key }.headOption match {
+            case Some((k, v)) => v match {
+              case _: DefaultValueF => map + (key -> value)
+              case OneOfValueF(possibilities) =>
+                if (possibilities.toList.contains(value)) map + (key -> value)
+                else {
+                  println(s"Parameter $key should be one of ${possibilities.toList.mkString(", ")}, was $value")
+                  map
+                }
+            }
+            case None =>
+              println(s"Ignoring unrecognized parameter: $key")
+              map
+          }
       }
 
       // Add anything from defaults that wasn't picked up as an argument from the console.

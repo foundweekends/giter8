@@ -26,6 +26,7 @@ final case class OneOf(possibilities: NonEmptyList[String])
 object OneOf {
   implicit val showOneOf: Show[OneOf] =
     Show.show(o => s"oneOf(${o.possibilities.toList.mkString(", ")})")
+
   val parser: Parser[OneOf] = {
     val sepParser = token(char(','))
     (string("oneOf") ~> parens(stringOf1(letter).sepBy1(sepParser)))
