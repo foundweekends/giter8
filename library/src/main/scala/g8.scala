@@ -35,6 +35,8 @@ import scala.collection.mutable
 import scala.util.Try
 import scala.util.control.Exception.{allCatch, catching}
 
+import construct._
+
 object G8 {
   import org.stringtemplate.v4.{AttributeRenderer, ST, STGroup, STErrorListener}
 

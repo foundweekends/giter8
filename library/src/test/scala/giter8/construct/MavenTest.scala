@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package giter8
+package giter8.construct
 
 import org.scalatest.{EitherValues, FlatSpec, Matchers}
 

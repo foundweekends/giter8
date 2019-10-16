@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package giter8
+package giter8.construct
 
 import scala.util.parsing.combinator._
 

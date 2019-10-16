@@ -1,6 +1,5 @@
 /*
- * Original implementation (C) 2014-2015 Kenji Yoshida and contributors
- * Adapted and extended in 2016 by foundweekends project
+ * Original implementation (C) 2016 Eugene Yokota
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +14,20 @@
  * limitations under the License.
  */
 
-package giter8
+package giter8.construct
 
-import atto._
 import atto.Atto._
-import cats.Show
 import cats.data.NonEmptyList
+import cats.syntax.show._
+import org.scalacheck._
 
-final case class OneOf(possibilities: NonEmptyList[String])
-object OneOf {
-  implicit val showOneOf: Show[OneOf] =
-    Show.show(o => s"oneOf(${o.possibilities.toList.mkString(", ")})")
+object OneOfSpecification extends Properties("OneOf") {
+  implicit val oneOfGen: Arbitrary[OneOf] = Arbitrary {
+    Gen.nonEmptyListOf(Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString))
+      .map(ls => OneOf(NonEmptyList.fromListUnsafe(ls)))
+  }
 
-  val parser: Parser[OneOf] = {
-    val sepParser = token(char(','))
-    (string("oneOf") ~> parens(stringOf1(letter).sepBy1(sepParser)))
-      .map(OneOf.apply)
-      .namedOpaque("oneOf")
+  property("OneOf roundtrip") = Prop.forAll { o: OneOf =>
+    OneOf.parser.parseOnly(o.show).option == Some(o)
   }
 }

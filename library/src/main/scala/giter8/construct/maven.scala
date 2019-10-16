@@ -16,6 +16,7 @@
  */
 
 package giter8
+package construct
 
 import java.io.File
 import scala.util.parsing.combinator._
@@ -24,7 +25,7 @@ import scala.xml.NodeSeq
 /**
   * Parse `maven-metadata.xml`
   */
-object Maven extends JavaTokenParsers with MavenHelper {
+object Maven extends JavaTokenParsers with utils.MavenHelper {
   private val org, name, release = """[\w\-\.]+""".r
 
   private val spec =

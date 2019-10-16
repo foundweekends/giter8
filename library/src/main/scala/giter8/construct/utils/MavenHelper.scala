@@ -16,6 +16,7 @@
  */
 
 package giter8
+package construct.utils
 
 import scala.xml.{NodeSeq, XML}
 import org.apache.http.HttpResponse
