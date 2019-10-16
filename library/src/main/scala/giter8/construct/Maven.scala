@@ -18,22 +18,42 @@
 package giter8
 package construct
 
-import scala.util.parsing.combinator._
+import atto._
+import atto.Atto._
+import atto.syntax.refined._
+import cats.Show
+import eu.timepit.refined.W
+import eu.timepit.refined.api.Refined
+import eu.timepit.refined.string.MatchesRegex
+
 import scala.xml.NodeSeq
 
-/**
-  * Parse `maven-metadata.xml`
-  */
-object Maven extends JavaTokenParsers with utils.MavenHelper {
-  private val org, name, release = """[\w\-\.]+""".r
+final case class Maven(org: String, name: String, stable: Boolean)
+object Maven extends utils.MavenHelper {
+  type ValidOrg = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
+  type Org = String Refined ValidOrg
+  type ValidName = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
+  type Name = String Refined ValidName
 
-  private val spec =
-    "maven" ~> "(" ~> org ~ ("," ~> name) ~ (("," ~> release) ?) <~ ")" ^^ {
-      case org ~ name ~ release => (org, name, release)
-    }
+  implicit val showMaven: Show[Maven] = Show.show { m =>
+    s"maven(${m.org}, ${m.name}${if (m.stable) ", stable" else ""})"
+  }
 
-  private def unapply(value: String): Option[(String, String, Option[String])] =
-    Some(parse(spec, value)).filter { _.successful }.map { _.get }
+  val parser: Parser[Maven] = {
+    val orgP = stringOf1(letter).refined[ValidOrg].namedOpaque("org")
+    val nameP = stringOf1(letter).refined[ValidName].namedOpaque("name")
+    val sepP = token(char(','))
+    (for {
+      _ <- string("maven") <~ char('(')
+      org <- orgP <~ sepP
+      name <- nameP
+      stable <- opt(sepP ~> string("stable"))
+      _ <- char(')')
+    } yield Maven(org.value, name.value, stable.isDefined)).namedOpaque("maven")
+  }
+
+  private def unapply(value: String): Option[(String, String, Boolean)] =
+    parser.parseOnly(value).option.map(mvn => (mvn.org, mvn.name, mvn.stable))
 
   private def latestVersion(
       org: String,
@@ -45,11 +65,10 @@ object Maven extends JavaTokenParsers with utils.MavenHelper {
       name: String
   ): VersionE = fromMaven(org, name, true)(findLatestStableVersion)
 
-  private[giter8] def findLatestVersion(loc: String, elem: NodeSeq): VersionE = {
+  private[giter8] def findLatestVersion(loc: String, elem: NodeSeq): VersionE =
     (elem \ "result" \ "doc" \ "str")
       .collectFirst { case x if x.attribute("name").map(_.text) == Some("latestVersion") => x.text }
       .toRight(s"Found metadata at $loc but can't extract latest version")
-  }
 
   private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(
       implicit svo: Ordering[VersionNumber]
@@ -71,10 +90,10 @@ object Maven extends JavaTokenParsers with utils.MavenHelper {
 
   def lookup(rawDefaults: G8.OrderedProperties): Either[String, G8.OrderedProperties] = {
     val defaults = rawDefaults.map {
-      case (k, Ls(owner, name))                  => k -> lsIsGone(name)
-      case (k, Maven(org, name, Some("stable"))) => k -> latestStableVersion(org, name)
-      case (k, Maven(org, name, _))              => k -> latestVersion(org, name)
-      case (k, value)                            => k -> Right(value)
+      case (k, Ls(owner, name))        => k -> lsIsGone(name)
+      case (k, Maven(org, name, true)) => k -> latestStableVersion(org, name)
+      case (k, Maven(org, name, _))    => k -> latestVersion(org, name)
+      case (k, value)                  => k -> Right(value)
     }
     val initial: Either[String, G8.OrderedProperties] = Right(List.empty)
     defaults.reverseIterator.foldLeft(initial) {
