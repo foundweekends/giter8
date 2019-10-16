@@ -18,8 +18,10 @@ ThisBuild / publishArtifact in (Compile, packageBin) := true
 ThisBuild / homepage := Some(url("http://www.foundweekends.org/giter8/"))
 ThisBuild / publishMavenStyle := true
 ThisBuild / publishTo :=
-  Some("releases" at
-    "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+  Some(
+    "releases" at
+      "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+  )
 ThisBuild / publishArtifact in Test := false
 ThisBuild / parallelExecution in Test := false
 ThisBuild / licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
@@ -28,7 +30,8 @@ ThisBuild / developers := List(
   Developer("eed3si9n", "Eugene Yokota", "@eed3si9n", url("https://github.com/eed3si9n"))
 )
 ThisBuild / scmInfo := Some(
-  ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git"))
+  ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git")
+)
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
@@ -64,7 +67,7 @@ lazy val crossSbt = Seq(
   scalaVersion := {
     val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
     partialVersion(crossSbtVersion) match {
-      case Some((1, _))  => scala212
+      case Some((1, _)) => scala212
       case _ =>
         throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 1.X)")
     }

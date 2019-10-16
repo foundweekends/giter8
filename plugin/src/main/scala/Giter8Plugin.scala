@@ -150,14 +150,16 @@ object Giter8Plugin extends sbt.AutoPlugin {
           if (file0.isDirectory) dir / "g8" / "test.script"
           else file0
 
-        val files = List(file0,
-                         dir / "g8" / "test.script",
-                         dir / "g8" / "giter8.test",
-                         dir / "g8" / "g8.test",
-                         metadir / "test",
-                         metadir / "test.script",
-                         metadir / "giter8.test",
-                         metadir / "g8.test")
+        val files = List(
+          file0,
+          dir / "g8" / "test.script",
+          dir / "g8" / "giter8.test",
+          dir / "g8" / "g8.test",
+          metadir / "test",
+          metadir / "test.script",
+          metadir / "giter8.test",
+          metadir / "g8.test"
+        )
 
         files
           .find(_.isFile)
