@@ -30,7 +30,7 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
   }
 
   "JGitInteractor" should "clone the remote repository" in tempDirectory { localRepository =>
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe Symbol("success")
 
     localRepository.branch shouldBe "master"
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
@@ -68,8 +68,8 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
     "in new branch" >> (remoteRepository / "test.txt")
     remoteRepository.commit("Create new branch")
 
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
-    interactor.checkoutBranch(localRepository, "firstBranch") shouldBe 'success
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe Symbol("success")
+    interactor.checkoutBranch(localRepository, "firstBranch") shouldBe Symbol("success")
 
     localRepository.branch shouldBe "firstBranch"
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
@@ -81,8 +81,8 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
     "after tag" >> (remoteRepository / "test.txt")
     remoteRepository.commit("Commit after tag")
 
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
-    interactor.checkoutTag(localRepository, "v1.0.0") shouldBe 'success
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe Symbol("success")
+    interactor.checkoutTag(localRepository, "v1.0.0") shouldBe Symbol("success")
 
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
   }
@@ -90,8 +90,8 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
   it should "not fail if checkout existing branch" in tempDirectory { localRepository =>
     remoteRepository.checkout("master")
 
-    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe 'success
-    interactor.checkoutBranch(localRepository, "master") shouldBe 'success
+    interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe Symbol("success")
+    interactor.checkoutBranch(localRepository, "master") shouldBe Symbol("success")
 
     localRepository.branch shouldBe "master"
   }
