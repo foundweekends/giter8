@@ -17,17 +17,18 @@
 package giter8.construct
 
 import atto.Atto._
-import cats.data.NonEmptyList
 import cats.syntax.show._
 import org.scalacheck._
 
-object OneOfSpecification extends Properties("OneOf") {
-  implicit val oneOfGen: Arbitrary[OneOf] = Arbitrary {
-    Gen.nonEmptyListOf(Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString))
-      .map(ls => OneOf(NonEmptyList.fromListUnsafe(ls)))
+object LsSpecification extends Properties("Ls") {
+  implicit val oneOfGen: Arbitrary[Ls] = Arbitrary {
+    for {
+      owner <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+      name <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+    } yield Ls(owner, name)
   }
 
-  property("roundtrip") = Prop.forAll { o: OneOf =>
-    OneOf.parser.parseOnly(o.show).option == Some(o)
+  property("roundtrip") = Prop.forAll { l: Ls =>
+    Ls.parser.parseOnly(l.show).option == Some(l)
   }
 }

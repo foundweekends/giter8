@@ -25,5 +25,6 @@ object Dependencies {
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
   val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
   val logback          = "ch.qos.logback" % "logback-classic" % "1.2.3"
-  val atto             = "org.tpolecat" %% "atto-core" % "0.7.0"
+  val atto             = "org.tpolecat" %% "atto-core"    % "0.7.0"
+  val attoRefined      = "org.tpolecat" %% "atto-refined" % "0.7.0"
 }

@@ -16,15 +16,35 @@
 
 package giter8.construct
 
-import scala.util.parsing.combinator._
+import atto._
+import atto.Atto._
+import atto.syntax.refined._
+import cats.Show
+import eu.timepit.refined.W
+import eu.timepit.refined.api.Refined
+import eu.timepit.refined.string.MatchesRegex
 
-object Ls extends JavaTokenParsers {
-  private val owner, name = """[\w\-\.]+""".r
-  private val spec =
-    "ls" ~> "(" ~> owner ~ ("," ~> name) <~ ")" ^^ {
-      case owner ~ name => (owner, name)
-    }
+final case class Ls(owner: String, name: String)
+object Ls {
+  type ValidOwner = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
+  type Owner = String Refined ValidOwner
+  type ValidName = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
+  type Name = String Refined ValidName
+
+  implicit val showLs: Show[Ls] = Show.show(l => s"ls(${l.owner}, ${l.name})")
+
+  val parser: Parser[Ls] = {
+    val ownerP = stringOf1(letter).refined[ValidOwner].namedOpaque("owner")
+    val nameP = stringOf1(letter).refined[ValidName].namedOpaque("name")
+    val sepP = token(char(','))
+    (for {
+      _ <- string("ls") <~ char('(')
+      owner <- ownerP <~ sepP
+      name <- nameP
+      _ <- char(')')
+    } yield Ls(owner.value, name.value)).namedOpaque("ls")
+  }
 
   def unapply(value: String): Option[(String, String)] =
-    Some(parse(spec, value)).filter { _.successful }.map { _.get }
+    Ls.parser.parseOnly(value).option.map(ls => (ls.owner, ls.name))
 }
