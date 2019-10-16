@@ -478,12 +478,26 @@ object G8 {
               k -> f(resolved)
             else {
               val default = f(resolved)
-              val message = Truthy.getMessage(default)
+              val message = f match {
+                case _: DefaultValueF => Truthy.getMessage(default)
+                case OneOfValueF(possibilities) =>
+                  s"one of ${possibilities.toList.mkString(", ")}, default $default"
+              }
 
               print(s"$k [$message]: ")
               Console.flush() // Gotta flush for Windows console!
               val in = scala.io.StdIn.readLine().trim
-              (k, if (in.isEmpty) default else in)
+              (k, if (in.isEmpty) default else {
+                f match {
+                  case _: DefaultValueF => in
+                  case OneOfValueF(possibilities) =>
+                    if (possibilities.toList.contains(in)) in
+                    else {
+                      println(s"Parameter $k should be one of ${possibilities.toList.mkString(", ")}, was $in")
+                      default
+                    }
+                }
+              })
             }
           )
       }
