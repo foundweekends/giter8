@@ -21,7 +21,7 @@ package construct.utils
 import scala.xml.{NodeSeq, XML}
 import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.DefaultHttpClient
+import org.apache.http.impl.client.HttpClientBuilder
 
 // http://hc.apache.org/httpcomponents-client-4.2.x/httpclient/apidocs/
 trait MavenHelper {
@@ -44,7 +44,7 @@ trait MavenHelper {
   }
 
   def withHttp[A](url: String)(f: HttpResponse => A): A = {
-    val httpClient = new DefaultHttpClient
+    val httpClient = HttpClientBuilder.create().build()
     try {
       val r        = new HttpGet(url)
       val response = httpClient.execute(r)

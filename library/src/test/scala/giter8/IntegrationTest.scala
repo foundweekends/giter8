@@ -121,7 +121,7 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
        |package = com.example
     """.stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
 
-      "package $package$" >> (template / "src/main/g8/src/main/scala" / "$package$" / "Main.scala")
+      s"package $$package$$" >> (template / "src/main/g8/src/main/scala" / s"$$package$$" / "Main.scala")
       "package com.example" >> (expected / "package-test" / "src/main/scala" / "com/example" / "Main.scala")
       checkGeneratedProject(template, expected, actual)
   }

@@ -3,7 +3,7 @@ package giter8
 import java.io.File
 
 import giter8.GitRepository.{GitHub, Local, Remote}
-import org.scalatest.{EitherValues, FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.util.{Success, Try}
 
@@ -42,7 +42,7 @@ class MockGit extends Git(null) {
   }
 }
 
-class JgitHelperTest extends FlatSpec with Matchers {
+class JGitHelperTest extends FlatSpec with Matchers {
 
   trait TestFixture {
     val git      = new MockGit

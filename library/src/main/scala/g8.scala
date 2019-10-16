@@ -19,11 +19,11 @@ package giter8
 
 import java.io.{File, InputStream}
 import java.util.{Locale, Properties}
+import java.nio.charset.StandardCharsets
 
 import atto.Atto._
 import cats.data.NonEmptyList
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.Charsets.UTF_8
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
@@ -191,7 +191,7 @@ object G8 {
     }
 
   def write(out: File, template: String, parameters: Map[String, String] /*, append: Boolean = false*/ ): Unit =
-    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8 /*, append*/ )
+    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), StandardCharsets.UTF_8 /*, append*/ )
 
   def verbatim(file: File, parameters: Map[String, String], base: File = new File(".")): Boolean = {
 
@@ -469,8 +469,7 @@ object G8 {
       println("\n")
     }
 
-    val fixed    = Set("verbatim")
-    val renderer = new AugmentedStringRenderer
+    val fixed = Set("verbatim")
 
     others
       .foldLeft(ResolvedProperties.empty) {
@@ -518,7 +517,6 @@ object G8 {
   ): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
-    val renderer = new AugmentedStringRenderer
 
     templates
       .map { in =>
