@@ -26,20 +26,20 @@ import eu.timepit.refined.string.MatchesRegex
 final case class Ls(owner: String, name: String)
 object Ls {
   type ValidOwner = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
-  type ValidName = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
+  type ValidName  = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
 
   implicit val showLs: Show[Ls] = Show.show(l => s"ls(${l.owner}, ${l.name})")
 
   val parser: Parser[Ls] = {
     val allowedChars = letter | digit | char('_') | char('-') | char('.')
-    val ownerP = stringOf1(allowedChars).refined[ValidOwner].namedOpaque("owner")
-    val nameP = stringOf1(allowedChars).refined[ValidName].namedOpaque("name")
-    val sepP = token(char(','))
+    val ownerP       = stringOf1(allowedChars).refined[ValidOwner].namedOpaque("owner")
+    val nameP        = stringOf1(allowedChars).refined[ValidName].namedOpaque("name")
+    val sepP         = token(char(','))
     (for {
-      _ <- string("ls") <~ char('(')
+      _     <- string("ls") <~ char('(')
       owner <- ownerP <~ sepP
-      name <- nameP
-      _ <- char(')')
+      name  <- nameP
+      _     <- char(')')
     } yield Ls(owner.value, name.value)).namedOpaque("ls")
   }
 

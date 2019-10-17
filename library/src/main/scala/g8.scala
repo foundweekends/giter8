@@ -22,7 +22,6 @@ import java.util.{Locale, Properties}
 import java.nio.charset.StandardCharsets
 
 import atto.Atto._
-import cats.data.NonEmptyList
 import org.apache.commons.io.FileUtils
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
@@ -402,11 +401,16 @@ object G8 {
       .map { f =>
         val props       = readProps(new FileInputStream(f))
         val transformed = transformProps(props)
-        transformed.right.map { _.map { case (k, v) =>
-          OneOf.parser.parseOnly(v).option
-            .map(of => (k, OneOfValueF(of)))
-            .getOrElse((k, DefaultValueF(v)))
-        } }
+        transformed.right.map {
+          _.map {
+            case (k, v) =>
+              OneOf.parser
+                .parseOnly(v)
+                .option
+                .map(of => (k, OneOfValueF(of)))
+                .getOrElse((k, DefaultValueF(v)))
+          }
+        }
       }
       .getOrElse(Right(UnresolvedProperties.empty))
 
@@ -420,16 +424,17 @@ object G8 {
       val specified = arguments.foldLeft(ResolvedProperties.empty) {
         case (map, Param(key, value)) =>
           defaults.filter { case (k, _) => k == key }.headOption match {
-            case Some((k, v)) => v match {
-              case _: DefaultValueF => map + (key -> value)
-              case OneOfValueF(oneOf) =>
-                oneOf.check(key, value) match {
-                  case Right(v) => map + (key -> value)
-                  case Left(msg) =>
-                    println(msg)
-                    map
-                }
-            }
+            case Some((k, v)) =>
+              v match {
+                case _: DefaultValueF => map + (key -> value)
+                case OneOfValueF(oneOf) =>
+                  oneOf.check(key, value) match {
+                    case Right(v) => map + (key -> value)
+                    case Left(msg) =>
+                      println(msg)
+                      map
+                  }
+              }
             case None =>
               println(s"Ignoring unrecognized parameter: $key")
               map
@@ -478,20 +483,24 @@ object G8 {
             else {
               val default = f(resolved)
               val message = f match {
-                case _: DefaultValueF => Truthy.getMessage(default)
+                case _: DefaultValueF   => Truthy.getMessage(default)
                 case OneOfValueF(oneOf) => oneOf.description
               }
 
               print(s"$k [$message]: ")
               Console.flush() // Gotta flush for Windows console!
               val in = scala.io.StdIn.readLine().trim
-              (k, if (in.isEmpty) default else {
-                f match {
-                  case _: DefaultValueF => in
-                  case OneOfValueF(oneOf) =>
-                    oneOf.check(k, in).fold(identity, msg => { println(msg); default })
+              (
+                k,
+                if (in.isEmpty) default
+                else {
+                  f match {
+                    case _: DefaultValueF => in
+                    case OneOfValueF(oneOf) =>
+                      oneOf.check(k, in).fold(identity, msg => { println(msg); default })
+                  }
                 }
-              })
+              )
             }
           )
       }

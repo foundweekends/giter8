@@ -29,8 +29,11 @@ final case class OneOf(possibilities: NonEmptyList[String]) {
 
   def check(k: String, v: String): VersionE =
     if (possibilities.toList.contains(v)) Right(v)
-    else Left(s"Parameter $k should be one of ${possibilities.toList.mkString(", ")}, " +
-      s"was $v, default applied (${possibilities.head})")
+    else
+      Left(
+        s"Parameter $k should be one of ${possibilities.toList.mkString(", ")}, " +
+          s"was $v, default applied (${possibilities.head})"
+      )
 }
 object OneOf {
   implicit val showOneOf: Show[OneOf] =
@@ -38,7 +41,7 @@ object OneOf {
 
   val parser: Parser[OneOf] = {
     val allowedChars = anyChar.filter(c => c != ',' && c != ')')
-    val sepP = token(char(','))
+    val sepP         = token(char(','))
     (string("oneOf") ~> parens(stringOf1(allowedChars).sepBy1(sepP)))
       .map(OneOf.apply)
       .namedOpaque("oneOf")

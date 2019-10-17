@@ -24,7 +24,7 @@ object LsSpecification extends Properties("Ls") {
   implicit val lsGen: Arbitrary[Ls] = Arbitrary {
     for {
       owner <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
-      name <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+      name  <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
     } yield Ls(owner, name)
   }
 

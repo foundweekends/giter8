@@ -29,7 +29,7 @@ import scala.xml.NodeSeq
 
 final case class Maven(org: String, name: String, stable: Boolean)
 object Maven extends utils.MavenHelper {
-  type ValidOrg = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
+  type ValidOrg  = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
   type ValidName = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
 
   implicit val showMaven: Show[Maven] = Show.show { m =>
@@ -38,15 +38,15 @@ object Maven extends utils.MavenHelper {
 
   val parser: Parser[Maven] = {
     val allowedChars = letter | digit | char('_') | char('-') | char('.')
-    val orgP = stringOf1(allowedChars).refined[ValidOrg].namedOpaque("org")
-    val nameP = stringOf1(allowedChars).refined[ValidName].namedOpaque("name")
-    val sepP = token(char(','))
+    val orgP         = stringOf1(allowedChars).refined[ValidOrg].namedOpaque("org")
+    val nameP        = stringOf1(allowedChars).refined[ValidName].namedOpaque("name")
+    val sepP         = token(char(','))
     (for {
-      _ <- string("maven") <~ char('(')
-      org <- orgP <~ sepP
-      name <- nameP
+      _      <- string("maven") <~ char('(')
+      org    <- orgP <~ sepP
+      name   <- nameP
       stable <- opt(sepP ~> string("stable"))
-      _ <- char(')')
+      _      <- char(')')
     } yield Maven(org.value, name.value, stable.isDefined)).namedOpaque("maven")
   }
 
