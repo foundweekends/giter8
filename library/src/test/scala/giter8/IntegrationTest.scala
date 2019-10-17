@@ -96,6 +96,14 @@ class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers
       checkGeneratedProject(template, expected, actual)
   }
 
+  ignore should "read default.properties containing oneOf from sbt project directory" in testCase {
+    case (template, expected, actual) =>
+      "foo = oneOf(bar, baz)" >> (template / "project" / "default.properties")
+      "$foo$" >> (template / "src" / "main" / "g8" / "foo.txt")
+      "bar" >> (expected / "foo.txt")
+      checkGeneratedProject(template, expected, actual)
+  }
+
   it should "handle booleans" in testCase {
     case (template, expected, actual) =>
       """foo = now you
