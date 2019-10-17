@@ -21,10 +21,25 @@ import cats.syntax.show._
 import org.scalacheck._
 
 object MavenSpecification extends Properties("Maven") {
+  val orgGen: Gen[String] = Gen.nonEmptyListOf(
+    Gen.oneOf(
+      Gen.nonEmptyListOf(Gen.alphaNumChar).map(_.mkString),
+      Gen.const(".")
+    )
+  ).map(_.mkString)
+  val nameGen: Gen[String] = for {
+    n <- Gen.nonEmptyListOf(
+      Gen.oneOf(
+        Gen.nonEmptyListOf(Gen.alphaNumChar).map(_.mkString),
+        Gen.const("-")
+      )
+    ).map(_.mkString)
+    v <- Gen.oneOf("_2.11", "_2.12", "_2.13")
+  } yield n + v
   implicit val mavenGen: Arbitrary[Maven] = Arbitrary {
     for {
-      org <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
-      name <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
+      org <- orgGen
+      name <- nameGen
       stable <- Gen.oneOf(true, false)
     } yield Maven(org, name, stable)
   }

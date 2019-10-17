@@ -21,21 +21,19 @@ import atto.Atto._
 import atto.syntax.refined._
 import cats.Show
 import eu.timepit.refined.W
-import eu.timepit.refined.api.Refined
 import eu.timepit.refined.string.MatchesRegex
 
 final case class Ls(owner: String, name: String)
 object Ls {
   type ValidOwner = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
-  type Owner = String Refined ValidOwner
   type ValidName = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
-  type Name = String Refined ValidName
 
   implicit val showLs: Show[Ls] = Show.show(l => s"ls(${l.owner}, ${l.name})")
 
   val parser: Parser[Ls] = {
-    val ownerP = stringOf1(letter).refined[ValidOwner].namedOpaque("owner")
-    val nameP = stringOf1(letter).refined[ValidName].namedOpaque("name")
+    val allowedChars = letter | digit | char('_') | char('-') | char('.')
+    val ownerP = stringOf1(allowedChars).refined[ValidOwner].namedOpaque("owner")
+    val nameP = stringOf1(allowedChars).refined[ValidName].namedOpaque("name")
     val sepP = token(char(','))
     (for {
       _ <- string("ls") <~ char('(')

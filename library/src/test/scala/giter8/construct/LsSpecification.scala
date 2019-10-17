@@ -21,7 +21,7 @@ import cats.syntax.show._
 import org.scalacheck._
 
 object LsSpecification extends Properties("Ls") {
-  implicit val oneOfGen: Arbitrary[Ls] = Arbitrary {
+  implicit val lsGen: Arbitrary[Ls] = Arbitrary {
     for {
       owner <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)
       name <- Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString)

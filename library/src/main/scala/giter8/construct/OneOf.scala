@@ -15,21 +15,31 @@
  * limitations under the License.
  */
 
-package giter8.construct
+package giter8
+package construct
 
 import atto._
 import atto.Atto._
 import cats.Show
 import cats.data.NonEmptyList
 
-final case class OneOf(possibilities: NonEmptyList[String])
+final case class OneOf(possibilities: NonEmptyList[String]) {
+  val description: String =
+    s"one of ${possibilities.toList.mkString(", ")}, default ${possibilities.head}"
+
+  def check(k: String, v: String): VersionE =
+    if (possibilities.toList.contains(v)) Right(v)
+    else Left(s"Parameter $k should be one of ${possibilities.toList.mkString(", ")}, " +
+      s"was $v, default applied (${possibilities.head})")
+}
 object OneOf {
   implicit val showOneOf: Show[OneOf] =
     Show.show(o => s"oneOf(${o.possibilities.toList.mkString(", ")})")
 
   val parser: Parser[OneOf] = {
-    val sepParser = token(char(','))
-    (string("oneOf") ~> parens(stringOf1(letter).sepBy1(sepParser)))
+    val allowedChars = anyChar.filter(c => c != ',' && c != ')')
+    val sepP = token(char(','))
+    (string("oneOf") ~> parens(stringOf1(allowedChars).sepBy1(sepP)))
       .map(OneOf.apply)
       .namedOpaque("oneOf")
   }

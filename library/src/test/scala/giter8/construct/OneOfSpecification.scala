@@ -23,7 +23,7 @@ import org.scalacheck._
 
 object OneOfSpecification extends Properties("OneOf") {
   implicit val oneOfGen: Arbitrary[OneOf] = Arbitrary {
-    Gen.nonEmptyListOf(Gen.nonEmptyListOf(Gen.alphaChar).map(_.mkString))
+    Gen.nonEmptyListOf(Gen.nonEmptyListOf(Gen.alphaNumChar).map(_.mkString))
       .map(ls => OneOf(NonEmptyList.fromListUnsafe(ls)))
   }
 

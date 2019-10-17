@@ -67,9 +67,9 @@ object G8 {
     override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
   }
 
-  final case class OneOfValueF(possibilities: NonEmptyList[String]) extends ValueF {
+  final case class OneOfValueF(oneOf: OneOf) extends ValueF {
     override def apply(resolved: ResolvedProperties): String =
-      applyTemplate(possibilities.head, resolved)
+      applyTemplate(oneOf.possibilities.head, resolved)
   }
 
   // Called from JgitHelper
@@ -313,10 +313,7 @@ object G8 {
         .withFilter(_.exists)
         .map(JGitIgnore.apply)
 
-    /**
-      * The list of ignore rules. Rules in `.g8ignore` will
-      * override those in `.gitignore`
-      */
+    /* The list of ignore rules. Rules in `.g8ignore` will override those in `.gitignore` */
     val ignores = gitIgnores.map(_ ++ g8Ignores).getOrElse(g8Ignores)
 
     def fileFilter(file: File): Boolean = {
@@ -407,7 +404,7 @@ object G8 {
         val transformed = transformProps(props)
         transformed.right.map { _.map { case (k, v) =>
           OneOf.parser.parseOnly(v).option
-            .map(of => (k, OneOfValueF(of.possibilities)))
+            .map(of => (k, OneOfValueF(of)))
             .getOrElse((k, DefaultValueF(v)))
         } }
       }
@@ -425,11 +422,12 @@ object G8 {
           defaults.filter { case (k, _) => k == key }.headOption match {
             case Some((k, v)) => v match {
               case _: DefaultValueF => map + (key -> value)
-              case OneOfValueF(possibilities) =>
-                if (possibilities.toList.contains(value)) map + (key -> value)
-                else {
-                  println(s"Parameter $key should be one of ${possibilities.toList.mkString(", ")}, was $value")
-                  map
+              case OneOfValueF(oneOf) =>
+                oneOf.check(key, value) match {
+                  case Right(v) => map + (key -> value)
+                  case Left(msg) =>
+                    println(msg)
+                    map
                 }
             }
             case None =>
@@ -481,8 +479,7 @@ object G8 {
               val default = f(resolved)
               val message = f match {
                 case _: DefaultValueF => Truthy.getMessage(default)
-                case OneOfValueF(possibilities) =>
-                  s"one of ${possibilities.toList.mkString(", ")}, default $default"
+                case OneOfValueF(oneOf) => oneOf.description
               }
 
               print(s"$k [$message]: ")
@@ -491,12 +488,8 @@ object G8 {
               (k, if (in.isEmpty) default else {
                 f match {
                   case _: DefaultValueF => in
-                  case OneOfValueF(possibilities) =>
-                    if (possibilities.toList.contains(in)) in
-                    else {
-                      println(s"Parameter $k should be one of ${possibilities.toList.mkString(", ")}, was $in")
-                      default
-                    }
+                  case OneOfValueF(oneOf) =>
+                    oneOf.check(k, in).fold(identity, msg => { println(msg); default })
                 }
               })
             }

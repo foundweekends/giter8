@@ -23,7 +23,6 @@ import atto.Atto._
 import atto.syntax.refined._
 import cats.Show
 import eu.timepit.refined.W
-import eu.timepit.refined.api.Refined
 import eu.timepit.refined.string.MatchesRegex
 
 import scala.xml.NodeSeq
@@ -31,17 +30,16 @@ import scala.xml.NodeSeq
 final case class Maven(org: String, name: String, stable: Boolean)
 object Maven extends utils.MavenHelper {
   type ValidOrg = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
-  type Org = String Refined ValidOrg
   type ValidName = MatchesRegex[W.`"""[\\w\\-\\.]+"""`.T]
-  type Name = String Refined ValidName
 
   implicit val showMaven: Show[Maven] = Show.show { m =>
     s"maven(${m.org}, ${m.name}${if (m.stable) ", stable" else ""})"
   }
 
   val parser: Parser[Maven] = {
-    val orgP = stringOf1(letter).refined[ValidOrg].namedOpaque("org")
-    val nameP = stringOf1(letter).refined[ValidName].namedOpaque("name")
+    val allowedChars = letter | digit | char('_') | char('-') | char('.')
+    val orgP = stringOf1(allowedChars).refined[ValidOrg].namedOpaque("org")
+    val nameP = stringOf1(allowedChars).refined[ValidName].namedOpaque("name")
     val sepP = token(char(','))
     (for {
       _ <- string("maven") <~ char('(')
