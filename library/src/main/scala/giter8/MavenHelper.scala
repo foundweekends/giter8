@@ -17,22 +17,20 @@
 
 package giter8
 
+import java.net.{URL, HttpURLConnection}
+import java.io.{BufferedReader, InputStreamReader}
+import java.util.stream.Collectors
 import scala.xml.{NodeSeq, XML}
-import org.apache.http.HttpResponse
-import org.apache.http.client.methods.HttpGet
-import org.apache.http.impl.client.DefaultHttpClient
 
-// http://hc.apache.org/httpcomponents-client-4.2.x/httpclient/apidocs/
 trait MavenHelper {
   def fromMaven(org: String, name: String, getVersions: Boolean)(process: (String, NodeSeq) => VersionE): VersionE = {
     val search = "https://search.maven.org/solrsearch/select"
     val loc    = s"""$search?q=g:%22$org%22+AND+a:%22$name%22&rows=10&wt=xml${if (getVersions) "&core=gav" else ""}"""
 
-    withHttp(loc) { response =>
-      val status = response.getStatusLine
-      status.getStatusCode match {
+    withHttp(new URL(loc)) { conn =>
+      conn.getResponseCode match {
         case 200 =>
-          val elem = XML.load(response.getEntity.getContent)
+          val elem = XML.load(conn.getInputStream)
           process(loc, elem)
         case 404 =>
           Left(s"Maven metadata not found for `maven($org, $name)`\nTried: $loc")
@@ -42,14 +40,16 @@ trait MavenHelper {
     }
   }
 
-  def withHttp[A](url: String)(f: HttpResponse => A): A = {
-    val httpClient = new DefaultHttpClient
+  def withHttp[A](url: URL)(f: HttpURLConnection => A): A = {
+    val conn = url.openConnection()
     try {
-      val r        = new HttpGet(url)
-      val response = httpClient.execute(r)
-      try {
-        f(response)
-      } finally {}
-    } finally {}
+      conn match {
+        case httpConn: HttpURLConnection => f(httpConn)
+      }
+    } finally {
+      conn match {
+        case httpConn: HttpURLConnection => httpConn.disconnect()
+      }
+    }
   }
 }
