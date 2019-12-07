@@ -25,4 +25,5 @@ object Dependencies {
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "1.2.0"
   val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
   val logback          = "ch.qos.logback" % "logback-classic" % "1.2.3"
+  val coursier         = "io.get-coursier" %% "coursier" % "2.0.0-RC5-2"
 }

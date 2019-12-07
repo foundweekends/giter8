@@ -8,6 +8,8 @@ val javaVmArgs: List[String] = {
   java.lang.management.ManagementFactory.getRuntimeMXBean.getInputArguments.asScala.toList
 }
 
+val coursierBootstrap = taskKey[File]("create bootstrap jar")
+
 ThisBuild / organization := "org.foundweekends.giter8"
 ThisBuild / version := g8version
 ThisBuild / scalaVersion := scala212
@@ -36,7 +38,7 @@ ThisBuild / scmInfo := Some(
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
-  .aggregate(app, lib, scaffold, plugin)
+  .aggregate(app, lib, scaffold, plugin, gitsupport, launcher)
   .settings(
     name := "giter8",
     crossScalaVersions := Nil,
@@ -48,18 +50,15 @@ lazy val root = (project in file("."))
 
 lazy val app = (project in file("app"))
   .disablePlugins(BintrayPlugin)
-  .enablePlugins(ConscriptPlugin, BuildInfoPlugin, SonatypePublish)
-  .dependsOn(lib)
+  .enablePlugins(ConscriptPlugin, SonatypePublish)
+  .dependsOn(lib, gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
     crossScalaVersions := List(scala212, scala213),
     sourceDirectory in csRun := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
-    },
-    libraryDependencies ++= Seq(scopt, logback),
-    buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
-    buildInfoPackage := "giter8"
+    }
   )
 
 lazy val crossSbt = Seq(
@@ -132,9 +131,28 @@ lazy val plugin = (project in file("plugin"))
     }
   )
 
+lazy val gitsupport = (project in file("cli-git"))
+  .enablePlugins(BuildInfoPlugin, SonatypePublish)
+  .settings(
+    description := "cli and git support library for Giter8",
+    name := "giter8-cli-git",
+    crossScalaVersions := List(scala212, scala213),
+    libraryDependencies ++= Seq(
+      scopt,
+      jgit,
+      commonsIo,
+      scalatest % Test,
+      scalamock % Test
+    ),
+    run / fork := true,
+    buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
+    buildInfoPackage := "giter8"
+  )
+
 lazy val lib = (project in file("library"))
   .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
+  .dependsOn(gitsupport)
   .settings(crossSbt)
   .settings(
     name := "giter8-lib",
@@ -156,6 +174,34 @@ lazy val lib = (project in file("library"))
           Seq(scalaXml, parserCombinator)
         case _ => Nil
       })
+  )
+
+lazy val launcher = (project in file("launcher"))
+  .dependsOn(gitsupport)
+  .enablePlugins(ConscriptPlugin)
+  .settings(
+    description := "Command line tool to apply templates defined on GitHub",
+    name := "giter8-launcher",
+    crossScalaVersions := List(scala212, scala213),
+    libraryDependencies += coursier,
+    run / fork := true,
+    // assemblyMergeStrategy in assembly := {
+    //   case "plugin.properties" => MergeStrategy.concat
+    //   case "module-info.class" => MergeStrategy.discard
+    //   case x =>
+    //     val oldStrategy = (assemblyMergeStrategy in assembly).value
+    //     oldStrategy(x)
+    // },
+    coursierBootstrap := {
+      val t = target.value / "g8"
+      val v = version.value
+      sys.process
+        .Process(
+          s"""coursier bootstrap org.foundweekends.giter8:giter8-launcher_2.12:$v --main giter8.LauncherMain -o $t --bat -f"""
+        )
+        .!
+      t
+    }
   )
 
 def customCommands: Seq[Setting[_]] = Seq(

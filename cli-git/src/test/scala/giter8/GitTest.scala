@@ -5,6 +5,7 @@ import java.io.File
 import giter8.Git.{NoBranchError, NoTagError}
 import giter8.GitInteractor.TransportError
 import giter8.GitRepository.{GitHub, Local, Remote}
+import giter8.Ref.{Branch, Tag}
 import org.scalatest.{EitherValues, FlatSpec, Matchers, TryValues}
 import org.scalamock.scalatest.MockFactory
 
@@ -79,7 +80,7 @@ class GitTest extends FlatSpec with Matchers with EitherValues with TryValues wi
   }
 
   it should "copy local repository directory if no branch is given" in new TestFixture {
-    val repository  = Local("some/repo")
+    val repository  = Local(new File("some/repo"))
     val branch      = None
     val destination = new File(".")
 

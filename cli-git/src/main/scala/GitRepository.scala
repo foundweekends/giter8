@@ -18,11 +18,13 @@
 package giter8
 
 import scala.util.matching.Regex
+import java.io.File
+import java.net.URI
 
 sealed trait GitRepository
 
 object GitRepository {
-  case class Local(path: String) extends GitRepository
+  case class Local(path: File) extends GitRepository
 
   case class Remote(url: String) extends GitRepository
 
@@ -32,7 +34,7 @@ object GitRepository {
   }
 
   def fromString(string: String): Either[String, GitRepository] = string match {
-    case Matches.Local(path)        => Right(Local(path))
+    case Matches.Local(_)           => Right(Local(toFile(new URI(string))))
     case Matches.NativeUrl(url)     => Right(Remote(url))
     case Matches.HttpsUrl(url)      => Right(Remote(url))
     case Matches.HttpUrl(url)       => Right(Remote(url))
@@ -50,4 +52,19 @@ object GitRepository {
     val SshUrl: Regex    = "^(ssh://.*)$".r
   }
 
+  def toFile(uri: URI): File = {
+    assert(
+      Option(uri.getScheme) match {
+        case None | Some("file") => true
+        case _ => false
+      },
+      s"Expected protocol to be 'file' or empty in URI $uri"
+    )
+    val part = uri.getSchemeSpecificPart
+    if (!(part startsWith "/") && (part contains ":")) new File("///" + part)
+    else {
+      if (part.startsWith("//")) new File(part.drop(2))
+      else new File(part)
+    }
+  }
 }

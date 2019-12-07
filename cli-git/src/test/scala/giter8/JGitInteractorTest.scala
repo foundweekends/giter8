@@ -5,12 +5,15 @@ import java.io.File
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.{Git => JGit}
 import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers, TryValues}
-import G8._
 
 import scala.collection.JavaConverters._
 
 class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with TryValues {
   import TestFileHelpers._
+
+  implicit class RichFile(file: File) {
+    def /(child: String): File = new File(file, child)
+  }
 
   var remoteRepository: File     = _
   var interactor: JGitInteractor = _

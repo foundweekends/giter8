@@ -17,25 +17,16 @@
 
 package giter8
 
-import java.io.File
-
-trait TemplateRenderer {
-  def render(
-      templateDirectory: File,
-      workingDirectory: File,
-      arguments: Seq[String],
-      forceOverwrite: Boolean,
-      outputDirectory: Option[File]
-  ): Either[String, String]
+sealed trait Ref
+object Ref {
+  case class Tag(name: String) extends Ref
+  case class Branch(name: String) extends Ref
 }
 
-object G8TemplateRenderer extends TemplateRenderer {
-  override def render(
-      templateDirectory: File,
-      workingDirectory: File,
-      arguments: Seq[String],
-      forceOverwrite: Boolean,
-      outputDirectory: Option[File]
-  ): Either[String, String] =
-    G8.fromDirectory(templateDirectory, workingDirectory, arguments, forceOverwrite, outputDirectory)
-}
+case class Config(
+    repo: String,
+    ref: Option[Ref]          = None,
+    forceOverwrite: Boolean   = false,
+    directory: Option[String] = None,
+    out: Option[String]       = None
+)
