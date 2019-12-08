@@ -59,7 +59,8 @@ lazy val app = (project in file("app"))
     crossScalaVersions := List(scala212, scala213),
     sourceDirectory in csRun := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
-    }
+    },
+    libraryDependencies += launcherIntf
   )
 
 lazy val crossSbt = Seq(
