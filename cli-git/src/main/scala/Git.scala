@@ -35,8 +35,8 @@ class Git(gitInteractor: GitInteractor) {
     case local: Local =>
       ref match {
         // for file:// repositories with no named branch, just do a file copy (assume current branch)
-        case None    => copy(new File(local.path), destination)
-        case Some(_) => cloneWithGivenRefOrDefaultBranch(local.path, ref, destination)
+        case None    => copy(local.path, destination)
+        case Some(_) => cloneWithGivenRefOrDefaultBranch(local.path.toString, ref, destination)
       }
     case github: GitHub =>
       cloneWithGivenRefOrDefaultBranch(github.publicUrl, ref, destination) recoverWith {
@@ -53,7 +53,7 @@ class Git(gitInteractor: GitInteractor) {
           gitInteractor.checkoutBranch(dest, branch)
         }
       }
-    case Some(Branch(br)) =>
+    case Some(Ref.Branch(br)) =>
       gitInteractor.getRemoteBranches(url) flatMap { remoteBranches =>
         if (!remoteBranches.contains(br)) Failure(NoBranchError(br))
         else
@@ -61,7 +61,7 @@ class Git(gitInteractor: GitInteractor) {
             gitInteractor.checkoutBranch(dest, br)
           }
       }
-    case Some(Tag(t)) =>
+    case Some(Ref.Tag(t)) =>
       gitInteractor.getRemoteTags(url) flatMap { remoteTags =>
         if (!remoteTags.contains(t)) Failure(NoTagError(t))
         else

@@ -1,5 +1,6 @@
 package giter8
 
+import java.io.File
 import org.scalatest.{FlatSpec, Matchers}
 
 class GitRepositoryTest extends FlatSpec with Matchers {
@@ -11,8 +12,8 @@ class GitRepositoryTest extends FlatSpec with Matchers {
       "https://some.path.com/repo" -> GitRepository.Remote("https://some.path.com/repo"),
       "http://some.path.com/repo" -> GitRepository.Remote("http://some.path.com/repo"),
       "ssh://some.path.com/repo" -> GitRepository.Remote("ssh://some.path.com/repo"),
-      "file://relative/path" -> GitRepository.Local("relative/path"),
-      "file:///home/foo/bar" -> GitRepository.Local("/home/foo/bar"),
+      "file://relative/path" -> GitRepository.Local(new File("relative/path")),
+      "file:///home/foo/bar" -> GitRepository.Local(new File("/home/foo/bar")),
       "foo/bar" -> GitRepository.GitHub("foo", "bar")
     )
 

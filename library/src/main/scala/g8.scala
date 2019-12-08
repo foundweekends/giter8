@@ -60,7 +60,7 @@ object G8 {
 
   // Called from JgitHelper
   def fromDirectory(
-      baseDirectory: File,
+      templateDirectory: File,
       workingDirectory: File,
       arguments: Seq[String],
       forceOverwrite: Boolean,
@@ -73,17 +73,17 @@ object G8 {
           defaultTemplatePaths,
           List(path("src") / "main" / "scaffolds", path("project") / "src" / "main" / "scaffolds")
         )
-    )(baseDirectory, workingDirectory, arguments, forceOverwrite, outputDirectory)
+    )(templateDirectory, workingDirectory, arguments, forceOverwrite, outputDirectory)
 
   // Called from ScaffoldPlugin
   def fromDirectoryRaw(
-      baseDirectory: File,
+      templateDirectory: File,
       outputDirectory: File,
       arguments: Seq[String],
       forceOverwrite: Boolean
   ): Either[String, String] =
     applyT((file: File) => fetchInfo(file, List(Path(Nil)), Nil))(
-      baseDirectory,
+      templateDirectory,
       outputDirectory,
       arguments,
       forceOverwrite,
@@ -304,10 +304,8 @@ object G8 {
         .withFilter(_.exists)
         .map(JGitIgnore.apply)
 
-    /**
-      * The list of ignore rules. Rules in `.g8ignore` will
-      * override those in `.gitignore`
-      */
+    // The list of ignore rules. Rules in `.g8ignore` will
+    // override those in `.gitignore`
     val ignores = gitIgnores.map(_ ++ g8Ignores).getOrElse(g8Ignores)
 
     def fileFilter(file: File): Boolean = {
@@ -358,6 +356,7 @@ object G8 {
       case e: STException =>
         Left(s"Exiting due to error in the template: ${tmpl}\n${e.getMessage}")
       case t: Throwable =>
+        t.printStackTrace()
         Left("Unknown exception: " + t.getMessage)
     }
 
@@ -503,7 +502,7 @@ object G8 {
                 else {
                   catching(classOf[MalformedInputException])
                     .opt {
-                      Some(G8.write(in, out, parameters /*, append = existingScaffoldingAction.getOrElse(false)*/ ))
+                      G8.write(in, out, parameters /*, append = existingScaffoldingAction.getOrElse(false)*/ )
                     }
                     .getOrElse {
                       // if (existingScaffoldingAction.getOrElse(false)) {
