@@ -51,7 +51,7 @@ lazy val root = (project in file("."))
 
 lazy val app = (project in file("app"))
   .disablePlugins(BintrayPlugin)
-  .enablePlugins(ConscriptPlugin, SonatypePublish)
+  .enablePlugins(SonatypePublish)
   .dependsOn(lib, gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
@@ -133,6 +133,7 @@ lazy val plugin = (project in file("plugin"))
   )
 
 lazy val gitsupport = (project in file("cli-git"))
+  .disablePlugins(BintrayPlugin)
   .enablePlugins(BuildInfoPlugin, SonatypePublish)
   .settings(
     description := "cli and git support library for Giter8",
@@ -178,8 +179,10 @@ lazy val lib = (project in file("library"))
   )
 
 lazy val launcher = (project in file("launcher"))
-  .dependsOn(gitsupport)
+  .disablePlugins(BintrayPlugin)
+  .enablePlugins(SonatypePublish)
   .enablePlugins(ConscriptPlugin)
+  .dependsOn(gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8-launcher",
@@ -196,6 +199,8 @@ lazy val launcher = (project in file("launcher"))
   )
 
 lazy val bootstrap = (project in file("bootstrap"))
+  .disablePlugins(BintrayPlugin)
+  .enablePlugins(SonatypePublish)
   .settings(
     coursierBootstrap := {
       val t = target.value / "g8"
