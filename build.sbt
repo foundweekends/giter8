@@ -227,11 +227,14 @@ def customCommands: Seq[Setting[_]] = Seq(
   commands += Command.command("release") { state =>
     "clean" ::
       s"++${scala213}" ::
-      "app/publishSigned" ::
       "lib/publishSigned" ::
+      "gitsupport/publishSigned" ::
+      "app/publishSigned" ::
       s"++${scala212}" ::
       s"^^${sbt1}" ::
       "lib/publishSigned" ::
+      "gitsupport/publishSigned" ::
+      "launcher/publishSigned" ::
       "app/publishSigned" ::
       "plugin/publishSigned" ::
       "scaffold/publishSigned" ::
