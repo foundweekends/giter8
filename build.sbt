@@ -1,7 +1,7 @@
 import Dependencies._
 import CrossVersion.partialVersion
 
-val g8version = "0.12.0-SNAPSHOT"
+val g8version = "0.12.0"
 
 val javaVmArgs: List[String] = {
   import scala.collection.JavaConverters._
@@ -203,6 +203,8 @@ lazy val bootstrap = (project in file("bootstrap"))
   .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
   .settings(
+    description := "Bootstrap script for Giter8 launcher",
+    name := "giter8-bootstrap",
     coursierBootstrap := {
       val t = target.value / "g8"
       val v = version.value
