@@ -8,7 +8,8 @@ val javaVmArgs: List[String] = {
   java.lang.management.ManagementFactory.getRuntimeMXBean.getInputArguments.asScala.toList
 }
 
-val coursierBootstrap = taskKey[File]("create bootstrap jar")
+val coursierBootstrap      = taskKey[File]("create bootstrap jar")
+val coursierBootstrapBatch = taskKey[File]("create bootstrap jar")
 
 ThisBuild / organization := "org.foundweekends.giter8"
 ThisBuild / version := g8version
@@ -50,7 +51,7 @@ lazy val root = (project in file("."))
 
 lazy val app = (project in file("app"))
   .disablePlugins(BintrayPlugin)
-  .enablePlugins(ConscriptPlugin, SonatypePublish)
+  .enablePlugins(SonatypePublish)
   .dependsOn(lib, gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
@@ -58,7 +59,8 @@ lazy val app = (project in file("app"))
     crossScalaVersions := List(scala212, scala213),
     sourceDirectory in csRun := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
-    }
+    },
+    libraryDependencies += launcherIntf
   )
 
 lazy val crossSbt = Seq(
@@ -132,6 +134,7 @@ lazy val plugin = (project in file("plugin"))
   )
 
 lazy val gitsupport = (project in file("cli-git"))
+  .disablePlugins(BintrayPlugin)
   .enablePlugins(BuildInfoPlugin, SonatypePublish)
   .settings(
     description := "cli and git support library for Giter8",
@@ -177,14 +180,16 @@ lazy val lib = (project in file("library"))
   )
 
 lazy val launcher = (project in file("launcher"))
-  .dependsOn(gitsupport)
+  .disablePlugins(BintrayPlugin)
+  .enablePlugins(SonatypePublish)
   .enablePlugins(ConscriptPlugin)
+  .dependsOn(gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8-launcher",
     crossScalaVersions := List(scala212, scala213),
     libraryDependencies += coursier,
-    run / fork := true,
+    run / fork := true
     // assemblyMergeStrategy in assembly := {
     //   case "plugin.properties" => MergeStrategy.concat
     //   case "module-info.class" => MergeStrategy.discard
@@ -192,6 +197,12 @@ lazy val launcher = (project in file("launcher"))
     //     val oldStrategy = (assemblyMergeStrategy in assembly).value
     //     oldStrategy(x)
     // },
+  )
+
+lazy val bootstrap = (project in file("bootstrap"))
+  .disablePlugins(BintrayPlugin)
+  .enablePlugins(SonatypePublish)
+  .settings(
     coursierBootstrap := {
       val t = target.value / "g8"
       val v = version.value
@@ -201,18 +212,35 @@ lazy val launcher = (project in file("launcher"))
         )
         .!
       t
-    }
+    },
+    coursierBootstrapBatch := {
+      val _ = coursierBootstrap.value
+      target.value / "g8.bat"
+    },
+    coursierBootstrap / artifact := {
+      val o = (coursierBootstrap / artifact).value
+      o.withExtension("sh")
+    },
+    coursierBootstrapBatch / artifact := {
+      val o = (coursierBootstrapBatch / artifact).value
+      o.withExtension("bat")
+    },
+    addArtifact(coursierBootstrap / artifact, coursierBootstrap),
+    addArtifact(coursierBootstrapBatch / artifact, coursierBootstrapBatch)
   )
 
 def customCommands: Seq[Setting[_]] = Seq(
   commands += Command.command("release") { state =>
     "clean" ::
       s"++${scala213}" ::
-      "app/publishSigned" ::
       "lib/publishSigned" ::
+      "gitsupport/publishSigned" ::
+      "app/publishSigned" ::
       s"++${scala212}" ::
       s"^^${sbt1}" ::
       "lib/publishSigned" ::
+      "gitsupport/publishSigned" ::
+      "launcher/publishSigned" ::
       "app/publishSigned" ::
       "plugin/publishSigned" ::
       "scaffold/publishSigned" ::
