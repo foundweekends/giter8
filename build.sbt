@@ -8,7 +8,8 @@ val javaVmArgs: List[String] = {
   java.lang.management.ManagementFactory.getRuntimeMXBean.getInputArguments.asScala.toList
 }
 
-val coursierBootstrap = taskKey[File]("create bootstrap jar")
+val coursierBootstrap      = taskKey[File]("create bootstrap jar")
+val coursierBootstrapBatch = taskKey[File]("create bootstrap jar")
 
 ThisBuild / organization := "org.foundweekends.giter8"
 ThisBuild / version := g8version
@@ -184,7 +185,7 @@ lazy val launcher = (project in file("launcher"))
     name := "giter8-launcher",
     crossScalaVersions := List(scala212, scala213),
     libraryDependencies += coursier,
-    run / fork := true,
+    run / fork := true
     // assemblyMergeStrategy in assembly := {
     //   case "plugin.properties" => MergeStrategy.concat
     //   case "module-info.class" => MergeStrategy.discard
@@ -192,6 +193,10 @@ lazy val launcher = (project in file("launcher"))
     //     val oldStrategy = (assemblyMergeStrategy in assembly).value
     //     oldStrategy(x)
     // },
+  )
+
+lazy val bootstrap = (project in file("bootstrap"))
+  .settings(
     coursierBootstrap := {
       val t = target.value / "g8"
       val v = version.value
@@ -201,7 +206,21 @@ lazy val launcher = (project in file("launcher"))
         )
         .!
       t
-    }
+    },
+    coursierBootstrapBatch := {
+      val _ = coursierBootstrap.value
+      target.value / "g8.bat"
+    },
+    coursierBootstrap / artifact := {
+      val o = (coursierBootstrap / artifact).value
+      o.withExtension("sh")
+    },
+    coursierBootstrapBatch / artifact := {
+      val o = (coursierBootstrapBatch / artifact).value
+      o.withExtension("bat")
+    },
+    addArtifact(coursierBootstrap / artifact, coursierBootstrap),
+    addArtifact(coursierBootstrapBatch / artifact, coursierBootstrapBatch)
   )
 
 def customCommands: Seq[Setting[_]] = Seq(
