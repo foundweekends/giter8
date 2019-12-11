@@ -66,13 +66,12 @@ object G8 {
       forceOverwrite: Boolean,
       outputDirectory: Option[File]
   ): Either[String, String] =
-    applyT(
-      (file: File) =>
-        fetchInfo(
-          file: File,
-          defaultTemplatePaths,
-          List(path("src") / "main" / "scaffolds", path("project") / "src" / "main" / "scaffolds")
-        )
+    applyT((file: File) =>
+      fetchInfo(
+        file: File,
+        defaultTemplatePaths,
+        List(path("src") / "main" / "scaffolds", path("project") / "src" / "main" / "scaffolds")
+      )
     )(templateDirectory, workingDirectory, arguments, forceOverwrite, outputDirectory)
 
   // Called from ScaffoldPlugin
