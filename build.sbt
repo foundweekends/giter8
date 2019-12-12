@@ -84,9 +84,7 @@ lazy val scaffold = (project in file("scaffold"))
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
     crossScalaVersions := List(scala212),
-    scriptedLaunchOpts ++= javaVmArgs.filter(
-      a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
-    ),
+    scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scripted := scripted
@@ -107,9 +105,7 @@ lazy val plugin = (project in file("plugin"))
     sbtPlugin := true,
     crossScalaVersions := List(scala212),
     resolvers += Resolver.typesafeIvyRepo("releases"),
-    scriptedLaunchOpts ++= javaVmArgs.filter(
-      a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)
-    ),
+    scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scripted := scripted
@@ -170,7 +166,7 @@ lazy val lib = (project in file("library"))
       sbtIo % Test,
       scalatest % Test,
       scalamock % Test,
-      "org.slf4j" % "slf4j-simple" % "1.7.28" % Test
+      "org.slf4j" % "slf4j-simple" % "1.7.29" % Test
     ) ++
       (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor >= 11 =>
