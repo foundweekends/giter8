@@ -15,7 +15,7 @@ object Dependencies {
     ExclusionRule("com.sun.jmx", "jmxri")
   )
   val scopt            = "com.github.scopt" %% "scopt" % "3.7.1"
-  val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.14.2"
+  val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.14.3"
   val scalatest        = "org.scalatest" %% "scalatest" % "3.1.0"
   val scalamock        = "org.scalamock" %% "scalamock" % "4.4.0"
   val sbtIo            = "org.scala-sbt" %% "io" % "1.3.1"
