@@ -208,7 +208,7 @@ object G8 {
       }: _*)
 
       val ignored = relative
-        .split(fileSeparator)
+        .split(File.separatorChar)
         .map(part => applyTemplate(formatize(part), fileParams))
         .exists(_.isEmpty)
 
