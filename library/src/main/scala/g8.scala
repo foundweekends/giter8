@@ -18,6 +18,7 @@
 package giter8
 
 import java.io.{File, InputStream}
+import java.util.regex.Matcher
 import java.util.{Locale, Properties}
 
 import org.apache.commons.io.FileUtils
@@ -197,18 +198,15 @@ object G8 {
 
   def expandPath(relative: String, toPath: File, parameters: Map[String, String]): Option[File] =
     try {
-      val fileSeparator = System.getProperty("file.separator")
+      val fileSeparator = File.separator
       val fileParams = Map(parameters.toSeq map {
         case (k, v) if k == "package" =>
-          (k, v.replaceAll("""\.""", fileSeparator match {
-            case "\\" => "\\\\"
-            case sep  => sep
-          }))
+          (k, v.replaceAll("""\.""", Matcher.quoteReplacement(fileSeparator)))
         case x => x
       }: _*)
 
       val ignored = relative
-        .split(fileSeparator)
+        .split(File.separatorChar)
         .map(part => applyTemplate(formatize(part), fileParams))
         .exists(_.isEmpty)
 
