@@ -88,9 +88,7 @@ class JGitInteractor extends GitInteractor {
       val checkoutCommand = git.checkout().setName(branch)
       Try {
         checkoutCommand.setCreateBranch(true).setStartPoint("origin/" + branch).call()
-      } map { _ =>
-        git.close()
-      }
+      } map { _ => git.close() }
     }
   }
 

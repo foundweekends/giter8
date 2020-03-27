@@ -19,9 +19,7 @@ class SampleTemplatesIntegrationTest extends FunSuite with IntegrationTestHelper
 
   testCases foreach { testCase =>
     test(s"Test template: '${testCase.name}'") {
-      tempDirectory { tmp =>
-        checkGeneratedProject(testCase.template, testCase.output, tmp)
-      }
+      tempDirectory { tmp => checkGeneratedProject(testCase.template, testCase.output, tmp) }
     }
   }
 }

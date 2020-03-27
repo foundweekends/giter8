@@ -42,9 +42,7 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
   it should "retrieve branch list from remote repository" in {
     val branches = Seq("fooBranch", "barBranch")
 
-    branches foreach { branch =>
-      remoteRepository.checkout(branch, createBranch = true)
-    }
+    branches foreach { branch => remoteRepository.checkout(branch, createBranch = true) }
 
     interactor
       .getRemoteBranches(remoteRepository.getAbsolutePath)
@@ -115,25 +113,17 @@ class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with
   }
 
   implicit class RichRepository(repository: File) {
-    def commits: Seq[String] = withRepository { git =>
-      git.log.call.asScala.map(c => c.getFullMessage).toSeq
-    }
+    def commits: Seq[String] = withRepository { git => git.log.call.asScala.map(c => c.getFullMessage).toSeq }
 
-    def branch: String = withRepository { git =>
-      git.getRepository.getBranch
-    }
+    def branch: String = withRepository { git => git.getRepository.getBranch }
 
-    def commit(message: String): Unit = withRepository { git =>
-      git.commit.setAll(true).setMessage(message).call()
-    }
+    def commit(message: String): Unit = withRepository { git => git.commit.setAll(true).setMessage(message).call() }
 
     def checkout(name: String, createBranch: Boolean = false): Unit = withRepository { git =>
       git.checkout.setName(name).setCreateBranch(createBranch).call()
     }
 
-    def tag(name: String): Unit = withRepository { git =>
-      git.tag.setName(name).call()
-    }
+    def tag(name: String): Unit = withRepository { git => git.tag.setName(name).call() }
 
     private def withRepository[A](code: JGit => A): A = {
       val git = JGit.open(repository)

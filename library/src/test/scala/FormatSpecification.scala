@@ -22,13 +22,9 @@ import sbt.io._, syntax._
 object FormatSpecification extends Properties("Format") {
   import Prop.forAll
 
-  property("plainConversion") = forAll(nonDollar) { x =>
-    conversion(x, Map.empty[String, String]) == x
-  }
+  property("plainConversion") = forAll(nonDollar) { x => conversion(x, Map.empty[String, String]) == x }
 
-  property("escapeDollar") = forAll(asciiString) { (x) =>
-    conversion("\\$" + x, Map.empty[String, String]) == "$" + x
-  }
+  property("escapeDollar") = forAll(asciiString) { (x) => conversion("\\$" + x, Map.empty[String, String]) == "$" + x }
 
   property("formatUppercase") = forAll(asciiString, asciiString, nonDollar) { (x, y, z) =>
     conversion(s"""$$$x;format="upper"$$$z""", Map(x -> y)) == y.toUpperCase + z

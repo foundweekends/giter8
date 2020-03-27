@@ -33,9 +33,7 @@ object BintrayPublish extends AutoPlugin {
   override def projectSettings = Seq(
     BintrayKeys.bintrayRepository := "sbt-plugin-releases",
     BintrayKeys.bintrayPackage := "sbt-giter8",
-    pomIncludeRepository := { _ =>
-      false
-    }
+    pomIncludeRepository := { _ => false }
   )
 }
 

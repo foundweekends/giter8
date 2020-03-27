@@ -49,7 +49,8 @@ class LauncherProcessor extends Processor {
     val bootHome        = Home.home / "boot"
     val bootDir         = bootHome / "org.foundweekends.giter8" / "giter8_2.12" / g8v
     val bootJars =
-      if (bootDir.exists) bootDir.listFiles.toList filter { _.getName.endsWith(".jar") } else Nil
+      if (bootDir.exists) bootDir.listFiles.toList filter { _.getName.endsWith(".jar") }
+      else Nil
     val giter8Files0 =
       if (bootJars.nonEmpty) bootJars
       else {

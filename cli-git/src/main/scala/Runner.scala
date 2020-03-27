@@ -39,9 +39,7 @@ class Runner {
         case Failure(e) => Left(e.getMessage)
       }
 
-    val result: Either[String, String] = (args.partition { s =>
-      Param.pattern.matcher(s).matches
-    } match {
+    val result: Either[String, String] = (args.partition { s => Param.pattern.matcher(s).matches } match {
       case (params, options) =>
         val tempdir = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
         try {

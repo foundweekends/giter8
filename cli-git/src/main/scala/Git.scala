@@ -49,25 +49,19 @@ class Git(gitInteractor: GitInteractor) {
   private def cloneWithGivenRefOrDefaultBranch(url: String, ref: Option[Ref], dest: File): Try[Unit] = ref match {
     case None =>
       gitInteractor.cloneRepository(url, dest) flatMap { _ =>
-        gitInteractor.getDefaultBranch(dest) flatMap { branch =>
-          gitInteractor.checkoutBranch(dest, branch)
-        }
+        gitInteractor.getDefaultBranch(dest) flatMap { branch => gitInteractor.checkoutBranch(dest, branch) }
       }
     case Some(Ref.Branch(br)) =>
       gitInteractor.getRemoteBranches(url) flatMap { remoteBranches =>
         if (!remoteBranches.contains(br)) Failure(NoBranchError(br))
         else
-          gitInteractor.cloneRepository(url, dest) flatMap { _ =>
-            gitInteractor.checkoutBranch(dest, br)
-          }
+          gitInteractor.cloneRepository(url, dest) flatMap { _ => gitInteractor.checkoutBranch(dest, br) }
       }
     case Some(Ref.Tag(t)) =>
       gitInteractor.getRemoteTags(url) flatMap { remoteTags =>
         if (!remoteTags.contains(t)) Failure(NoTagError(t))
         else
-          gitInteractor.cloneRepository(url, dest) flatMap { _ =>
-            gitInteractor.checkoutTag(dest, t)
-          }
+          gitInteractor.cloneRepository(url, dest) flatMap { _ => gitInteractor.checkoutTag(dest, t) }
       }
   }
 
