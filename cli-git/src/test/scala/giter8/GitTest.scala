@@ -6,12 +6,14 @@ import giter8.Git.{NoBranchError, NoTagError}
 import giter8.GitInteractor.TransportError
 import giter8.GitRepository.{GitHub, Local, Remote}
 import giter8.Ref.{Branch, Tag}
-import org.scalatest.{EitherValues, FlatSpec, Matchers, TryValues}
+import org.scalatest.{EitherValues, TryValues}
 import org.scalamock.scalatest.MockFactory
 
 import scala.util.{Failure, Success, Try}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class GitTest extends FlatSpec with Matchers with EitherValues with TryValues with MockFactory {
+class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues with MockFactory {
   trait TestFixture {
     var directoryWasCleaned           = false
     var directoryWasCopied            = false

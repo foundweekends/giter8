@@ -3,11 +3,11 @@ package giter8
 import java.io.ByteArrayInputStream
 import java.net.URI
 
-import org.scalatest.{FlatSpec, Matchers}
-
 import scala.language.implicitConversions
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class JGitIgnoreTest extends FlatSpec with Matchers {
+class JGitIgnoreTest extends AnyFlatSpec with Matchers {
 
   implicit def toURI(s: String): URI = new URI(s)
 

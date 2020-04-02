@@ -2,10 +2,11 @@ package giter8
 
 import java.io.File
 
-import org.scalatest.{FlatSpec, Matchers}
 import G8._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class IntegrationTest extends FlatSpec with IntegrationTestHelpers with Matchers {
+class IntegrationTest extends AnyFlatSpec with IntegrationTestHelpers with Matchers {
   import TestFileHelpers._
 
   "Giter8" should "treat sources root as template root" in testCase {

@@ -4,11 +4,13 @@ import java.io.File
 
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.{Git => JGit}
-import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers, TryValues}
+import org.scalatest.{BeforeAndAfter, TryValues}
 
 import scala.collection.JavaConverters._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class JGitInteractorTest extends FlatSpec with Matchers with BeforeAndAfter with TryValues {
+class JGitInteractorTest extends AnyFlatSpec with Matchers with BeforeAndAfter with TryValues {
   import TestFileHelpers._
 
   implicit class RichFile(file: File) {

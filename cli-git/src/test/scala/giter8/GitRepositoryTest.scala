@@ -1,9 +1,10 @@
 package giter8
 
 import java.io.File
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class GitRepositoryTest extends FlatSpec with Matchers {
+class GitRepositoryTest extends AnyFlatSpec with Matchers {
 
   "JGit" should "resolve repo name correctly" in {
     val testCases: Map[String, GitRepository] = Map(

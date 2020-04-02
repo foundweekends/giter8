@@ -17,9 +17,11 @@
 
 package giter8
 
-import org.scalatest.{EitherValues, FlatSpec, Matchers}
+import org.scalatest.EitherValues
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-final class MavenTest extends FlatSpec with Matchers with EitherValues {
+final class MavenTest extends AnyFlatSpec with Matchers with EitherValues {
 
   "Maven" should "resolve the latest version when found" in {
     val xml =

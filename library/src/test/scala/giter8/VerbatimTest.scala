@@ -2,9 +2,10 @@ package giter8
 
 import java.io.File
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class VerbatimTest extends FlatSpec with Matchers {
+class VerbatimTest extends AnyFlatSpec with Matchers {
 
   "G8" should "ignore file based on extension" in {
     G8.verbatim(new File("/myProject/public/fr/index.html"), Map("verbatim" -> "*.html"), new File("/")) shouldBe true
