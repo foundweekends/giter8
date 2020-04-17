@@ -21,7 +21,7 @@ class JGitInteractorTest extends AnyFlatSpec with Matchers with BeforeAndAfter w
   var interactor: JGitInteractor = _
 
   before {
-    interactor = new JGitInteractor
+    interactor = new JGitInteractor(None)
 
     remoteRepository = new File(FileUtils.getTempDirectory, "giter8-" + System.nanoTime)
     JGit.init().setDirectory(remoteRepository).call()

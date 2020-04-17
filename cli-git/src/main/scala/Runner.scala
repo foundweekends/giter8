@@ -32,9 +32,8 @@ class Runner {
     * Parses command line argument, clones the template, and runs the processor.
     */
   def run(args: Array[String], workingDirectory: File, processor: Processor): Int = {
-    val gitInteractor = new Git(new JGitInteractor)
-    def clone(repo: GitRepository, ref: Option[Ref], tempdir: File): Either[String, File] =
-      gitInteractor.clone(repo, ref, tempdir) match {
+    def clone(repo: GitRepository, ref: Option[Ref], tempdir: File, knownHosts: Option[String]): Either[String, File] =
+      new Git(new JGitInteractor(knownHosts)).clone(repo, ref, tempdir) match {
         case Success(_) => Right(tempdir)
         case Failure(e) => Left(e.getMessage)
       }
@@ -46,7 +45,7 @@ class Runner {
           for {
             config   <- parser.parse(options, Config("")).map(Right(_)).getOrElse(Left(""))
             repo     <- GitRepository.fromString(config.repo)
-            cloneDir <- clone(repo, config.ref, tempdir)
+            cloneDir <- clone(repo, config.ref, tempdir, config.knownHosts)
             templateDir     = new File(cloneDir, config.directory.getOrElse(""))
             outputDirectory = config.out.map(new File(_))
             p <- processor.process(templateDir, workingDirectory, params, config.forceOverwrite, outputDirectory)
@@ -99,6 +98,10 @@ class Runner {
     opt[Unit]('f', "force") action { (_, config) =>
       config.copy(forceOverwrite = true)
     } text "Force overwrite of any existing files in output directory"
+
+    opt[String]('h', "known-hosts") action { (h, config) =>
+      config.copy(knownHosts = Some(h))
+    } text "SSH known hosts file. If unset the location will be guessed."
 
     version("version").text("Display version number")
 

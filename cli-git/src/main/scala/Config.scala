@@ -25,8 +25,9 @@ object Ref {
 
 case class Config(
     repo: String,
-    ref: Option[Ref]          = None,
-    forceOverwrite: Boolean   = false,
-    directory: Option[String] = None,
-    out: Option[String]       = None
+    ref: Option[Ref]           = None,
+    forceOverwrite: Boolean    = false,
+    directory: Option[String]  = None,
+    out: Option[String]        = None,
+    knownHosts: Option[String] = None
 )
