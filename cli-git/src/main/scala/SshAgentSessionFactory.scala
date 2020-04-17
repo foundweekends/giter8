@@ -9,11 +9,13 @@ import org.eclipse.jgit.util.FS
 
 class SshAgentSessionFactory(knownHosts: Option[String]) extends JschConfigSessionFactory() {
 
-  private val Home = Option(System.getProperty("user.home")).getOrElse("")
+  private val Home        = Option(System.getProperty("user.home")).getOrElse("")
+  private val ProgramData = Option(System.getenv("PROGRAMDATA")).getOrElse("")
 
   private val KnownHostsPaths: List[String] = List(
     s"$Home/.ssh/known_hosts",
-    "/etc/ssh/ssh_known_hosts"
+    "/etc/ssh/ssh_known_hosts",
+    s"$ProgramData/ssh/ssh_known_hosts"
   )
 
   override protected def configure(host: OpenSshConfig.Host, session: Session): Unit = {}
