@@ -1,6 +1,6 @@
 package giter8
 
-import java.nio.file.{Files, Path}
+import java.nio.file.{Files, Paths}
 
 import com.jcraft.jsch.agentproxy.{ConnectorFactory, RemoteIdentityRepository}
 import com.jcraft.jsch.{JSch, Session}
@@ -28,7 +28,7 @@ class SshAgentSessionFactory(knownHosts: Option[String]) extends JschConfigSessi
   }
 
   private def knownHostsWithDefault = {
-    knownHosts.orElse(KnownHostsPaths.find(path => Files.exists(Path.of(path))))
+    knownHosts.orElse(KnownHostsPaths.find(path => Files.exists(Paths.get(path))))
   }
 
   private def identityRepository = {
