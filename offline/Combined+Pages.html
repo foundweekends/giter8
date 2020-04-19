@@ -83,7 +83,15 @@ them on the command line and skip the interaction:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8 --name=my-new-website
 </code></pre><p>Any unsupplied parameters are assigned their default values.
 </p><h3 id="Private+Repositories">Private Repositories<a href="#Private+Repositories" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 will use your ssh key to access private repositories, just like git does.
-</p><h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="Use+CC0+1.0+for+template+licensing">Use CC0 1.0 for template licensing<a href="#Use+CC0+1.0+for+template+licensing" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>We recommend licensing software templates under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>,
+</p><h3 id="SSH+Agent">SSH Agent<a href="#SSH+Agent" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 now support proxying to an SSH Agent which can be useful if you are using another SSH agent
+such as <code>gpg-agent</code>.
+</p><p>Consider the following example:
+</p><p><code>~/.gitconfig</code>:
+</p><pre><code>[url &quot;ssh://git@github.com&quot;]
+    insteadOf = https://github.com
+    
+</code></pre><p><code>~/.profile</code>:
+</p><pre><code>export SSH_AUTH_SOCK=&quot;</code></pre><h2 id="Making+your+own+templates">Making your own templates<a href="#Making+your+own+templates" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h3 id="Use+CC0+1.0+for+template+licensing">Use CC0 1.0 for template licensing<a href="#Use+CC0+1.0+for+template+licensing" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>We recommend licensing software templates under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>,
 which waives all copyrights and related rights, similar to the “public domain.”
 </p><p>If you reside in a country covered by the Berne Convention, such as the US,
 copyright will arise automatically without registration.

@@ -101,6 +101,21 @@ Any unsupplied parameters are assigned their default values.
 
 Giter8 will use your ssh key to access private repositories, just like git does.
 
+### SSH Agent
+
+Giter8 now support proxying to an SSH Agent which can be useful if you are using another SSH agent
+such as `gpg-agent`.
+
+Consider the following example:
+
+`~/.gitconfig`:
+
+    [url "ssh://git@github.com"]
+        insteadOf = https://github.com
+        
+`~/.profile`:
+
+    export SSH_AUTH_SOCK="
 
   [CC0]: https://creativecommons.org/publicdomain/zero/1.0/
 

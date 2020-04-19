@@ -64,7 +64,15 @@ them on the command line and skip the interaction:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8 --name=my-new-website
 </code></pre><p>Any unsupplied parameters are assigned their default values.
 </p><h3 id="Private+Repositories">Private Repositories<a href="#Private+Repositories" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 will use your ssh key to access private repositories, just like git does.
-</p><div class="bottom nav">
+</p><h3 id="SSH+Agent">SSH Agent<a href="#SSH+Agent" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 now support proxying to an SSH Agent which can be useful if you are using another SSH agent
+such as <code>gpg-agent</code>.
+</p><p>Consider the following example:
+</p><p><code>~/.gitconfig</code>:
+</p><pre><code>[url &quot;ssh://git@github.com&quot;]
+    insteadOf = https://github.com
+    
+</code></pre><p><code>~/.profile</code>:
+</p><pre><code>export SSH_AUTH_SOCK=&quot;</code></pre><div class="bottom nav">
                 <div class="row">
                   <div class="col-md-auto">
                     <a href="template.html">
