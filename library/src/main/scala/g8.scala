@@ -33,6 +33,7 @@ import org.stringtemplate.v4.misc.STMessage
 import scala.collection.mutable
 import scala.util.Try
 import scala.util.control.Exception.{allCatch, catching}
+import scala.util.control.NonFatal
 
 object G8 {
   import org.stringtemplate.v4.{AttributeRenderer, ST, STGroup, STErrorListener}
@@ -131,13 +132,22 @@ object G8 {
 
     val attributes = resolved mapValues AugmentedString.apply
 
-    val st = new ST(group, default)
-
-    attributes.foreach {
-      case (k, v) =>
-        st.add(k, v)
+    try {
+      val st = new ST(group, default)
+      attributes.foreach {
+        case (k, v) =>
+          st.add(k, v)
+      }
+      st.render()
+    } catch {
+      case NonFatal(e: Exception) =>
+        // This is a workaround for https://github.com/antlr/stringtemplate4/issues/253.
+        throw new STException(
+          "An unexpected error occurred while processing the template. " +
+            "Check that all literal '$' are properly escaped with '\\$'",
+          e
+        )
     }
-    st.render()
   }
 
   class STErrorHandler extends STErrorListener {
