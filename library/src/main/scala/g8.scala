@@ -205,8 +205,9 @@ object G8 {
         case x => x
       }: _*)
 
+      val splitter = File.separator.replace("\\", "\\\\")
       val ignored = relative
-        .split(File.separatorChar)
+        .split(splitter)
         .map(part => applyTemplate(formatize(part), fileParams))
         .exists(_.isEmpty)
 
