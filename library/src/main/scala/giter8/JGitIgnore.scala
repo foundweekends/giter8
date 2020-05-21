@@ -64,21 +64,47 @@ case class JGitIgnore(patterns: String*) {
 }
 
 object JGitIgnore {
+  private implicit class RichLine(private val line: String) extends AnyVal {
+    def isCommentLine: Boolean = (line.nonEmpty && line(0) == '#') || line.trim.isEmpty
+  }
 
   def apply(in: InputStream): JGitIgnore = {
-    val patterns = Source.fromInputStream(in).getLines().toIndexedSeq
+    val source = Source.fromInputStream(in)
+    val patterns =
+      try {
+        source.getLines().filterNot(_.isCommentLine).toList
+      } finally {
+        source.close()
+      }
+
     new JGitIgnore(patterns: _*)
   }
 
   def apply(file: File): JGitIgnore = {
-    val patterns = Source.fromFile(file).getLines.filterNot(_.startsWith("#")).filterNot(_.trim.isEmpty).toIndexedSeq
+    val source = Source.fromFile(file)
+    val patterns =
+      try {
+        source.getLines().filterNot(_.isCommentLine).toList
+      } finally {
+        source.close()
+      }
     JGitIgnore(patterns: _*)
   }
 
   def fromFiles(files: File*): JGitIgnore = {
-    val patterns: IndexedSeq[String] = files.foldLeft[IndexedSeq[String]](IndexedSeq.empty) {
-      case (m, file) =>
-        m ++ Source.fromFile(file).getLines().filterNot(_.startsWith("#")).filterNot(_.trim.isEmpty).toIndexedSeq
+    val patterns: IndexedSeq[String] = {
+      val builder = Vector.newBuilder[String]
+
+      files.foreach { file =>
+        val source = Source.fromFile(file)
+        try {
+          builder ++= source.getLines.filterNot(_.isCommentLine)
+        } finally {
+          source.close()
+        }
+      }
+
+      builder.result
     }
     JGitIgnore(patterns: _*)
   }
