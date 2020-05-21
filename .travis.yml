@@ -15,6 +15,16 @@ matrix:
   - env: SBT_VERSION=1.3.10
     jdk: openjdk11
     script: sbt "-no-colors" "^^ $SBT_VERSION" ";publishLocal;plugin/scripted;scaffold/scripted;lib/test;app/compile"
+  - os: windows
+    language: bash
+    name: windows
+    env:
+    - JDK="adopt@1.8.0-252"
+    script:
+    - curl "https://raw.githubusercontent.com/DanySK/Gravis-CI/0a17947c034d1c7f5938ac7ec97e74b475eca399/.install-jdk-travis.sh" --output .install-jdk-travis.sh
+    - source .install-jdk-travis.sh
+    - wget https://raw.githubusercontent.com/paulp/sbt-extras/e252487b9bfdea6a6c/sbt && chmod +x ./sbt
+    - ./sbt "-no-colors" "^^ 1.3.10" ";lib/test;app/test" # TODO enable scripted-test
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
