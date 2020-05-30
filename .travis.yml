@@ -4,9 +4,15 @@ language: scala
 
 jdk: openjdk8
 
-matrix:
+stages:
+  - name: test
+  - name: push-pages
+    if: (type = push) AND (repo = foundweekends/giter8) AND (branch = master)
+
+jobs:
   include:
-  - env: SBT_VERSION=1.2.8
+  - stage: test
+    env: SBT_VERSION=1.2.8
     jdk: openjdk8
     script: sbt "-no-colors" "^^ $SBT_VERSION" ";publishLocal;scalafmtCheckAll;plugin/scripted;scaffold/scripted;lib/test;app/compile"
   - name: "Scala 2.13"
@@ -25,23 +31,15 @@ matrix:
     - source .install-jdk-travis.sh
     - wget https://raw.githubusercontent.com/paulp/sbt-extras/e252487b9bfdea6a6c/sbt && chmod +x ./sbt
     - ./sbt "-no-colors" "^^ 1.3.10" ";lib/test;app/test" # TODO enable scripted-test
+  - stage: push-pages
+    script:
+    - export SBT_GHPAGES_COMMIT_MESSAGE="updated site https://github.com/foundweekends/giter8/commit/${TRAVIS_COMMIT}"
+    - export PUBLISH_SITE=true;
+    - eval "$(ssh-agent -s)" #start the ssh agent
+    - openssl aes-256-cbc -K $encrypted_e5f9765ae931_key -iv $encrypted_e5f9765ae931_iv -in deploy_rsa.enc -out deploy_rsa -d
+    - chmod 600 deploy_rsa
+    - ssh-add deploy_rsa
+    - sbt pushSiteIfChanged
 
 before_script:
  - export JVM_OPTS="-Xms1024m -Xmx1024m -XX:ReservedCodeCacheSize=128m -Xss2m -Dfile.encoding=UTF-8"
-
-after_success:
-- export SBT_GHPAGES_COMMIT_MESSAGE="updated site https://github.com/foundweekends/giter8/commit/${TRAVIS_COMMIT}"
-- >
-  if [[ "${TRAVIS_PULL_REQUEST}" == "false" && \
-        "${TRAVIS_BRANCH}" == "master" && \
-        "${TRAVIS_REPO_SLUG}" == "foundweekends/giter8" ]]; then
-    export PUBLISH_SITE=true;
-    eval "$(ssh-agent -s)" #start the ssh agent
-    openssl aes-256-cbc \
-      -K $encrypted_e5f9765ae931_key \
-      -iv $encrypted_e5f9765ae931_iv \
-      -in deploy_rsa.enc -out deploy_rsa -d
-    chmod 600 deploy_rsa
-    ssh-add deploy_rsa
-    sbt pushSiteIfChanged
-  fi
