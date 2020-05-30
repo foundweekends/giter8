@@ -56,7 +56,7 @@ GitHub 브랜치에 템플릿을 push 하기전에 테스트를 해볼 수 있�
 위의 가이드대로, <code>foundweekends/giter8.g8</code> 템플릿을 사용하고 있다면 이미 구성되어 있습니다.
 </p><p>이미 사용하고 있는 템플릿을 현재 플러그인으로 업그레이드 하기위해서는 
 <code>project/giter8.sbt</code> 에 아래 내용을 추가합니다.
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.11.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.12.0&quot;)
 </code></pre><p>이 플러그인이 설정된 템플릿 기반 디렉토리에서 sbt 쉘에 들어가면 <code>g8Test</code> 라는 액션에서 
 기본 출력 디렉토리 (<code>target/sbt-test</code>)에 템플릿이 적용되어 해당 프로젝트에 대해 <a href="https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html">scriptted test</a> 를 fork된 프로세스에서 실행 한다. 
 테스트 스크립트는<code>project/giter8.test</code>또는 <code>src/test/g8/test</code>로 제공 할 수있습니다. 만약 없으면 <code>&gt;test</code>가 사용됩니다.

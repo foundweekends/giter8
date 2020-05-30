@@ -411,7 +411,7 @@ If you need to upgrade an existing template project to the current plugin, you c
 add it as a source dependency in `project/giter8.sbt`:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.11.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.12.0")
 ```
 
 When you enter sbt's shell in the base directory of a
@@ -450,7 +450,7 @@ Giter8 supplies an sbt plugin for creating and using scaffolds.
 Add the following lines in `project/scaffold.sbt`
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.11.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.12.0")
 ```
 
 Once done, the  `g8Scaffold` command can be used in the sbt shell.
