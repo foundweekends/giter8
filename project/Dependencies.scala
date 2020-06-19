@@ -19,7 +19,7 @@ object Dependencies {
   val jschConnectorFactory = "com.jcraft" % "jsch.agentproxy.connector-factory" % "0.0.9"
   val scopt                = "com.github.scopt" %% "scopt" % "3.7.1"
   val scalacheck           = "org.scalacheck" %% "scalacheck" % "1.14.3"
-  val scalatest            = "org.scalatest" %% "scalatest" % "3.1.2"
+  val scalatest            = "org.scalatest" %% "scalatest" % "3.2.0"
   val scalamock            = "org.scalamock" %% "scalamock" % "4.4.0"
   val sbtIo                = "org.scala-sbt" %% "io" % "1.3.4"
   val scala212             = "2.12.11"
