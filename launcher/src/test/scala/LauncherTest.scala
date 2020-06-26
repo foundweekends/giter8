@@ -21,4 +21,13 @@ object LauncherTest extends BasicTestSuite {
       assert((dir / "hello" / "build.sbt").exists)
     }
   }
+
+  /*
+  test("runs git@github.com:scala/scala-seed.g8.git") {
+    IO.withTemporaryDirectory { dir =>
+      launcher.run(Array("git@github.com:scala/scala-seed.g8.git", "--name=hello"), dir)
+      assert((dir / "hello" / "build.sbt").exists)
+    }
+  }
+ */
 }

@@ -142,6 +142,7 @@ lazy val gitsupport = (project in file("cli-git"))
       jsch,
       jschSshAgent,
       jschConnectorFactory,
+      jgitJsch,
       commonsIo,
       scalatest % Test,
       scalamock % Test

@@ -21,7 +21,7 @@ import java.io.File
 
 import giter8.GitInteractor.TransportError
 import org.eclipse.jgit.api.errors.TransportException
-import org.eclipse.jgit.transport.{CredentialsProvider, SshSessionFactory}
+import org.eclipse.jgit.transport.{CredentialsProvider, SshSessionFactory, SshTransport}
 import org.eclipse.jgit.api.{Git => JGit}
 
 import scala.util.{Failure, Success, Try}
@@ -42,7 +42,6 @@ object GitInteractor {
 
 class JGitInteractor(knownHosts: Option[String]) extends GitInteractor {
   CredentialsProvider.setDefault(ConsoleCredentialsProvider)
-  SshSessionFactory.setInstance(new SshAgentSessionFactory(knownHosts))
 
   override def cloneRepository(url: String, dest: File): Try[Unit] = Try {
     JGit
@@ -50,6 +49,10 @@ class JGitInteractor(knownHosts: Option[String]) extends GitInteractor {
       .setURI(url)
       .setDirectory(dest)
       .setCredentialsProvider(ConsoleCredentialsProvider)
+      .setTransportConfigCallback({
+        case sshTransport: SshTransport => sshTransport.setSshSessionFactory(new SshAgentSessionFactory(knownHosts))
+        case x                          => x
+      })
       .call()
       .close()
   }

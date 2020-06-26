@@ -26,26 +26,29 @@ object ConsoleCredentialsProvider extends CredentialsProvider {
   def supports(items: CredentialItem*) = true
 
   def get(uri: URIish, items: CredentialItem*): Boolean = {
-    items foreach {
-      case i: CredentialItem.Username =>
-        val username = System.console.readLine("%s: ", i.getPromptText)
-        i.setValue(username)
+    if (System.console == null) false
+    else {
+      items foreach {
+        case i: CredentialItem.Username =>
+          val username = System.console.readLine("%s: ", i.getPromptText)
+          i.setValue(username)
 
-      case i: CredentialItem.Password =>
-        val password = System.console.readPassword("%s: ", i.getPromptText)
-        i.setValueNoCopy(password)
+        case i: CredentialItem.Password =>
+          val password = System.console.readPassword("%s: ", i.getPromptText)
+          i.setValueNoCopy(password)
 
-      case i: CredentialItem.InformationalMessage =>
-        System.console.printf("%s\n", i.getPromptText)
+        case i: CredentialItem.InformationalMessage =>
+          System.console.printf("%s\n", i.getPromptText)
 
-      case i: CredentialItem.YesNoType =>
-        i.setValue(askYesNo(i.getPromptText))
+        case i: CredentialItem.YesNoType =>
+          i.setValue(askYesNo(i.getPromptText))
 
-      case i: CredentialItem.StringType if uri.getScheme == "ssh" =>
-        val password = String.valueOf(System.console.readPassword("%s: ", i.getPromptText))
-        i.setValue(password)
+        case i: CredentialItem.StringType if uri.getScheme == "ssh" =>
+          val password = String.valueOf(System.console.readPassword("%s: ", i.getPromptText))
+          i.setValue(password)
+      }
+      true
     }
-    true
   }
 
   @scala.annotation.tailrec
