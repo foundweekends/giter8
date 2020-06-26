@@ -4,7 +4,7 @@ import java.net.URLClassLoader
 import java.io.{BufferedInputStream, File, FileInputStream}
 import java.util.Properties
 import java.lang.reflect.InvocationTargetException
-import java.nio.file.Files
+import java.nio.file.{Files, StandardCopyOption}
 
 object LauncherMain extends Runner with App {
   java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
@@ -35,7 +35,7 @@ class LauncherProcessor extends Processor {
         (if (forceOverwrite) Vector("-f") else Vector()) ++
         (outputDirectory match { case Some(out) => Vector("-o", out.toString); case _ => Vector() })
     val giter8Files = giter8Artifacts(g8v)
-    virtuallyRun(giter8Files, virtualArgument)
+    virtuallyRun(giter8Files, virtualArgument, workingDirectory)
     Right("")
   }
 
@@ -67,7 +67,7 @@ class LauncherProcessor extends Processor {
         }
         downloadedJars map { downloaded =>
           val t = bootDir / downloaded.getName
-          Files.copy(downloaded.toPath, t.toPath).toFile
+          Files.copy(downloaded.toPath, t.toPath, StandardCopyOption.REPLACE_EXISTING).toFile
         }
       }
     // push launcher JAR to the end of classpath to avoid Scala version clash
@@ -83,9 +83,9 @@ class LauncherProcessor extends Processor {
   }
 
   // uses classloader trick to run
-  def virtuallyRun(files: Seq[File], args: Seq[String]): Unit = {
+  def virtuallyRun(files: Seq[File], args: Seq[String], workingDirectory: File): Unit = {
     val cl = new URLClassLoader(files.map(_.toURL).toArray, null)
-    call("giter8.Giter8", "run", cl)(classOf[Array[String]])(args.toArray)
+    call("giter8.Giter8", "run", cl)(classOf[Array[String]], classOf[File])(args.toArray, workingDirectory)
   }
 
   def giter8Version(templateDir: File): Option[String] = {

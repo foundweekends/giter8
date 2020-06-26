@@ -14,7 +14,7 @@ jobs:
   - stage: test
     env: SBT_VERSION=1.2.8
     jdk: openjdk8
-    script: sbt "-no-colors" "^^ $SBT_VERSION" ";publishLocal;scalafmtCheckAll;plugin/scripted;scaffold/scripted;lib/test;app/compile"
+    script: sbt "-no-colors" "^^ $SBT_VERSION" ";publishLocal;scalafmtCheckAll;launcher/test;plugin/scripted;scaffold/scripted;lib/test;app/compile"
   - name: "Scala 2.13"
     script:
     - sbt "++ 2.13.2" app/test lib/test

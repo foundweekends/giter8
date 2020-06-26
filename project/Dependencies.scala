@@ -21,6 +21,7 @@ object Dependencies {
   val scalacheck           = "org.scalacheck" %% "scalacheck" % "1.14.3"
   val scalatest            = "org.scalatest" %% "scalatest" % "3.2.0"
   val scalamock            = "org.scalamock" %% "scalamock" % "4.4.0"
+  val verify               = "com.eed3si9n.verify" %% "verify" % "0.2.0"
   val sbtIo                = "org.scala-sbt" %% "io" % "1.3.4"
   val scala212             = "2.12.11"
   val scala213             = "2.13.2"
