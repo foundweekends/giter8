@@ -14,6 +14,7 @@ object Dependencies {
     ExclusionRule("com.sun.jdmk", "jmxtools"),
     ExclusionRule("com.sun.jmx", "jmxri")
   )
+  val jgitJsch             = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.jsch" % "5.8.0.202006091008-r"
   val jsch                 = "com.jcraft" % "jsch.agentproxy.jsch" % "0.0.9"
   val jschSshAgent         = "com.jcraft" % "jsch.agentproxy.sshagent" % "0.0.9"
   val jschConnectorFactory = "com.jcraft" % "jsch.agentproxy.connector-factory" % "0.0.9"
@@ -21,6 +22,7 @@ object Dependencies {
   val scalacheck           = "org.scalacheck" %% "scalacheck" % "1.14.3"
   val scalatest            = "org.scalatest" %% "scalatest" % "3.2.0"
   val scalamock            = "org.scalamock" %% "scalamock" % "4.4.0"
+  val verify               = "com.eed3si9n.verify" %% "verify" % "0.2.0"
   val sbtIo                = "org.scala-sbt" %% "io" % "1.3.4"
   val scala212             = "2.12.11"
   val scala213             = "2.13.2"

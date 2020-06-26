@@ -1,7 +1,7 @@
 import Dependencies._
 import CrossVersion.partialVersion
 
-val g8version = "0.13.0-SNAPSHOT"
+val g8version = "0.13.1-SNAPSHOT"
 
 val javaVmArgs: List[String] = {
   import scala.collection.JavaConverters._
@@ -142,6 +142,7 @@ lazy val gitsupport = (project in file("cli-git"))
       jsch,
       jschSshAgent,
       jschConnectorFactory,
+      jgitJsch,
       commonsIo,
       scalatest % Test,
       scalamock % Test
@@ -187,8 +188,15 @@ lazy val launcher = (project in file("launcher"))
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8-launcher",
     crossScalaVersions := List(scala212, scala213),
-    libraryDependencies += coursier,
-    run / fork := true
+    libraryDependencies ++= Seq(
+      coursier,
+      verify % Test,
+      sbtIo % Test
+    ),
+    testFrameworks += new TestFramework("verify.runner.Framework"),
+    run / fork := true,
+    Test / fork := true,
+    Test / javaOptions ++= Seq(s"""-DG8_HOME=${target.value / "home"}""")
     // assemblyMergeStrategy in assembly := {
     //   case "plugin.properties" => MergeStrategy.concat
     //   case "module-info.class" => MergeStrategy.discard
