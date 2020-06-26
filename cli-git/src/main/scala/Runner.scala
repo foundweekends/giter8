@@ -105,6 +105,8 @@ class Runner {
 
     version("version").text("Display version number")
 
+    help("help").text("Show this help and exit")
+
     note("""  --paramname=paramval  Set given parameter value and bypass interaction
       |
       |EXAMPLES
