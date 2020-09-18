@@ -9,12 +9,12 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.8.1.202007141445-r" excludeAll (
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.9.0.202009080501-r" excludeAll (
     ExclusionRule("javax.jms", "jms"),
     ExclusionRule("com.sun.jdmk", "jmxtools"),
     ExclusionRule("com.sun.jmx", "jmxri")
   )
-  val jgitJsch             = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.jsch" % "5.8.1.202007141445-r"
+  val jgitJsch             = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.jsch" % "5.9.0.202009080501-r"
   val jsch                 = "com.jcraft" % "jsch.agentproxy.jsch" % "0.0.9"
   val jschSshAgent         = "com.jcraft" % "jsch.agentproxy.sshagent" % "0.0.9"
   val jschConnectorFactory = "com.jcraft" % "jsch.agentproxy.connector-factory" % "0.0.9"
@@ -30,6 +30,6 @@ object Dependencies {
   val scalaXml             = "org.scala-lang.modules" %% "scala-xml" % "1.3.0"
   val parserCombinator     = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
   val logback              = "ch.qos.logback" % "logback-classic" % "1.2.3"
-  val coursier             = "io.get-coursier" %% "coursier" % "2.0.0-RC6-25"
+  val coursier             = "io.get-coursier" %% "coursier" % "2.0.0-RC6-26"
   val launcherIntf         = "org.scala-sbt" % "launcher-interface" % "1.1.3"
 }
