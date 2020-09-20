@@ -41,9 +41,9 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
           .filter(f => f.isDirectory && !f.isHidden)
           .map(_.getName: Parser[String])
         (Space) ~> token(templates.foldLeft(" ": Parser[String])(_ | _)).examples("<template>") ~
-          (Space ~> StringBasic.examples("--k=v")).* map {
-          case tmp ~ args => (tmp, args.toList)
-        }
+          (Space ~> StringBasic.examples("--k=v")).* map { case tmp ~ args =>
+            (tmp, args.toList)
+          }
     }
 
   val scaffoldTask =

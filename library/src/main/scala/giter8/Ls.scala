@@ -21,8 +21,8 @@ import scala.util.parsing.combinator._
 object Ls extends JavaTokenParsers {
   private val owner, name = """[\w\-\.]+""".r
   private val spec =
-    "ls" ~> "(" ~> owner ~ ("," ~> name) <~ ")" ^^ {
-      case owner ~ name => (owner, name)
+    "ls" ~> "(" ~> owner ~ ("," ~> name) <~ ")" ^^ { case owner ~ name =>
+      (owner, name)
     }
 
   def unapply(value: String): Option[(String, String)] =

@@ -81,13 +81,16 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
   private def fixedPrefixVersionNumbers(prefix: Long*): Gen[Seq[VersionNumber]] =
     for {
       variations <- Gen.choose(1, 5)
-      versionNumbers <- Gen.listOfN(variations, genVersionNumber.map { vn =>
-        VersionNumber(
-          numbers = prefix.toSeq ++: vn.numbers.drop(prefix.length),
-          tags    = vn.tags,
-          extras  = vn.extras
-        )
-      })
+      versionNumbers <- Gen.listOfN(
+        variations,
+        genVersionNumber.map { vn =>
+          VersionNumber(
+            numbers = prefix.toSeq ++: vn.numbers.drop(prefix.length),
+            tags = vn.tags,
+            extras = vn.extras
+          )
+        }
+      )
     } yield versionNumbers
 
   private def genVersionNumberList: Gen[Seq[VersionNumber]] =

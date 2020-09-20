@@ -12,7 +12,15 @@ class VerbatimTest extends AnyFlatSpec with Matchers {
   }
 
   it should "ignore file with wildcard referring a partial path" in {
-    G8.verbatim(new File("/myProject/public/fr/index.html"), Map("verbatim" -> "*/public/*"), new File("/")) shouldBe true
-    G8.verbatim(new File("/myProject/public/fr/index.html"), Map("verbatim" -> "/myProject/**/*.html"), new File("/")) shouldBe true
+    G8.verbatim(
+      new File("/myProject/public/fr/index.html"),
+      Map("verbatim" -> "*/public/*"),
+      new File("/")
+    ) shouldBe true
+    G8.verbatim(
+      new File("/myProject/public/fr/index.html"),
+      Map("verbatim" -> "/myProject/**/*.html"),
+      new File("/")
+    ) shouldBe true
   }
 }

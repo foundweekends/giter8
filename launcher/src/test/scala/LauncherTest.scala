@@ -29,5 +29,5 @@ object LauncherTest extends BasicTestSuite {
       assert((dir / "hello" / "build.sbt").exists)
     }
   }
- */
+   */
 }

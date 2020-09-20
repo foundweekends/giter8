@@ -39,10 +39,9 @@ class Git(gitInteractor: GitInteractor) {
         case Some(_) => cloneWithGivenRefOrDefaultBranch(local.path.toString, ref, destination)
       }
     case github: GitHub =>
-      cloneWithGivenRefOrDefaultBranch(github.publicUrl, ref, destination) recoverWith {
-        case _: TransportError =>
-          cleanDir(destination)
-          cloneWithGivenRefOrDefaultBranch(github.privateUrl, ref, destination)
+      cloneWithGivenRefOrDefaultBranch(github.publicUrl, ref, destination) recoverWith { case _: TransportError =>
+        cleanDir(destination)
+        cloneWithGivenRefOrDefaultBranch(github.privateUrl, ref, destination)
       }
   }
 

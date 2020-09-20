@@ -91,9 +91,8 @@ object Giter8Plugin extends sbt.AutoPlugin {
           G8.transformProps(G8.readProps(in))
             .fold(
               err => sys.error(err),
-              _.foldLeft(G8.ResolvedProperties.empty) {
-                case (resolved, (k, v)) =>
-                  resolved + (k -> G8.DefaultValueF(v)(resolved))
+              _.foldLeft(G8.ResolvedProperties.empty) { case (resolved, (k, v)) =>
+                resolved + (k -> G8.DefaultValueF(v)(resolved))
               }.toMap
             )
         } finally {

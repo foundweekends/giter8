@@ -60,16 +60,16 @@ class JGitInteractor(knownHosts: Option[String]) extends GitInteractor {
   override def getRemoteBranches(url: String): Try[Seq[String]] = {
     Try(JGit.lsRemoteRepository().setRemote(url).setHeads(true).setTags(false).call()) map { refs =>
       refs.asScala.map(r => r.getName.stripPrefix("refs/heads/")).toSeq
-    } recoverWith {
-      case e: TransportException => Failure(TransportError(e.getMessage))
+    } recoverWith { case e: TransportException =>
+      Failure(TransportError(e.getMessage))
     }
   }
 
   override def getRemoteTags(url: String): Try[Seq[String]] = {
     Try(JGit.lsRemoteRepository().setRemote(url).setHeads(false).setTags(true).call()) map { refs =>
       refs.asScala.map(r => r.getName.stripPrefix("refs/tags/")).toSeq
-    } recoverWith {
-      case e: TransportException => Failure(TransportError(e.getMessage))
+    } recoverWith { case e: TransportException =>
+      Failure(TransportError(e.getMessage))
     }
   }
 

@@ -94,12 +94,11 @@ object G8 {
   val defaultTemplatePaths: List[Path] = List(path("src") / "main" / "g8", Path(Nil))
 
   def apply(fromMapping: Seq[(File, String)], toPath: File, parameters: Map[String, String]): Seq[File] =
-    fromMapping filter { !_._1.isDirectory } flatMap {
-      case (in, relative) =>
-        expandPath(relative, toPath, parameters) match {
-          case None      => Seq()
-          case Some(out) => apply(in, out, toPath, parameters)
-        }
+    fromMapping filter { !_._1.isDirectory } flatMap { case (in, relative) =>
+      expandPath(relative, toPath, parameters) match {
+        case None      => Seq()
+        case Some(out) => apply(in, out, toPath, parameters)
+      }
     }
 
   def apply(in: File, out: File, base: File, parameters: Map[String, String]) = {
@@ -134,9 +133,8 @@ object G8 {
 
     try {
       val st = new ST(group, default)
-      attributes.foreach {
-        case (k, v) =>
-          st.add(k, v)
+      attributes.foreach { case (k, v) =>
+        st.add(k, v)
       }
       st.render()
     } catch {
@@ -330,35 +328,34 @@ object G8 {
   )(
       tmpl: File,
       workingDirectory: File,
-      arguments: Seq[String]  = Nil,
+      arguments: Seq[String] = Nil,
       forceOverwrite: Boolean = false,
       outputDirectory: Option[File]
   ): Either[String, String] =
     try {
-      fetch(tmpl).right.flatMap {
-        case (defaults, templates, templatesRoot, scaffoldsRoot) =>
-          val parameters = consoleParams(defaults, arguments).getOrElse {
-            interact(defaults)
+      fetch(tmpl).right.flatMap { case (defaults, templates, templatesRoot, scaffoldsRoot) =>
+        val parameters = consoleParams(defaults, arguments).getOrElse {
+          interact(defaults)
+        }
+
+        val base: File = outputDirectory
+          .orElse {
+            parameters.get("name").map(workingDirectory / G8.normalize(_))
           }
+          .getOrElse(workingDirectory)
 
-          val base: File = outputDirectory
-            .orElse {
-              parameters.get("name").map(workingDirectory / G8.normalize(_))
-            }
-            .getOrElse(workingDirectory)
-
-          val r = writeTemplates(
-            templatesRoot,
-            templates,
-            parameters,
-            base, // isScaffolding,
-            forceOverwrite
-          )
-          for {
-            _    <- r.right
-            root <- scaffoldsRoot
-          } copyScaffolds(root, base)
-          r
+        val r = writeTemplates(
+          templatesRoot,
+          templates,
+          parameters,
+          base, // isScaffolding,
+          forceOverwrite
+        )
+        for {
+          _    <- r.right
+          root <- scaffoldsRoot
+        } copyScaffolds(root, base)
+        r
       }
     } catch {
       case e: STException =>
@@ -371,7 +368,8 @@ object G8 {
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
   /** transforms any maven() property operations to the latest
-    * version number reported by that service. */
+    * version number reported by that service.
+    */
   def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
     Maven.lookup(props)
 
@@ -423,10 +421,9 @@ object G8 {
       }
 
       // Add anything from defaults that wasn't picked up as an argument from the console.
-      defaults.foldLeft(specified) {
-        case (resolved, (k, f)) =>
-          if (!resolved.contains(k)) resolved + (k -> f(resolved))
-          else resolved
+      defaults.foldLeft(specified) { case (resolved, (k, f)) =>
+        if (!resolved.contains(k)) resolved + (k -> f(resolved))
+        else resolved
       }
     }
   }
@@ -457,21 +454,20 @@ object G8 {
     val renderer = new AugmentedStringRenderer
 
     others
-      .foldLeft(ResolvedProperties.empty) {
-        case (resolved, (k, f)) =>
-          resolved + (
-            if (fixed.contains(k))
-              k -> f(resolved)
-            else {
-              val default = f(resolved)
-              val message = Truthy.getMessage(default)
+      .foldLeft(ResolvedProperties.empty) { case (resolved, (k, f)) =>
+        resolved + (
+          if (fixed.contains(k))
+            k -> f(resolved)
+          else {
+            val default = f(resolved)
+            val message = Truthy.getMessage(default)
 
-              print(s"$k [$message]: ")
-              Console.flush() // Gotta flush for Windows console!
-              val in = scala.io.StdIn.readLine().trim
-              (k, if (in.isEmpty) default else in)
-            }
-          )
+            print(s"$k [$message]: ")
+            Console.flush() // Gotta flush for Windows console!
+            val in = scala.io.StdIn.readLine().trim
+            (k, if (in.isEmpty) default else in)
+          }
+        )
       }
       .toMap
   }
@@ -496,37 +492,36 @@ object G8 {
         val optionOut = G8.expandPath(name, base, parameters)
         (in, optionOut)
       }
-      .foreach {
-        case (in, optionOut) =>
-          optionOut match {
-            case None => println("Skipping ignored file: %s" format in.toString)
-            case Some(out) => {
-              if (out.exists && !forceOverwrite) {
-                println("Skipping existing file: %s" format out.toString)
-              } else {
-                out.getParentFile.mkdirs()
-                if (G8.verbatim(in, parameters, tmpl))
-                  FileUtils.copyFile(in, out)
-                else {
-                  catching(classOf[MalformedInputException])
-                    .opt {
-                      G8.write(in, out, parameters /*, append = existingScaffoldingAction.getOrElse(false)*/ )
-                    }
-                    .getOrElse {
-                      // if (existingScaffoldingAction.getOrElse(false)) {
-                      //   val existing = FileUtils.readFileToString(in, UTF_8)
-                      //   FileUtils.write(out, existing, UTF_8, true)
-                      // } else {
-                      FileUtils.copyFile(in, out)
-                      // }
-                    }
-                }
-                if (in.canExecute) {
-                  out.setExecutable(true)
-                }
+      .foreach { case (in, optionOut) =>
+        optionOut match {
+          case None => println("Skipping ignored file: %s" format in.toString)
+          case Some(out) => {
+            if (out.exists && !forceOverwrite) {
+              println("Skipping existing file: %s" format out.toString)
+            } else {
+              out.getParentFile.mkdirs()
+              if (G8.verbatim(in, parameters, tmpl))
+                FileUtils.copyFile(in, out)
+              else {
+                catching(classOf[MalformedInputException])
+                  .opt {
+                    G8.write(in, out, parameters /*, append = existingScaffoldingAction.getOrElse(false)*/ )
+                  }
+                  .getOrElse {
+                    // if (existingScaffoldingAction.getOrElse(false)) {
+                    //   val existing = FileUtils.readFileToString(in, UTF_8)
+                    //   FileUtils.write(out, existing, UTF_8, true)
+                    // } else {
+                    FileUtils.copyFile(in, out)
+                    // }
+                  }
+              }
+              if (in.canExecute) {
+                out.setExecutable(true)
               }
             }
           }
+        }
       }
 
     Right("Template applied in %s" format (base.toString))
@@ -536,8 +531,10 @@ object G8 {
 
     val scaffolds = if (sf.exists) Some(getFiles(_ => true)(sf)) else None
 
-    for (fs <- scaffolds;
-         f  <- fs if !f.isDirectory) {
+    for (
+      fs <- scaffolds;
+      f  <- fs if !f.isDirectory
+    ) {
       // Copy scaffolding recipes
       val realProjectRoot = getVisibleFiles(output)
         .filter(_.isDirectory)

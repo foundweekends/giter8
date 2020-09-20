@@ -27,8 +27,8 @@ object Maven extends JavaTokenParsers with MavenHelper {
   private val org, name, release = """[\w\-\.]+""".r
 
   private val spec =
-    "maven" ~> "(" ~> org ~ ("," ~> name) ~ (("," ~> release) ?) <~ ")" ^^ {
-      case org ~ name ~ release => (org, name, release)
+    "maven" ~> "(" ~> org ~ ("," ~> name) ~ (("," ~> release) ?) <~ ")" ^^ { case org ~ name ~ release =>
+      (org, name, release)
     }
 
   private def unapply(value: String): Option[(String, String, Option[String])] =
@@ -50,14 +50,14 @@ object Maven extends JavaTokenParsers with MavenHelper {
       .toRight(s"Found metadata at $loc but can't extract latest version")
   }
 
-  private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(
-      implicit svo: Ordering[VersionNumber]
+  private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(implicit
+      svo: Ordering[VersionNumber]
   ): VersionE = {
     val versions = (elem \ "result" \ "doc" \ "str").collect {
       case x if x.attribute("name").map(_.text) == Some("v") => x.text
     }
-    val validVersions = versions.collect {
-      case VersionNumber.Stable(version) => version
+    val validVersions = versions.collect { case VersionNumber.Stable(version) =>
+      version
     }
     validVersions.sorted.headOption.map(_.toString).toRight(s"Could not find latest stable version at $loc")
   }
@@ -76,12 +76,11 @@ object Maven extends JavaTokenParsers with MavenHelper {
       case (k, value)                            => k -> Right(value)
     }
     val initial: Either[String, G8.OrderedProperties] = Right(List.empty)
-    defaults.reverseIterator.foldLeft(initial) {
-      case (accumEither, (k, either)) =>
-        for {
-          cur   <- accumEither.right
-          value <- either.right
-        } yield (k -> value) :: cur
+    defaults.reverseIterator.foldLeft(initial) { case (accumEither, (k, either)) =>
+      for {
+        cur   <- accumEither.right
+        value <- either.right
+      } yield (k -> value) :: cur
     }
   }
 }

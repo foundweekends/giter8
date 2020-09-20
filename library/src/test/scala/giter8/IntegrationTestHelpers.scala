@@ -42,18 +42,16 @@ trait IntegrationTestHelpers {
   private def compareFiles(actual: File, expected: File): Unit = {
     val expectedFiles = getFiles(expected)
     val actualFiles   = getFiles(actual)
-    actualFiles foreach {
-      case (path, file) =>
-        compareFileContents(path, file, expectedFiles(path))
+    actualFiles foreach { case (path, file) =>
+      compareFileContents(path, file, expectedFiles(path))
     }
   }
 
   private def compareFileContents(path: String, actual: File, expected: File): Unit = {
     val actualLines   = Source.fromFile(actual).getLines().toSeq
     val expectedLines = Source.fromFile(expected).getLines().toSeq
-    expectedLines.zipWithIndex foreach {
-      case (line, i) =>
-        assert(line == actualLines(i), s"in file $path:$i")
+    expectedLines.zipWithIndex foreach { case (line, i) =>
+      assert(line == actualLines(i), s"in file $path:$i")
     }
   }
 
