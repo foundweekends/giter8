@@ -30,6 +30,6 @@ object Dependencies {
   val scalaXml             = "org.scala-lang.modules" %% "scala-xml" % "1.3.0"
   val parserCombinator     = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
   val logback              = "ch.qos.logback" % "logback-classic" % "1.2.3"
-  val coursier             = "io.get-coursier" %% "coursier" % "2.0.3"
+  val coursier             = "io.get-coursier" %% "coursier" % "2.0.4"
   val launcherIntf         = "org.scala-sbt" % "launcher-interface" % "1.1.5"
 }
