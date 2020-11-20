@@ -18,7 +18,7 @@
 package giter8
 
 import org.scalacheck.{Arbitrary, Gen, Prop, Properties}
-import org.scalacheck.Prop.BooleanOperators
+import org.scalacheck.Prop.propBoolean
 
 final class VersionNumberOrderingTest extends Properties("StableVersion") {
 
