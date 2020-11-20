@@ -28,8 +28,7 @@ class Runner {
 
   val Param = """(?s)^--(\S+)=(.+)$""".r
 
-  /**
-    * Parses command line argument, clones the template, and runs the processor.
+  /** Parses command line argument, clones the template, and runs the processor.
     */
   def run(args: Array[String], workingDirectory: File, processor: Processor): Int = {
     def clone(repo: GitRepository, ref: Option[Ref], tempdir: File, knownHosts: Option[String]): Either[String, File] =

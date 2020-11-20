@@ -61,8 +61,7 @@ final class VersionNumber private[giter8] (val numbers: Seq[Long], val tags: Seq
 
 object VersionNumber {
 
-  /**
-    * @param numbers numbers delimited by a dot.
+  /** @param numbers numbers delimited by a dot.
     * @param tags string prefixed by a dash.
     * @param any other strings at the end.
     */

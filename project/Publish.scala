@@ -18,8 +18,7 @@ import sbt._
 import sbt.Keys._
 import bintray.{BintrayKeys, BintrayPlugin}
 
-/**
-  * Publish to private bintray repository.
+/** Publish to private bintray repository.
   */
 object BintrayPublish extends AutoPlugin {
   override def trigger  = allRequirements
@@ -37,8 +36,7 @@ object BintrayPublish extends AutoPlugin {
   )
 }
 
-/**
-  * Publish to private bintray repository.
+/** Publish to private bintray repository.
   */
 object SonatypePublish extends AutoPlugin {
   override def requires = plugins.JvmPlugin
@@ -52,8 +50,7 @@ object SonatypePublish extends AutoPlugin {
   )
 }
 
-/**
-  * For projects that are not published.
+/** For projects that are not published.
   */
 object NoPublish extends AutoPlugin {
   override def requires = plugins.JvmPlugin && BintrayPublish
