@@ -1,0 +1,14 @@
+name: scala-steward
+on:
+  push:
+  schedule:
+  - cron: '0 14 * * *'
+jobs:
+  scala-steward:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Launch Scala Steward
+      if: ${{ !github.event.repository.fork }}
+      uses: scala-steward-org/scala-steward-action@v2.9.1
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
