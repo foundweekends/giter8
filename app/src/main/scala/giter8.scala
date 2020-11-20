@@ -43,8 +43,7 @@ object Giter8 extends Giter8 {
   class Exit(val code: Int) extends xsbti.Exit
 }
 
-/**
-  * The processor that is responsible for rendering.
+/** The processor that is responsible for rendering.
   */
 class AppProcessor extends Processor {
   def process(

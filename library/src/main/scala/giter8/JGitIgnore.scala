@@ -31,8 +31,7 @@ case class JGitIgnore(patterns: String*) {
 
   def getPatterns: Seq[String] = patterns
 
-  /**
-    * This method uses a manual precedence implementation for rules.
+  /** This method uses a manual precedence implementation for rules.
     *
     * The last rule to match a path will be used to determine if it is ignored.
     *

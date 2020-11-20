@@ -39,8 +39,7 @@ class LauncherProcessor extends Processor {
     Right("")
   }
 
-  /**
-    * See if there are JARs in ~/.giter8/boot/org.foundweekends.giter8/giter8_2.12/0.10.x.
+  /** See if there are JARs in ~/.giter8/boot/org.foundweekends.giter8/giter8_2.12/0.10.x.
     * Otherwise, use Coursier to download the giter8 artifacts and move them into the boot dir
     * for the next time.
     */

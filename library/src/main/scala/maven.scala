@@ -20,8 +20,7 @@ package giter8
 import scala.util.parsing.combinator._
 import scala.xml.NodeSeq
 
-/**
-  * Parse `maven-metadata.xml`
+/** Parse `maven-metadata.xml`
   */
 object Maven extends JavaTokenParsers with MavenHelper {
   private val org, name, release = """[\w\-\.]+""".r
