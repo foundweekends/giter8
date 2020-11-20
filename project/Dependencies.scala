@@ -1,7 +1,7 @@
 import sbt._
 
 object Dependencies {
-  val stringTemplate = "org.antlr" % "ST4" % "4.2"
+  val stringTemplate = "org.antlr" % "ST4" % "4.3.1"
   val commonsIo      = "commons-io" % "commons-io" % "2.6"
   val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll (
     ExclusionRule("org.apache.commons", "commons-compress"),
