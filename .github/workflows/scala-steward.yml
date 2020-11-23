@@ -6,9 +6,19 @@ on:
 jobs:
   scala-steward:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v1
+      if: ${{ !github.event.repository.fork }}
+      with:
+        app_id: 89697
+        private_key: ${{ secrets.FOUNDWEEKENDS_BOT_KEY }}
     - name: Launch Scala Steward
       if: ${{ !github.event.repository.fork }}
       uses: scala-steward-org/scala-steward-action@v2.9.1
       with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+        github-token: ${{ steps.generate_token.outputs.token }}
+        author-email: "74864734+foundweekends-bot[bot]@users.noreply.github.com"
+        author-name: "foundweekends-bot[bot]"
