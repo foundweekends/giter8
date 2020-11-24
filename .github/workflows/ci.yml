@@ -70,4 +70,4 @@ jobs:
       run: |
         # https://github.com/sbt/sbt-ghpages/commit/cbedd8edb8
         export SBT_GHPAGES_COMMIT_MESSAGE="auto commit on CI https://github.com/foundweekends/giter8/commit/${{ github.sha }}"
-        sbt -v ghpagesPushSite
+        sbt -v pushSiteIfChanged

@@ -75,7 +75,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       case Some(x) => x
       case _       => "HEAD^..HEAD"
     }
-    val stat = git(("diff" :: "--shortstat" :: range :: "docs" :: Nil): _*)(dir, log)
+    val stat = git(("diff" :: "--shortstat" :: range :: "--" :: "docs" :: Nil): _*)(dir, log)
     stat.trim.nonEmpty
   }
 
