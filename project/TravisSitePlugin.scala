@@ -57,8 +57,13 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       val r       = GitKeys.gitRunner.value
       val s       = streams.value
       val changed = gitDocsChanged(repo, r, s.log)
-      if (changed) ghpagesPushSite
-      else Def.task {}
+      if (changed) {
+        ghpagesPushSite
+      } else {
+        Def.task {
+          s.log.info("skip push site")
+        }
+      }
     }).value,
     git.remoteRepo := s"git@github.com:${siteGitHubRepo.value}.git"
   )
