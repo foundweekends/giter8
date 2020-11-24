@@ -82,7 +82,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
   def gitConfig(dir: File, email: String, git: GitRunner, log: Logger): Unit =
     sys.env.get("CI") match {
       case Some(_) =>
-        git(("config" :: "user.name" :: "Travis CI" :: Nil): _*)(dir, log)
+        git(("config" :: "user.name" :: "foundweekends-bot[bot]" :: Nil): _*)(dir, log)
         git(("config" :: "user.email" :: email :: Nil): _*)(dir, log)
       case _ => ()
     }

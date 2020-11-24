@@ -36,6 +36,10 @@ ThisBuild / scmInfo := Some(
   ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git")
 )
 
+ThisBuild / commands += Command.command("SetScala213") {
+  s"++ ${scala213}! -v" :: _
+}
+
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
@@ -44,7 +48,7 @@ lazy val root = (project in file("."))
     name := "giter8",
     crossScalaVersions := Nil,
     siteGitHubRepo := "foundweekends/giter8",
-    siteEmail := { "eed3si9n" + "@" + "gmail.com" },
+    siteEmail := { "74864734+foundweekends-bot[bot]@users.noreply.github.com" },
     publish / skip := true,
     customCommands
   )
