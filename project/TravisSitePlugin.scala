@@ -53,7 +53,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
     // 5. remove the private key ./deploy_rsa
     // 4. rename it to deploy_rsa.enc
     pushSiteIfChanged := (Def.taskDyn {
-      val repo    = baseDirectory.value
+      val repo    = (LocalRootProject / baseDirectory).value
       val r       = GitKeys.gitRunner.value
       val s       = streams.value
       val changed = gitDocsChanged(repo, r, s.log)
