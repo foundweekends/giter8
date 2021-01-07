@@ -146,14 +146,13 @@ GitHub プロジェクトがあるとき、Giter8 ランタイムは以下の 2�
 この `default.properties` は `project/` ディレクトリ下、もしくはテンプレートのルートにに置くことが可能だ。
 プロパティは簡単なキーとそれを置換する値のペアから成り立っている。
 
-Giter8 テンプレートに実際の適用を行うのは [Scalasti][scalasti] でラッピングされた [StringTemplate][st] で、
+Giter8 テンプレートに実際の適用を行うのは [StringTemplate][st] で、
 ソースファイル内のテンプレートフィールドは `$` で囲んで書かれる。具体例で説明すると、`classname` というフィールドはソース内では
 
     class $classname$ {
 
 といったふうに表記される。
 
-[scalasti]: http://bmc.github.com/scalasti/
 [st]: https://www.stringtemplate.org/
 
 このテンプレートフィールドは他のフィールドのデフォルト値を定義するのにも使うことができる。

@@ -102,7 +102,7 @@ This template is distributed without any warranty. See &lt;https://creativecommo
 <code>default.properties</code> という Java プロパティファイルがテンプレートのフィールドとそのデフォルト値を定義する。
 </p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>この <code>default.properties</code> は <code>project/</code> ディレクトリ下、もしくはテンプレートのルートにに置くことが可能だ。
 プロパティは簡単なキーとそれを置換する値のペアから成り立っている。
-</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="http://bmc.github.com/scalasti/">Scalasti</a> でラッピングされた <a href="https://www.stringtemplate.org/">StringTemplate</a> で、
+</p><p>Giter8 テンプレートに実際の適用を行うのは <a href="https://www.stringtemplate.org/">StringTemplate</a> で、
 ソースファイル内のテンプレートフィールドは <code>$</code> で囲んで書かれる。具体例で説明すると、<code>classname</code> というフィールドはソース内では
 </p><pre><code>class $classname$ {
 </code></pre><p>といったふうに表記される。
