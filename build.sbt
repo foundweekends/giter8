@@ -54,7 +54,6 @@ lazy val root = (project in file("."))
   )
 
 lazy val app = (project in file("app"))
-  .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
   .dependsOn(lib, gitsupport)
   .settings(
@@ -80,7 +79,7 @@ lazy val crossSbt = Seq(
 )
 
 lazy val scaffold = (project in file("scaffold"))
-  .enablePlugins(SbtPlugin, BintrayPublish, ScriptedPlugin)
+  .enablePlugins(SbtPlugin, SonatypePublish, ScriptedPlugin)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
@@ -100,7 +99,7 @@ lazy val scaffold = (project in file("scaffold"))
   )
 
 lazy val plugin = (project in file("plugin"))
-  .enablePlugins(SbtPlugin, BintrayPublish, ScriptedPlugin)
+  .enablePlugins(SbtPlugin, SonatypePublish, ScriptedPlugin)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
@@ -134,7 +133,6 @@ lazy val plugin = (project in file("plugin"))
   )
 
 lazy val gitsupport = (project in file("cli-git"))
-  .disablePlugins(BintrayPlugin)
   .enablePlugins(BuildInfoPlugin, SonatypePublish)
   .settings(
     description := "cli and git support library for Giter8",
@@ -157,7 +155,6 @@ lazy val gitsupport = (project in file("cli-git"))
   )
 
 lazy val lib = (project in file("library"))
-  .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
   .dependsOn(gitsupport)
   .settings(crossSbt)
@@ -184,7 +181,6 @@ lazy val lib = (project in file("library"))
   )
 
 lazy val launcher = (project in file("launcher"))
-  .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
   .enablePlugins(ConscriptPlugin)
   .dependsOn(gitsupport)
@@ -211,7 +207,6 @@ lazy val launcher = (project in file("launcher"))
   )
 
 lazy val bootstrap = (project in file("bootstrap"))
-  .disablePlugins(BintrayPlugin)
   .enablePlugins(SonatypePublish)
   .settings(
     description := "Bootstrap script for Giter8 launcher",

@@ -16,25 +16,6 @@
 
 import sbt._
 import sbt.Keys._
-import bintray.{BintrayKeys, BintrayPlugin}
-
-/** Publish to private bintray repository.
-  */
-object BintrayPublish extends AutoPlugin {
-  override def trigger  = allRequirements
-  override def requires = plugins.JvmPlugin && BintrayPlugin
-
-  override def buildSettings = Seq(
-    BintrayKeys.bintrayOrganization := Some("sbt"),
-    BintrayKeys.bintrayReleaseOnPublish := false
-  )
-
-  override def projectSettings = Seq(
-    BintrayKeys.bintrayRepository := "sbt-plugin-releases",
-    BintrayKeys.bintrayPackage := "sbt-giter8",
-    pomIncludeRepository := { _ => false }
-  )
-}
 
 /** Publish to sonatype repository.
   */
@@ -53,7 +34,7 @@ object SonatypePublish extends AutoPlugin {
 /** For projects that are not published.
   */
 object NoPublish extends AutoPlugin {
-  override def requires = plugins.JvmPlugin && BintrayPublish
+  override def requires = plugins.JvmPlugin
 
   override def projectSettings = Seq(
     publishArtifact := false,
