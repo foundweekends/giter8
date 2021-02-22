@@ -63,7 +63,7 @@ jobs:
       with:
         fetch-depth: 10
     - uses: coursier/cache-action@v5
-    - uses: webfactory/ssh-agent@v0.4.1
+    - uses: webfactory/ssh-agent@v0.5.0
       if: ${{ !github.event.repository.fork && github.ref == 'refs/heads/master' && github.event_name == 'push' }}
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY_1 }}
