@@ -77,8 +77,8 @@ object Maven extends JavaTokenParsers with MavenHelper {
     val initial: Either[String, G8.OrderedProperties] = Right(List.empty)
     defaults.reverseIterator.foldLeft(initial) { case (accumEither, (k, either)) =>
       for {
-        cur   <- accumEither.right
-        value <- either.right
+        cur   <- accumEither
+        value <- either
       } yield (k -> value) :: cur
     }
   }

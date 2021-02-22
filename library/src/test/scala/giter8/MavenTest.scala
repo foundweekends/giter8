@@ -37,7 +37,7 @@ final class MavenTest extends AnyFlatSpec with Matchers with EitherValues {
 
     val loc =
       "https://search.maven.org/solrsearch/select?q=g:%22org.scala-lang%22+AND+a:%22scala-library%22&rows=20&wt=xml"
-    Maven.findLatestVersion(loc, xml).right.value should be("2.13.0-M5")
+    Maven.findLatestVersion(loc, xml).value should be("2.13.0-M5")
   }
 
   it should "return an error when the latest version is not found" in {
@@ -109,7 +109,7 @@ final class MavenTest extends AnyFlatSpec with Matchers with EitherValues {
 
     val loc =
       "https://search.maven.org/solrsearch/select?q=g:%22org.scalatest%22+AND+a:%22scalatest_2.12%22&rows=20&wt=xml&core=gav"
-    Maven.findLatestStableVersion(loc, xml).right.value should be("3.0.5")
+    Maven.findLatestStableVersion(loc, xml).value should be("3.0.5")
   }
 
   it should "return the latest version if the latest version is stable" in {
@@ -152,7 +152,7 @@ final class MavenTest extends AnyFlatSpec with Matchers with EitherValues {
 
     val loc =
       "https://search.maven.org/solrsearch/select?q=g:%22org.scalacheck%22+AND+a:%22scalacheck_2.12%22&core=gav&rows=20&wt=xml"
-    Maven.findLatestStableVersion(loc, xml).right.value should be("1.14.0")
+    Maven.findLatestStableVersion(loc, xml).value should be("1.14.0")
   }
 
   it should "return an error if the latest stable version is not found" in {
