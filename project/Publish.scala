@@ -36,7 +36,7 @@ object BintrayPublish extends AutoPlugin {
   )
 }
 
-/** Publish to private bintray repository.
+/** Publish to sonatype repository.
   */
 object SonatypePublish extends AutoPlugin {
   override def requires = plugins.JvmPlugin
