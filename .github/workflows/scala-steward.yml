@@ -1,8 +1,10 @@
 name: scala-steward
 on:
   push:
+    branches: [ master ]
   schedule:
   - cron: '0 14 * * *'
+  workflow_dispatch:
 jobs:
   scala-steward:
     runs-on: ubuntu-latest
