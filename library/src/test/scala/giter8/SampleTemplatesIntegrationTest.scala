@@ -13,13 +13,8 @@ class SampleTemplatesIntegrationTest extends AnyFunSuite with IntegrationTestHel
 
   val testCases: Seq[TestCase] = {
     val testCasesDirectory = new File(getClass.getResource("/testcases").getPath)
-    if (Properties.isWin) {
-      // TODO fix and enable tests
-      Nil
-    } else {
-      testCasesDirectory.listFiles map { testCase =>
-        TestCase(testCase.getName, testCase / "template", testCase / "output")
-      }
+    testCasesDirectory.listFiles map { testCase =>
+      TestCase(testCase.getName, testCase / "template", testCase / "output")
     }
   }
 
