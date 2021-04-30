@@ -41,6 +41,10 @@ object FormatSpecification extends Properties("Format") {
 
   property("formatPackageNaming") = conversion("""$x;format="package"$""", Map("x" -> "foo bar  baz")) == "foo.bar.baz"
 
+  property("formatReverseOrg") = forAll(nonDotNonDollar, nonDotNonDollar, nonDotNonDollar) { (x, y, z) =>
+    conversion("""$k;format="reverse-organization"$""", Map("k" -> s"$x.$y.$z")) == s"$z.$y.$x"
+  }
+
   lazy val hiragana = (0x3041 to 0x3094).toList
 
   lazy val nonDollarChar: Gen[Char] = Gen.oneOf(
@@ -56,6 +60,16 @@ object FormatSpecification extends Properties("Format") {
 
   lazy val asciiString: Gen[String] = Gen.sized { size =>
     Gen.listOfN(size, asciiChar).map(_.mkString)
+  } filter { _.nonEmpty }
+
+  lazy val nonDotNonDollarChar: Gen[Char] = Gen.oneOf(
+    ((0x20 to 0xff).toList ::: hiragana)
+      .filter(x => Character.isDefined(x) && x != 0x2e && x != 0x24 && x != 0x5c)
+      .map(_.toChar)
+  )
+
+  lazy val nonDotNonDollar: Gen[String] = Gen.sized { size =>
+    Gen.listOfN(size, nonDotNonDollarChar).map(_.mkString)
   } filter { _.nonEmpty }
 
   def conversion(inContent: String, ps: Map[String, String]): String = synchronized {
