@@ -41,8 +41,8 @@ object FormatSpecification extends Properties("Format") {
 
   property("formatPackageNaming") = conversion("""$x;format="package"$""", Map("x" -> "foo bar  baz")) == "foo.bar.baz"
 
-  property("formatReverseOrg") = forAll(nonDotNonDollar, nonDotNonDollar, nonDotNonDollar) { (x, y, z) =>
-    conversion("""$k;format="reverse-organization"$""", Map("k" -> s"$x.$y.$z")) == s"$z.$y.$x"
+  property("formatDotReverse") = forAll(nonDotNonDollar, nonDotNonDollar, nonDotNonDollar) { (x, y, z) =>
+    conversion("""$k;format="dot-reverse"$""", Map("k" -> s"$x.$y.$z")) == s"$z.$y.$x"
   }
 
   lazy val hiragana = (0x3041 to 0x3094).toList

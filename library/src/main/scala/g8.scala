@@ -240,7 +240,7 @@ object G8 {
   def snakeCase(s: String)       = s.replaceAll("""[\s\.\-]+""", "_")
   def packageNaming(s: String)   = s.replaceAll("""\s+""", ".")
   def packageDir(s: String)      = s.replace(".", System.getProperty("file.separator"))
-  def reverseOrg(s: String)      = s.split('.').reverse.mkString(".")
+  def dotReverse(s: String)      = s.split('.').reverse.mkString(".")
   def addRandomId(s: String)     = s + "-" + new java.math.BigInteger(256, new java.security.SecureRandom).toString(32)
   def scalaIdentifier(s: String) = if (s.contains("-")) "`" + s + "`" else s
 
@@ -590,22 +590,22 @@ class AugmentedStringRenderer {
   }
 
   def format(value: String, formatName: String): String = formatName match {
-    case "upper"      | "uppercase"            => value.toUpperCase
-    case "lower"      | "lowercase"            => value.toLowerCase
-    case "cap"        | "capitalize"           => value.capitalize
-    case "decap"      | "decapitalize"         => decapitalize(value)
-    case "start"      | "start-case"           => startCase(value)
-    case "word"       | "word-only"            => wordOnly(value)
-    case "space"      | "word-space"           => space(value)
-    case "Camel"      | "upper-camel"          => upperCamel(value)
-    case "camel"      | "lower-camel"          => lowerCamel(value)
-    case "hyphen"     | "hyphenate"            => hyphenate(value)
-    case "norm"       | "normalize"            => normalize(value)
-    case "snake"      | "snake-case"           => snakeCase(value)
-    case "package"    | "package-naming"       => packageNaming(value)
-    case "packaged"   | "package-dir"          => packageDir(value)
-    case "reverseOrg" | "reverse-organization" => reverseOrg(value)
-    case "random"     | "generate-random"      => addRandomId(value)
+    case "upper"      | "uppercase"       => value.toUpperCase
+    case "lower"      | "lowercase"       => value.toLowerCase
+    case "cap"        | "capitalize"      => value.capitalize
+    case "decap"      | "decapitalize"    => decapitalize(value)
+    case "start"      | "start-case"      => startCase(value)
+    case "word"       | "word-only"       => wordOnly(value)
+    case "space"      | "word-space"      => space(value)
+    case "Camel"      | "upper-camel"     => upperCamel(value)
+    case "camel"      | "lower-camel"     => lowerCamel(value)
+    case "hyphen"     | "hyphenate"       => hyphenate(value)
+    case "norm"       | "normalize"       => normalize(value)
+    case "snake"      | "snake-case"      => snakeCase(value)
+    case "package"    | "package-naming"  => packageNaming(value)
+    case "packaged"   | "package-dir"     => packageDir(value)
+    case "dotReverse" | "dot-reverse"     => dotReverse(value)
+    case "random"     | "generate-random" => addRandomId(value)
     case _ => value
   }
 }
