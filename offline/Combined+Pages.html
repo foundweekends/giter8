@@ -124,7 +124,7 @@ fields and their default values using the Java properties file format.
 </p><h3 id="default.properties">default.properties<a href="#default.properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><code>default.properties</code> file may be placed in <code>project/</code> directory,
 or directly under the root of the template.
 Properties are simple keys and values that replace them.
-</p><p><a href="https://www.stringtemplate.org/">StringTemplate</a>, wrapped by <a href="http://bmc.github.com/scalasti/">Scalasti</a>, is the engine
+</p><p><a href="https://www.stringtemplate.org/">StringTemplate</a> is the engine
 that applies Giter8 templates, so template fields in source files are
 bracketed with the <code>$</code> character. For example, a “classname” field
 might be referenced in the source as:
@@ -219,21 +219,22 @@ can be added when referencing fields. For example, the <code>name</code> field c
 formatted in upper camel case with:
 </p><pre><code>$name;format=&quot;Camel&quot;$
 </code></pre><p>The formatting options are:
-</p><pre><code>upper    | uppercase       : all uppercase letters
-lower    | lowercase       : all lowercase letters
-cap      | capitalize      : uppercase first letter
-decap    | decapitalize    : lowercase first letter
-start    | start-case      : uppercase the first letter of each word
-word     | word-only       : remove all non-word letters (only a-zA-Z0-9_)
-space    | word-space      : replace all non-word letters (only a-zA-Z0-9) with a whitespace
-Camel    | upper-camel     : upper camel case (start-case, word-only)
-camel    | lower-camel     : lower camel case (start-case, word-only, decapitalize)
-hyphen   | hyphenate       : replace spaces with hyphens
-norm     | normalize       : all lowercase with hyphens (lowercase, hyphenate)
-snake    | snake-case      : replace spaces and dots with underscores
-package  | package-naming  : replace spaces with dots
-packaged | package-dir     : replace dots with slashes (net.databinder -&gt; net/databinder)
-random   | generate-random : appends random characters to the given string
+</p><pre><code>upper      | uppercase       : all uppercase letters
+lower      | lowercase       : all lowercase letters
+cap        | capitalize      : uppercase first letter
+decap      | decapitalize    : lowercase first letter
+start      | start-case      : uppercase the first letter of each word
+word       | word-only       : remove all non-word letters (only a-zA-Z0-9_)
+space      | word-space      : replace all non-word letters (only a-zA-Z0-9) with a whitespace
+Camel      | upper-camel     : upper camel case (start-case, word-only)
+camel      | lower-camel     : lower camel case (start-case, word-only, decapitalize)
+hyphen     | hyphenate       : replace spaces with hyphens
+norm       | normalize       : all lowercase with hyphens (lowercase, hyphenate)
+snake      | snake-case      : replace spaces and dots with underscores
+dotReverse | dot-reverse     : tokenizes by dot and reverses the tokens (scala-lang.org -&gt; org.scala-lang)
+package    | package-naming  : replace spaces with dots
+packaged   | package-dir     : replace dots with slashes (net.databinder -&gt; net/databinder)
+random     | generate-random : appends random characters to the given string
 </code></pre><p>A <code>name</code> field with a value of <code>My Project</code> could be rendered in several ways:
 </p><pre><code>$name$ -&gt; &quot;My Project&quot;
 $name;format=&quot;camel&quot;$ -&gt; &quot;myProject&quot;
