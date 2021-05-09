@@ -105,8 +105,8 @@ lazy val plugin = (project in file("plugin"))
   .settings(
     name := "sbt-giter8",
     description := "sbt plugin for testing giter8 templates",
-    sbtPlugin := true,
     crossScalaVersions := List(scala212),
+    pluginCrossBuild / sbtVersion := "1.2.8",
     resolvers += Resolver.typesafeIvyRepo("releases"),
     scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
     scriptedBufferLog := false,
@@ -196,7 +196,7 @@ lazy val launcher = (project in file("launcher"))
     testFrameworks += new TestFramework("verify.runner.Framework"),
     run / fork := true,
     Test / fork := true,
-    Test / javaOptions ++= Seq(s"""-DG8_HOME=${target.value / "home"}""")
+    Test / javaOptions ++= Seq(s"""-DG8_HOME=${target.value / "home"}"""),
     // assemblyMergeStrategy in assembly := {
     //   case "plugin.properties" => MergeStrategy.concat
     //   case "module-info.class" => MergeStrategy.discard
