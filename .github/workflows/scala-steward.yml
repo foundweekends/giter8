@@ -12,7 +12,7 @@ jobs:
     steps:
     - name: Generate token
       id: generate_token
-      uses: tibdex/github-app-token@v1
+      uses: tibdex/github-app-token@v1.3
       if: ${{ !github.event.repository.fork }}
       with:
         app_id: 89697
