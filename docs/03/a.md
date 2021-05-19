@@ -44,4 +44,6 @@ For file and directory names a format option can be specified after a double
 underscore. For example, a directory named `\$organization__packaged\$` will
 change `org.somewhere` to `org/somewhere` like the built-in support for
 `package`. A file named `\$name__Camel\$.scala` and the name `awesome project`
-will create the file `AwesomeProject.scala`.
+will create the file `AwesomeProject.scala`. Multiple comma separated formatting 
+options can be used at once: `\$name__lower,hyphen\$.scala` and the name 
+`Awesome Project` will create the file `awesome-project.scala`.
