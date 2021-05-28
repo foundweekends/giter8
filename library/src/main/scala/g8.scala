@@ -359,6 +359,8 @@ object G8 {
     } catch {
       case e: STException =>
         Left(s"Exiting due to error in the template: ${tmpl}\n${e.getMessage}")
+      case NullInputException =>
+        Left(s"Interrupting...")
       case t: Throwable =>
         t.printStackTrace()
         Left("Unknown exception: " + t.getMessage)
@@ -462,13 +464,17 @@ object G8 {
 
             print(s"$k [$message]: ")
             Console.flush() // Gotta flush for Windows console!
-            val in = scala.io.StdIn.readLine().trim
+            val in = Option(scala.io.StdIn.readLine())
+              .map(_.trim)
+              .getOrElse(throw NullInputException)
             (k, if (in.isEmpty) default else in)
           }
         )
       }
       .toMap
   }
+
+  final case object NullInputException extends Throwable
 
   private def relativize(in: File, from: File): String = from.toURI().relativize(in.toURI).getPath
 
