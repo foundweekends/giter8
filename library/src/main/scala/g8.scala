@@ -122,9 +122,9 @@ object G8 {
     group.setListener(new STErrorHandler)
     group.registerRenderer(
       classOf[AugmentedString],
-      new AttributeRenderer {
-        override def toString(o: AnyRef, format: String, locale: Locale) =
-          renderer.toString(o.asInstanceOf[AugmentedString], format, locale)
+      new AttributeRenderer[AugmentedString] {
+        override def toString(o: AugmentedString, format: String, locale: Locale) =
+          renderer.toString(o, format, locale)
       }
     )
 
