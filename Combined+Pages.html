@@ -46,20 +46,19 @@ output for any purpose.
 </code></pre><h3 id="Credits">Credits<a href="#Credits" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Original implementation (C) 2010-2015 Nathan Hamblen and contributors
 </li><li>Adapted and extended in 2016 by foundweekends project
 </li></ul><p>Giter8 is licensed under Apache 2.0 license
-</p><h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can install Giter8 and other Scala command line tools with
-<a href="http://www.foundweekends.org/conscript/setup.html">Conscript</a>. This will setup Conscript in <code>~/.conscript/bin/cs</code>:
-</p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
-</code></pre><p>(See <a href="http://www.foundweekends.org/conscript/setup.html">Conscript's readme</a> for a non-unixy option.) Once <code>cs</code> is
-on your path, you can install (or upgrade) giter8 with this command:
-</p><pre><code>cs foundweekends/giter8
-</code></pre><p>To make sure everything is working, try running <code>g8</code> with no
-parameters. This should download giter8 and its dependencies, then print
-a usage message.
-</p><p>When it’s time to upgrade to a new version of giter8, just run the
-same <code>cs</code> command again.
-</p><p>Giter8 is also installable with the OS X package manager <a href="https://brew.sh">Homebrew</a>:
-</p><pre><code>$ brew update &amp;&amp; brew install giter8
-</code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on GitHub and be named with the
+</p><h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h4 id="Coursier">Coursier<a href="#Coursier" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>Giter8 and other Scala command line tools can be installed using <a href="https://get-coursier.io/">Coursier</a>. 
+See the coursier <a href="https://get-coursier.io/docs/cli-installation">installation instruction</a> to add it to your path.
+Once <code>cs</code> is on your path, you can install giter8 with this command:
+</p><pre><code>$ cs install giter8
+</code></pre><p>and update it using:
+</p><pre><code>$ cs update g8
+</code></pre><h4 id="Manual">Manual<a href="#Manual" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>It’s possible to manually download and install giter8 directly from Maven Central:
+</p><pre><code>$ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.13.1/giter8-bootstrap_2.12-0.13.1.sh &gt; ~/bin/g8
+$ chmod +x ~/bin/g8
+</code></pre><p>Replace <code>~/bin/</code> with anything that is on your <code>PATH</code>. To make sure everything is working, try running <code>g8</code> with no
+parameters, you should see
+</p><pre><code>Error: Missing argument &lt;template&gt;
+Try --help for more information. </code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on GitHub and be named with the
 suffix <code>.g8</code>. We’re keeping a <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
 </p><p>To apply a template, for example, <a href="https://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8
@@ -141,80 +140,11 @@ project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
 github_id [githubber]: n8han
 project_url [https://github.com/n8han/my-proj]:
 developer_url [https://github.com/n8han]:
-</code></pre><h3 id="Conditionals">Conditionals<a href="#Conditionals" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>All fields have a property named <code>truthy</code> to be used in <a href="https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals">conditional expressions</a>.
-<code>&quot;y&quot;</code>, <code>&quot;yes&quot;</code>, and <code>&quot;true&quot;</code> evaluate to <code>true</code>; anything else evaluates to <code>false</code>.
-</p><pre><code class="">scala212 = yes
-scala211 = no
-</code></pre><p>These could be used in a template as follows:
-</p><pre>
-$if(scala212.truthy)$
-scalaVersion := "2.12.3"
-$elseif(scala211.truthy)$
-scalaVersion := "2.11.11"
-$else$
-scalaVersion := "2.10.6"
-$endif$
-</pre><p>These could also be used include/exclude files or directories:
-</p><pre><code class="prettyprint lang-bash">src/main/g8
-├── $name__normalize$
-│   ├── $if(jvm.truthy)$jvm$endif$
-│   │   └── src
-│   │       └── main
-│   │           └── scala
-│   │               └── $organization__packaged$
-│   │                   └── $name;format=&quot;Camel&quot;$.scala
-
-</code></pre><p>If you want to skip a directory from the path, but keep all nested directories and files, use <code>.</code> as the name of the directory. For example the next template:
-</p><pre><code class="">src/main/g8
-├── parent_folder
-│   ├── $if(cond.truthy)$skip_folder$else$.$endif$
-|   |   └── child_file
-</code></pre><p>will be processed to
-</p><pre><code class="">├── parent_folder
-|   └── child_file
-</code></pre><h3 id="name+field">name field<a href="#name+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>name</code> field, if defined, is treated specially by Giter8. It is
-assumed to be the name of a project being created, so the g8 runtime
-creates a directory based off that name (with spaces and capitals
-replaced) that will contain the template output. If no name field is
-specified in the template, <code>g8</code>’s output goes to the user’s current
-working directory. In both cases, directories nested under the
-template’s source directory are reproduced in its output. File and
-directory names also participate in template expansion, e.g.
-</p><pre><code>src/main/g8/src/main/scala/$classname$.scala
-</code></pre><h3 id="package+field">package field<a href="#package+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>package</code> field, if defined, is assumed to be the package name
-of the user’s source. A directory named <code>$package$</code> expands out to
-package directory structure. For example, <code>net.databinder</code> becomes
-<code>net/databinder</code>.
-</p><h3 id="verbatim+field">verbatim field<a href="#verbatim+field" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>The <code>verbatim</code> field, if defined, is assumed to be the space delimited
-list of file patterns such as <code>*.html *.js</code>. Files matching <code>verbatim</code>
-pattern are excluded from string template processing.
-</p><h3 id="Maven+properties">Maven properties<a href="#Maven+properties" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p><em>maven properties</em> tell Giter8 to query the Central Maven Repository.
-Instead of supplying a particular version (and having to update
-the template with every release), specify a library and giter8 will
-set the value to the latest version according to Maven Central.
-</p><p>The property value format is <code>maven(groupId, artifactId)</code>.
-Keep in mind that Scala projects are typically published with a
-Scala version identifier in the artifact id. So for the Unfiltered
-library, we could refer to the latest version as follows:
-</p><pre><code class="">name = My Template Project
-description = Creates a giter8 project template.
-unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
-</code></pre><p>To only use the latest stable release (excluding Milestone builds,
-Release candidates etc) specify a “stable” value in the
-property value format <code>maven(groupId, artifactId, stable)</code>.
-To use the latest stable version for the Scalatest library
-we could refer to it as follows:
-</p><pre><code class="">name = My Template Project
-description = Creates a giter8 project template.
-scalatest_version = maven(org.scalatest, scalatest_2.11, stable)
-</code></pre><h3 id="root+layout">root layout<a href="#root+layout" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There’s an experimental layout called root layout,
-which uses the root directory of the GitHub project as
-the root of template.
-</p><p>Since you can no longer include template fields in the files
-under <code>project</code> its application is very limited.
-It might be useful for templates that are not for sbt builds
-or templates without any fields.
-</p><h3 id="Formatting+template+fields">Formatting template fields<a href="#Formatting+template+fields" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 has built-in support for formatting template fields. Formatting options
+</code></pre><p>Dollar signs can be escaped to avoid resolution:
+</p><p>```
+val foo = “foo”
+val bar = “bar”
+println(s”\</p><h3 id="Formatting+template+fields">Formatting template fields<a href="#Formatting+template+fields" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Giter8 has built-in support for formatting template fields. Formatting options
 can be added when referencing fields. For example, the <code>name</code> field can be
 formatted in upper camel case with:
 </p><pre><code>$name;format=&quot;Camel&quot;$
@@ -247,7 +177,9 @@ be applied in the order given.
 underscore. For example, a directory named <code>$organization__packaged$</code> will
 change <code>org.somewhere</code> to <code>org/somewhere</code> like the built-in support for
 <code>package</code>. A file named <code>$name__Camel$.scala</code> and the name <code>awesome project</code>
-will create the file <code>AwesomeProject.scala</code>.
+will create the file <code>AwesomeProject.scala</code>. Multiple comma separated formatting 
+options can be used at once: <code>$name__lower,hyphen$.scala</code> and the name 
+<code>Awesome Project</code> will create the file <code>awesome-project.scala</code>.
 </p><h3 id="Testing+templates+locally">Testing templates locally<a href="#Testing+templates+locally" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Templates may be passed to the <code>g8</code> command with a <code>file://</code> URL, and
 in this case the template is applied as it is currently saved to the
 file system. In conjunction with the <code>--force</code> option

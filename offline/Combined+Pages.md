@@ -30,31 +30,30 @@ Giter8 is licensed under Apache 2.0 license
 Setup
 -----
 
-You can install Giter8 and other Scala command line tools with
-[Conscript][cs]. This will setup Conscript in `~/.conscript/bin/cs`:
+#### Coursier
 
-    curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
+Giter8 and other Scala command line tools can be installed using [Coursier](https://get-coursier.io/). 
+See the coursier [installation instruction](https://get-coursier.io/docs/cli-installation) to add it to your path.
+Once `cs` is on your path, you can install giter8 with this command:
 
-(See [Conscript's readme][cs] for a non-unixy option.) Once `cs` is
-on your path, you can install (or upgrade) giter8 with this command:
+    $ cs install giter8
 
-    cs foundweekends/giter8
+and update it using:
 
-[cs]: http://www.foundweekends.org/conscript/setup.html
+    $ cs update g8
 
-To make sure everything is working, try running `g8` with no
-parameters. This should download giter8 and its dependencies, then print
-a usage message.
+#### Manual
 
-When it's time to upgrade to a new version of giter8, just run the
-same `cs` command again.
+It's possible to manually download and install giter8 directly from Maven Central:
 
-Giter8 is also installable with the OS X package manager [Homebrew][]:
+    $ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.13.1/giter8-bootstrap_2.12-0.13.1.sh > ~/bin/g8
+    $ chmod +x ~/bin/g8
 
-    $ brew update && brew install giter8
+Replace `~/bin/` with anything that is on your `PATH`. To make sure everything is working, try running `g8` with no
+parameters, you should see
 
-[Homebrew]: https://brew.sh
-
+    Error: Missing argument <template>
+    Try --help for more information. 
 
 Usage
 -----
@@ -204,128 +203,12 @@ project_url [https://github.com/n8han/my-proj]:
 developer_url [https://github.com/n8han]:
 ```
 
-### Conditionals
-
-All fields have a property named `truthy` to be used in [conditional expressions][conditionals].
-`"y"`, `"yes"`, and `"true"` evaluate to `true`; anything else evaluates to `false`.
+Dollar signs can be escaped to avoid resolution:
 
 ```
-scala212 = yes
-scala211 = no
-```
-
-These could be used in a template as follows:
-
-<pre>
-$if(scala212.truthy)$
-scalaVersion := "2.12.3"
-$elseif(scala211.truthy)$
-scalaVersion := "2.11.11"
-$else$
-scalaVersion := "2.10.6"
-$endif$
-</pre>
-
-
-These could also be used include/exclude files or directories:
-
-```bash
-src/main/g8
-├── $name__normalize$
-│   ├── $if(jvm.truthy)$jvm$endif$
-│   │   └── src
-│   │       └── main
-│   │           └── scala
-│   │               └── $organization__packaged$
-│   │                   └── $name;format="Camel"$.scala
-
-```
-
-If you want to skip a directory from the path, but keep all nested directories and files, use `.` as the name of the directory. For example the next template:
-
-```
-src/main/g8
-├── parent_folder
-│   ├── $if(cond.truthy)$skip_folder$else$.$endif$
-|   |   └── child_file
-```
-
-will be processed to
-
-```
-├── parent_folder
-|   └── child_file
-```
-
-[conditionals]: https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals
-
-### name field
-
-The `name` field, if defined, is treated specially by Giter8. It is
-assumed to be the name of a project being created, so the g8 runtime
-creates a directory based off that name (with spaces and capitals
-replaced) that will contain the template output. If no name field is
-specified in the template, `g8`'s output goes to the user's current
-working directory. In both cases, directories nested under the
-template's source directory are reproduced in its output. File and
-directory names also participate in template expansion, e.g.
-
-    src/main/g8/src/main/scala/$classname$.scala
-
-### package field
-
-The `package` field, if defined, is assumed to be the package name
-of the user's source. A directory named `$package$` expands out to
-package directory structure. For example, `net.databinder` becomes
-`net/databinder`.
-
-### verbatim field
-
-The `verbatim` field, if defined, is assumed to be the space delimited
-list of file patterns such as `*.html *.js`. Files matching `verbatim`
-pattern are excluded from string template processing.
-
-### Maven properties
-
-*maven properties* tell Giter8 to query the Central Maven Repository.
-Instead of supplying a particular version (and having to update
-the template with every release), specify a library and giter8 will
-set the value to the latest version according to Maven Central.
-
-The property value format is `maven(groupId, artifactId)`.
-Keep in mind that Scala projects are typically published with a
-Scala version identifier in the artifact id. So for the Unfiltered
-library, we could refer to the latest version as follows:
-
-```
-name = My Template Project
-description = Creates a giter8 project template.
-unfiltered_version = maven(ws.unfiltered, unfiltered_2.11)
-```
-
-To only use the latest stable release (excluding Milestone builds,
-Release candidates etc) specify a "stable" value in the
-property value format `maven(groupId, artifactId, stable)`.
-To use the latest stable version for the Scalatest library
-we could refer to it as follows:
-
-```
-name = My Template Project
-description = Creates a giter8 project template.
-scalatest_version = maven(org.scalatest, scalatest_2.11, stable)
-```
-
-### root layout
-
-There's an experimental layout called root layout,
-which uses the root directory of the GitHub project as
-the root of template.
-
-Since you can no longer include template fields in the files
-under `project` its application is very limited.
-It might be useful for templates that are not for sbt builds
-or templates without any fields.
-
+val foo = "foo"
+val bar = "bar"
+println(s"\
 
 ### Formatting template fields
 
@@ -369,7 +252,9 @@ For file and directory names a format option can be specified after a double
 underscore. For example, a directory named `$organization__packaged$` will
 change `org.somewhere` to `org/somewhere` like the built-in support for
 `package`. A file named `$name__Camel$.scala` and the name `awesome project`
-will create the file `AwesomeProject.scala`.
+will create the file `AwesomeProject.scala`. Multiple comma separated formatting 
+options can be used at once: `$name__lower,hyphen$.scala` and the name 
+`Awesome Project` will create the file `awesome-project.scala`.
 
 
 ### Testing templates locally
