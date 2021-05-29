@@ -103,6 +103,14 @@ class IntegrationTest extends AnyFlatSpec with IntegrationTestHelpers with Match
     checkGeneratedProject(template, expected, actual)
   }
 
+  it should "read default.properties with description parameter from root directory" in testCase {
+    case (template, expected, actual) =>
+      "foo = bar\ndescription = my description" >> (template / "src" / "main" / "g8" / "default.properties")
+      "$foo$ $description$" >> (template / "src" / "main" / "g8" / "foo.txt")
+      "bar my description" >> (expected / "foo.txt")
+      checkGeneratedProject(template, expected, actual)
+  }
+
   it should "resolve package names" in testCase { case (template, expected, actual) =>
     """|name = Package test
        |package = com.example

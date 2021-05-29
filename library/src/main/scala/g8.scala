@@ -429,9 +429,7 @@ object G8 {
   }
 
   def interact(params: UnresolvedProperties): ResolvedProperties = {
-    val (desc, others) = params partition { case (k, _) => k == "description" }
-
-    desc.foreach { d =>
+    params.filter(_._1 == "description").foreach { d =>
       @scala.annotation.tailrec
       def liner(cursor: Int, rem: Iterable[String]): Unit = {
         if (!rem.isEmpty) {
@@ -453,10 +451,10 @@ object G8 {
     val fixed    = Set("verbatim")
     val renderer = new AugmentedStringRenderer
 
-    others
+    params
       .foldLeft(ResolvedProperties.empty) { case (resolved, (k, f)) =>
         resolved + (
-          if (fixed.contains(k))
+          if (fixed.contains(k) || k == "description")
             k -> f(resolved)
           else {
             val default = f(resolved)
