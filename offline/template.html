@@ -90,6 +90,32 @@ project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
 github_id [githubber]: n8han
 project_url [https://github.com/n8han/my-proj]:
 developer_url [https://github.com/n8han]:
+</code></pre><p>Dollar signs can be escaped to avoid resolution:
+</p><pre><code class="">val foo = &quot;foo&quot;
+val bar = &quot;bar&quot;
+println(s&quot;\$foo\$bar&quot;)
+</code></pre><p>This would yield to:
+</p><pre><code class="">val foo = &quot;foo&quot;
+val bar = &quot;bar&quot;
+println(s&quot;$foo$bar&quot;)
+</code></pre><h3 id="Template+comments">Template comments<a href="#Template+comments" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Sometimes it’s useful to put a comment into a template that is intended for 
+template maintainers, and should not be included in the generated output.
+</p><p>Wrapping comments between <code>$!</code> and <code>!$</code> won’t make them appear in the output.
+</p><pre><code class="">$! This comment won't appear in the output !$
+// This comment will appear in the output
+$!
+This multiline comment won't appear either
+No matter how
+long it is
+
+Internal $substitutions$ are ignored.
+
+Even $invalid$ ones.
+
+!$
+/*
+ * This comment is output and can contain $substitutions$
+ */
 </code></pre><h3 id="Conditionals">Conditionals<a href="#Conditionals" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>All fields have a property named <code>truthy</code> to be used in <a href="https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals">conditional expressions</a>.
 <code>&quot;y&quot;</code>, <code>&quot;yes&quot;</code>, and <code>&quot;true&quot;</code> evaluate to <code>true</code>; anything else evaluates to <code>false</code>.
 </p><pre><code class="">scala212 = yes

@@ -46,20 +46,19 @@ output for any purpose.
 </code></pre><h3 id="Credits">Credits<a href="#Credits" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Original implementation (C) 2010-2015 Nathan Hamblen and contributors
 </li><li>Adapted and extended in 2016 by foundweekends project
 </li></ul><p>Giter8 is licensed under Apache 2.0 license
-</p><h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can install Giter8 and other Scala command line tools with
-<a href="http://www.foundweekends.org/conscript/setup.html">Conscript</a>. This will setup Conscript in <code>~/.conscript/bin/cs</code>:
-</p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
-</code></pre><p>(See <a href="http://www.foundweekends.org/conscript/setup.html">Conscript's readme</a> for a non-unixy option.) Once <code>cs</code> is
-on your path, you can install (or upgrade) giter8 with this command:
-</p><pre><code>cs foundweekends/giter8
-</code></pre><p>To make sure everything is working, try running <code>g8</code> with no
-parameters. This should download giter8 and its dependencies, then print
-a usage message.
-</p><p>When it’s time to upgrade to a new version of giter8, just run the
-same <code>cs</code> command again.
-</p><p>Giter8 is also installable with the OS X package manager <a href="https://brew.sh">Homebrew</a>:
-</p><pre><code>$ brew update &amp;&amp; brew install giter8
-</code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on GitHub and be named with the
+</p><h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h4 id="Coursier">Coursier<a href="#Coursier" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>Giter8 and other Scala command line tools can be installed using <a href="https://get-coursier.io/">Coursier</a>. 
+See the coursier <a href="https://get-coursier.io/docs/cli-installation">installation instruction</a> to add it to your path.
+Once <code>cs</code> is on your path, you can install giter8 with this command:
+</p><pre><code>$ cs install giter8
+</code></pre><p>and update it using:
+</p><pre><code>$ cs update g8
+</code></pre><h4 id="Manual">Manual<a href="#Manual" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>It’s possible to manually download and install giter8 directly from Maven Central:
+</p><pre><code>$ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.13.1/giter8-bootstrap_2.12-0.13.1.sh &gt; ~/bin/g8
+$ chmod +x ~/bin/g8
+</code></pre><p>Replace <code>~/bin/</code> with anything that is on your <code>PATH</code>. To make sure everything is working, try running <code>g8</code> with no
+parameters, you should see
+</p><pre><code>Error: Missing argument &lt;template&gt;
+Try --help for more information. </code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on GitHub and be named with the
 suffix <code>.g8</code>. We’re keeping a <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
 </p><p>To apply a template, for example, <a href="https://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8
@@ -141,6 +140,32 @@ project_url=https://github.com/$github_id$/$name;format=&quot;norm&quot;$
 github_id [githubber]: n8han
 project_url [https://github.com/n8han/my-proj]:
 developer_url [https://github.com/n8han]:
+</code></pre><p>Dollar signs can be escaped to avoid resolution:
+</p><pre><code class="">val foo = &quot;foo&quot;
+val bar = &quot;bar&quot;
+println(s&quot;\$foo\$bar&quot;)
+</code></pre><p>This would yield to:
+</p><pre><code class="">val foo = &quot;foo&quot;
+val bar = &quot;bar&quot;
+println(s&quot;$foo$bar&quot;)
+</code></pre><h3 id="Template+comments">Template comments<a href="#Template+comments" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Sometimes it’s useful to put a comment into a template that is intended for 
+template maintainers, and should not be included in the generated output.
+</p><p>Wrapping comments between <code>$!</code> and <code>!$</code> won’t make them appear in the output.
+</p><pre><code class="">$! This comment won't appear in the output !$
+// This comment will appear in the output
+$!
+This multiline comment won't appear either
+No matter how
+long it is
+
+Internal $substitutions$ are ignored.
+
+Even $invalid$ ones.
+
+!$
+/*
+ * This comment is output and can contain $substitutions$
+ */
 </code></pre><h3 id="Conditionals">Conditionals<a href="#Conditionals" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>All fields have a property named <code>truthy</code> to be used in <a href="https://github.com/antlr/stringtemplate4/blob/master/doc/templates.md#conditionals">conditional expressions</a>.
 <code>&quot;y&quot;</code>, <code>&quot;yes&quot;</code>, and <code>&quot;true&quot;</code> evaluate to <code>true</code>; anything else evaluates to <code>false</code>.
 </p><pre><code class="">scala212 = yes
@@ -247,7 +272,9 @@ be applied in the order given.
 underscore. For example, a directory named <code>$organization__packaged$</code> will
 change <code>org.somewhere</code> to <code>org/somewhere</code> like the built-in support for
 <code>package</code>. A file named <code>$name__Camel$.scala</code> and the name <code>awesome project</code>
-will create the file <code>AwesomeProject.scala</code>.
+will create the file <code>AwesomeProject.scala</code>. Multiple comma separated formatting 
+options can be used at once: <code>$name__lower,hyphen$.scala</code> and the name 
+<code>Awesome Project</code> will create the file <code>awesome-project.scala</code>.
 </p><h3 id="Testing+templates+locally">Testing templates locally<a href="#Testing+templates+locally" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Templates may be passed to the <code>g8</code> command with a <code>file://</code> URL, and
 in this case the template is applied as it is currently saved to the
 file system. In conjunction with the <code>--force</code> option

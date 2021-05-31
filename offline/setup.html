@@ -40,20 +40,19 @@
       </div>
                 </div><div class="col-md-8 col-xs-9">
                   <div class="rightcolumn contents">
-                  <h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can install Giter8 and other Scala command line tools with
-<a href="http://www.foundweekends.org/conscript/setup.html">Conscript</a>. This will setup Conscript in <code>~/.conscript/bin/cs</code>:
-</p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
-</code></pre><p>(See <a href="http://www.foundweekends.org/conscript/setup.html">Conscript's readme</a> for a non-unixy option.) Once <code>cs</code> is
-on your path, you can install (or upgrade) giter8 with this command:
-</p><pre><code>cs foundweekends/giter8
-</code></pre><p>To make sure everything is working, try running <code>g8</code> with no
-parameters. This should download giter8 and its dependencies, then print
-a usage message.
-</p><p>When it’s time to upgrade to a new version of giter8, just run the
-same <code>cs</code> command again.
-</p><p>Giter8 is also installable with the OS X package manager <a href="https://brew.sh">Homebrew</a>:
-</p><pre><code>$ brew update &amp;&amp; brew install giter8
-</code></pre><div class="bottom nav">
+                  <h2 id="Setup">Setup<a href="#Setup" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><h4 id="Coursier">Coursier<a href="#Coursier" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>Giter8 and other Scala command line tools can be installed using <a href="https://get-coursier.io/">Coursier</a>. 
+See the coursier <a href="https://get-coursier.io/docs/cli-installation">installation instruction</a> to add it to your path.
+Once <code>cs</code> is on your path, you can install giter8 with this command:
+</p><pre><code>$ cs install giter8
+</code></pre><p>and update it using:
+</p><pre><code>$ cs update g8
+</code></pre><h4 id="Manual">Manual<a href="#Manual" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>It’s possible to manually download and install giter8 directly from Maven Central:
+</p><pre><code>$ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.13.1/giter8-bootstrap_2.12-0.13.1.sh &gt; ~/bin/g8
+$ chmod +x ~/bin/g8
+</code></pre><p>Replace <code>~/bin/</code> with anything that is on your <code>PATH</code>. To make sure everything is working, try running <code>g8</code> with no
+parameters, you should see
+</p><pre><code>Error: Missing argument &lt;template&gt;
+Try --help for more information. </code></pre><div class="bottom nav">
                 <div class="row">
                   <div class="col-md-auto">
                     <a href="usage.html">
