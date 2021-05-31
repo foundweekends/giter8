@@ -58,7 +58,7 @@ parameters, you should see
 Usage
 -----
 
-Template repositories must reside on GitHub and be named with the
+Template repositories can reside on GitHub and should be named with the
 suffix `.g8`. We're keeping a [list of templates on the wiki][wiki].
 
 To apply a template, for example, [unfiltered/unfiltered.g8][uft]:
@@ -73,7 +73,21 @@ repository and queries GitHub for the project's template
 parameters.
 Alternatively, you can also use a git repository full name
 
-    $ g8 https://github.com/unfiltered/unfiltered.g8.git
+    $ g8 https://gitlab.com/unfiltered/unfiltered-gitlab.g8.git
+
+or even a local template, using the `file://` protocol:
+
+    $ g8 file://path/to/template
+
+For remote or local repositories it's possible to fetch a specific branch,
+a specific tag or even a specific directory using command-line arguments:
+
+    -b, --branch <value>     Resolve a template within a given branch
+    -t, --tag <value>        Resolve a template within a given tag
+    -d, --directory <value>  Resolve a template within the given 
+                             subdirectory in the repo
+
+ The default enclosing directory is `.`.
 
 You'll be prompted for each parameter, with its default
 value in square brackets:
@@ -88,6 +102,18 @@ If the template has a `name` parameter, it will be used to create base
 directory in the current directory (typical for a new project). 
 Otherwise, giter8 will output its files and directories into 
 the current directory, skipping over any files that already exist.
+
+An output directory can be specified:
+
+    -o, --out <value>        Output directory
+
+this will override the generation of the directory's name according to the value
+of the `name` variable and the current directory as the enclosing one.
+
+To overwrite existing files in the destination folder, you can use:
+
+    -f, --force              Force overwrite of any existing files in 
+                             output directory
 
 Once you become familiar with a template's parameters, you can enter
 them on the command line and skip the interaction:
@@ -111,10 +137,29 @@ Consider the following example:
 
     [url "ssh://git@github.com"]
         insteadOf = https://github.com
-        
+
 `~/.profile`:
 
-    export SSH_AUTH_SOCK="
+    export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+    gpgconf --launch gpg-agent 
+
+Then this would have previously failed with:
+
+    $ g8 unfiltered/unfiltered.g8
+    
+    ssh://git@github.com/unfiltered/unfiltered.g8.git: Auth fail
+
+This now works provided that the GitHub public key is in your known hosts file.
+
+You can do this by running:
+
+    $ ssh -T git@github.com
+
+Optionally the known hosts file can be overridden using:
+
+    -h, --known-hosts <value>  SSH known hosts file. If unset the location 
+                               will be guessed.
+
 
   [CC0]: https://creativecommons.org/publicdomain/zero/1.0/
 

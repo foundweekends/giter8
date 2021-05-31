@@ -40,7 +40,7 @@
       </div>
                 </div><div class="col-md-8 col-xs-9">
                   <div class="rightcolumn contents">
-                  <h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories must reside on GitHub and be named with the
+                  <h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories can reside on GitHub and should be named with the
 suffix <code>.g8</code>. We’re keeping a <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
 </p><p>To apply a template, for example, <a href="https://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8
@@ -48,8 +48,17 @@ suffix <code>.g8</code>. We’re keeping a <a href="https://github.com/foundweek
 repository and queries GitHub for the project’s template
 parameters.
 Alternatively, you can also use a git repository full name
-</p><pre><code>$ g8 https://github.com/unfiltered/unfiltered.g8.git
-</code></pre><p>You’ll be prompted for each parameter, with its default
+</p><pre><code>$ g8 https://gitlab.com/unfiltered/unfiltered-gitlab.g8.git
+</code></pre><p>or even a local template, using the <code>file://</code> protocol:
+</p><pre><code>$ g8 file://path/to/template
+</code></pre><p>For remote or local repositories it’s possible to fetch a specific branch,
+a specific tag or even a specific directory using command-line arguments:
+</p><pre><code>-b, --branch &lt;value&gt;     Resolve a template within a given branch
+-t, --tag &lt;value&gt;        Resolve a template within a given tag
+-d, --directory &lt;value&gt;  Resolve a template within the given 
+                         subdirectory in the repo
+</code></pre><p> The default enclosing directory is <code>.</code>.
+</p><p>You’ll be prompted for each parameter, with its default
 value in square brackets:
 </p><pre><code>name [My Web Project]: 
 </code></pre><p>Enter your own value or press enter to accept the default. After all
@@ -59,7 +68,14 @@ the parameters, and writes them to your filesystem.
 directory in the current directory (typical for a new project). 
 Otherwise, giter8 will output its files and directories into 
 the current directory, skipping over any files that already exist.
-</p><p>Once you become familiar with a template’s parameters, you can enter
+</p><p>An output directory can be specified:
+</p><pre><code>-o, --out &lt;value&gt;        Output directory
+</code></pre><p>this will override the generation of the directory’s name according to the value
+of the <code>name</code> variable and the current directory as the enclosing one.
+</p><p>To overwrite existing files in the destination folder, you can use:
+</p><pre><code>-f, --force              Force overwrite of any existing files in 
+                         output directory
+</code></pre><p>Once you become familiar with a template’s parameters, you can enter
 them on the command line and skip the interaction:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8 --name=my-new-website
 </code></pre><p>Any unsupplied parameters are assigned their default values.
@@ -70,9 +86,20 @@ such as <code>gpg-agent</code>.
 </p><p><code>~/.gitconfig</code>:
 </p><pre><code>[url &quot;ssh://git@github.com&quot;]
     insteadOf = https://github.com
-    
 </code></pre><p><code>~/.profile</code>:
-</p><pre><code>export SSH_AUTH_SOCK=&quot;</code></pre><div class="bottom nav">
+</p><pre><code>export SSH_AUTH_SOCK=&quot;$(gpgconf --list-dirs agent-ssh-socket)&quot;
+gpgconf --launch gpg-agent 
+</code></pre><p>Then this would have previously failed with:
+</p><pre><code>$ g8 unfiltered/unfiltered.g8
+
+ssh://git@github.com/unfiltered/unfiltered.g8.git: Auth fail
+</code></pre><p>This now works provided that the GitHub public key is in your known hosts file.
+</p><p>You can do this by running:
+</p><pre><code>$ ssh -T git@github.com
+</code></pre><p>Optionally the known hosts file can be overridden using:
+</p><pre><code>-h, --known-hosts &lt;value&gt;  SSH known hosts file. If unset the location 
+                           will be guessed.
+</code></pre><div class="bottom nav">
                 <div class="row">
                   <div class="col-md-auto">
                     <a href="template.html">
