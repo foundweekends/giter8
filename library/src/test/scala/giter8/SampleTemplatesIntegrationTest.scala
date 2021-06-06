@@ -4,7 +4,6 @@ import java.io.File
 
 import G8._
 import org.scalatest.funsuite.AnyFunSuite
-import scala.util.Properties
 
 class SampleTemplatesIntegrationTest extends AnyFunSuite with IntegrationTestHelpers {
   import TestFileHelpers.tempDirectory

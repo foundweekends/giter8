@@ -178,7 +178,7 @@ lazy val lib = (project in file("library"))
           Seq(scalaXml, parserCombinator)
         case _ => Nil
       }),
-    testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
+    Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
 
 lazy val launcher = (project in file("launcher"))
