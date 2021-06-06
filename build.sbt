@@ -177,7 +177,8 @@ lazy val lib = (project in file("library"))
         case Some((2, scalaMajor)) if scalaMajor >= 11 =>
           Seq(scalaXml, parserCombinator)
         case _ => Nil
-      })
+      }),
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
 
 lazy val launcher = (project in file("launcher"))

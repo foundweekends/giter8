@@ -22,7 +22,6 @@ import java.util.regex.Matcher
 import java.util.{Locale, Properties}
 
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.Charsets.UTF_8
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
@@ -34,6 +33,7 @@ import scala.collection.mutable
 import scala.util.Try
 import scala.util.control.Exception.{allCatch, catching}
 import scala.util.control.NonFatal
+import java.nio.charset.StandardCharsets
 
 object G8 {
   import org.stringtemplate.v4.{AttributeRenderer, ST, STGroup, STErrorListener}
@@ -189,7 +189,7 @@ object G8 {
     }
 
   def write(out: File, template: String, parameters: Map[String, String] /*, append: Boolean = false*/ ): Unit =
-    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8 /*, append*/ )
+    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), StandardCharsets.UTF_8 /*, append*/ )
 
   def verbatim(file: File, parameters: Map[String, String], base: File = new File(".")): Boolean = {
 
@@ -448,8 +448,7 @@ object G8 {
       println("\n")
     }
 
-    val fixed    = Set("verbatim")
-    val renderer = new AugmentedStringRenderer
+    val fixed = Set("verbatim")
 
     params
       .foldLeft(ResolvedProperties.empty) { case (resolved, (k, f)) =>
@@ -486,7 +485,6 @@ object G8 {
   ): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
-    val renderer = new AugmentedStringRenderer
 
     templates
       .map { in =>
