@@ -264,6 +264,14 @@ val bar = "bar"
 println(s"$foo$bar")
 ```
 
+Some variable names are prohibited since they're tokens used by [StringTemplate][st]
+in its grammar, the complete list is [here](https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md) but the most common are:
+
+```
+"i", "i0", "if", "else", "elseif", "endif", "first", "length"
+"strlen", "last", "rest", "reverse", "trunc", "strip", "trim"
+```
+
 ### Template comments
 
 Sometimes it's useful to put a comment into a template that is intended for 

@@ -175,6 +175,10 @@ println(s&quot;\$foo\$bar&quot;)
 </p><pre><code class="">val foo = &quot;foo&quot;
 val bar = &quot;bar&quot;
 println(s&quot;$foo$bar&quot;)
+</code></pre><p>Some variable names are prohibited since they’re tokens used by <a href="https://www.stringtemplate.org/">StringTemplate</a>
+in its grammar, the complete list is <a href="https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md">here</a> but the most common are:
+</p><pre><code class="">&quot;i&quot;, &quot;i0&quot;, &quot;if&quot;, &quot;else&quot;, &quot;elseif&quot;, &quot;endif&quot;, &quot;first&quot;, &quot;length&quot;
+&quot;strlen&quot;, &quot;last&quot;, &quot;rest&quot;, &quot;reverse&quot;, &quot;trunc&quot;, &quot;strip&quot;, &quot;trim&quot;
 </code></pre><h3 id="Template+comments">Template comments<a href="#Template+comments" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Sometimes it’s useful to put a comment into a template that is intended for 
 template maintainers, and should not be included in the generated output.
 </p><p>Wrapping comments between <code>$!</code> and <code>!$</code> won’t make them appear in the output.
