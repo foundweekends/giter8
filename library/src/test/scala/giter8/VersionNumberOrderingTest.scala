@@ -85,7 +85,7 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
         variations,
         genVersionNumber.map { vn =>
           VersionNumber(
-            numbers = prefix.toSeq ++: vn.numbers.drop(prefix.length),
+            numbers = prefix.toSeq ++: vn.numbers.drop(prefix.length).filterNot(_ == 0),
             tags = vn.tags,
             extras = vn.extras
           )
