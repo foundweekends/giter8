@@ -34,6 +34,10 @@ object FormatSpecification extends Properties("Format") {
     conversion(s"""$$$x;format="lower"$$$z""", Map(x -> y)) == y.toLowerCase + z
   }
 
+  property("formatDotReverse") = forAll(nonDotNonDollar, nonDotNonDollar, nonDotNonDollar) { (x, y, z) =>
+    conversion("""$k;format="dot-reverse"$""", Map("k" -> s"$x.$y.$z")) == s"$z.$y.$x"
+  }
+
   property("formatSnakecase") =
     conversion("""$x;format="snake"$""", Map("x" -> "My-Example-Project")) == "My_Example_Project"
 
@@ -41,36 +45,62 @@ object FormatSpecification extends Properties("Format") {
 
   property("formatPackageNaming") = conversion("""$x;format="package"$""", Map("x" -> "foo bar  baz")) == "foo.bar.baz"
 
-  property("formatDotReverse") = forAll(nonDotNonDollar, nonDotNonDollar, nonDotNonDollar) { (x, y, z) =>
-    conversion("""$k;format="dot-reverse"$""", Map("k" -> s"$x.$y.$z")) == s"$z.$y.$x"
-  }
+  prohibited_variable_names.map(x => property(s"$x is prohibited") = throws(s"$dollar$x$dollar", Map.empty))
 
-  lazy val hiragana = (0x3041 to 0x3094).toList
+  lazy val hiragana: List[Int] = (0x3041 to 0x3094).toList
+  lazy val AZ: List[Int]       = (0x41 to 0x5a).toList
+  lazy val az: List[Int]       = (0x61 to 0x7a).toList
+  lazy val extAscii: List[Int] = (0x20 to 0xff).toList
 
-  lazy val nonDollarChar: Gen[Char] = Gen.oneOf(
-    ((0x20 to 0xff).toList ::: hiragana).filter(x => Character.isDefined(x) && x != 0x24 && x != 0x5c).map(_.toChar)
+  lazy val dollar: Char    = '$'
+  lazy val backslash: Char = '\\'
+  lazy val dot: Char       = '.'
+
+  // These come from the expressions that is possible to use with ST4
+  // https://github.com/antlr/stringtemplate4/blob/master/doc/cheatsheet.md
+  lazy val prohibited_variable_names: List[String] = List(
+    "i",
+    "i0",
+    "if",
+    "else",
+    "elseif",
+    "endif",
+    "first",
+    "length",
+    "strlen",
+    "last",
+    "rest",
+    "reverse",
+    "trunc",
+    "strip",
+    "trim"
   )
 
-  lazy val nonDollar: Gen[String] = Gen.sized { size =>
-    Gen.listOfN(size, nonDollarChar).map(_.mkString)
-  } filter { _.nonEmpty }
+  lazy val nonDollarChar: Gen[Char] = Gen
+    .oneOf(extAscii ::: hiragana)
+    .filter(Character.isDefined)
+    .map(_.toChar)
+    .filter(x => x != dollar && x != backslash)
+  lazy val nonDotNonDollarChar: Gen[Char] = nonDollarChar.filter(_ != dot)
+  lazy val asciiChar: Gen[Char]           = Gen.oneOf(AZ ::: az).filter(Character.isDefined).map(_.toChar)
 
-  lazy val asciiChar: Gen[Char] =
-    Gen.oneOf(((0x41 to 0x5a).toList ::: (0x61 to 0x7a).toList).filter(x => Character.isDefined(x)).map(_.toChar))
+  lazy val nonDollar: Gen[String] = Gen
+    .sized(Gen.listOfN(_, nonDollarChar))
+    .map(_.mkString)
+    .filter(_.nonEmpty)
+    .filterNot(prohibited_variable_names.toSet)
 
-  lazy val asciiString: Gen[String] = Gen.sized { size =>
-    Gen.listOfN(size, asciiChar).map(_.mkString)
-  } filter { _.nonEmpty }
+  lazy val asciiString: Gen[String] = Gen
+    .sized(Gen.listOfN(_, asciiChar))
+    .map(_.mkString)
+    .filter(_.nonEmpty)
+    .filterNot(prohibited_variable_names.toSet)
 
-  lazy val nonDotNonDollarChar: Gen[Char] = Gen.oneOf(
-    ((0x20 to 0xff).toList ::: hiragana)
-      .filter(x => Character.isDefined(x) && x != 0x2e && x != 0x24 && x != 0x5c)
-      .map(_.toChar)
-  )
-
-  lazy val nonDotNonDollar: Gen[String] = Gen.sized { size =>
-    Gen.listOfN(size, nonDotNonDollarChar).map(_.mkString)
-  } filter { _.nonEmpty }
+  lazy val nonDotNonDollar: Gen[String] = Gen
+    .sized(Gen.listOfN(_, nonDotNonDollarChar))
+    .map(_.mkString)
+    .filter(_.nonEmpty)
+    .filterNot(prohibited_variable_names.toSet)
 
   def conversion(inContent: String, ps: Map[String, String]): String = synchronized {
     IO.withTemporaryDirectory { tempDir =>
@@ -79,8 +109,11 @@ object FormatSpecification extends Properties("Format") {
       IO.write(in, inContent, IO.utf8)
       G8(in, out, tempDir, ps)
       val outContent = IO.read(out, IO.utf8)
-      // println(outContent)
       outContent
     }
   }
+
+  // if an expression is prohibited giter8 logs an STException
+  // and the string returned by conversion is not replaced
+  def throws(inContent: String, ps: Map[String, String]): Boolean = conversion(inContent, ps) == inContent
 }

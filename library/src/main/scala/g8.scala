@@ -22,7 +22,6 @@ import java.util.regex.Matcher
 import java.util.{Locale, Properties}
 
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.Charsets.UTF_8
 import org.codehaus.plexus.logging.Logger
 import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
@@ -34,6 +33,7 @@ import scala.collection.mutable
 import scala.util.Try
 import scala.util.control.Exception.{allCatch, catching}
 import scala.util.control.NonFatal
+import java.nio.charset.StandardCharsets
 
 object G8 {
   import org.stringtemplate.v4.{AttributeRenderer, ST, STGroup, STErrorListener}
@@ -122,9 +122,9 @@ object G8 {
     group.setListener(new STErrorHandler)
     group.registerRenderer(
       classOf[AugmentedString],
-      new AttributeRenderer {
-        override def toString(o: AnyRef, format: String, locale: Locale) =
-          renderer.toString(o.asInstanceOf[AugmentedString], format, locale)
+      new AttributeRenderer[AugmentedString] {
+        override def toString(o: AugmentedString, format: String, locale: Locale) =
+          renderer.toString(o, format, locale)
       }
     )
 
@@ -189,7 +189,7 @@ object G8 {
     }
 
   def write(out: File, template: String, parameters: Map[String, String] /*, append: Boolean = false*/ ): Unit =
-    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), UTF_8 /*, append*/ )
+    FileUtils.writeStringToFile(out, applyTemplate(template, parameters), StandardCharsets.UTF_8 /*, append*/ )
 
   def verbatim(file: File, parameters: Map[String, String], base: File = new File(".")): Boolean = {
 
@@ -359,6 +359,8 @@ object G8 {
     } catch {
       case e: STException =>
         Left(s"Exiting due to error in the template: ${tmpl}\n${e.getMessage}")
+      case NullInputException =>
+        Left(s"Interrupting...")
       case t: Throwable =>
         t.printStackTrace()
         Left("Unknown exception: " + t.getMessage)
@@ -427,9 +429,7 @@ object G8 {
   }
 
   def interact(params: UnresolvedProperties): ResolvedProperties = {
-    val (desc, others) = params partition { case (k, _) => k == "description" }
-
-    desc.foreach { d =>
+    params.filter(_._1 == "description").foreach { d =>
       @scala.annotation.tailrec
       def liner(cursor: Int, rem: Iterable[String]): Unit = {
         if (!rem.isEmpty) {
@@ -448,13 +448,12 @@ object G8 {
       println("\n")
     }
 
-    val fixed    = Set("verbatim")
-    val renderer = new AugmentedStringRenderer
+    val fixed = Set("verbatim")
 
-    others
+    params
       .foldLeft(ResolvedProperties.empty) { case (resolved, (k, f)) =>
         resolved + (
-          if (fixed.contains(k))
+          if (fixed.contains(k) || k == "description")
             k -> f(resolved)
           else {
             val default = f(resolved)
@@ -462,13 +461,17 @@ object G8 {
 
             print(s"$k [$message]: ")
             Console.flush() // Gotta flush for Windows console!
-            val in = scala.io.StdIn.readLine().trim
+            val in = Option(scala.io.StdIn.readLine())
+              .map(_.trim)
+              .getOrElse(throw NullInputException)
             (k, if (in.isEmpty) default else in)
           }
         )
       }
       .toMap
   }
+
+  final case object NullInputException extends Throwable
 
   private def relativize(in: File, from: File): String = from.toURI().relativize(in.toURI).getPath
 
@@ -482,7 +485,6 @@ object G8 {
   ): Either[String, String] = {
 
     import java.nio.charset.MalformedInputException
-    val renderer = new AugmentedStringRenderer
 
     templates
       .map { in =>

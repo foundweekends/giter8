@@ -1,9 +1,9 @@
 import sbt._
 
 object Dependencies {
-  val stringTemplate = "org.antlr" % "ST4" % "4.2"
-  val commonsIo      = "commons-io" % "commons-io" % "2.9.0"
-  val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.11" excludeAll (
+  val stringTemplate = "org.antlr" % "ST4" % "4.3.1"
+  val commonsIo      = "commons-io" % "commons-io" % "2.10.0"
+  val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "2.7.1" excludeAll (
     ExclusionRule("org.apache.commons", "commons-compress"),
     ExclusionRule("classworlds", "classworlds"),
     ExclusionRule("org.tukaani", "xz"),
@@ -23,13 +23,13 @@ object Dependencies {
   val scalatest            = "org.scalatest" %% "scalatest" % "3.2.9"
   val scalamock            = "org.scalamock" %% "scalamock" % "5.1.0"
   val verify               = "com.eed3si9n.verify" %% "verify" % "1.0.0"
-  val sbtIo                = "org.scala-sbt" %% "io" % "1.5.0"
-  val scala212             = "2.12.13"
+  val sbtIo                = "org.scala-sbt" %% "io" % "1.5.1"
+  val scala212             = "2.12.14"
   val scala213             = "2.13.6"
   val sbt1                 = "1.2.8"
   val scalaXml             = "org.scala-lang.modules" %% "scala-xml" % "2.0.0"
   val parserCombinator     = "org.scala-lang.modules" %% "scala-parser-combinators" % "2.0.0"
   val logback              = "ch.qos.logback" % "logback-classic" % "1.2.3"
   val coursier             = "io.get-coursier" %% "coursier" % "2.0.16"
-  val launcherIntf         = "org.scala-sbt" % "launcher-interface" % "1.3.1"
+  val launcherIntf         = "org.scala-sbt" % "launcher-interface" % "1.3.2"
 }
