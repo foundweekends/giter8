@@ -35,13 +35,14 @@ case class JGitIgnore(patterns: String*) {
     *
     * The last rule to match a path will be used to determine if it is ignored.
     *
-    * It is recommended to pass a `relativeTo` file to avoid matching against
-    * absolute paths.
+    * It is recommended to pass a `relativeTo` file to avoid matching against absolute paths.
     *
     * @param uri
     * @param isDir
-    * @param relativeTo a file which the subject path with be resolved relative to.
-    * @return whether or not the file should be ignored
+    * @param relativeTo
+    *   a file which the subject path with be resolved relative to.
+    * @return
+    *   whether or not the file should be ignored
     */
   def isIgnored(uri: URI, isDir: Boolean = false, relativeTo: Option[URI] = None): Boolean = {
 

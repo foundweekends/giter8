@@ -47,15 +47,17 @@ object G8 {
     val empty = List.empty[(String, ValueF)]
   }
 
-  /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input, ready for insertion into template */
+  /** G8 template properties which have been fully resolved, i.e. defaults replaced by user input, ready for insertion
+    * into template
+    */
   type ResolvedProperties = Map[String, String]
   object ResolvedProperties {
     val empty = Map.empty[String, String]
   }
 
-  /** A function which will return the resolved value of a property given the properties resolved thus far.
-    * This is a bit more general than was needed for resolving "dynamic defaults". I did it this way so it's
-    * possible to have other ValueF definitions which perform arbitrary logic given previously defined properties.
+  /** A function which will return the resolved value of a property given the properties resolved thus far. This is a
+    * bit more general than was needed for resolving "dynamic defaults". I did it this way so it's possible to have
+    * other ValueF definitions which perform arbitrary logic given previously defined properties.
     */
   type ValueF = ResolvedProperties => String
 
@@ -162,7 +164,9 @@ object G8 {
     }
   }
 
-  /** The ValueF implementation for handling default properties.  It performs formatted substitution on any properties found. */
+  /** The ValueF implementation for handling default properties. It performs formatted substitution on any properties
+    * found.
+    */
   case class DefaultValueF(default: String) extends ValueF {
     override def apply(resolved: ResolvedProperties): String = applyTemplate(default, resolved)
   }
@@ -368,8 +372,7 @@ object G8 {
 
   private def getVisibleFiles = getFiles(!_.isHidden) _
 
-  /** transforms any maven() property operations to the latest
-    * version number reported by that service.
+  /** transforms any maven() property operations to the latest version number reported by that service.
     */
   def transformProps(props: G8.OrderedProperties): Either[String, G8.OrderedProperties] =
     Maven.lookup(props)
