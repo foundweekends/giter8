@@ -9,12 +9,12 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.12.0.202106070339-r" excludeAll (
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.13.0.202109080827-r" excludeAll (
     ExclusionRule("javax.jms", "jms"),
     ExclusionRule("com.sun.jdmk", "jmxtools"),
     ExclusionRule("com.sun.jmx", "jmxri")
   )
-  val jgitJsch             = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.jsch" % "5.12.0.202106070339-r"
+  val jgitJsch             = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.jsch" % "5.13.0.202109080827-r"
   val jsch                 = "com.jcraft" % "jsch.agentproxy.jsch" % "0.0.9"
   val jschSshAgent         = "com.jcraft" % "jsch.agentproxy.sshagent" % "0.0.9"
   val jschConnectorFactory = "com.jcraft" % "jsch.agentproxy.connector-factory" % "0.0.9"
