@@ -106,7 +106,7 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
     } yield versions
 
   property("ordering") = Prop.forAll(genVersionNumberList) { (versions: Seq[VersionNumber]) =>
-    if (versions.isEmpty) Prop(true) //support shrinking to empty.
+    if (versions.isEmpty) Prop(true) // support shrinking to empty.
     else {
       val sortedVersion = versions.sorted.head
 
@@ -117,7 +117,7 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
   }
 
   private def majorVersionShouldBeMax(sortedVersion: VersionNumber, versions: Seq[VersionNumber]): Prop = {
-    //major version on sorted to be the max major version in all the versions
+    // major version on sorted to be the max major version in all the versions
     val sortedMajor = sortedVersion._1.getOrElse(0L)
     val maxMajor    = versions.maxBy(_._1.getOrElse(0L))._1.getOrElse(0L)
 

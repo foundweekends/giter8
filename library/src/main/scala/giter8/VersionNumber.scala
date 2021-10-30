@@ -111,7 +111,7 @@ object VersionNumber {
     }
   }
 
-  //Extractor for stable dependencies (without tags)
+  // Extractor for stable dependencies (without tags)
   object Stable {
     def unapply(v: String): Option[VersionNumber] = {
       VersionNumber.unapply(v).fold[Option[VersionNumber]](None) { x =>
