@@ -111,6 +111,24 @@ class IntegrationTest extends AnyFlatSpec with IntegrationTestHelpers with Match
       checkGeneratedProject(template, expected, actual)
   }
 
+  it should "read default.properties with multiline description parameter from root directory" in testCase {
+    case (template, expected, actual) =>
+      """description = \
+        |  this is multiline\n\
+        |  with another line\n\
+        |  long description
+        |
+        |foo = bar
+        |""".stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
+      "$foo$ $description$" >> (template / "src" / "main" / "g8" / "foo.txt")
+
+      """bar this is multiline
+        |with another line
+        |long description
+        |""".stripMargin >> (expected / "foo.txt")
+      checkGeneratedProject(template, expected, actual)
+  }
+
   it should "resolve package names" in testCase { case (template, expected, actual) =>
     """|name = Package test
        |package = com.example

@@ -432,32 +432,24 @@ object G8 {
   }
 
   def interact(params: UnresolvedProperties): ResolvedProperties = {
-    params.filter(_._1 == "description").foreach { d =>
-      @scala.annotation.tailrec
-      def liner(cursor: Int, rem: Iterable[String]): Unit = {
-        if (!rem.isEmpty) {
-          val next = cursor + 1 + rem.head.length
-          if (next > 70) {
-            println()
-            liner(0, rem)
-          } else {
-            print(rem.head + " ")
-            liner(next, rem.tail)
-          }
-        }
+    val description = params
+      .collectFirst { case (param, getDescription) if param == "description" =>
+        getDescription(ResolvedProperties.empty)
       }
+
+    println()
+
+    description.foreach { descr =>
+      println(descr)
       println()
-      liner(0, d._2(ResolvedProperties.empty).split(" "))
-      println("\n")
     }
 
-    val fixed = Set("verbatim")
+    val fixed = Set("verbatim", "description")
 
     params
       .foldLeft(ResolvedProperties.empty) { case (resolved, (k, f)) =>
         resolved + (
-          if (fixed.contains(k) || k == "description")
-            k -> f(resolved)
+          if (fixed.contains(k)) k -> f(resolved)
           else {
             val default = f(resolved)
             val message = Truthy.getMessage(default)
