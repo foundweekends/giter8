@@ -433,8 +433,9 @@ object G8 {
 
   def interact(params: UnresolvedProperties): ResolvedProperties = {
     val description = params
-      .collectFirst { case (param, getDescription) if param == "description" =>
-        getDescription(ResolvedProperties.empty)
+      .collectFirst {
+        case (param, getDescription) if param == "description" =>
+          getDescription(ResolvedProperties.empty)
       }
 
     println()
