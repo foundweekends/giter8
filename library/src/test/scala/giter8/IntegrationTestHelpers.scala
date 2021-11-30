@@ -51,7 +51,7 @@ trait IntegrationTestHelpers {
     val actualLines   = Source.fromFile(actual).getLines().toSeq
     val expectedLines = Source.fromFile(expected).getLines().toSeq
     expectedLines.zipWithIndex foreach { case (line, i) =>
-      assert(line == actualLines(i), s"in file $path:$i")
+      assert(actualLines(i) == line, s"in file $path:$i")
     }
   }
 
