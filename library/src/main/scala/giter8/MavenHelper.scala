@@ -17,9 +17,7 @@
 
 package giter8
 
-import java.net.{URL, HttpURLConnection}
-import java.io.{BufferedReader, InputStreamReader}
-import java.util.stream.Collectors
+import java.net.{HttpURLConnection, URL}
 import scala.xml.{NodeSeq, XML}
 
 trait MavenHelper {

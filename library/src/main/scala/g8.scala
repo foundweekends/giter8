@@ -438,10 +438,24 @@ object G8 {
           getDescription(ResolvedProperties.empty)
       }
 
-    println()
-
     description.foreach { descr =>
-      println(descr)
+      descr.split("\n").foreach { line =>
+        @scala.annotation.tailrec
+        def liner(cursor: Int, rem: Iterable[String]): Unit = {
+          if (rem.nonEmpty) {
+            val next = cursor + 1 + rem.head.length
+            if (next > 70 && cursor > 0) {
+              println()
+              liner(0, rem)
+            } else {
+              print(rem.head + " ")
+              liner(next, rem.tail)
+            }
+          }
+        }
+        liner(0, line.split(" "))
+        println()
+      }
       println()
     }
 

@@ -116,7 +116,8 @@ class IntegrationTest extends AnyFlatSpec with IntegrationTestHelpers with Match
       """description = \
         |  this is multiline\n\
         |  with another line\n\
-        |  long description
+        |  long long long long long long long long long long long long long long description within the line\n\
+        |  the end.
         |
         |foo = bar
         |""".stripMargin >> (template / "src" / "main" / "g8" / "default.properties")
@@ -124,7 +125,8 @@ class IntegrationTest extends AnyFlatSpec with IntegrationTestHelpers with Match
 
       """bar this is multiline
         |with another line
-        |long description
+        |long long long long long long long long long long long long long long description within the line
+        |the end.
         |""".stripMargin >> (expected / "foo.txt")
       checkGeneratedProject(template, expected, actual)
   }
