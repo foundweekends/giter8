@@ -21,7 +21,7 @@ object Dependencies {
   val scopt                = "com.github.scopt" %% "scopt" % "4.0.1"
   val scalacheck           = "org.scalacheck" %% "scalacheck" % "1.15.4"
   val scalatest            = "org.scalatest" %% "scalatest" % "3.2.10"
-  val scalamock            = "org.scalamock" %% "scalamock" % "5.1.0"
+  val scalamock            = "org.scalamock" %% "scalamock" % "5.2.0"
   val verify               = "com.eed3si9n.verify" %% "verify" % "1.0.0"
   val sbtIo                = "org.scala-sbt" %% "io" % "1.5.1"
   val scala212             = "2.12.15"
