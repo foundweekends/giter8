@@ -25,8 +25,8 @@ ThisBuild / publishTo :=
     "releases" at
       "https://oss.sonatype.org/service/local/staging/deploy/maven2"
   )
-ThisBuild / publishArtifact in Test := false
-ThisBuild / parallelExecution in Test := false
+ThisBuild / Test / publishArtifact := false
+ThisBuild / Test / parallelExecution := false
 ThisBuild / licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / developers := List(
   Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han")),
@@ -60,7 +60,7 @@ lazy val app = (project in file("app"))
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
     crossScalaVersions := List(scala212, scala213),
-    sourceDirectory in csRun := {
+    csRun / sourceDirectory := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
     },
     libraryDependencies += launcherIntf
@@ -69,7 +69,7 @@ lazy val app = (project in file("app"))
 lazy val crossSbt = Seq(
   crossSbtVersions := List(sbt1),
   scalaVersion := {
-    val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
+    val crossSbtVersion = (pluginCrossBuild / sbtVersion).value
     partialVersion(crossSbtVersion) match {
       case Some((1, _)) => scala212
       case _ =>
@@ -91,9 +91,9 @@ lazy val scaffold = (project in file("scaffold"))
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scripted := scripted
-      .dependsOn(publishLocal in lib)
+      .dependsOn(lib / publishLocal)
       .evaluated,
-    test in Test := {
+    Test / test := {
       scripted.toTask("").value
     }
   )
@@ -112,10 +112,10 @@ lazy val plugin = (project in file("plugin"))
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scripted := scripted
-      .dependsOn(publishLocal in lib)
+      .dependsOn(lib / publishLocal)
       .evaluated,
     libraryDependencies += {
-      val crossSbtVersion = (sbtVersion in pluginCrossBuild).value
+      val crossSbtVersion = (pluginCrossBuild / sbtVersion).value
 
       val artifact =
         partialVersion(crossSbtVersion) match {
@@ -127,7 +127,7 @@ lazy val plugin = (project in file("plugin"))
 
       artifact % crossSbtVersion
     },
-    test in Test := {
+    Test / test := {
       scripted.toTask("").value
     }
   )
