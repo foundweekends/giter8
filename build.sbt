@@ -25,8 +25,8 @@ ThisBuild / publishTo :=
     "releases" at
       "https://oss.sonatype.org/service/local/staging/deploy/maven2"
   )
-(Test / ThisBuild / publishArtifact) := false
-(Test / ThisBuild / parallelExecution) := false
+ThisBuild / Test / publishArtifact := false
+ThisBuild / Test / parallelExecution := false
 ThisBuild / licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / developers := List(
   Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han")),
@@ -60,7 +60,7 @@ lazy val app = (project in file("app"))
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
     crossScalaVersions := List(scala212, scala213),
-    (csRun / sourceDirectory) := {
+    csRun / sourceDirectory := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
     },
     libraryDependencies += launcherIntf
@@ -91,9 +91,9 @@ lazy val scaffold = (project in file("scaffold"))
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scripted := scripted
-      .dependsOn((lib / publishLocal))
+      .dependsOn(lib / publishLocal)
       .evaluated,
-    (Test / test) := {
+    Test / test := {
       scripted.toTask("").value
     }
   )
@@ -112,7 +112,7 @@ lazy val plugin = (project in file("plugin"))
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scripted := scripted
-      .dependsOn((lib / publishLocal))
+      .dependsOn(lib / publishLocal)
       .evaluated,
     libraryDependencies += {
       val crossSbtVersion = (pluginCrossBuild / sbtVersion).value
@@ -127,7 +127,7 @@ lazy val plugin = (project in file("plugin"))
 
       artifact % crossSbtVersion
     },
-    (Test / test) := {
+    Test / test := {
       scripted.toTask("").value
     }
   )
