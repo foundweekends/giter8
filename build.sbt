@@ -181,14 +181,18 @@ lazy val lib = (project in file("library"))
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
 
-// TODO add `.enablePlugins(ConscriptPlugin)` ?
 lazy val launcher = (project in file("launcher"))
   .enablePlugins(SonatypePublish)
+  .enablePlugins(ConscriptPlugin)
   .dependsOn(gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8-launcher",
     crossScalaVersions := List(scala212, scala213),
+    libraryDependencies ~= (_.filterNot(x =>
+      // https://github.com/foundweekends/conscript/blob/0dcab5124e6d817e9c409e6c3065993adbaa47f6/sbt-conscript/src/main/scala/ConscriptPlugin.scala#L20
+      x.organization == "org.scala-sbt" && x.name == "launcher"
+    )),
     libraryDependencies ++= Seq(
       coursier,
       verify % Test,
