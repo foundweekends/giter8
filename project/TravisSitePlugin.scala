@@ -23,7 +23,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
   import autoImport._
 
   override lazy val projectSettings = Seq(
-    sourceDirectory in Pamflet := { baseDirectory.value / "docs" },
+    Pamflet / sourceDirectory := { baseDirectory.value / "docs" },
     // ghpagesBranch in ghpagesUpdatedRepository := Some("gh-pages"),
     // This task is responsible for updating the master branch on some temp dir.
     // On the branch there are files that was generated in some other ways such as:
