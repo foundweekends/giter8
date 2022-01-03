@@ -181,9 +181,9 @@ lazy val lib = (project in file("library"))
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
 
+// TODO add `.enablePlugins(ConscriptPlugin)` ?
 lazy val launcher = (project in file("launcher"))
   .enablePlugins(SonatypePublish)
-  .enablePlugins(ConscriptPlugin)
   .dependsOn(gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
