@@ -55,6 +55,7 @@ lazy val root = (project in file("."))
 
 lazy val app = (project in file("app"))
   .enablePlugins(SonatypePublish)
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(lib, gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
