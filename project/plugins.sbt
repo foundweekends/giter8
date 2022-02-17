@@ -1,5 +1,5 @@
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.6")
-addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.10.0")
+addSbtPlugin("com.eed3si9n" % "sbt-buildinfo" % "0.11.0")
 addSbtPlugin("org.foundweekends.conscript" % "sbt-conscript" % "0.5.8")
 addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.1.2")
 libraryDependencies += "org.scala-sbt" %% "scripted-plugin" % sbtVersion.value
