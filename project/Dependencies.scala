@@ -24,7 +24,7 @@ object Dependencies {
   val scalamock            = "org.scalamock" %% "scalamock" % "5.2.0"
   val verify               = "com.eed3si9n.verify" %% "verify" % "1.0.0"
   val sbtIo                = "org.scala-sbt" %% "io" % "1.6.0"
-  val scala212             = "2.12.15"
+  val scala212             = "2.12.16"
   val scala213             = "2.13.8"
   val sbt1                 = "1.2.8"
   val scalaXml             = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
