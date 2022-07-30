@@ -4,6 +4,8 @@ import java.io.File
 
 import org.apache.commons.io.FileUtils
 import org.eclipse.jgit.api.{Git => JGit}
+import org.eclipse.jgit.util.SystemReader
+import org.eclipse.jgit.lib.ConfigConstants
 import org.scalatest.{BeforeAndAfter, TryValues}
 
 import scala.collection.JavaConverters._
@@ -19,6 +21,13 @@ class JGitInteractorTest extends AnyFlatSpec with Matchers with BeforeAndAfter w
 
   var remoteRepository: File     = _
   var interactor: JGitInteractor = _
+
+  // Since Jgit 5.11, default branch name can be changed by user configuration (e.g. main)
+  val defaultBranchName = SystemReader.getInstance.getUserConfig.getString(
+    ConfigConstants.CONFIG_INIT_SECTION,
+    null,
+    ConfigConstants.CONFIG_KEY_DEFAULT_BRANCH
+  )
 
   before {
     interactor = new JGitInteractor(None)
@@ -37,7 +46,7 @@ class JGitInteractorTest extends AnyFlatSpec with Matchers with BeforeAndAfter w
   "JGitInteractor" should "clone the remote repository" in tempDirectory { localRepository =>
     interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe Symbol("success")
 
-    localRepository.branch shouldBe "master"
+    localRepository.branch shouldBe defaultBranchName
     localRepository.commits should contain theSameElementsAs Seq("Initial commit")
   }
 
@@ -49,7 +58,7 @@ class JGitInteractorTest extends AnyFlatSpec with Matchers with BeforeAndAfter w
     interactor
       .getRemoteBranches(remoteRepository.getAbsolutePath)
       .success
-      .value should contain theSameElementsAs branches :+ "master"
+      .value should contain theSameElementsAs branches :+ defaultBranchName
   }
 
   it should "retrieve tag list from remote repository" in {
@@ -91,12 +100,12 @@ class JGitInteractorTest extends AnyFlatSpec with Matchers with BeforeAndAfter w
   }
 
   it should "not fail if checkout existing branch" in tempDirectory { localRepository =>
-    remoteRepository.checkout("master")
+    remoteRepository.checkout(defaultBranchName)
 
     interactor.cloneRepository(remoteRepository.getAbsolutePath, localRepository) shouldBe Symbol("success")
-    interactor.checkoutBranch(localRepository, "master") shouldBe Symbol("success")
+    interactor.checkoutBranch(localRepository, defaultBranchName) shouldBe Symbol("success")
 
-    localRepository.branch shouldBe "master"
+    localRepository.branch shouldBe defaultBranchName
   }
 
   it should "retrieve default branch (where HEAD is pointing)" in tempDirectory { localRepository =>
