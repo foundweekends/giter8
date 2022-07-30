@@ -11,3 +11,12 @@ project/plugins/project/
 .settings
 *~
 .cache
+
+# bloop and metals
+.bloop
+.bsp
+project/metals.sbt
+.metals
+
+# vs code
+.vscode
