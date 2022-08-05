@@ -9,15 +9,8 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit.pgm" % "5.13.1.202206130422-r" excludeAll (
-    ExclusionRule("javax.jms", "jms"),
-    ExclusionRule("com.sun.jdmk", "jmxtools"),
-    ExclusionRule("com.sun.jmx", "jmxri")
-  )
-  val jgitJsch             = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.jsch" % "5.13.1.202206130422-r"
-  val jsch                 = "com.jcraft" % "jsch.agentproxy.jsch" % "0.0.9"
-  val jschSshAgent         = "com.jcraft" % "jsch.agentproxy.sshagent" % "0.0.9"
-  val jschConnectorFactory = "com.jcraft" % "jsch.agentproxy.connector-factory" % "0.0.9"
+  val jgit                 = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.1.202206130422-r"
+  val jgitSshApache        = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.apache" % "5.13.1.202206130422-r"
   val scopt                = "com.github.scopt" %% "scopt" % "4.1.0"
   val scalacheck           = "org.scalacheck" %% "scalacheck" % "1.16.0"
   val scalatest            = "org.scalatest" %% "scalatest" % "3.2.13"

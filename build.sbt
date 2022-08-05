@@ -141,10 +141,7 @@ lazy val gitsupport = (project in file("cli-git"))
     libraryDependencies ++= Seq(
       scopt,
       jgit,
-      jsch,
-      jschSshAgent,
-      jschConnectorFactory,
-      jgitJsch,
+      jgitSshApache,
       commonsIo,
       scalatest % Test,
       scalamock % Test
