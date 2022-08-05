@@ -22,8 +22,6 @@ import java.util.regex.Matcher
 import java.util.{Locale, Properties}
 
 import org.apache.commons.io.FileUtils
-import org.codehaus.plexus.logging.Logger
-import org.codehaus.plexus.logging.console.ConsoleLogger
 import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
 import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
@@ -179,7 +177,7 @@ object G8 {
         case Some(attr) =>
           val mode = attr.getOctalMode
           write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
-          Try(ArchiveEntryUtils.chmod(out, mode, new ConsoleLogger(Logger.LEVEL_ERROR, "")))
+          Try(ArchiveEntryUtils.chmod(out, mode))
         case None =>
           // PlexusIoResourceAttributes is not available for some OS'es such as windows
           write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
