@@ -82,7 +82,7 @@ class LauncherProcessor extends Processor {
 
   // uses classloader trick to run
   def virtuallyRun(files: Seq[File], args: Seq[String], workingDirectory: File): Unit = {
-    val cl = new URLClassLoader(files.map(_.toURL).toArray, null)
+    val cl = new URLClassLoader(files.map(_.toURI.toURL).toArray, null)
     call("giter8.Giter8", "run", cl)(classOf[Array[String]], classOf[File])(args.toArray, workingDirectory)
   }
 
