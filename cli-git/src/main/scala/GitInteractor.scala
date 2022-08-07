@@ -76,11 +76,10 @@ class JGitInteractor(knownHosts: Option[String]) extends GitInteractor {
   override def getDefaultBranch(repository: File): Try[String] = Try {
     val git = JGit.open(repository)
     try {
-      val refs = git.getRepository.getAllRefs.asScala
+      val refs = git.getRepository.getRefDatabase.getRefs.asScala
       // We assume we have freshly cloned repository with origin set up to clone URL
       // Symref HEAD will point to default remote branch.
-      val symRefs = refs.filter(_._2.isSymbolic)
-      val head    = symRefs("HEAD")
+      val head = refs.filter(_.isSymbolic).find(_.getName == "HEAD").get
       head.getTarget.getName.stripPrefix("refs/heads/")
     } finally git.close()
   }
