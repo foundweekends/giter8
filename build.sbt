@@ -79,7 +79,7 @@ lazy val crossSbt = Seq(
 )
 
 lazy val scaffold = (project in file("scaffold"))
-  .enablePlugins(SbtPlugin, SonatypePublish, ScriptedPlugin)
+  .enablePlugins(SbtPlugin, SonatypePublish)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
@@ -99,7 +99,7 @@ lazy val scaffold = (project in file("scaffold"))
   )
 
 lazy val plugin = (project in file("plugin"))
-  .enablePlugins(SbtPlugin, SonatypePublish, ScriptedPlugin)
+  .enablePlugins(SbtPlugin, SonatypePublish)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
