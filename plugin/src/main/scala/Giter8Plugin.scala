@@ -47,16 +47,16 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
   lazy val baseGiter8Settings: Seq[Def.Setting[_]] = Seq(
     g8 := {
-      val base  = (unmanagedSourceDirectories in g8).value
-      val srcs  = (sources in g8).value
-      val out   = (target in g8).value
-      val props = (g8Properties in g8).value
+      val base  = (g8 / unmanagedSourceDirectories).value
+      val srcs  = (g8 / sources).value
+      val out   = (g8 / target).value
+      val props = (g8 / g8Properties).value
       val s     = streams.value
       IO.delete(out)
       val retval = G8(srcs pair relativeTo(base), out, props)
 
       // copy scaffolds
-      val scaffoldsDir = (sourceDirectory in Compile).value / "scaffolds"
+      val scaffoldsDir = (Compile / sourceDirectory).value / "scaffolds"
       val scaffolds = if (scaffoldsDir.exists) {
         val outDir = out / ".g8"
         IO.copyDirectory(scaffoldsDir, outDir)
@@ -65,26 +65,26 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
       retval ++ scaffolds
     },
-    aggregate in g8 := false,
-    unmanagedSourceDirectories in g8 := {
+    g8 / aggregate := false,
+    g8 / unmanagedSourceDirectories := {
       val dir1 = (sourceDirectory.value / "g8").get
       if (dir1.nonEmpty) dir1
       else List(baseDirectory.value)
     },
-    sources in g8 := {
-      val dirs = (unmanagedSourceDirectories in g8).value
+    g8 / sources := {
+      val dirs = (g8 / unmanagedSourceDirectories).value
       val root = dirs.head
       G8.templateFiles(root, baseDirectory.value)
     },
-    target in g8 := { target.value / "g8" },
-    g8PropertiesFile in g8 := {
-      val propertiesLoc0 = ((unmanagedSourceDirectories in g8).value / "default.properties").get.headOption
+    g8 / target := { target.value / "g8" },
+    g8 / g8PropertiesFile := {
+      val propertiesLoc0 = ((g8 / unmanagedSourceDirectories).value / "default.properties").get.headOption
       val propertiesLoc1: Option[File] =
-        Some((baseDirectory in LocalRootProject).value / "project" / "default.properties")
+        Some((LocalRootProject / baseDirectory).value / "project" / "default.properties")
       (propertiesLoc0 orElse propertiesLoc1).get
     },
-    g8Properties in g8 := {
-      val f = (g8PropertiesFile in g8).value
+    g8 / g8Properties := {
+      val f = (g8 / g8PropertiesFile).value
       if (f.exists) {
         val in = new java.io.FileInputStream(f)
         try {
@@ -104,23 +104,23 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
   lazy val giter8TestSettings: Seq[Def.Setting[_]] = SBTCompat.scriptedSettings ++
     Seq(
-      g8Test in Test := { scriptedTask.evaluated },
-      aggregate in (Test, g8Test) := false,
+      Test / g8Test := { scriptedTask.evaluated },
+      Test / g8Test / aggregate := false,
       scriptedDependencies := {
-        val x = (g8 in Test).value
+        val x = (Test / g8).value
       },
-      g8 in Test := {
-        val base  = (unmanagedSourceDirectories in (Compile, g8)).value
-        val srcs  = (sources in (Compile, g8)).value
-        val out   = (target in (Test, g8)).value
-        val props = (g8Properties in (Test, g8)).value
-        val ts    = (g8TestScript in (Test, g8)).value
+      Test / g8 := {
+        val base  = (Compile / g8 / unmanagedSourceDirectories).value
+        val srcs  = (Compile / g8 / sources).value
+        val out   = (Test / g8 / target).value
+        val props = (Test / g8 / g8Properties).value
+        val ts    = (Test / g8 / g8TestScript).value
         val s     = streams.value
         IO.delete(out)
         val retval = G8(srcs pair relativeTo(base), out, props)
 
         // copy scaffolds
-        val scaffoldsDir = (sourceDirectory in Compile).value / "scaffolds"
+        val scaffoldsDir = (Compile / sourceDirectory).value / "scaffolds"
         val scaffolds = if (scaffoldsDir.exists) {
           val outDir = out / ".g8"
           IO.copyDirectory(scaffoldsDir, outDir)
@@ -137,10 +137,10 @@ object Giter8Plugin extends sbt.AutoPlugin {
         retval ++ scaffolds :+ script
       },
       sbtTestDirectory := { target.value / "sbt-test" },
-      target in (Test, g8) := { sbtTestDirectory.value / name.value / "scripted" },
+      Test / g8 / target := { sbtTestDirectory.value / name.value / "scripted" },
       g8TestScript := {
-        val dir     = (sourceDirectory in Test).value
-        val metadir = (baseDirectory in LocalRootProject).value / "project"
+        val dir     = (Test / sourceDirectory).value
+        val metadir = (LocalRootProject / baseDirectory).value / "project"
         val file0   = dir / "g8" / "test"
 
         // we should only use file0 if its an exisiting file
@@ -164,7 +164,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
           .find(_.isFile)
           .getOrElse(defaultTestScript)
       },
-      scriptedBufferLog in (Test, g8) := true
+      Test / g8 / scriptedBufferLog := true
     )
 
   override lazy val projectSettings: Seq[Def.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
