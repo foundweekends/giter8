@@ -37,7 +37,8 @@ jobs:
             sbt -v \
             -no-colors \
             publishLocal \
-            scalafmtCheckAll \
+            scalafmtSbtCheck \
+            "+ scalafmtCheckAll" \
             launcher/test \
             plugin/scripted \
             scaffold/scripted \
