@@ -66,5 +66,28 @@ project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
 
+### Using Mill
+
+There is also an external [Mill plugin][mill-plugin] that can be used to test
+your templates as well. An example setup can be found below:
+
+```scala
+import \$ivy.`io.chris-kipp::mill-giter8::0.2.0`
+
+import io.kipp.mill.giter8.G8Module
+
+object g8 extends G8Module {
+  override def validationTargets =
+    Seq("example.compile", "example.fix", "example.reformat")
+}
+```
+
+This plugin only supprts [`src` layouts][src-layout], but gives you some useful
+targets like `g8.validate` which will both test the generation of your template
+and also ensure any targets defined with `validationTargets` can also be ran
+against your generated project.
+
   [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
   [wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
+  [mill-plugin]: https://github.com/ckipp01/mill-giter8
+  [src-layout]: http://www.foundweekends.org/giter8/template.html#template+layout
