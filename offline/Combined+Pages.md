@@ -46,14 +46,15 @@ and update it using:
 
 It's possible to manually download and install giter8 directly from Maven Central:
 
-    $ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.13.1/giter8-bootstrap_2.12-0.13.1.sh > ~/bin/g8
+    $ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.14.0/giter8-bootstrap_2.12-0.14.0.sh > ~/bin/g8
     $ chmod +x ~/bin/g8
 
 Replace `~/bin/` with anything that is on your `PATH`. To make sure everything is working, try running `g8` with no
 parameters, you should see
 
     Error: Missing argument <template>
-    Try --help for more information. 
+    Try --help for more information.
+
 
 Usage
 -----
@@ -506,7 +507,7 @@ If you need to upgrade an existing template project to the current plugin, you c
 add it as a source dependency in `project/giter8.sbt`:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.12.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.15.0")
 ```
 
 When you enter sbt's shell in the base directory of a
@@ -531,8 +532,31 @@ project with a `.g8` extension) you can test it with the actual g8
 runtime. When you're ready, add your template project to the
 [the wiki][wiki] so other giter8 users can find it.
 
+### Using Mill
+
+There is also an external [Mill plugin][mill-plugin] that can be used to test
+your templates as well. An example setup can be found below:
+
+```scala
+import $ivy.`io.chris-kipp::mill-giter8::0.2.0`
+
+import io.kipp.mill.giter8.G8Module
+
+object g8 extends G8Module {
+  override def validationTargets =
+    Seq("example.compile", "example.fix", "example.reformat")
+}
+```
+
+This plugin only supprts [`src` layouts][src-layout], but gives you some useful
+targets like `g8.validate` which will both test the generation of your template
+and also ensure any targets defined with `validationTargets` can also be ran
+against your generated project.
+
   [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
   [wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
+  [mill-plugin]: https://github.com/ckipp01/mill-giter8
+  [src-layout]: http://www.foundweekends.org/giter8/template.html#template+layout
 
 
 Scaffolding plugin
@@ -545,7 +569,7 @@ Giter8 supplies an sbt plugin for creating and using scaffolds.
 Add the following lines in `project/scaffold.sbt`
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.12.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.15.0")
 ```
 
 Once done, the  `g8Scaffold` command can be used in the sbt shell.
