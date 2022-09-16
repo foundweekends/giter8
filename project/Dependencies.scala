@@ -12,7 +12,7 @@ object Dependencies {
   val jgit             = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.1.202206130422-r"
   val jgitSshApache    = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.apache" % "5.13.1.202206130422-r"
   val scopt            = "com.github.scopt" %% "scopt" % "4.1.0"
-  val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.16.0"
+  val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.17.0"
   val scalatest        = "org.scalatest" %% "scalatest" % "3.2.13"
   val scalamock        = "org.scalamock" %% "scalamock" % "5.2.0"
   val verify           = "com.eed3si9n.verify" %% "verify" % "1.0.0"
