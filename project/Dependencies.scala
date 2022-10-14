@@ -18,7 +18,7 @@ object Dependencies {
   val verify           = "com.eed3si9n.verify" %% "verify" % "1.0.0"
   val sbtIo            = "org.scala-sbt" %% "io" % "1.7.0"
   val scala212         = "2.12.17"
-  val scala213         = "2.13.9"
+  val scala213         = "2.13.10"
   val sbt1             = "1.2.8"
   val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
   val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2"
