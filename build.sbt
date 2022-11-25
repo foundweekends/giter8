@@ -168,7 +168,7 @@ lazy val lib = (project in file("library"))
       sbtIo % Test,
       scalatest % Test,
       scalamock % Test,
-      "org.slf4j" % "slf4j-simple" % "1.7.36" % Test
+      "org.slf4j" % "slf4j-simple" % "2.0.5" % Test
     ) ++
       (CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((2, scalaMajor)) if scalaMajor >= 11 =>
