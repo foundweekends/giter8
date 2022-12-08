@@ -9,8 +9,14 @@ object Dependencies {
     ExclusionRule("org.tukaani", "xz"),
     ExclusionRule("junit", "junit")
   )
-  val jgit             = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.1.202206130422-r"
-  val jgitSshApache    = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.apache" % "5.13.1.202206130422-r"
+  // We excluded sshd-sftp to avoid https://github.com/advisories/GHSA-fhw8-8j55-vwgq
+  // Either that or we need to bump to jgit 6.x
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.1.202206130422-r" excludeAll (
+    ExclusionRule("org.apache.sshd", "sshd-sftp")
+  )
+  val jgitSshApache = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.apache" % "5.13.1.202206130422-r" excludeAll (
+    ExclusionRule("org.apache.sshd", "sshd-sftp")
+  )
   val scopt            = "com.github.scopt" %% "scopt" % "4.1.0"
   val scalacheck       = "org.scalacheck" %% "scalacheck" % "1.17.0"
   val scalatest        = "org.scalatest" %% "scalatest" % "3.2.14"
