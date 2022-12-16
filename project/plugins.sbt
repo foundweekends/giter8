@@ -4,4 +4,4 @@ addSbtPlugin("org.foundweekends.conscript" % "sbt-conscript" % "0.5.8")
 addSbtPlugin("com.github.sbt" % "sbt-pgp" % "2.2.1")
 libraryDependencies += "org.scala-sbt" %% "scripted-plugin" % sbtVersion.value
 addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.4.1")
-addSbtPlugin("com.typesafe.sbt" % "sbt-ghpages" % "0.6.3")
+addSbtPlugin("com.github.sbt" % "sbt-ghpages" % "0.7.0")
