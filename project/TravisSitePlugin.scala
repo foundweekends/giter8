@@ -1,10 +1,10 @@
 import sbt._
 import Keys._
 
-import com.typesafe.sbt.sbtghpages.GhpagesPlugin
-import com.typesafe.sbt.sbtghpages.GhpagesPlugin.autoImport._
-import com.typesafe.sbt.SbtGit.{git, GitKeys}
-import com.typesafe.sbt.git.GitRunner
+import com.github.sbt.sbtghpages.GhpagesPlugin
+import com.github.sbt.sbtghpages.GhpagesPlugin.autoImport._
+import com.github.sbt.git.SbtGit.{git, GitKeys}
+import com.github.sbt.git.GitRunner
 import com.typesafe.sbt.site.pamflet.PamfletPlugin
 import com.typesafe.sbt.site.SitePlugin
 
