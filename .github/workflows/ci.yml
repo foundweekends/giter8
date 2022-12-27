@@ -67,11 +67,11 @@ jobs:
         fetch-depth: 10
     - uses: coursier/cache-action@v6
     - uses: webfactory/ssh-agent@v0.7.0
-      if: ${{ !github.event.repository.fork && github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
+      if: ${{ github.repository_owner == 'foundweekends' && github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY_1 }}
     - name: Push to gh-pages
-      if: ${{ !github.event.repository.fork && github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
+      if: ${{ github.repository_owner == 'foundweekends' && github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
       run: |
         # https://github.com/sbt/sbt-ghpages/commit/cbedd8edb8
         export SBT_GHPAGES_COMMIT_MESSAGE="auto commit on CI https://github.com/foundweekends/giter8/commit/${{ github.sha }}"
