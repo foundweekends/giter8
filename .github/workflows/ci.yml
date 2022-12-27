@@ -23,6 +23,9 @@ jobs:
           - java: 11
             os: ubuntu-latest
             name: test_all
+          - java: 17
+            os: ubuntu-latest
+            name: test_all
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/setup-java@v3
