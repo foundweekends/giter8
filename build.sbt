@@ -143,9 +143,9 @@ lazy val gitsupport = (project in file("cli-git"))
       jgit,
       jgitSshApache,
       commonsIo,
-      scalatest % Test,
       scalamock % Test
     ),
+    libraryDependencies ++= scalatest,
     run / fork := true,
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
@@ -159,6 +159,7 @@ lazy val lib = (project in file("library"))
     name := "giter8-lib",
     description := "shared library for app and plugin",
     crossScalaVersions := List(scala212, scala213),
+    libraryDependencies ++= scalatest,
     libraryDependencies ++= Seq(
       stringTemplate,
       jgit,
@@ -166,7 +167,6 @@ lazy val lib = (project in file("library"))
       plexusArchiver,
       scalacheck % Test,
       sbtIo % Test,
-      scalatest % Test,
       scalamock % Test,
       "org.slf4j" % "slf4j-simple" % "1.7.36" % Test
     ) ++
