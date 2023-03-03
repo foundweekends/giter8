@@ -1,7 +1,7 @@
 import Dependencies._
 import CrossVersion.partialVersion
 
-val g8version = "0.15.1-SNAPSHOT"
+val g8version = "0.16.2-SNAPSHOT"
 
 val javaVmArgs: List[String] = {
   import scala.collection.JavaConverters._
@@ -143,9 +143,9 @@ lazy val gitsupport = (project in file("cli-git"))
       jgit,
       jgitSshApache,
       commonsIo,
-      scalatest % Test,
       scalamock % Test
     ),
+    libraryDependencies ++= scalatest,
     run / fork := true,
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
     buildInfoPackage := "giter8"
@@ -159,22 +159,19 @@ lazy val lib = (project in file("library"))
     name := "giter8-lib",
     description := "shared library for app and plugin",
     crossScalaVersions := List(scala212, scala213),
+    libraryDependencies ++= scalatest,
     libraryDependencies ++= Seq(
       stringTemplate,
       jgit,
       commonsIo,
       plexusArchiver,
+      scalaXml,
+      parserCombinator(scalaVersion.value),
       scalacheck % Test,
       sbtIo % Test,
-      scalatest % Test,
       scalamock % Test,
       "org.slf4j" % "slf4j-simple" % "1.7.36" % Test
-    ) ++
-      (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-          Seq(scalaXml, parserCombinator)
-        case _ => Nil
-      }),
+    ),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
 
