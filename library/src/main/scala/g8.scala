@@ -288,6 +288,7 @@ object G8 {
         "template.properties",
         "project/template.properties",
         "test",
+        "!**/sbt-test/**/test",
         "!test/",
         "project/test",
         "!project/test/",
