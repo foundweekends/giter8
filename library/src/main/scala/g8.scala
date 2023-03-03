@@ -291,6 +291,8 @@ object G8 {
         "!test/",
         "project/test",
         "!project/test/",
+        "test.script",
+        "project/test.script",
         "giter8.test",
         "project/giter8.test",
         "g8.test",
