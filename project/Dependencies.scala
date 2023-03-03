@@ -25,15 +25,20 @@ object Dependencies {
     "org.scalatest" %% "scalatest-funsuite" % "3.2.15" % Test,
     "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.15" % Test
   )
-  val scalamock        = "org.scalamock" %% "scalamock" % "5.2.0"
-  val verify           = "com.eed3si9n.verify" %% "verify" % "1.0.0"
-  val sbtIo            = "org.scala-sbt" %% "io" % "1.8.0"
-  val scala212         = "2.12.17"
-  val scala213         = "2.13.10"
-  val sbt1             = "1.2.8"
-  val scalaXml         = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
-  val parserCombinator = "org.scala-lang.modules" %% "scala-parser-combinators" % "2.2.0"
-  val logback          = "ch.qos.logback" % "logback-classic" % "1.2.3"
-  val coursier         = "io.get-coursier" %% "coursier" % "2.0.16"
-  val launcherIntf     = "org.scala-sbt" % "launcher-interface" % "1.4.1"
+  val scalamock = "org.scalamock" %% "scalamock" % "5.2.0"
+  val verify    = "com.eed3si9n.verify" %% "verify" % "1.0.0"
+  val sbtIo     = "org.scala-sbt" %% "io" % "1.8.0"
+  val scala212  = "2.12.17"
+  val scala213  = "2.13.10"
+  val sbt1      = "1.2.8"
+  val scalaXml  = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
+  def parserCombinator(scalaVersion: String) = "org.scala-lang.modules" %% "scala-parser-combinators" % {
+    CrossVersion.partialVersion(scalaVersion) match {
+      case Some((2, _)) => "1.1.2" // Do not upgrade beyond 1.x
+      case _            => "2.2.0"
+    }
+  }
+  val logback      = "ch.qos.logback" % "logback-classic" % "1.2.3"
+  val coursier     = "io.get-coursier" %% "coursier" % "2.0.16"
+  val launcherIntf = "org.scala-sbt" % "launcher-interface" % "1.4.1"
 }

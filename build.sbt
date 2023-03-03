@@ -165,16 +165,13 @@ lazy val lib = (project in file("library"))
       jgit,
       commonsIo,
       plexusArchiver,
+      scalaXml,
+      parserCombinator(scalaVersion.value),
       scalacheck % Test,
       sbtIo % Test,
       scalamock % Test,
       "org.slf4j" % "slf4j-simple" % "1.7.36" % Test
-    ) ++
-      (CrossVersion.partialVersion(scalaVersion.value) match {
-        case Some((2, scalaMajor)) if scalaMajor >= 11 =>
-          Seq(scalaXml, parserCombinator)
-        case _ => Nil
-      }),
+    ),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
 
