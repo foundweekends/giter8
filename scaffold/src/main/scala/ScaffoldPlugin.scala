@@ -33,7 +33,7 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
   import complete._
   import complete.DefaultParsers._
 
-  val parser: Def.Initialize[State => Parser[(String, List[String])]] =
+  val parser: Def.Initialize[State => Parser[(String, Boolean, List[String])]] =
     Def.setting {
       val dir = g8ScaffoldTemplatesDirectory.value
       (state: State) =>
@@ -41,16 +41,17 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
           .filter(f => f.isDirectory && !f.isHidden)
           .map(_.getName: Parser[String])
         (Space) ~> token(templates.foldLeft(" ": Parser[String])(_ | _)).examples("<template>") ~
-          (Space ~> StringBasic.examples("--k=v")).* map { case tmp ~ args =>
-            (tmp, args.toList)
+          (Space ~> "--force").? ~
+          (Space ~> StringBasic.examples("--k=v")).* map { case tmp ~ force ~ args =>
+            (tmp, force.nonEmpty, args.toList)
           }
     }
 
   val scaffoldTask =
     Def.inputTask {
-      val (name, args) = parser.parsed
-      val folder       = g8ScaffoldTemplatesDirectory.value
-      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, false)
+      val (name, forceOverwrite, args) = parser.parsed
+      val folder                       = g8ScaffoldTemplatesDirectory.value
+      G8.fromDirectoryRaw(folder / name, baseDirectory.value, args, forceOverwrite)
         .fold(
           e => sys.error(e),
           r => println("Success :)")
