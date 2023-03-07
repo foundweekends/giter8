@@ -1,3 +1,8 @@
 > g8Scaffold controller --className=Application
 
 $exists app/controllers/Application.scala
+
+> g8Scaffold controller-forcing --force --className=Application
+
+# If files are identical then app/controllers/Application.scala was successfully overwritten
+$must-mirror app/controllers/Application.scala Application_forced.scala
