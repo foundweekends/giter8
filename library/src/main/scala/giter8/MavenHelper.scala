@@ -17,7 +17,7 @@
 
 package giter8
 
-import java.net.{HttpURLConnection, URL}
+import java.net.{HttpURLConnection, URI, URL}
 import scala.xml.{NodeSeq, XML}
 
 trait MavenHelper {
@@ -25,7 +25,7 @@ trait MavenHelper {
     val search = "https://search.maven.org/solrsearch/select"
     val loc    = s"""$search?q=g:%22$org%22+AND+a:%22$name%22&rows=10&wt=xml${if (getVersions) "&core=gav" else ""}"""
 
-    withHttp(new URL(loc)) { conn =>
+    withHttp(new URI(loc).toURL) { conn =>
       conn.getResponseCode match {
         case 200 =>
           val elem = XML.load(conn.getInputStream)
