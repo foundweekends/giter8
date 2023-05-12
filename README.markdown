@@ -14,4 +14,4 @@ Credits
 
 Giter8 is licensed under Apache 2.0 license
 
-  [docs]: http://www.foundweekends.org/giter8/
+  [docs]: https://www.foundweekends.org/giter8/

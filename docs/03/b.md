@@ -90,4 +90,4 @@ against your generated project.
   [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
   [wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
   [mill-plugin]: https://github.com/ckipp01/mill-giter8
-  [src-layout]: http://www.foundweekends.org/giter8/template.html#template+layout
+  [src-layout]: https://www.foundweekends.org/giter8/template.html#template+layout

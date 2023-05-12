@@ -15,10 +15,10 @@ ThisBuild / organization := "org.foundweekends.giter8"
 ThisBuild / version := g8version
 ThisBuild / scalaVersion := scala212
 ThisBuild / organizationName := "foundweekends"
-ThisBuild / organizationHomepage := Some(url("http://foundweekends.org/"))
+ThisBuild / organizationHomepage := Some(url("https://foundweekends.org/"))
 ThisBuild / scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint", "-Xfuture")
 ThisBuild / Compile / packageBin / publishArtifact := true
-ThisBuild / homepage := Some(url("http://www.foundweekends.org/giter8/"))
+ThisBuild / homepage := Some(url("https://www.foundweekends.org/giter8/"))
 ThisBuild / publishMavenStyle := true
 ThisBuild / publishTo :=
   Some(
@@ -29,7 +29,7 @@ ThisBuild / Test / publishArtifact := false
 ThisBuild / Test / parallelExecution := false
 ThisBuild / licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / developers := List(
-  Developer("n8han", "Nathan Hamblen", "@n8han", url("http://github.com/n8han")),
+  Developer("n8han", "Nathan Hamblen", "@n8han", url("https://github.com/n8han")),
   Developer("eed3si9n", "Eugene Yokota", "@eed3si9n", url("https://github.com/eed3si9n"))
 )
 ThisBuild / scmInfo := Some(

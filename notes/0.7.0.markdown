@@ -33,8 +33,8 @@ If you're using conscript:
 
     cs foundweekends/giter8
 
-  [fw]: http://www.foundweekends.org/
-  [docs]: http://www.foundweekends.org/giter8/
+  [fw]: https://www.foundweekends.org/
+  [docs]: https://www.foundweekends.org/giter8/
   [165]: https://github.com/foundweekends/giter8/pull/165
   [192]: https://github.com/foundweekends/giter8/pull/192
   [193]: https://github.com/foundweekends/giter8/pull/193
