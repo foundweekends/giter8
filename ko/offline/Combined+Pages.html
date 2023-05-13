@@ -43,10 +43,10 @@ Scala 를 사용하여 구현되어 있어, <a href="https://www.scala-sbt.org/1
 </code></pre><h3 id="%EA%B3%B5%ED%97%8C">공헌<a href="#%EA%B3%B5%ED%97%8C" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>최초구현 (C) 2010-2015 Nathan Hamblen 와 기타 기여자
 </li><li>2016년 이후 foundweekends 프로젝트를 통해 기여하고 있습니다.
 </li></ul><p>Giter8 is licensed under Apache 2.0 license
-</p><h2 id="%EC%84%A4%EC%B9%98">설치<a href="#%EC%84%A4%EC%B9%98" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8및 기타 Scala 명령줄 도구는 <a href="http://www.foundweekends.org/conscript/ja/setup.html">Conscript</a>
+</p><h2 id="%EC%84%A4%EC%B9%98">설치<a href="#%EC%84%A4%EC%B9%98" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8및 기타 Scala 명령줄 도구는 <a href="https://www.foundweekends.org/conscript/ja/setup.html">Conscript</a>
 를 사용하여 설치 할 수 있다. 다음의 방법으로 Conscript 을 <code>~/.conscript/bin/cs</code> 로 설치 합니다.
 </p><pre><code>curl https://raw.githubusercontent.com/foundweekends/conscript/master/setup.sh | sh
-</code></pre><p>(다른 설치 방법도 있으므로, <a href="http://www.foundweekends.org/conscript/ja/setup.html">Conscript 의 설치방법</a>참고.)
+</code></pre><p>(다른 설치 방법도 있으므로, <a href="https://www.foundweekends.org/conscript/ja/setup.html">Conscript 의 설치방법</a>참고.)
 PATH가 적용되어, <code>cs</code> 명령을 실행할 수 있는 위치에서、아래의 방법으로 Giter8 를 설치(또는 업그레이드)하는것이 가능합니다:
 </p><pre><code>cs foundweekends/giter8
 </code></pre><p>동작을 확인 하려면, <code>g8</code> 매개변수 없이 실행 합니다.。
@@ -181,7 +181,7 @@ GitHub 브랜치에 템플릿을 push 하기전에 테스트를 해볼 수 있�
 위의 가이드대로, <code>foundweekends/giter8.g8</code> 템플릿을 사용하고 있다면 이미 구성되어 있습니다.
 </p><p>이미 사용하고 있는 템플릿을 현재 플러그인으로 업그레이드 하기위해서는 
 <code>project/giter8.sbt</code> 에 아래 내용을 추가합니다.
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.15.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.12.0&quot;)
 </code></pre><p>이 플러그인이 설정된 템플릿 기반 디렉토리에서 sbt 쉘에 들어가면 <code>g8Test</code> 라는 액션에서 
 기본 출력 디렉토리 (<code>target/sbt-test</code>)에 템플릿이 적용되어 해당 프로젝트에 대해 <a href="https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html">scriptted test</a> 를 fork된 프로세스에서 실행 한다. 
 테스트 스크립트는<code>project/giter8.test</code>또는 <code>src/test/g8/test</code>로 제공 할 수있습니다. 만약 없으면 <code>&gt;test</code>가 사용됩니다.
@@ -196,7 +196,7 @@ TodaysMenu.html
 다른 Giter8 사용자가 발견되도록 하여야 합니다.
 </p><h2 id="Scaffolding+%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8">Scaffolding 플러그인<a href="#Scaffolding+%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8는 scaffolding 용 sbt 플러그인도 제공하고 있습니다.
 </p><h3 id="scaffold+%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8%EC%9D%98+%EC%82%AC%EC%9A%A9">scaffold 플러그인의 사용<a href="#scaffold+%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8%EC%9D%98+%EC%82%AC%EC%9A%A9" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>아래내용을 <code>project/scaffold.sbt</code> 파일에 적용:
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.15.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.12.0&quot;)
 </code></pre><p>이제 sbt 쉘에서 <code>g8Scaffold</code> 명령을 사용할 수있게 되었습니다.
 또한 탭 완성을 사용하여 사용 가능한 템플릿을 확인 해볼 수있습니다.
 </p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;

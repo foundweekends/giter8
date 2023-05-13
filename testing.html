@@ -63,7 +63,7 @@ them to a GitHub branch. If you used the <code>foundweekends/giter8.g8</code> te
 recommended above, it should already be configured.
 </p><p>If you need to upgrade an existing template project to the current plugin, you can
 add it as a source dependency in <code>project/giter8.sbt</code>:
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.15.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.12.0&quot;)
 </code></pre><p>When you enter sbt’s shell in the base directory of a
 template project that is configured to use this plugin, the action
 <code>g8Test</code> will apply the template in the default output directory
@@ -91,7 +91,7 @@ object g8 extends G8Module {
   override def validationTargets =
     Seq(&quot;example.compile&quot;, &quot;example.fix&quot;, &quot;example.reformat&quot;)
 }
-</code></pre><p>This plugin only supprts <a href="http://www.foundweekends.org/giter8/template.html#template+layout">`src` layouts</a>, but gives you some useful
+</code></pre><p>This plugin only supprts <a href="https://www.foundweekends.org/giter8/template.html#template+layout">`src` layouts</a>, but gives you some useful
 targets like <code>g8.validate</code> which will both test the generation of your template
 and also ensure any targets defined with <code>validationTargets</code> can also be ran
 against your generated project.

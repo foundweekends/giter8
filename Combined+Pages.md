@@ -507,7 +507,7 @@ If you need to upgrade an existing template project to the current plugin, you c
 add it as a source dependency in `project/giter8.sbt`:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.15.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.12.0")
 ```
 
 When you enter sbt's shell in the base directory of a
@@ -556,7 +556,7 @@ against your generated project.
   [scripted]: https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html
   [wiki]: https://github.com/foundweekends/giter8/wiki/giter8-templates
   [mill-plugin]: https://github.com/ckipp01/mill-giter8
-  [src-layout]: http://www.foundweekends.org/giter8/template.html#template+layout
+  [src-layout]: https://www.foundweekends.org/giter8/template.html#template+layout
 
 
 Scaffolding plugin
@@ -569,7 +569,7 @@ Giter8 supplies an sbt plugin for creating and using scaffolds.
 Add the following lines in `project/scaffold.sbt`
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.15.0")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.12.0")
 ```
 
 Once done, the  `g8Scaffold` command can be used in the sbt shell.
@@ -578,6 +578,12 @@ Use TAB completion to discover available templates.
 ```
 > g8Scaffold <TAB>
 controller   global       model
+```
+
+To overwrite existing files pass the `--force` flag after the template:
+
+```
+> g8Scaffold model --force
 ```
 
 The template plugin will prompt each property that needed to complete the scaffolding process:
@@ -649,4 +655,4 @@ You can either delete existing version of giter8, or change `PATH` variable such
 From a shell session run `cs foundweekends/giter8`.
 
 [official page]: https://github.com/foundweekends/conscript
-[conscript]: http://www.foundweekends.org/conscript/
+[conscript]: https://www.foundweekends.org/conscript/
