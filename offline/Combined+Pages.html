@@ -53,12 +53,13 @@ Once <code>cs</code> is on your path, you can install giter8 with this command:
 </code></pre><p>and update it using:
 </p><pre><code>$ cs update g8
 </code></pre><h4 id="Manual">Manual<a href="#Manual" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>It’s possible to manually download and install giter8 directly from Maven Central:
-</p><pre><code>$ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.13.1/giter8-bootstrap_2.12-0.13.1.sh &gt; ~/bin/g8
+</p><pre><code>$ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.14.0/giter8-bootstrap_2.12-0.14.0.sh &gt; ~/bin/g8
 $ chmod +x ~/bin/g8
 </code></pre><p>Replace <code>~/bin/</code> with anything that is on your <code>PATH</code>. To make sure everything is working, try running <code>g8</code> with no
 parameters, you should see
 </p><pre><code>Error: Missing argument &lt;template&gt;
-Try --help for more information. </code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories can reside on GitHub and should be named with the
+Try --help for more information.
+</code></pre><h2 id="Usage">Usage<a href="#Usage" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Template repositories can reside on GitHub and should be named with the
 suffix <code>.g8</code>. We’re keeping a <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">list of templates on the wiki</a>.
 </p><p>To apply a template, for example, <a href="https://github.com/unfiltered/unfiltered.g8">unfiltered/unfiltered.g8</a>:
 </p><pre><code>$ g8 unfiltered/unfiltered.g8
@@ -329,7 +330,7 @@ them to a GitHub branch. If you used the <code>foundweekends/giter8.g8</code> te
 recommended above, it should already be configured.
 </p><p>If you need to upgrade an existing template project to the current plugin, you can
 add it as a source dependency in <code>project/giter8.sbt</code>:
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.12.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.16.2&quot;)
 </code></pre><p>When you enter sbt’s shell in the base directory of a
 template project that is configured to use this plugin, the action
 <code>g8Test</code> will apply the template in the default output directory
@@ -347,13 +348,29 @@ to the template and write it to the same <code>target/g8</code> directory.
 project with a <code>.g8</code> extension) you can test it with the actual g8
 runtime. When you’re ready, add your template project to the
 <a href="https://github.com/foundweekends/giter8/wiki/giter8-templates">the wiki</a> so other giter8 users can find it.
+</p><h3 id="Using+Mill">Using Mill<a href="#Using+Mill" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There is also an external <a href="https://github.com/ckipp01/mill-giter8">Mill plugin</a> that can be used to test
+your templates as well. An example setup can be found below:
+</p><pre><code class="prettyprint lang-scala">import $ivy.`io.chris-kipp::mill-giter8::0.2.0`
+
+import io.kipp.mill.giter8.G8Module
+
+object g8 extends G8Module {
+  override def validationTargets =
+    Seq(&quot;example.compile&quot;, &quot;example.fix&quot;, &quot;example.reformat&quot;)
+}
+</code></pre><p>This plugin only supprts <a href="https://www.foundweekends.org/giter8/template.html#template+layout">`src` layouts</a>, but gives you some useful
+targets like <code>g8.validate</code> which will both test the generation of your template
+and also ensure any targets defined with <code>validationTargets</code> can also be ran
+against your generated project.
 </p><h2 id="Scaffolding+plugin">Scaffolding plugin<a href="#Scaffolding+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 supplies an sbt plugin for creating and using scaffolds.
 </p><h3 id="Using+the+scaffold+plugin">Using the scaffold plugin<a href="#Using+the+scaffold+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Add the following lines in <code>project/scaffold.sbt</code>
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.12.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.16.2&quot;)
 </code></pre><p>Once done, the  <code>g8Scaffold</code> command can be used in the sbt shell.
 Use TAB completion to discover available templates.
 </p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;
 controller   global       model
+</code></pre><p>To overwrite existing files pass the <code>--force</code> flag after the template:
+</p><pre><code class="">&gt; g8Scaffold model --force
 </code></pre><p>The template plugin will prompt each property that needed to complete the scaffolding process:
 </p><pre><code class="">&gt; g8Scaffold controller
 className [Application]:

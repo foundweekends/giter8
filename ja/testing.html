@@ -57,7 +57,7 @@ GitHub ブランチにテンプレートをプッシュする前にちゃんと�
 上で推奨される手順にしたがって <code>foundweekends/giter8.g8</code> テンプレートを使っていれば既に設定済みのはずだ。
 </p><p>既にあるテンプレートを現行プラグインにアップグレードさせるためには以下を
 <code>project/giter8.sbt</code> に書き込む:
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.12.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.16.2&quot;)
 </code></pre><p>このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
 <code>g8Test</code> というアクションでデフォルトのアウトプットディレクトリ (<code>target/sbt-test</code>)
 内にテンプレートが適用されて、そのプロジェクトに対して<a href="https://www.scala-sbt.org/1.x/docs/Testing-sbt-plugins.html">scriptted test</a> がフォークプロセスで実行される。

@@ -42,11 +42,13 @@
                   <div class="rightcolumn contents">
                   <h2 id="Scaffolding+plugin">Scaffolding plugin<a href="#Scaffolding+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 supplies an sbt plugin for creating and using scaffolds.
 </p><h3 id="Using+the+scaffold+plugin">Using the scaffold plugin<a href="#Using+the+scaffold+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Add the following lines in <code>project/scaffold.sbt</code>
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.12.0&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.16.2&quot;)
 </code></pre><p>Once done, the  <code>g8Scaffold</code> command can be used in the sbt shell.
 Use TAB completion to discover available templates.
 </p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;
 controller   global       model
+</code></pre><p>To overwrite existing files pass the <code>--force</code> flag after the template:
+</p><pre><code class="">&gt; g8Scaffold model --force
 </code></pre><p>The template plugin will prompt each property that needed to complete the scaffolding process:
 </p><pre><code class="">&gt; g8Scaffold controller
 className [Application]:
