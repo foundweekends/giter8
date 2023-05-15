@@ -46,7 +46,7 @@ and update it using:
 
 It's possible to manually download and install giter8 directly from Maven Central:
 
-    $ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.14.0/giter8-bootstrap_2.12-0.14.0.sh > ~/bin/g8
+    $ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_2.12/0.16.2/giter8-bootstrap_2.12-0.16.2.sh > ~/bin/g8
     $ chmod +x ~/bin/g8
 
 Replace `~/bin/` with anything that is on your `PATH`. To make sure everything is working, try running `g8` with no
