@@ -1,7 +1,7 @@
 name: scala-steward
 on:
   push:
-    branches: [ master ]
+    branches: [ develop ]
   schedule:
   - cron: '0 14 * * *'
   workflow_dispatch:
