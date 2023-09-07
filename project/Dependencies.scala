@@ -20,10 +20,10 @@ object Dependencies {
   val scopt      = "com.github.scopt" %% "scopt" % "4.1.0"
   val scalacheck = "org.scalacheck" %% "scalacheck" % "1.17.0"
   val scalatest = Seq(
-    "org.scalatest" %% "scalatest-flatspec" % "3.2.16" % Test,
-    "org.scalatest" %% "scalatest-funspec" % "3.2.16" % Test,
-    "org.scalatest" %% "scalatest-funsuite" % "3.2.16" % Test,
-    "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.16" % Test
+    "org.scalatest" %% "scalatest-flatspec" % "3.2.17" % Test,
+    "org.scalatest" %% "scalatest-funspec" % "3.2.17" % Test,
+    "org.scalatest" %% "scalatest-funsuite" % "3.2.17" % Test,
+    "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.17" % Test
   )
   val scalamock = "org.scalamock" %% "scalamock" % "5.2.0"
   val verify    = "com.eed3si9n.verify" %% "verify" % "1.0.0"
