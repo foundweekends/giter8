@@ -13,7 +13,7 @@ jobs:
     steps:
     - name: Generate token
       id: generate_token
-      uses: tibdex/github-app-token@v1
+      uses: tibdex/github-app-token@v2
       with:
         app_id: 89697
         private_key: ${{ secrets.FOUNDWEEKENDS_BOT_KEY }}
