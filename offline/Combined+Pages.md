@@ -548,7 +548,7 @@ object g8 extends G8Module {
 }
 ```
 
-This plugin only supprts [`src` layouts][src-layout], but gives you some useful
+This plugin only supports [`src` layouts][src-layout], but gives you some useful
 targets like `g8.validate` which will both test the generation of your template
 and also ensure any targets defined with `validationTargets` can also be ran
 against your generated project.
