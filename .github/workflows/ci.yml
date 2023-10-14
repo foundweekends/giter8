@@ -20,10 +20,7 @@ jobs:
           - java: 8
             os: ubuntu-latest
             name: scala_2_13
-          - java: 11
-            os: ubuntu-latest
-            name: test_all
-          - java: 17
+          - java: 21
             os: ubuntu-latest
             name: test_all
     runs-on: ${{ matrix.os }}
