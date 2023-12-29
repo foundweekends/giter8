@@ -120,7 +120,7 @@ object VersionNumber {
     }
   }
 
-  implicit val versionNumberOrdering = new Ordering[VersionNumber] {
+  implicit val versionNumberOrdering: Ordering[VersionNumber] = new Ordering[VersionNumber] {
     override def compare(v1: VersionNumber, v2: VersionNumber): Int = {
       val matchedVersions = v1.numbers.zipAll(v2.numbers, 0L, 0L)
 
