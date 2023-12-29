@@ -17,6 +17,14 @@ ThisBuild / scalaVersion := scala212
 ThisBuild / organizationName := "foundweekends"
 ThisBuild / organizationHomepage := Some(url("https://foundweekends.org/"))
 ThisBuild / scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint", "-Xfuture")
+ThisBuild / scalacOptions ++= {
+  scalaBinaryVersion.value match {
+    case "3" =>
+      Nil
+    case _ =>
+      Seq("-Xsource:3")
+  }
+}
 ThisBuild / Compile / packageBin / publishArtifact := true
 ThisBuild / homepage := Some(url("https://www.foundweekends.org/giter8/"))
 ThisBuild / publishMavenStyle := true

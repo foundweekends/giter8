@@ -148,16 +148,16 @@ object G8 {
   }
 
   class STErrorHandler extends STErrorListener {
-    def compileTimeError(msg: STMessage) = {
+    def compileTimeError(msg: STMessage): Unit = {
       throw new STException(msg.toString, null)
     }
-    def runTimeError(msg: STMessage) = {
+    def runTimeError(msg: STMessage): Unit = {
       throw new STException(msg.toString, null)
     }
-    def IOError(msg: STMessage) = {
+    def IOError(msg: STMessage): Unit = {
       throw new STException(msg.toString, null)
     }
-    def internalError(msg: STMessage) = {
+    def internalError(msg: STMessage): Unit = {
       throw new STException(msg.toString, null)
     }
   }
