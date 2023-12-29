@@ -199,7 +199,7 @@ object G8 {
       parameters
         .get("verbatim")
         .toSeq
-        .flatMap(_.split(' ').toSeq): _*
+        .flatMap(_.split(' ').toSeq)*
     )
 
     rules.isIgnored(file, base)

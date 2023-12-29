@@ -240,7 +240,7 @@ lazy val bootstrap = (project in file("bootstrap"))
     addArtifact(coursierBootstrapBatch / artifact, coursierBootstrapBatch)
   )
 
-def customCommands: Seq[Setting[_]] = Seq(
+def customCommands: Seq[Setting[?]] = Seq(
   commands += Command.command("release") { state =>
     "clean" ::
       s"++${scala213}" ::
