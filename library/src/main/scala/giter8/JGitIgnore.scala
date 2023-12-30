@@ -77,7 +77,7 @@ object JGitIgnore {
         source.close()
       }
 
-    new JGitIgnore(patterns: _*)
+    new JGitIgnore(patterns*)
   }
 
   def apply(file: File): JGitIgnore = {
@@ -88,7 +88,7 @@ object JGitIgnore {
       } finally {
         source.close()
       }
-    JGitIgnore(patterns: _*)
+    JGitIgnore(patterns*)
   }
 
   def fromFiles(files: File*): JGitIgnore = {
@@ -106,6 +106,6 @@ object JGitIgnore {
 
       builder.result
     }
-    JGitIgnore(patterns: _*)
+    JGitIgnore(patterns*)
   }
 }

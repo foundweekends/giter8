@@ -104,12 +104,12 @@ class LauncherProcessor extends Processor {
       interfaceClassName: String,
       methodName: String,
       loader: ClassLoader
-  )(argTypes: Class[_]*)(args: AnyRef*): AnyRef = {
+  )(argTypes: Class[?]*)(args: AnyRef*): AnyRef = {
     val interfaceClass = getInterfaceClass(interfaceClassName, loader)
     val interface      = interfaceClass.getDeclaredConstructor().newInstance().asInstanceOf[AnyRef]
-    val method         = interfaceClass.getMethod(methodName, argTypes: _*)
+    val method         = interfaceClass.getMethod(methodName, argTypes*)
     try {
-      method.invoke(interface, args: _*)
+      method.invoke(interface, args*)
     } catch {
       case e: InvocationTargetException => throw e.getCause
     }

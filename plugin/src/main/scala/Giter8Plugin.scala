@@ -45,7 +45,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     scriptedLaunchOpts := Seq()
   )
 
-  lazy val baseGiter8Settings: Seq[Def.Setting[_]] = Seq(
+  lazy val baseGiter8Settings: Seq[Def.Setting[?]] = Seq(
     g8 := {
       val base  = (g8 / unmanagedSourceDirectories).value
       val srcs  = (g8 / sources).value
@@ -102,7 +102,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     }
   )
 
-  lazy val giter8TestSettings: Seq[Def.Setting[_]] = SBTCompat.scriptedSettings ++
+  lazy val giter8TestSettings: Seq[Def.Setting[?]] = SBTCompat.scriptedSettings ++
     Seq(
       Test / g8Test := { scriptedTask.evaluated },
       Test / g8Test / aggregate := false,
@@ -167,5 +167,5 @@ object Giter8Plugin extends sbt.AutoPlugin {
       Test / g8 / scriptedBufferLog := true
     )
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
+  override lazy val projectSettings: Seq[Def.Setting[?]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
 }

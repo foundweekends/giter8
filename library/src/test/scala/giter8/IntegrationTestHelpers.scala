@@ -61,7 +61,7 @@ trait IntegrationTestHelpers {
 
   private def mapWithRelativePaths(files: Seq[File], baseDir: File): Map[String, File] = {
     val pairs = files.map(f => getRelativePath(f, baseDir) -> f)
-    Map(pairs: _*)
+    Map(pairs*)
   }
 
   private def getRelativePath(file: File, baseDirectory: File): String = {

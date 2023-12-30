@@ -58,7 +58,7 @@ object ScaffoldPlugin extends sbt.AutoPlugin {
         )
     }
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = Seq(
+  override lazy val projectSettings: Seq[Def.Setting[?]] = Seq(
     g8ScaffoldTemplatesDirectory := { baseDirectory.value / ".g8" },
     g8Scaffold := scaffoldTask.evaluated
   )

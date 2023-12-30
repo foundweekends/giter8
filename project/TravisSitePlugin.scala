@@ -70,7 +70,7 @@ object TravisSitePlugin extends sbt.AutoPlugin {
 
   def gitRemoveFiles(dir: File, files: List[File], git: GitRunner, s: TaskStreams): Unit = {
     if (!files.isEmpty)
-      git(("rm" :: "-r" :: "-f" :: "--ignore-unmatch" :: files.map(_.getAbsolutePath)): _*)(dir, s.log)
+      git(("rm" :: "-r" :: "-f" :: "--ignore-unmatch" :: files.map(_.getAbsolutePath))*)(dir, s.log)
     ()
   }
 
@@ -80,15 +80,15 @@ object TravisSitePlugin extends sbt.AutoPlugin {
       case Some(x) => x
       case _       => "HEAD^..HEAD"
     }
-    val stat = git(("diff" :: "--shortstat" :: range :: "--" :: "docs" :: Nil): _*)(dir, log)
+    val stat = git(("diff" :: "--shortstat" :: range :: "--" :: "docs" :: Nil)*)(dir, log)
     stat.trim.nonEmpty
   }
 
   def gitConfig(dir: File, email: String, git: GitRunner, log: Logger): Unit =
     sys.env.get("CI") match {
       case Some(_) =>
-        git(("config" :: "user.name" :: "foundweekends-bot[bot]" :: Nil): _*)(dir, log)
-        git(("config" :: "user.email" :: email :: Nil): _*)(dir, log)
+        git(("config" :: "user.name" :: "foundweekends-bot[bot]" :: Nil)*)(dir, log)
+        git(("config" :: "user.email" :: email :: Nil)*)(dir, log)
       case _ => ()
     }
 }

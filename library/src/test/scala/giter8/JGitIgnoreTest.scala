@@ -13,7 +13,7 @@ class JGitIgnoreTest extends AnyFlatSpec with Matchers {
 
   "JGitIgnore" can "be created from Seq of string patterns" in {
     val patterns = Seq(".test")
-    JGitIgnore(patterns: _*).getPatterns should contain theSameElementsAs patterns
+    JGitIgnore(patterns*).getPatterns should contain theSameElementsAs patterns
   }
 
   it can "be created from InputStream" in {
