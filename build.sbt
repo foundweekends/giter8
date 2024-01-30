@@ -115,7 +115,6 @@ lazy val plugin = (project in file("plugin"))
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
     crossScalaVersions := List(scala212),
-    resolvers += Resolver.typesafeIvyRepo("releases"),
     scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
     scriptedBufferLog := false,
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
