@@ -18,7 +18,7 @@ object Dependencies {
     ExclusionRule("org.apache.sshd", "sshd-sftp")
   )
   val scopt      = "com.github.scopt" %% "scopt" % "4.1.0"
-  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.17.0"
+  val scalacheck = "org.scalacheck" %% "scalacheck" % "1.17.1"
   val scalatest = Seq(
     "org.scalatest" %% "scalatest-flatspec" % "3.2.18" % Test,
     "org.scalatest" %% "scalatest-funspec" % "3.2.18" % Test,
