@@ -177,7 +177,7 @@ lazy val lib = (project in file("library"))
       scalacheck % Test,
       sbtIo % Test,
       scalamock % Test,
-      "org.slf4j" % "slf4j-simple" % "1.7.36" % Test
+      "org.slf4j" % "slf4j-simple" % "2.0.16" % Test
     ),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
