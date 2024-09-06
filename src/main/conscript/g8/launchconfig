@@ -4,7 +4,7 @@
   name: giter8
   class: giter8.Giter8
 [scala]
-  version: 2.12.19
+  version: 2.12.20
 [repositories]
   local
   maven-central
