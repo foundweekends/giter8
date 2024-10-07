@@ -121,19 +121,6 @@ lazy val plugin = (project in file("plugin"))
     scripted := scripted
       .dependsOn(lib / publishLocal)
       .evaluated,
-    libraryDependencies += {
-      val crossSbtVersion = (pluginCrossBuild / sbtVersion).value
-
-      val artifact =
-        partialVersion(crossSbtVersion) match {
-          case Some((1, _)) =>
-            "org.scala-sbt" %% "scripted-plugin"
-          case _ =>
-            throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 1.X)")
-        }
-
-      artifact % crossSbtVersion
-    },
     Test / test := {
       scripted.toTask("").value
     }
