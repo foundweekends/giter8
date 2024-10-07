@@ -482,7 +482,7 @@ object G8 {
       .toMap
   }
 
-  final case object NullInputException extends Throwable
+  case object NullInputException extends Throwable
 
   private def relativize(in: File, from: File): String = from.toURI().relativize(in.toURI).getPath
 
@@ -563,8 +563,8 @@ object G8 {
 
   def readProps(stm: InputStream): G8.OrderedProperties = {
     // Overrides java.util.Properties to return properties back in the order they were specified
+    val parameters = mutable.ListBuffer.empty[(String, String)]
     val properties = new Properties {
-      val parameters = mutable.ListBuffer.empty[(String, String)]
 
       override def put(key: Object, value: Object) = {
         val k = key.toString
@@ -577,7 +577,7 @@ object G8 {
 
     try {
       properties.load(stm)
-      properties.parameters.toList
+      parameters.toList
     } finally {
       stm.close()
     }

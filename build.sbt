@@ -67,7 +67,7 @@ lazy val app = (project in file("app"))
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
-    crossScalaVersions := List(scala212, scala213),
+    crossScalaVersions := List(scala212, scala213, scala3),
     csRun / sourceDirectory := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
     },
@@ -144,7 +144,7 @@ lazy val gitsupport = (project in file("cli-git"))
   .settings(
     description := "cli and git support library for Giter8",
     name := "giter8-cli-git",
-    crossScalaVersions := List(scala212, scala213),
+    crossScalaVersions := List(scala212, scala213, scala3),
     libraryDependencies ++= Seq(
       scopt,
       jgit,
@@ -165,7 +165,7 @@ lazy val lib = (project in file("library"))
   .settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",
-    crossScalaVersions := List(scala212, scala213),
+    crossScalaVersions := List(scala212, scala213, scala3),
     libraryDependencies ++= scalatest,
     libraryDependencies ++= Seq(
       stringTemplate,
@@ -189,7 +189,7 @@ lazy val launcher = (project in file("launcher"))
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8-launcher",
-    crossScalaVersions := List(scala212, scala213),
+    crossScalaVersions := List(scala212, scala213, scala3),
     libraryDependencies ++= Seq(
       coursier,
       verify % Test,

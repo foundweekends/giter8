@@ -32,7 +32,7 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
   private def genVersionNumber: Gen[VersionNumber] =
     for {
       n       <- Gen.choose(3, 4)
-      numbers <- Gen.listOfN(n, Gen.choose(0, 1000L))
+      numbers <- Gen.listOfN(n, Gen.choose(0L, 1000L))
       t       <- Gen.choose(1, 3)
       o       <- Gen.choose(1, 3)
       tags    <- Gen.listOfN(t, defaultGenStr)
@@ -47,32 +47,32 @@ final class VersionNumberOrderingTest extends Properties("StableVersion") {
 
   private def genSameMajorVersionNumbers: Gen[Seq[VersionNumber]] =
     for {
-      major          <- Gen.choose(0, 1000L)
+      major          <- Gen.choose(0L, 1000L)
       variations     <- Gen.choose(1, 5)
       versionNumbers <- fixedPrefixVersionNumbers(major)
     } yield versionNumbers
 
   private def genSameMajorAndMinorVersionNumbers: Gen[Seq[VersionNumber]] =
     for {
-      major          <- Gen.choose(0, 1000L)
-      minor          <- Gen.choose(0, 1000L)
+      major          <- Gen.choose(0L, 1000L)
+      minor          <- Gen.choose(0L, 1000L)
       versionNumbers <- fixedPrefixVersionNumbers(major, minor)
     } yield versionNumbers
 
   private def genSameMajorAndMinorAndPatchVersionNumbers: Gen[Seq[VersionNumber]] =
     for {
-      major          <- Gen.choose(0, 1000L)
-      minor          <- Gen.choose(0, 1000L)
-      patch          <- Gen.choose(0, 1000L)
+      major          <- Gen.choose(0L, 1000L)
+      minor          <- Gen.choose(0L, 1000L)
+      patch          <- Gen.choose(0L, 1000L)
       versionNumbers <- fixedPrefixVersionNumbers(major, minor, patch)
     } yield versionNumbers
 
   private def genSameMajorAndMinorAndPatchAndOtherVersionNumbers: Gen[Seq[VersionNumber]] =
     for {
-      major          <- Gen.choose(0, 1000L)
-      minor          <- Gen.choose(0, 1000L)
-      patch          <- Gen.choose(0, 1000L)
-      other          <- Gen.choose(0, 1000L)
+      major          <- Gen.choose(0L, 1000L)
+      minor          <- Gen.choose(0L, 1000L)
+      patch          <- Gen.choose(0L, 1000L)
+      other          <- Gen.choose(0L, 1000L)
       versionNumbers <- fixedPrefixVersionNumbers(major, minor, patch, other)
     } yield versionNumbers
 

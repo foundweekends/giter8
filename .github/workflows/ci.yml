@@ -15,6 +15,9 @@ jobs:
             os: ubuntu-latest
             name: test_all
           - java: 8
+            os: ubuntu-latest
+            name: scala_3
+          - java: 8
             os: windows-latest
             name: scala_2_13 # TODO enable scripted test
           - java: 8
@@ -48,6 +51,9 @@ jobs:
             ;;
           "scala_2_13")
             sbt -v SetScala213 app/test lib/test
+            ;;
+          "scala_3")
+            sbt -v '++ 3.x' app/test lib/test
             ;;
           *)
             echo "unknown job"
