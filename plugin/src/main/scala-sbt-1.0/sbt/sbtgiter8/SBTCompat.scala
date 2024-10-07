@@ -18,8 +18,10 @@
 package sbt
 package sbtgiter8
 
+@deprecated("will be removed")
 object SBTCompat extends ScriptedCompat
 
+@deprecated("will be removed")
 trait ScriptedCompat {
   val finalScriptName      = "test.script"
   val scriptedSettings     = sbt.ScriptedPlugin.projectSettings
