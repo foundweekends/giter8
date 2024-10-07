@@ -26,7 +26,7 @@ object Maven extends JavaTokenParsers with MavenHelper {
   private val org, name, release = """[\w\-\.]+""".r
 
   private val spec =
-    "maven" ~> "(" ~> org ~ ("," ~> name) ~ (("," ~> release) ?) <~ ")" ^^ { case org ~ name ~ release =>
+    "maven" ~> "(" ~> org ~ ("," ~> name) ~ (("," ~> release).?) <~ ")" ^^ { case org ~ name ~ release =>
       (org, name, release)
     }
 
