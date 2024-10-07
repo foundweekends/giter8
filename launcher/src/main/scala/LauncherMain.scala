@@ -39,13 +39,13 @@ class LauncherProcessor extends Processor {
     Right("")
   }
 
-  /** See if there are JARs in ~/.giter8/boot/org.foundweekends.giter8/giter8_2.12/0.10.x. Otherwise, use Coursier to
-    * download the giter8 artifacts and move them into the boot dir for the next time.
+  /** See if there are JARs in ~/.giter8/boot/org.foundweekends.giter8/giter8_${scalaBinaryVersion}/${version}.
+    * Otherwise, use Coursier to download the giter8 artifacts and move them into the boot dir for the next time.
     */
   def giter8Artifacts(g8v: String): Seq[File] = {
     val launcherVersion = "1.1.3"
     val bootHome        = Home.home / "boot"
-    val bootDir         = bootHome / "org.foundweekends.giter8" / "giter8_2.12" / g8v
+    val bootDir         = bootHome / "org.foundweekends.giter8" / s"giter8_${giter8.BuildInfo.scalaBinaryVersion}" / g8v
     val bootJars =
       if (bootDir.exists) bootDir.listFiles.toList filter { _.getName.endsWith(".jar") }
       else Nil
@@ -56,7 +56,13 @@ class LauncherProcessor extends Processor {
         import coursier._
         val downloadedJars = Fetch()
           .addDependencies(
-            Dependency(Module(Organization("org.foundweekends.giter8"), ModuleName("giter8_2.12")), g8v),
+            Dependency(
+              Module(
+                Organization("org.foundweekends.giter8"),
+                ModuleName(s"giter8_${giter8.BuildInfo.scalaBinaryVersion}")
+              ),
+              g8v
+            ),
             Dependency(Module(Organization("org.scala-sbt"), ModuleName("launcher")), launcherVersion)
           )
           .run()
