@@ -19,8 +19,11 @@ package giter8
 
 import sbt._
 import sbt.Path.relativeTo
-import sbt.sbtgiter8.{SBTCompat, ScriptedCompat}
-import sbt.sbtgiter8.SBTCompat._
+import sbt.sbtgiter8.ScriptedCompat
+import sbt.ScriptedPlugin.autoImport.scriptedBufferLog
+import sbt.ScriptedPlugin.autoImport.scriptedLaunchOpts
+import sbt.ScriptedPlugin.autoImport.scriptedDependencies
+import sbt.ScriptedPlugin.autoImport.sbtTestDirectory
 
 object Giter8Plugin extends sbt.AutoPlugin {
   override val requires = sbt.plugins.JvmPlugin
@@ -29,6 +32,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
   import Keys._
 
   object autoImport {
+    @deprecated("will be removed")
     object g8ScriptedCompat extends ScriptedCompat
 
     lazy val g8               = taskKey[Seq[File]]("Apply default parameters to input templates and write to output.")
@@ -102,9 +106,9 @@ object Giter8Plugin extends sbt.AutoPlugin {
     }
   )
 
-  lazy val giter8TestSettings: Seq[Def.Setting[?]] = SBTCompat.scriptedSettings ++
+  lazy val giter8TestSettings: Seq[Def.Setting[?]] = ScriptedPlugin.projectSettings ++
     Seq(
-      Test / g8Test := { scriptedTask.evaluated },
+      Test / g8Test := { ScriptedPlugin.autoImport.scripted.evaluated },
       Test / g8Test / aggregate := false,
       scriptedDependencies := {
         val x = (Test / g8).value
@@ -130,7 +134,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
         // copy test script or generate one
         // the final script should always be called "test.script"
         // no matter how it was originally called by user
-        val script = new File(out, finalScriptName)
+        val script = new File(out, "test.script")
         if (ts.exists) IO.copyFile(ts, script)
         else IO.write(script, """>test""")
 

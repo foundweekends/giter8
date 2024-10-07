@@ -3,4 +3,4 @@ val javaVmArgs: List[String] = {
   java.lang.management.ManagementFactory.getRuntimeMXBean.getInputArguments.asScala.toList
 }
 
-g8ScriptedCompat.scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith))
+scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith))
