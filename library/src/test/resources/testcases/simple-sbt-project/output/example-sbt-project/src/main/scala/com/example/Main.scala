@@ -1,5 +1,7 @@
 package com.example
 
-object Main extends App {
-  println("Hello from project Example SBT project")
+object Main {
+  def main(args: Array[String]): Unit = {
+    println("Hello from project Example SBT project")
+  }
 }

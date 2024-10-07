@@ -1,5 +1,7 @@
 package $package$
 
-object Main extends App {
-  println("Hello from project without name")
+object Main {
+  def main(args: Array[String]): Unit = {
+    println("Hello from project without name")
+  }
 }

@@ -6,10 +6,12 @@ import java.util.Properties
 import java.lang.reflect.InvocationTargetException
 import java.nio.file.{Files, StandardCopyOption}
 
-object LauncherMain extends Runner with App {
-  java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
+object LauncherMain extends Runner {
+  def main(args: Array[String]): Unit = {
+    java.util.logging.Logger.getLogger("").setLevel(java.util.logging.Level.SEVERE)
 
-  System.exit(run(args, new LauncherProcessor))
+    System.exit(run(args, new LauncherProcessor))
+  }
 }
 
 class LauncherProcessor extends Processor {
