@@ -141,7 +141,7 @@ lazy val gitsupport = (project in file("cli-git"))
     ),
     libraryDependencies ++= scalatest,
     run / fork := true,
-    buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion),
+    buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion, scalaBinaryVersion),
     buildInfoPackage := "giter8"
   )
 
