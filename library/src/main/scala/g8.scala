@@ -108,7 +108,7 @@ object G8 {
       }
     } catch {
       case e: Exception =>
-        println("Falling back to file copy for %s: %s" format (in.toString, e.getMessage))
+        println(s"Falling back to file copy for ${in}: ${e.getMessage}")
         FileUtils.copyFile(in, out)
     }
     allCatch opt {
@@ -505,10 +505,10 @@ object G8 {
       }
       .foreach { case (in, optionOut) =>
         optionOut match {
-          case None => println("Skipping ignored file: %s" format in.toString)
+          case None => println(s"Skipping ignored file: ${in}")
           case Some(out) => {
             if (out.exists && !forceOverwrite) {
-              println("Skipping existing file: %s" format out.toString)
+              println(s"Skipping existing file: ${out}")
             } else {
               out.getParentFile.mkdirs()
               if (G8.verbatim(in, parameters, tmpl))
@@ -535,7 +535,7 @@ object G8 {
         }
       }
 
-    Right("Template applied in %s" format (base.toString))
+    Right(s"Template applied in ${base}")
   }
 
   def copyScaffolds(sf: File, output: File): Unit = {
