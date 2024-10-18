@@ -41,5 +41,5 @@ object Dependencies {
   }
   val logback      = "ch.qos.logback" % "logback-classic" % "1.2.3"
   val coursier     = "io.get-coursier" %% "coursier" % "2.1.13"
-  val launcherIntf = "org.scala-sbt" % "launcher-interface" % "1.4.3"
+  val launcherIntf = "org.scala-sbt" % "launcher-interface" % "1.4.4"
 }
