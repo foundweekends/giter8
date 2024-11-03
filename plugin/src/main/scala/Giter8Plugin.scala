@@ -17,6 +17,7 @@
 
 package giter8
 
+import giter8.Giter8PluginCompat._
 import sbt._
 import sbt.Path.relativeTo
 import sbt.sbtgiter8.ScriptedCompat
@@ -35,11 +36,13 @@ object Giter8Plugin extends sbt.AutoPlugin {
     @deprecated("will be removed")
     object g8ScriptedCompat extends ScriptedCompat
 
+    @transient
     lazy val g8               = taskKey[Seq[File]]("Apply default parameters to input templates and write to output.")
     lazy val g8PropertiesFile = settingKey[File]("g8-properties-file")
-    lazy val g8Properties     = taskKey[Map[String, String]]("g8-properties")
-    lazy val g8TestScript     = settingKey[File]("g8-test-script")
-    lazy val g8Test           = inputKey[Unit]("Run `sbt test` in output to smoke-test the templates")
+    @transient
+    lazy val g8Properties = taskKey[Map[String, String]]("g8-properties")
+    lazy val g8TestScript = settingKey[File]("g8-test-script")
+    lazy val g8Test       = inputKey[Unit]("Run `sbt test` in output to smoke-test the templates")
   }
 
   import autoImport._
@@ -70,12 +73,12 @@ object Giter8Plugin extends sbt.AutoPlugin {
       retval ++ scaffolds
     },
     g8 / aggregate := false,
-    g8 / unmanagedSourceDirectories := {
+    g8 / unmanagedSourceDirectories := Def.uncached {
       val dir1 = (sourceDirectory.value / "g8").get()
       if (dir1.nonEmpty) dir1
       else List(baseDirectory.value)
     },
-    g8 / sources := {
+    g8 / sources := Def.uncached {
       val dirs = (g8 / unmanagedSourceDirectories).value
       val root = dirs.head
       G8.templateFiles(root, baseDirectory.value)
@@ -110,7 +113,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     Seq(
       Test / g8Test := { ScriptedPlugin.autoImport.scripted.evaluated },
       Test / g8Test / aggregate := false,
-      scriptedDependencies := {
+      scriptedDependencies := Def.uncached {
         val x = (Test / g8).value
       },
       Test / g8 := {
