@@ -16,7 +16,7 @@ ThisBuild / version := g8version
 ThisBuild / scalaVersion := scala212
 ThisBuild / organizationName := "foundweekends"
 ThisBuild / organizationHomepage := Some(url("https://foundweekends.org/"))
-ThisBuild / scalacOptions ++= Seq("-language:_", "-deprecation", "-Xlint", "-Xfuture")
+ThisBuild / scalacOptions ++= Seq("-deprecation", "-Xlint", "-Xfuture")
 ThisBuild / scalacOptions ++= {
   scalaBinaryVersion.value match {
     case "3" =>
@@ -51,8 +51,9 @@ ThisBuild / commands += Command.command("SetScala213") {
 }
 
 // posterous title needs to be giter8, so both app and root are named giter8
-lazy val root = (project in file("."))
+lazy val root = (projectMatrix in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
+  .defaultAxes()
   .aggregate(app, lib, scaffold, plugin, gitsupport, launcher)
   .settings(
     name := "giter8",
@@ -63,13 +64,13 @@ lazy val root = (project in file("."))
     customCommands
   )
 
-lazy val app = (project in file("app"))
+lazy val app = (projectMatrix in file("app"))
   .enablePlugins(SonatypePublish)
+  .defaultAxes()
   .dependsOn(lib, gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
-    crossScalaVersions := List(scala212, scala213, scala3),
     csRun / sourceDirectory := {
       (baseDirectory).value.getParentFile / "src" / "main" / "conscript"
     },
@@ -78,65 +79,59 @@ lazy val app = (project in file("app"))
       slf4jsimple
     )
   )
+  .jvmPlatform(
+    scalaVersions = Seq(scala212, scala213, scala3)
+  )
 
 lazy val crossSbt = Seq(
-  crossSbtVersions := List(sbt1),
-  scalaVersion := {
-    val crossSbtVersion = (pluginCrossBuild / sbtVersion).value
-    partialVersion(crossSbtVersion) match {
-      case Some((1, _)) => scala212
-      case _ =>
-        throw new Exception(s"unexpected sbt version: $crossSbtVersion (supported: 1.X)")
+  pluginCrossBuild / sbtVersion := {
+    scalaBinaryVersion.value match {
+      case "2.12" => sbt1
+      case _      => "2.0.0-RC3"
     }
   }
 )
 
-lazy val scaffold = (project in file("scaffold"))
+lazy val scaffold = (projectMatrix in file("scaffold"))
   .enablePlugins(SbtPlugin, SonatypePublish)
+  .defaultAxes()
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
     name := "sbt-giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
-    crossScalaVersions := List(scala212),
     scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
     scriptedBufferLog := false,
-    scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scripted := scripted
-      .dependsOn(lib / publishLocal)
-      .evaluated,
-    Test / test := {
-      scripted.toTask("").value
-    }
+    scriptedLaunchOpts += ("-Dplugin.version=" + version.value)
+  )
+  .jvmPlatform(
+    scalaVersions = Seq(scala212, scala3)
   )
 
-lazy val plugin = (project in file("plugin"))
+lazy val plugin = (projectMatrix in file("plugin"))
   .enablePlugins(SbtPlugin, SonatypePublish)
+  .defaultAxes()
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
     name := "sbt-giter8",
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
-    crossScalaVersions := List(scala212),
     scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
     scriptedBufferLog := false,
-    scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    scripted := scripted
-      .dependsOn(lib / publishLocal)
-      .evaluated,
-    Test / test := {
-      scripted.toTask("").value
-    }
+    scriptedLaunchOpts += ("-Dplugin.version=" + version.value)
+  )
+  .jvmPlatform(
+    scalaVersions = Seq(scala212, scala3)
   )
 
-lazy val gitsupport = (project in file("cli-git"))
+lazy val gitsupport = (projectMatrix in file("cli-git"))
   .enablePlugins(BuildInfoPlugin, SonatypePublish)
+  .defaultAxes()
   .settings(
     description := "cli and git support library for Giter8",
     name := "giter8-cli-git",
-    crossScalaVersions := List(scala212, scala213, scala3),
     libraryDependencies ++= Seq(
       scopt,
       jgit,
@@ -149,15 +144,18 @@ lazy val gitsupport = (project in file("cli-git"))
     buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion, scalaBinaryVersion),
     buildInfoPackage := "giter8"
   )
+  .jvmPlatform(
+    scalaVersions = Seq(scala212, scala213, scala3)
+  )
 
-lazy val lib = (project in file("library"))
+lazy val lib = (projectMatrix in file("library"))
   .enablePlugins(SonatypePublish)
+  .defaultAxes()
   .dependsOn(gitsupport)
   .settings(crossSbt)
   .settings(
     name := "giter8-lib",
     description := "shared library for app and plugin",
-    crossScalaVersions := List(scala212, scala213, scala3),
     libraryDependencies ++= scalatest,
     libraryDependencies ++= Seq(
       stringTemplate,
@@ -173,15 +171,18 @@ lazy val lib = (project in file("library"))
     ),
     Test / testOptions += Tests.Argument(TestFrameworks.ScalaCheck, "-minSuccessfulTests", "1000", "-workers", "10")
   )
+  .jvmPlatform(
+    scalaVersions = Seq(scala212, scala213, scala3)
+  )
 
-lazy val launcher = (project in file("launcher"))
+lazy val launcher = (projectMatrix in file("launcher"))
   .enablePlugins(SonatypePublish)
   .enablePlugins(ConscriptPlugin)
+  .defaultAxes()
   .dependsOn(gitsupport)
   .settings(
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8-launcher",
-    crossScalaVersions := List(scala212, scala213, scala3),
     libraryDependencies ++= Seq(
       coursier,
       slf4jsimple,
@@ -200,9 +201,13 @@ lazy val launcher = (project in file("launcher"))
     //     oldStrategy(x)
     // },
   )
+  .jvmPlatform(
+    scalaVersions = Seq(scala212, scala213, scala3)
+  )
 
-lazy val bootstrap = (project in file("bootstrap"))
+lazy val bootstrap = (projectMatrix in file("bootstrap"))
   .enablePlugins(SonatypePublish)
+  .defaultAxes()
   .settings(
     description := "Bootstrap script for Giter8 launcher",
     name := "giter8-bootstrap",
@@ -234,20 +239,6 @@ lazy val bootstrap = (project in file("bootstrap"))
 
 def customCommands: Seq[Setting[?]] = Seq(
   commands += Command.command("release") { state =>
-    "clean" ::
-      s"++${scala213}" ::
-      "lib/publishSigned" ::
-      "gitsupport/publishSigned" ::
-      "app/publishSigned" ::
-      s"++${scala212}" ::
-      s"^^${sbt1}" ::
-      "lib/publishSigned" ::
-      "gitsupport/publishSigned" ::
-      "launcher/publishSigned" ::
-      "app/publishSigned" ::
-      "plugin/publishSigned" ::
-      "scaffold/publishSigned" ::
-      "reload" ::
-      state
+    "clean" :: "publishSigned" :: "reload" :: state
   }
 )

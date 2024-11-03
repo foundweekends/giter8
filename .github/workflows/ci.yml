@@ -13,19 +13,10 @@ jobs:
         include:
           - java: 8
             os: ubuntu-latest
-            name: test_all
-          - java: 8
-            os: ubuntu-latest
-            name: scala_3
           - java: 8
             os: windows-latest
-            name: scala_2_13 # TODO enable scripted test
-          - java: 8
-            os: ubuntu-latest
-            name: scala_2_13
           - java: 21
             os: ubuntu-latest
-            name: test_all
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/setup-java@v5
@@ -35,32 +26,19 @@ jobs:
     - uses: actions/checkout@v5
     - uses: coursier/cache-action@v6
     - uses: sbt/setup-sbt@v1
-    - shell: bash
-      run: |
-        case ${{ matrix.name }} in
-          "test_all")
-            sbt -v \
-            -no-colors \
-            publishLocal \
-            scalafmtSbtCheck \
-            "+ scalafmtCheckAll" \
-            gitsupport/test \
-            launcher/test \
-            plugin/scripted \
-            scaffold/scripted \
-            lib/test \
-            app/compile
-            ;;
-          "scala_2_13")
-            sbt -v SetScala213 app/test lib/test
-            ;;
-          "scala_3")
-            sbt -v '++ 3.x' app/test lib/test
-            ;;
-          *)
-            echo "unknown job"
-            exit 1
-        esac
+    - if: matrix.os == 'ubuntu-latest'
+      run: sbt -v "all scalafmtSbtCheck scalafmtCheckAll"
+    - run:
+        sbt -v
+        -no-colors
+        publishLocal
+        test
+    - if: ${{ matrix.java == '8' && matrix.os == 'ubuntu-latest' }}
+      run:
+        sbt -v
+        -no-colors
+        publishLocal
+        scripted
   push_gh_pages:
     needs: test
     timeout-minutes: 30
