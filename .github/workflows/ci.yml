@@ -74,7 +74,7 @@ jobs:
         fetch-depth: 10
     - uses: coursier/cache-action@v6
     - uses: sbt/setup-sbt@v1
-    - uses: webfactory/ssh-agent@v0.9.0
+    - uses: webfactory/ssh-agent@v0.9.1
       if: ${{ github.repository_owner == 'foundweekends' && github.ref == 'refs/heads/develop' && github.event_name == 'push' }}
       with:
         ssh-private-key: ${{ secrets.DEPLOY_KEY_1 }}
