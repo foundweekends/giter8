@@ -30,7 +30,7 @@ object Dependencies {
   val sbtIo     = "org.scala-sbt" %% "io" % "1.10.5"
   val scala212  = "2.12.20"
   val scala213  = "2.13.16"
-  val scala3    = "3.3.5"
+  val scala3    = "3.3.6"
   val sbt1      = "1.2.8"
   val scalaXml  = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
   def parserCombinator(scalaVersion: String) = "org.scala-lang.modules" %% "scala-parser-combinators" % {
