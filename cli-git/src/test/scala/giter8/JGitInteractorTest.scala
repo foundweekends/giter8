@@ -23,11 +23,13 @@ class JGitInteractorTest extends AnyFlatSpec with Matchers with BeforeAndAfter w
   var interactor: JGitInteractor = _
 
   // Since Jgit 5.11, default branch name can be changed by user configuration (e.g. main)
-  val defaultBranchName = SystemReader.getInstance.getUserConfig.getString(
-    ConfigConstants.CONFIG_INIT_SECTION,
-    null,
-    ConfigConstants.CONFIG_KEY_DEFAULT_BRANCH
-  )
+  val defaultBranchName: String = Option(
+    SystemReader.getInstance.getUserConfig.getString(
+      ConfigConstants.CONFIG_INIT_SECTION,
+      null,
+      ConfigConstants.CONFIG_KEY_DEFAULT_BRANCH
+    )
+  ).getOrElse("master")
 
   before {
     interactor = new JGitInteractor(None)

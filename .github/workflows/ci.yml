@@ -44,6 +44,7 @@ jobs:
             publishLocal \
             scalafmtSbtCheck \
             "+ scalafmtCheckAll" \
+            gitsupport/test \
             launcher/test \
             plugin/scripted \
             scaffold/scripted \
