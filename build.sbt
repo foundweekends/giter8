@@ -30,11 +30,6 @@ ThisBuild / scalacOptions ++= {
 ThisBuild / Compile / packageBin / publishArtifact := true
 ThisBuild / homepage := Some(url("https://www.foundweekends.org/giter8/"))
 ThisBuild / publishMavenStyle := true
-ThisBuild / publishTo :=
-  Some(
-    "releases" at
-      "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-  )
 ThisBuild / Test / publishArtifact := false
 ThisBuild / Test / parallelExecution := false
 ThisBuild / licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
@@ -242,6 +237,6 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
 
 def customCommands: Seq[Setting[?]] = Seq(
   commands += Command.command("release") { state =>
-    "clean" :: "publishSigned" :: "reload" :: state
+    "clean" :: "publishSigned" :: "sonaRelease" :: "reload" :: state
   }
 )
