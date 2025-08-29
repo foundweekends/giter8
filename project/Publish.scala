@@ -23,11 +23,7 @@ object SonatypePublish extends AutoPlugin {
   override def requires = plugins.JvmPlugin
 
   override def projectSettings = Seq(
-    publishTo := {
-      val nexus = "https://oss.sonatype.org/"
-      if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
-      else Some("releases" at nexus + "service/local/staging/deploy/maven2")
-    }
+    publishTo := (if (isSnapshot.value) None else localStaging.value)
   )
 }
 
