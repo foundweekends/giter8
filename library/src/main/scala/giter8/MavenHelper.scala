@@ -21,6 +21,27 @@ import java.net.{HttpURLConnection, URI, URL}
 import scala.xml.{NodeSeq, XML}
 
 trait MavenHelper {
+  def fromMavenMetadata(org: String, name: String)(
+      process: (String, NodeSeq) => VersionE
+  ): VersionE = {
+    val mavenCentral = "https://repo1.maven.org/maven2/"
+    val loc =
+      s"""$mavenCentral${org.replace('.', '/')}/$name/maven-metadata.xml"""
+
+    withHttp(new URI(loc).toURL) { conn =>
+      conn.getResponseCode match {
+        case 200 =>
+          val elem = XML.load(conn.getInputStream)
+          process(loc, elem)
+        case 404 =>
+          Left(s"Maven metadata not found for `maven($org, $name)`\nTried: $loc")
+        case status =>
+          Left(s"Unexpected response status $status fetching metadata from $loc")
+      }
+    }
+  }
+
+  @deprecated("use fromMavenMetadata instead")
   def fromMaven(org: String, name: String, getVersions: Boolean)(process: (String, NodeSeq) => VersionE): VersionE = {
     val search = "https://search.maven.org/solrsearch/select"
     val loc    = s"""$search?q=g:%22$org%22+AND+a:%22$name%22&rows=10&wt=xml${if (getVersions) "&core=gav" else ""}"""
