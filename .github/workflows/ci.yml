@@ -39,6 +39,7 @@ jobs:
         -no-colors
         publishLocal
         scripted
+        makeSite
   push_gh_pages:
     needs: test
     timeout-minutes: 30
