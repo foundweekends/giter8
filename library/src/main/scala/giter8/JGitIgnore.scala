@@ -60,7 +60,7 @@ case class JGitIgnore(patterns: String*) {
     isIgnored(file.toURI, file.isDirectory, Some(relativeTo.toURI))
 
   def ++(other: JGitIgnore): JGitIgnore =
-    JGitIgnore(patterns ++ other.patterns: _*)
+    JGitIgnore((patterns ++ other.patterns)*)
 }
 
 object JGitIgnore {
@@ -98,13 +98,13 @@ object JGitIgnore {
       files.foreach { file =>
         val source = Source.fromFile(file)
         try {
-          builder ++= source.getLines.filterNot(_.isCommentLine)
+          builder ++= source.getLines().filterNot(_.isCommentLine)
         } finally {
           source.close()
         }
       }
 
-      builder.result
+      builder.result()
     }
     JGitIgnore(patterns*)
   }
