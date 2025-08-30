@@ -208,11 +208,11 @@ object G8 {
   def expandPath(relative: String, toPath: File, parameters: Map[String, String]): Option[File] =
     try {
       val fileSeparator = File.separator
-      val fileParams = Map(parameters.toSeq map {
+      val fileParams = parameters.map {
         case (k, v) if k == "package" =>
           (k, v.replaceAll("""\.""", Matcher.quoteReplacement(fileSeparator)))
         case x => x
-      }: _*)
+      }
 
       val ignored = relative
         .split("/")
@@ -231,7 +231,7 @@ object G8 {
 
   private def formatize(s: String) = s.replaceAll("""\$(\w+)__([\w,]+)\$""", """\$$1;format="$2"\$""")
 
-  def decapitalize(s: String)    = if (s.isEmpty) s else s(0).toLower + s.substring(1)
+  def decapitalize(s: String)    = if (s.isEmpty) s else s"${s(0).toLower}${s.substring(1)}"
   def startCase(s: String)       = s.toLowerCase.split(" ").map(_.capitalize).mkString(" ")
   def wordOnly(s: String)        = s.replaceAll("""\W""", "")
   def space(s: String)           = s.replaceAll("""[\W_]+""", " ")
