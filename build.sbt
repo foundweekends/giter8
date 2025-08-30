@@ -54,6 +54,9 @@ ThisBuild / commands += Command.command("SetScala213") {
 lazy val root = (projectMatrix in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
   .defaultAxes()
+  .jvmPlatform(
+    scalaVersions = Seq(scala3)
+  )
   .aggregate(app, lib, scaffold, plugin, gitsupport, launcher)
   .settings(
     name := "giter8",
