@@ -16,17 +16,6 @@ ThisBuild / version := g8version
 ThisBuild / scalaVersion := scala212
 ThisBuild / organizationName := "foundweekends"
 ThisBuild / organizationHomepage := Some(url("https://foundweekends.org/"))
-ThisBuild / scalacOptions ++= Seq("-deprecation", "-Xlint", "-Xfuture")
-ThisBuild / scalacOptions ++= {
-  scalaBinaryVersion.value match {
-    case "3" =>
-      Nil
-    case "2.13" =>
-      Seq("-Xsource:3-cross")
-    case _ =>
-      Seq("-Xsource:3")
-  }
-}
 ThisBuild / Compile / packageBin / publishArtifact := true
 ThisBuild / homepage := Some(url("https://www.foundweekends.org/giter8/"))
 ThisBuild / publishMavenStyle := true
@@ -45,6 +34,28 @@ ThisBuild / commands += Command.command("SetScala213") {
   s"++ ${scala213}! -v" :: _
 }
 
+lazy val commonSettings = Def.settings(
+  scalacOptions ++= Seq("-deprecation"),
+  scalacOptions ++= {
+    scalaBinaryVersion.value match {
+      case "3" =>
+        Nil
+      case _ =>
+        Seq("-Xlint")
+    }
+  },
+  scalacOptions ++= {
+    scalaBinaryVersion.value match {
+      case "3" =>
+        Nil
+      case "2.13" =>
+        Seq("-Xsource:3-cross")
+      case _ =>
+        Seq("-Xsource:3", "-Xfuture")
+    }
+  }
+)
+
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (projectMatrix in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
@@ -54,6 +65,7 @@ lazy val root = (projectMatrix in file("."))
   )
   .aggregate(app, lib, scaffold, plugin, gitsupport, launcher)
   .settings(
+    commonSettings,
     name := "giter8",
     crossScalaVersions := Nil,
     siteGitHubRepo := "foundweekends/giter8",
@@ -67,6 +79,7 @@ lazy val app = (projectMatrix in file("app"))
   .defaultAxes()
   .dependsOn(lib, gitsupport)
   .settings(
+    commonSettings,
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8",
     csRun / sourceDirectory := {
@@ -96,6 +109,7 @@ lazy val scaffold = (projectMatrix in file("scaffold"))
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
+    commonSettings,
     name := "sbt-giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
     sbtPlugin := true,
@@ -113,6 +127,7 @@ lazy val plugin = (projectMatrix in file("plugin"))
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
+    commonSettings,
     name := "sbt-giter8",
     description := "sbt plugin for testing giter8 templates",
     sbtPlugin := true,
@@ -128,6 +143,7 @@ lazy val gitsupport = (projectMatrix in file("cli-git"))
   .enablePlugins(BuildInfoPlugin, SonatypePublish)
   .defaultAxes()
   .settings(
+    commonSettings,
     description := "cli and git support library for Giter8",
     name := "giter8-cli-git",
     libraryDependencies ++= Seq(
@@ -152,6 +168,7 @@ lazy val lib = (projectMatrix in file("library"))
   .dependsOn(gitsupport)
   .settings(crossSbt)
   .settings(
+    commonSettings,
     name := "giter8-lib",
     description := "shared library for app and plugin",
     libraryDependencies ++= scalatest,
@@ -179,6 +196,7 @@ lazy val launcher = (projectMatrix in file("launcher"))
   .defaultAxes()
   .dependsOn(gitsupport)
   .settings(
+    commonSettings,
     description := "Command line tool to apply templates defined on GitHub",
     name := "giter8-launcher",
     libraryDependencies ++= Seq(
@@ -207,6 +225,7 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
   .enablePlugins(SonatypePublish)
   .defaultAxes()
   .settings(
+    commonSettings,
     description := "Bootstrap script for Giter8 launcher",
     name := "giter8-bootstrap",
     coursierBootstrap := {
