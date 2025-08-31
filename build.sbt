@@ -98,7 +98,7 @@ lazy val crossSbt = Seq(
   pluginCrossBuild / sbtVersion := {
     scalaBinaryVersion.value match {
       case "2.12" => sbt1
-      case _      => "2.0.0-RC3"
+      case _      => "2.0.0-RC4"
     }
   }
 )
