@@ -56,7 +56,6 @@ lazy val commonSettings = Def.settings(
   }
 )
 
-// posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
   .enablePlugins(G8SitePlugin, NoPublish)
   .aggregate(
