@@ -71,7 +71,6 @@ lazy val root = (project in file("."))
   )
   .settings(
     commonSettings,
-    name := "giter8",
     crossScalaVersions := Nil,
     publish / skip := true,
     customCommands
