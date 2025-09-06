@@ -1,7 +1,7 @@
 import Dependencies._
 import CrossVersion.partialVersion
 
-val g8version = "0.16.2-SNAPSHOT"
+val g8version = "0.18.0-RC1"
 
 val javaVmArgs: List[String] = {
   import scala.collection.JavaConverters._
