@@ -13,7 +13,7 @@
         <link rel="stylesheet" href="../css/color_scheme-github.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/color_scheme-monokai.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="../css/pamfletheight_2em_2em.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
-        <script type="text/javascript" src="../js/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="../js/jquery.min.js"></script>
         <script type="text/javascript" src="../js/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="../js/pamflet.js"></script>
         <script type="text/javascript">
@@ -69,7 +69,7 @@ $name;format=&quot;lower,hyphen&quot;$ -&gt; &quot;my-project&quot;
 </code></pre><p>コンマ区切り複数のフォーマットを指定可能なことにも注目してほしい。その場合は、与えられた順序で評価される。
 </p><p>ファイルやディレクトリ名にフォーマットオプションを渡すにはアンダースコアを 2つつなげたものを使う。
 例えば、<code>$organization__packaged$</code> という名前のついたディレクトリは、組み込みの <code>package</code> フィールド同様に
-<code>org.somewhere</code> を <code>org/somewher</code> に変換する。
+<code>org.somewhere</code> を <code>org/somewhere</code> に変換する。
 <code>$name__Camel$.scala</code> という名前のついたファイルは、<code>name</code> が <code>awesome project</code> であるとき、
 <code>AwesomeProject.scala</code> というファイルを生成する。
 </p><div class="bottom nav">

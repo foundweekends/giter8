@@ -11,7 +11,13 @@ body {
     /* font-family: "Warnock Pro", "Goudy Old Style", "Palatino", "Book Antiqua", Georgia, serif; */
 }
 pre, code, tt {
-    font-family: 'andale mono', 'lucida console', monospace
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Courier, monospace;
+    color: black;
+}
+p > code, p > tt {
+    background-color: rgba(30,30,30,.05);
+    border-radius: 3px;
+    padding: .2em .4em;
 }
 div.top.nav {
     z-index: 1;

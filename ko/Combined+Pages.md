@@ -275,11 +275,11 @@ GitHub 브랜치에 템플릿을 push 하기전에 테스트를 해볼 수 있�
 `project/giter8.sbt` 에 아래 내용을 추가합니다.
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.16.2")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.18.0-RC1")
 ```
 
 이 플러그인이 설정된 템플릿 기반 디렉토리에서 sbt 쉘에 들어가면 `g8Test` 라는 액션에서 
-기본 출력 디렉토리 (`target/sbt-test`)에 템플릿이 적용되어 해당 프로젝트에 대해 [scriptted test][scripted] 를 fork된 프로세스에서 실행 한다. 
+기본 출력 디렉토리 (`target/sbt-test`)에 템플릿이 적용되어 해당 프로젝트에 대해 [scripted test][scripted] 를 fork된 프로세스에서 실행 한다. 
 테스트 스크립트는`project/giter8.test`또는 `src/test/g8/test`로 제공 할 수있습니다. 만약 없으면 `>test`가 사용됩니다.
 특히 sbt 프로젝트를 생성하는 템플릿은 이 방법으로 테스트 할 수 있을 것입니다.
 
@@ -309,7 +309,7 @@ Giter8는 scaffolding 용 sbt 플러그인도 제공하고 있습니다.
 아래내용을 `project/scaffold.sbt` 파일에 적용:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.16.2")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.18.0-RC1")
 ```
 
 이제 sbt 쉘에서 `g8Scaffold` 명령을 사용할 수있게 되었습니다.
@@ -335,7 +335,7 @@ sbt 쉘에서 엑세스 가능합니다. 일반적으로 템플릿과 마찬가�
 필드값을 정의하는것이 가능합니다. 여기에서도 `name` 은 특별한 필드명으로서,
 혹시 `name` 필드가 있다면, scaffold 는 `name` 을 기반으로 디렉토리가 생성되고, 그 아래에, scaffold 의 소스 디렉토리를
 복제하는 방식으로 하위디렉토리 구조가 형성됩니다.
- 
+
 템플릿으로 사용된 scaffold는 `<project_root>/.g8`에 저장됩니다.
 
 ```

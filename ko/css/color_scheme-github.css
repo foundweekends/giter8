@@ -1,7 +1,7 @@
 body.color_scheme-github pre,
 body.color_scheme-github code,
 body.color_scheme-github tt {
-    font-family: Consolas, 'Liberation Mono', Courier, monospace;
+    font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Courier, monospace;
 }
 body.color_scheme-github pre {
     font-size: 80%

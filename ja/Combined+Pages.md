@@ -258,7 +258,7 @@ Giter8 は、テンプレートフィールドをフォーマットする方法�
 
 ファイルやディレクトリ名にフォーマットオプションを渡すにはアンダースコアを 2つつなげたものを使う。
 例えば、`$organization__packaged$` という名前のついたディレクトリは、組み込みの `package` フィールド同様に
-`org.somewhere` を `org/somewher` に変換する。
+`org.somewhere` を `org/somewhere` に変換する。
 `$name__Camel$.scala` という名前のついたファイルは、`name` が `awesome project` であるとき、
 `AwesomeProject.scala` というファイルを生成する。
 
@@ -295,12 +295,12 @@ GitHub ブランチにテンプレートをプッシュする前にちゃんと�
 `project/giter8.sbt` に書き込む:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.16.2")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.18.0-RC1")
 ```
 
 このプラグインが設定されたテンプレートのベースディレクトリから sbt のシェルに入ると、
 `g8Test` というアクションでデフォルトのアウトプットディレクトリ (`target/sbt-test`)
-内にテンプレートが適用されて、そのプロジェクトに対して[scriptted test][scripted] がフォークプロセスで実行される。
+内にテンプレートが適用されて、そのプロジェクトに対して[scripted test][scripted] がフォークプロセスで実行される。
 テストスクリプトは `project/giter8.test` もしくは `src/test/g8/test` として提供できる。
 もし無ければ `>test` が使用される。
 特に sbt プロジェクトを生成するテンプレートはこの方法でテストできるはずだ。
@@ -332,7 +332,7 @@ Giter8 は scaffolding 用の sbt プラグインも提供している。
 以下を `project/scaffold.sbt` に書く:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.16.2")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.18.0-RC1")
 ```
 
 これで sbt シェルから `g8Scaffold` コマンドを使えるようになる。
