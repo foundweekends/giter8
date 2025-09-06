@@ -57,13 +57,18 @@ lazy val commonSettings = Def.settings(
 )
 
 // posterous title needs to be giter8, so both app and root are named giter8
-lazy val root = (projectMatrix in file("."))
+lazy val root = (project in file("."))
   .enablePlugins(TravisSitePlugin, NoPublish)
-  .defaultAxes()
-  .jvmPlatform(
-    scalaVersions = Seq(scala3)
+  .aggregate(
+    Seq(
+      app,
+      lib,
+      scaffold,
+      plugin,
+      gitsupport,
+      launcher
+    ).flatMap(_.projectRefs) *
   )
-  .aggregate(app, lib, scaffold, plugin, gitsupport, launcher)
   .settings(
     commonSettings,
     name := "giter8",
