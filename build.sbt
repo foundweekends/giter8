@@ -58,7 +58,7 @@ lazy val commonSettings = Def.settings(
 
 // posterous title needs to be giter8, so both app and root are named giter8
 lazy val root = (project in file("."))
-  .enablePlugins(TravisSitePlugin, NoPublish)
+  .enablePlugins(G8SitePlugin, NoPublish)
   .aggregate(
     Seq(
       app,
@@ -73,8 +73,6 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "giter8",
     crossScalaVersions := Nil,
-    siteGitHubRepo := "foundweekends/giter8",
-    siteEmail := { "74864734+foundweekends-bot[bot]@users.noreply.github.com" },
     publish / skip := true,
     customCommands
   )
