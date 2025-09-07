@@ -1,5 +1,5 @@
 import Dependencies._
-import CrossVersion.partialVersion
+import scala.sys.process.ProcessLogger
 
 val g8version = "0.18.0-SNAPSHOT"
 
@@ -10,6 +10,7 @@ val javaVmArgs: List[String] = {
 
 val coursierBootstrap      = taskKey[File]("create bootstrap jar")
 val coursierBootstrapBatch = taskKey[File]("create bootstrap jar")
+val coursierBootstrapTest  = taskKey[Unit]("test bootstrap jar")
 
 ThisBuild / organization := "org.foundweekends.giter8"
 ThisBuild / version := g8version
@@ -61,6 +62,7 @@ lazy val root = (project in file("."))
   .aggregate(
     Seq(
       app,
+      bootstrap,
       lib,
       scaffold,
       plugin,
@@ -229,16 +231,27 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
     commonSettings,
     description := "Bootstrap script for Giter8 launcher",
     name := "giter8-bootstrap",
-    coursierBootstrap := {
+    libraryDependencies += Dependencies.coursierCli % Test,
+    coursierBootstrap := Def.taskDyn {
       val t = target.value / "g8"
       val v = version.value
-      sys.process
-        .Process(
-          s"""coursier bootstrap org.foundweekends.giter8:giter8-launcher_2.12:$v --main giter8.LauncherMain -o $t --bat -f"""
+      (Test / runMain)
+        .toTask(
+          Seq(
+            "coursier.cli.Coursier",
+            "bootstrap",
+            s"org.foundweekends.giter8:giter8-launcher_3:$v",
+            "--main",
+            "giter8.LauncherMain",
+            "-o",
+            t.getAbsolutePath,
+            "--bat",
+            "-f"
+          ).mkString(" ", " ", "")
         )
-        .!
-      t
-    },
+        .map((_: Unit) => t)
+    }.value,
+    coursierBootstrap := coursierBootstrap.dependsOn(launcher.jvm(Dependencies.scala3) / publishLocal).value,
     coursierBootstrapBatch := {
       val _ = coursierBootstrap.value
       target.value / "g8.bat"
@@ -251,8 +264,50 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
       val o = (coursierBootstrapBatch / artifact).value
       o.withExtension("bat")
     },
+    coursierBootstrapTest := {
+      case class Res(out: Seq[String], err: Seq[String], exitCoce: Int)
+
+      def runWithLog(p: sys.process.ProcessBuilder): Res = {
+        val outLog = List.newBuilder[String]
+        val errLog = List.newBuilder[String]
+        val res = p
+          .!(new ProcessLogger {
+            override def out(s: => String): Unit = outLog += s
+            override def err(s: => String): Unit = errLog += s
+            override def buffer[T](f: => T)      = f
+          })
+
+        Res(outLog.result(), errLog.result(), res)
+      }
+
+      val binary = {
+        if (scala.util.Properties.isWin) {
+          coursierBootstrapBatch.value.getAbsolutePath
+        } else {
+          coursierBootstrap.value.getAbsolutePath
+        }
+      }
+      val res1 = runWithLog(sys.process.Process(binary))
+      assert(res1.exitCoce == 1)
+      assert(
+        res1.err == Seq(
+          "Error: Missing argument <template>",
+          "Try --help for more information."
+        )
+      )
+      val res2 = runWithLog(sys.process.Process(binary, Seq("--help")))
+      assert(res2.exitCoce == 0)
+      assert(res2.out.contains("Usage: g8 [options] <template>"))
+    },
+    Test / test := {
+      coursierBootstrapTest.value
+      (Test / test).value
+    },
     addArtifact(coursierBootstrap / artifact, coursierBootstrap),
     addArtifact(coursierBootstrapBatch / artifact, coursierBootstrapBatch)
+  )
+  .jvmPlatform(
+    scalaVersions = Seq(scala3)
   )
 
 def customCommands: Seq[Setting[?]] = Seq(
