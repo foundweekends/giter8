@@ -280,13 +280,13 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
         Res(outLog.result(), errLog.result(), res)
       }
 
-      val binary = {
+      val binary = Def.taskIf {
         if (scala.util.Properties.isWin) {
           coursierBootstrapBatch.value.getAbsolutePath
         } else {
           coursierBootstrap.value.getAbsolutePath
         }
-      }
+      }.value
       val res1 = runWithLog(sys.process.Process(binary))
       assert(res1.exitCoce == 1)
       assert(
