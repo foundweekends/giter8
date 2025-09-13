@@ -27,7 +27,7 @@ class LauncherProcessor extends Processor {
       outputDirectory: Option[File]
   ): Either[String, String] = {
     val fallback = giter8.BuildInfo.version
-    val g8v = giter8Version(templateDirectory) match {
+    val g8v      = giter8Version(templateDirectory) match {
       case Some(v) => v
       case _       => fallback
     }
@@ -48,7 +48,7 @@ class LauncherProcessor extends Processor {
     val launcherVersion = "1.1.3"
     val bootHome        = Home.home / "boot"
     val bootDir         = bootHome / "org.foundweekends.giter8" / s"giter8_${giter8.BuildInfo.scalaBinaryVersion}" / g8v
-    val bootJars =
+    val bootJars        =
       if (bootDir.exists) bootDir.listFiles.toList filter { _.getName.endsWith(".jar") } else Nil
     val giter8Files0 =
       if (bootJars.nonEmpty) bootJars

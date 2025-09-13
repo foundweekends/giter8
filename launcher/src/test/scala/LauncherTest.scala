@@ -36,7 +36,7 @@ object LauncherTest extends BasicTestSuite {
     val originalErr           = System.err
     val byteArrayOutputStream = new ByteArrayOutputStream()
     val inMemoryPrintStream   = new PrintStream(byteArrayOutputStream)
-    val result =
+    val result                =
       try {
         System.setErr(inMemoryPrintStream)
         val r = f

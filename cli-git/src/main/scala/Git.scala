@@ -32,7 +32,7 @@ class Git(gitInteractor: GitInteractor) {
 
   def clone(repository: GitRepository, ref: Option[Ref], destination: File): Try[Unit] = repository match {
     case remote: Remote => cloneWithGivenRefOrDefaultBranch(remote.url, ref, destination)
-    case local: Local =>
+    case local: Local   =>
       ref match {
         // for file:// repositories with no named branch, just do a file copy (assume current branch)
         case None    => copy(local.path, destination)

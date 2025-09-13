@@ -270,7 +270,7 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
       def runWithLog(p: sys.process.ProcessBuilder): Res = {
         val outLog = List.newBuilder[String]
         val errLog = List.newBuilder[String]
-        val res = p
+        val res    = p
           .!(new ProcessLogger {
             override def out(s: => String): Unit = outLog += s
             override def err(s: => String): Unit = errLog += s

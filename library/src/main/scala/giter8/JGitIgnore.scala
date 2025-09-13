@@ -69,7 +69,7 @@ object JGitIgnore {
   }
 
   def apply(in: InputStream): JGitIgnore = {
-    val source = Source.fromInputStream(in)
+    val source   = Source.fromInputStream(in)
     val patterns =
       try {
         source.getLines().filterNot(_.isCommentLine).toList
@@ -81,7 +81,7 @@ object JGitIgnore {
   }
 
   def apply(file: File): JGitIgnore = {
-    val source = Source.fromFile(file)
+    val source   = Source.fromFile(file)
     val patterns =
       try {
         source.getLines().filterNot(_.isCommentLine).toList

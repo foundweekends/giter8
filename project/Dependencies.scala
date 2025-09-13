@@ -19,20 +19,20 @@ object Dependencies {
   )
   val scopt      = "com.github.scopt" %% "scopt" % "4.1.0"
   val scalacheck = "org.scalacheck" %% "scalacheck" % "1.18.1"
-  val scalatest = Seq(
+  val scalatest  = Seq(
     "org.scalatest" %% "scalatest-flatspec" % "3.2.19" % Test,
     "org.scalatest" %% "scalatest-funspec" % "3.2.19" % Test,
     "org.scalatest" %% "scalatest-funsuite" % "3.2.19" % Test,
     "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test
   )
-  val scalamock = "org.scalamock" %% "scalamock" % "7.4.1"
-  val verify    = "com.eed3si9n.verify" %% "verify" % "1.0.0"
-  val sbtIo     = "org.scala-sbt" %% "io" % "1.10.5"
-  val scala212  = "2.12.20"
-  val scala213  = "2.13.16"
-  val scala3    = "3.7.2"
-  val sbt1      = "1.3.13"
-  val scalaXml  = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
+  val scalamock                              = "org.scalamock" %% "scalamock" % "7.4.1"
+  val verify                                 = "com.eed3si9n.verify" %% "verify" % "1.0.0"
+  val sbtIo                                  = "org.scala-sbt" %% "io" % "1.10.5"
+  val scala212                               = "2.12.20"
+  val scala213                               = "2.13.16"
+  val scala3                                 = "3.7.2"
+  val sbt1                                   = "1.3.13"
+  val scalaXml                               = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
   def parserCombinator(scalaVersion: String) = "org.scala-lang.modules" %% "scala-parser-combinators" % {
     CrossVersion.partialVersion(scalaVersion) match {
       case Some((2, _)) => "1.1.2" // Do not upgrade beyond 1.x

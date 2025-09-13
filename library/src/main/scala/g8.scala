@@ -208,7 +208,7 @@ object G8 {
   def expandPath(relative: String, toPath: File, parameters: Map[String, String]): Option[File] =
     try {
       val fileSeparator = File.separator
-      val fileParams = parameters.map {
+      val fileParams    = parameters.map {
         case (k, v) if k == "package" =>
           (k, v.replaceAll("""\.""", Matcher.quoteReplacement(fileSeparator)))
         case x => x
@@ -392,7 +392,7 @@ object G8 {
     val propertiesLoc0 = templatesRoot / "default.properties"
     val propertiesLoc1 = metaDir / "default.properties"
     val propertiesLocs = Set(propertiesLoc0, propertiesLoc1)
-    val scaffoldsRoot =
+    val scaffoldsRoot  =
       (scaffoldPaths map {
         case Path(Nil) => baseDirectory
         case p         => baseDirectory / p
@@ -505,7 +505,7 @@ object G8 {
       }
       .foreach { case (in, optionOut) =>
         optionOut match {
-          case None => println(s"Skipping ignored file: ${in}")
+          case None      => println(s"Skipping ignored file: ${in}")
           case Some(out) => {
             if (out.exists && !forceOverwrite) {
               println(s"Skipping existing file: ${out}")
