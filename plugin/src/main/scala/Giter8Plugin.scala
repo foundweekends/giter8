@@ -64,7 +64,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
       // copy scaffolds
       val scaffoldsDir = (Compile / sourceDirectory).value / "scaffolds"
-      val scaffolds = if (scaffoldsDir.exists) {
+      val scaffolds    = if (scaffoldsDir.exists) {
         val outDir = out / ".g8"
         IO.copyDirectory(scaffoldsDir, outDir)
         sbt.Path.allSubpaths(outDir).collect { case (f, _) if f.isFile => f }
@@ -128,7 +128,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
         // copy scaffolds
         val scaffoldsDir = (Compile / sourceDirectory).value / "scaffolds"
-        val scaffolds = if (scaffoldsDir.exists) {
+        val scaffolds    = if (scaffoldsDir.exists) {
           val outDir = out / ".g8"
           IO.copyDirectory(scaffoldsDir, outDir)
           sbt.Path.allSubpaths(outDir).collect { case (f, _) if f.isFile => f }

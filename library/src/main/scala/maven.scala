@@ -54,7 +54,7 @@ object Maven extends JavaTokenParsers with MavenHelper {
   private[giter8] def findLatestStableVersion(loc: String, elem: NodeSeq)(implicit
       svo: Ordering[VersionNumber]
   ): VersionE = {
-    val versions = (elem \ "versioning" \ "versions" \\ "version").map(_.text)
+    val versions      = (elem \ "versioning" \ "versions" \\ "version").map(_.text)
     val validVersions = versions.collect { case VersionNumber.Stable(version) =>
       version
     }

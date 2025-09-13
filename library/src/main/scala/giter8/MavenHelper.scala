@@ -25,7 +25,7 @@ trait MavenHelper {
       process: (String, NodeSeq) => VersionE
   ): VersionE = {
     val mavenCentral = "https://repo1.maven.org/maven2/"
-    val loc =
+    val loc          =
       s"""$mavenCentral${org.replace('.', '/')}/$name/maven-metadata.xml"""
 
     withHttp(new URI(loc).toURL) { conn =>
