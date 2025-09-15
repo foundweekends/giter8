@@ -31,10 +31,6 @@ ThisBuild / scmInfo := Some(
   ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git")
 )
 
-ThisBuild / commands += Command.command("SetScala213") {
-  s"++ ${scala213}! -v" :: _
-}
-
 lazy val commonSettings = Def.settings(
   scalacOptions ++= Seq("-deprecation"),
   scalacOptions ++= {
