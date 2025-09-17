@@ -15,14 +15,14 @@ jobs:
             os: ubuntu-latest
           - java: 8
             os: windows-latest
-          - java: 21
+          - java: 25
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/setup-java@v5
       with:
         java-version: ${{ matrix.java }}
-        distribution: adopt
+        distribution: zulu
     - uses: actions/checkout@v5
     - uses: coursier/cache-action@v6
     - uses: sbt/setup-sbt@v1

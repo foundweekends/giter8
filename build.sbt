@@ -285,12 +285,8 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
       }.value
       val res1 = runWithLog(sys.process.Process(binary))
       assert(res1.exitCoce == 1)
-      assert(
-        res1.err == Seq(
-          "Error: Missing argument <template>",
-          "Try --help for more information."
-        )
-      )
+      assert(res1.err.contains("Error: Missing argument <template>"), res1.err)
+      assert(res1.err.contains("Try --help for more information."), res1.err)
       val res2 = runWithLog(sys.process.Process(binary, Seq("--help")))
       assert(res2.exitCoce == 0)
       assert(res2.out.contains("Usage: g8 [options] <template>"))
