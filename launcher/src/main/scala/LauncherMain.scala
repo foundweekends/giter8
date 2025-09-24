@@ -45,7 +45,7 @@ class LauncherProcessor extends Processor {
     * Otherwise, use Coursier to download the giter8 artifacts and move them into the boot dir for the next time.
     */
   def giter8Artifacts(g8v: String): Seq[File] = {
-    val launcherVersion = "1.1.3"
+    val launcherVersion = giter8.BuildInfo.sbtLauncherVersion
     val bootHome        = Home.home / "boot"
     val bootDir         = bootHome / "org.foundweekends.giter8" / s"giter8_${giter8.BuildInfo.scalaBinaryVersion}" / g8v
     val bootJars        =

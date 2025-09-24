@@ -12,6 +12,8 @@ val coursierBootstrap      = taskKey[File]("create bootstrap jar")
 val coursierBootstrapBatch = taskKey[File]("create bootstrap jar")
 val coursierBootstrapTest  = taskKey[Unit]("test bootstrap jar")
 
+val sbtLauncherVersion = settingKey[String]("")
+
 ThisBuild / organization := "org.foundweekends.giter8"
 ThisBuild / version := g8version
 ThisBuild / scalaVersion := scala212
@@ -145,6 +147,7 @@ lazy val gitsupport = (projectMatrix in file("cli-git"))
     commonSettings,
     description := "cli and git support library for Giter8",
     name := "giter8-cli-git",
+    sbtLauncherVersion := launcherIntf.revision,
     libraryDependencies ++= Seq(
       scopt,
       jgit,
@@ -154,7 +157,7 @@ lazy val gitsupport = (projectMatrix in file("cli-git"))
     ),
     libraryDependencies ++= scalatest,
     run / fork := true,
-    buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion, scalaBinaryVersion),
+    buildInfoKeys := Seq(name, version, scalaVersion, sbtVersion, scalaBinaryVersion, sbtLauncherVersion),
     buildInfoPackage := "giter8"
   )
   .jvmPlatform(
