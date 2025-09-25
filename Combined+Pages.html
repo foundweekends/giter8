@@ -53,7 +53,7 @@ Once <code>cs</code> is on your path, you can install giter8 with this command:
 </code></pre><p>and update it using:
 </p><pre><code>$ cs update g8
 </code></pre><h4 id="Manual">Manual<a href="#Manual" class="header-link"><span class="header-link-content">&nbsp;</span></a></h4><p>It’s possible to manually download and install giter8 directly from Maven Central:
-</p><pre><code>$ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_3/0.18.0-RC1/giter8-bootstrap_3-0.18.0-RC1.sh &gt; ~/bin/g8
+</p><pre><code>$ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_3/0.18.0/giter8-bootstrap_3-0.18.0.sh &gt; ~/bin/g8
 $ chmod +x ~/bin/g8
 </code></pre><p>Replace <code>~/bin/</code> with anything that is on your <code>PATH</code>. To make sure everything is working, try running <code>g8</code> with no
 parameters, you should see
@@ -330,7 +330,7 @@ them to a GitHub branch. If you used the <code>foundweekends/giter8.g8</code> te
 recommended above, it should already be configured.
 </p><p>If you need to upgrade an existing template project to the current plugin, you can
 add it as a source dependency in <code>project/giter8.sbt</code>:
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.18.0-RC1&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8&quot; % &quot;0.18.0&quot;)
 </code></pre><p>When you enter sbt’s shell in the base directory of a
 template project that is configured to use this plugin, the action
 <code>g8Test</code> will apply the template in the default output directory
@@ -364,7 +364,7 @@ and also ensure any targets defined with <code>validationTargets</code> can also
 against your generated project.
 </p><h2 id="Scaffolding+plugin">Scaffolding plugin<a href="#Scaffolding+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Giter8 supplies an sbt plugin for creating and using scaffolds.
 </p><h3 id="Using+the+scaffold+plugin">Using the scaffold plugin<a href="#Using+the+scaffold+plugin" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>Add the following lines in <code>project/scaffold.sbt</code>
-</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.18.0-RC1&quot;)
+</p><pre><code class="prettyprint lang-scala">addSbtPlugin(&quot;org.foundweekends.giter8&quot; % &quot;sbt-giter8-scaffold&quot; % &quot;0.18.0&quot;)
 </code></pre><p>Once done, the  <code>g8Scaffold</code> command can be used in the sbt shell.
 Use TAB completion to discover available templates.
 </p><pre><code class="">&gt; g8Scaffold &lt;TAB&gt;

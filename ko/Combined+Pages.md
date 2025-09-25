@@ -275,7 +275,7 @@ GitHub 브랜치에 템플릿을 push 하기전에 테스트를 해볼 수 있�
 `project/giter8.sbt` 에 아래 내용을 추가합니다.
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.18.0-RC1")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.18.0")
 ```
 
 이 플러그인이 설정된 템플릿 기반 디렉토리에서 sbt 쉘에 들어가면 `g8Test` 라는 액션에서 
@@ -309,7 +309,7 @@ Giter8는 scaffolding 용 sbt 플러그인도 제공하고 있습니다.
 아래내용을 `project/scaffold.sbt` 파일에 적용:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.18.0-RC1")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.18.0")
 ```
 
 이제 sbt 쉘에서 `g8Scaffold` 명령을 사용할 수있게 되었습니다.

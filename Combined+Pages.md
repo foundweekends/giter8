@@ -46,7 +46,7 @@ and update it using:
 
 It's possible to manually download and install giter8 directly from Maven Central:
 
-    $ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_3/0.18.0-RC1/giter8-bootstrap_3-0.18.0-RC1.sh > ~/bin/g8
+    $ curl https://repo1.maven.org/maven2/org/foundweekends/giter8/giter8-bootstrap_3/0.18.0/giter8-bootstrap_3-0.18.0.sh > ~/bin/g8
     $ chmod +x ~/bin/g8
 
 Replace `~/bin/` with anything that is on your `PATH`. To make sure everything is working, try running `g8` with no
@@ -507,7 +507,7 @@ If you need to upgrade an existing template project to the current plugin, you c
 add it as a source dependency in `project/giter8.sbt`:
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.18.0-RC1")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % "0.18.0")
 ```
 
 When you enter sbt's shell in the base directory of a
@@ -569,7 +569,7 @@ Giter8 supplies an sbt plugin for creating and using scaffolds.
 Add the following lines in `project/scaffold.sbt`
 
 ```scala
-addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.18.0-RC1")
+addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8-scaffold" % "0.18.0")
 ```
 
 Once done, the  `g8Scaffold` command can be used in the sbt shell.
