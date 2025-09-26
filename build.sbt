@@ -250,7 +250,12 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
         )
         .map((_: Unit) => t)
     }.value,
-    coursierBootstrap := coursierBootstrap.dependsOn(launcher.jvm(Dependencies.scala3) / publishLocal).value,
+    coursierBootstrap := coursierBootstrap
+      .dependsOn(Def.task {
+        (launcher.jvm(Dependencies.scala3) / publishLocal).value
+        (gitsupport.jvm(Dependencies.scala3) / publishLocal).value
+      })
+      .value,
     coursierBootstrapBatch := {
       val _ = coursierBootstrap.value
       target.value / "g8.bat"
