@@ -31,6 +31,7 @@ jobs:
     - run:
         sbt -v
         -no-colors
+        coursierBootstrap
         publishLocal
         test
     - if: ${{ matrix.java == '8' && matrix.os == 'ubuntu-latest' }}
