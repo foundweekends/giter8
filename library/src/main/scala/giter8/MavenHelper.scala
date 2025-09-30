@@ -62,6 +62,7 @@ trait MavenHelper {
   def withHttp[A](url: URL)(f: HttpURLConnection => A): A = {
     val conn = url.openConnection()
     try {
+      conn.setRequestProperty("User-Agent", "giter8")
       conn match {
         case httpConn: HttpURLConnection => f(httpConn)
       }
