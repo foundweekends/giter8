@@ -179,7 +179,6 @@ lazy val lib = (projectMatrix in file("library"))
       jgit,
       slf4jsimple,
       commonsIo,
-      plexusArchiver,
       scalaXml,
       parserCombinator(scalaVersion.value),
       scalacheck % Test,

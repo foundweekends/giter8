@@ -3,12 +3,6 @@ import sbt._
 object Dependencies {
   val stringTemplate = "org.antlr" % "ST4" % "4.3.4"
   val commonsIo      = "commons-io" % "commons-io" % "2.20.0"
-  val plexusArchiver = "org.codehaus.plexus" % "plexus-archiver" % "4.10.1" excludeAll (
-    ExclusionRule("org.apache.commons", "commons-compress"),
-    ExclusionRule("classworlds", "classworlds"),
-    ExclusionRule("org.tukaani", "xz"),
-    ExclusionRule("junit", "junit")
-  )
   // We excluded sshd-sftp to avoid https://github.com/advisories/GHSA-fhw8-8j55-vwgq
   // Either that or we need to bump to jgit 6.x
   val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.3.202401111512-r" excludeAll (
