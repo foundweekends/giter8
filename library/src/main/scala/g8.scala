@@ -22,8 +22,6 @@ import java.util.regex.Matcher
 import java.util.{Locale, Properties}
 
 import org.apache.commons.io.FileUtils
-import org.codehaus.plexus.archiver.util.ArchiveEntryUtils
-import org.codehaus.plexus.components.io.attributes.PlexusIoResourceAttributeUtils
 import org.stringtemplate.v4.compiler.STException
 import org.stringtemplate.v4.misc.STMessage
 
@@ -32,6 +30,7 @@ import scala.util.Try
 import scala.util.control.Exception.{allCatch, catching}
 import scala.util.control.NonFatal
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
 
 object G8 {
   import org.stringtemplate.v4.{AttributeRenderer, ST, STGroup, STErrorListener}
@@ -173,14 +172,12 @@ object G8 {
 
   def write(in: File, out: File, parameters: Map[String, String] /*, append: Boolean*/ ): Unit =
     try {
-      Option(PlexusIoResourceAttributeUtils.getFileAttributes(in)) match {
-        case Some(attr) =>
-          val mode = attr.getOctalMode
-          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
-          Try(ArchiveEntryUtils.chmod(out, mode))
-        case None =>
-          // PlexusIoResourceAttributes is not available for some OS's such as windows
-          write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
+      if (!scala.util.Properties.isWin) {
+        val mode = Files.getPosixFilePermissions(in.toPath)
+        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
+        Try(Files.setPosixFilePermissions(out.toPath, mode))
+      } else {
+        write(out, FileUtils.readFileToString(in, "UTF-8"), parameters /*, append*/ )
       }
     } catch {
       case e: STException =>
