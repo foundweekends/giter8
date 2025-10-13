@@ -77,7 +77,7 @@ lazy val root = (project in file("."))
 
 lazy val app = (projectMatrix in file("app"))
   .enablePlugins(SonatypePublish)
-  .defaultAxes()
+  .defaultAxes(VirtualAxis.jvm)
   .dependsOn(lib, gitsupport)
   .settings(
     commonSettings,
@@ -106,7 +106,7 @@ lazy val crossSbt = Seq(
 
 lazy val scaffold = (projectMatrix in file("scaffold"))
   .enablePlugins(SbtPlugin, SonatypePublish)
-  .defaultAxes()
+  .defaultAxes(VirtualAxis.jvm)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
@@ -124,7 +124,7 @@ lazy val scaffold = (projectMatrix in file("scaffold"))
 
 lazy val plugin = (projectMatrix in file("plugin"))
   .enablePlugins(SbtPlugin, SonatypePublish)
-  .defaultAxes()
+  .defaultAxes(VirtualAxis.jvm)
   .dependsOn(lib)
   .settings(crossSbt)
   .settings(
@@ -142,7 +142,7 @@ lazy val plugin = (projectMatrix in file("plugin"))
 
 lazy val gitsupport = (projectMatrix in file("cli-git"))
   .enablePlugins(BuildInfoPlugin, SonatypePublish)
-  .defaultAxes()
+  .defaultAxes(VirtualAxis.jvm)
   .settings(
     commonSettings,
     description := "cli and git support library for Giter8",
@@ -166,7 +166,7 @@ lazy val gitsupport = (projectMatrix in file("cli-git"))
 
 lazy val lib = (projectMatrix in file("library"))
   .enablePlugins(SonatypePublish)
-  .defaultAxes()
+  .defaultAxes(VirtualAxis.jvm)
   .dependsOn(gitsupport)
   .settings(crossSbt)
   .settings(
@@ -194,7 +194,7 @@ lazy val lib = (projectMatrix in file("library"))
 lazy val launcher = (projectMatrix in file("launcher"))
   .enablePlugins(SonatypePublish)
   .enablePlugins(ConscriptPlugin)
-  .defaultAxes()
+  .defaultAxes(VirtualAxis.jvm)
   .dependsOn(gitsupport)
   .settings(
     commonSettings,
@@ -224,7 +224,7 @@ lazy val launcher = (projectMatrix in file("launcher"))
 
 lazy val bootstrap = (projectMatrix in file("bootstrap"))
   .enablePlugins(SonatypePublish)
-  .defaultAxes()
+  .defaultAxes(VirtualAxis.jvm)
   .settings(
     commonSettings,
     description := "Bootstrap script for Giter8 launcher",
