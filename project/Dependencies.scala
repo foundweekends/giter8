@@ -5,10 +5,10 @@ object Dependencies {
   val commonsIo      = "commons-io" % "commons-io" % "2.20.0"
   // We excluded sshd-sftp to avoid https://github.com/advisories/GHSA-fhw8-8j55-vwgq
   // Either that or we need to bump to jgit 6.x
-  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.3.202401111512-r" excludeAll (
+  val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.5.202508271544-r" excludeAll (
     ExclusionRule("org.apache.sshd", "sshd-sftp")
   )
-  val jgitSshApache = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.apache" % "5.13.3.202401111512-r" excludeAll (
+  val jgitSshApache = "org.eclipse.jgit" % "org.eclipse.jgit.ssh.apache" % "5.13.5.202508271544-r" excludeAll (
     ExclusionRule("org.apache.sshd", "sshd-sftp")
   )
   val scopt      = "com.github.scopt" %% "scopt" % "4.1.0"
