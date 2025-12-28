@@ -14,12 +14,12 @@ jobs:
     - uses: sbt/setup-sbt@v1
     - name: Generate token
       id: generate_token
-      uses: tibdex/github-app-token@v2
+      uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf # v2.2.1
       with:
-        app_id: 89697
-        private_key: ${{ secrets.FOUNDWEEKENDS_BOT_KEY }}
+        app-id: 89697
+        private-key: ${{ secrets.FOUNDWEEKENDS_BOT_KEY }}
     - name: Launch Scala Steward
-      uses: scala-steward-org/scala-steward-action@v2.78.0
+      uses: scala-steward-org/scala-steward-action@f60ccd18bc9d8083e6809d9dc3db4a69a71d856c # v2.78.0
       with:
         github-token: ${{ steps.generate_token.outputs.token }}
         author-email: "74864734+foundweekends-bot[bot]@users.noreply.github.com"
