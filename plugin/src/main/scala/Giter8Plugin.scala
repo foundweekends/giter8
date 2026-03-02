@@ -27,7 +27,7 @@ import sbt.ScriptedPlugin.autoImport.scriptedDependencies
 import sbt.ScriptedPlugin.autoImport.sbtTestDirectory
 
 object Giter8Plugin extends sbt.AutoPlugin {
-  override val requires = sbt.plugins.JvmPlugin && sbt.ScriptedPlugin
+  override val requires = sbt.plugins.JvmPlugin
   override val trigger  = allRequirements
 
   import Keys._
@@ -47,7 +47,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
   import autoImport._
 
-  override lazy val globalSettings = Seq(
+  override lazy val globalSettings = ScriptedPlugin.globalSettings ++ Seq(
     scriptedBufferLog := true,
     scriptedLaunchOpts := Seq()
   )
@@ -109,7 +109,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
     }
   )
 
-  lazy val giter8TestSettings: Seq[Def.Setting[?]] = Seq(
+  lazy val giter8TestSettings: Seq[Def.Setting[?]] = ScriptedPlugin.projectSettings ++ Seq(
     Test / g8Test := { ScriptedPlugin.autoImport.scripted.evaluated },
     Test / g8Test / aggregate := false,
     scriptedDependencies := Def.uncached {
