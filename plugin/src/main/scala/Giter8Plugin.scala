@@ -110,68 +110,68 @@ object Giter8Plugin extends sbt.AutoPlugin {
   )
 
   lazy val giter8TestSettings: Seq[Def.Setting[?]] = Seq(
-      Test / g8Test := { ScriptedPlugin.autoImport.scripted.evaluated },
-      Test / g8Test / aggregate := false,
-      scriptedDependencies := Def.uncached {
-        val x = (Test / g8).value
-      },
-      Test / g8 := {
-        val base  = (Compile / g8 / unmanagedSourceDirectories).value
-        val srcs  = (Compile / g8 / sources).value
-        val out   = (Test / g8 / target).value
-        val props = (Test / g8 / g8Properties).value
-        val ts    = (Test / g8 / g8TestScript).value
-        val s     = streams.value
-        IO.delete(out)
-        val retval = G8(srcs pair relativeTo(base), out, props)
+    Test / g8Test := { ScriptedPlugin.autoImport.scripted.evaluated },
+    Test / g8Test / aggregate := false,
+    scriptedDependencies := Def.uncached {
+      val x = (Test / g8).value
+    },
+    Test / g8 := {
+      val base  = (Compile / g8 / unmanagedSourceDirectories).value
+      val srcs  = (Compile / g8 / sources).value
+      val out   = (Test / g8 / target).value
+      val props = (Test / g8 / g8Properties).value
+      val ts    = (Test / g8 / g8TestScript).value
+      val s     = streams.value
+      IO.delete(out)
+      val retval = G8(srcs pair relativeTo(base), out, props)
 
-        // copy scaffolds
-        val scaffoldsDir = (Compile / sourceDirectory).value / "scaffolds"
-        val scaffolds    = if (scaffoldsDir.exists) {
-          val outDir = out / ".g8"
-          IO.copyDirectory(scaffoldsDir, outDir)
-          sbt.Path.allSubpaths(outDir).collect { case (f, _) if f.isFile => f }
-        } else Nil
+      // copy scaffolds
+      val scaffoldsDir = (Compile / sourceDirectory).value / "scaffolds"
+      val scaffolds    = if (scaffoldsDir.exists) {
+        val outDir = out / ".g8"
+        IO.copyDirectory(scaffoldsDir, outDir)
+        sbt.Path.allSubpaths(outDir).collect { case (f, _) if f.isFile => f }
+      } else Nil
 
-        // copy test script or generate one
-        // the final script should always be called "test.script"
-        // no matter how it was originally called by user
-        val script = new File(out, "test.script")
-        if (ts.exists) IO.copyFile(ts, script)
-        else IO.write(script, """>test""")
+      // copy test script or generate one
+      // the final script should always be called "test.script"
+      // no matter how it was originally called by user
+      val script = new File(out, "test.script")
+      if (ts.exists) IO.copyFile(ts, script)
+      else IO.write(script, """>test""")
 
-        retval ++ scaffolds :+ script
-      },
-      sbtTestDirectory := { target.value / "sbt-test" },
-      Test / g8 / target := { sbtTestDirectory.value / name.value / "scripted" },
-      g8TestScript := {
-        val dir     = (Test / sourceDirectory).value
-        val metadir = (LocalRootProject / baseDirectory).value / "project"
-        val file0   = dir / "g8" / "test"
+      retval ++ scaffolds :+ script
+    },
+    sbtTestDirectory := { target.value / "sbt-test" },
+    Test / g8 / target := { sbtTestDirectory.value / name.value / "scripted" },
+    g8TestScript := {
+      val dir     = (Test / sourceDirectory).value
+      val metadir = (LocalRootProject / baseDirectory).value / "project"
+      val file0   = dir / "g8" / "test"
 
-        // we should only use file0 if its an existing file
-        // if it exists and is a dir we should fallback to test.script
-        val defaultTestScript =
-          if (file0.isDirectory) dir / "g8" / "test.script"
-          else file0
+      // we should only use file0 if its an existing file
+      // if it exists and is a dir we should fallback to test.script
+      val defaultTestScript =
+        if (file0.isDirectory) dir / "g8" / "test.script"
+        else file0
 
-        val files = List(
-          file0,
-          dir / "g8" / "test.script",
-          dir / "g8" / "giter8.test",
-          dir / "g8" / "g8.test",
-          metadir / "test",
-          metadir / "test.script",
-          metadir / "giter8.test",
-          metadir / "g8.test"
-        )
+      val files = List(
+        file0,
+        dir / "g8" / "test.script",
+        dir / "g8" / "giter8.test",
+        dir / "g8" / "g8.test",
+        metadir / "test",
+        metadir / "test.script",
+        metadir / "giter8.test",
+        metadir / "g8.test"
+      )
 
-        files
-          .find(_.isFile)
-          .getOrElse(defaultTestScript)
-      },
-      Test / g8 / scriptedBufferLog := true
-    )
+      files
+        .find(_.isFile)
+        .getOrElse(defaultTestScript)
+    },
+    Test / g8 / scriptedBufferLog := true
+  )
 
   override lazy val projectSettings: Seq[Def.Setting[?]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
 }
