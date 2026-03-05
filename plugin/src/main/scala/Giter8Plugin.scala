@@ -47,7 +47,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
 
   import autoImport._
 
-  override lazy val globalSettings = ScriptedPlugin.globalSettings ++ Seq(
+  override lazy val globalSettings = Seq(
     scriptedBufferLog := true,
     scriptedLaunchOpts := Seq()
   )
