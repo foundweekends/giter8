@@ -40,7 +40,7 @@ lazy val commonSettings = Def.settings(
       case "3" =>
         Nil
       case _ =>
-        Seq("-Xlint")
+        Seq("-Xlint", "-release:8")
     }
   },
   scalacOptions ++= {

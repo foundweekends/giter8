@@ -11,9 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - java: 8
+          - java: 17
             os: ubuntu-latest
-          - java: 8
+          - java: 17
             os: windows-latest
           - java: 25
             os: ubuntu-latest
@@ -34,7 +34,7 @@ jobs:
         coursierBootstrap
         publishLocal
         test
-    - if: ${{ matrix.java == '8' && matrix.os == 'ubuntu-latest' }}
+    - if: ${{ matrix.java == '17' && matrix.os == 'ubuntu-latest' }}
       run:
         sbt -v
         -no-colors
@@ -48,7 +48,7 @@ jobs:
     steps:
     - uses: actions/setup-java@v5
       with:
-        java-version: 8
+        java-version: 17
         distribution: adopt
     - uses: actions/checkout@v6
       with:
