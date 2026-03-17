@@ -1,1 +1,1 @@
-
+Compile / unmanagedSourceDirectories += baseDirectory.value
