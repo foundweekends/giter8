@@ -16,3 +16,6 @@
  */
 
 addSbtPlugin("org.foundweekends.giter8" % "sbt-giter8" % System.getProperty("plugin.version"))
+
+// sbt-giter8's Giter8Plugin requires ScriptedPlugin; add it to the meta-build like any sbt plugin test project.
+libraryDependencies += "org.scala-sbt" %% "scripted-plugin" % sbtVersion.value

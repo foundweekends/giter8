@@ -25,7 +25,8 @@ object Dependencies {
   val scala212                               = "2.12.21"
   val scala213                               = "2.13.18"
   val scala3                                 = "3.7.4"
-  val sbt1                                   = "1.3.13"
+  // Scripted tests fork this sbt version; 1.3.x breaks on modern JDKs (Security Manager, classfile parser).
+  val sbt1                                   = "1.10.7"
   val scalaXml                               = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
   def parserCombinator(scalaVersion: String) = "org.scala-lang.modules" %% "scala-parser-combinators" % {
     CrossVersion.partialVersion(scalaVersion) match {

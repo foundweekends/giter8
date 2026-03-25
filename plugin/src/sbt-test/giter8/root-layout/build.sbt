@@ -1,5 +1,6 @@
+enablePlugins(ScriptedPlugin)
+
 Compile / unmanagedSourceDirectories += baseDirectory.value
 
-// Scripted smoke-test projects must declare a Scala version.
-// This fixture stores Scala sources at the project root.
-scalaVersion := "2.13.14"
+// ScriptedPlugin 1.x pulls scripted-sbt for this Scala binary version (2.12 is always published).
+scalaVersion := "2.12.21"

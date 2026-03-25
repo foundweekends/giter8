@@ -113,13 +113,21 @@ lazy val scaffold = (projectMatrix in file("scaffold"))
     commonSettings,
     name := "sbt-giter8-scaffold",
     description := "sbt plugin for scaffolding giter8 templates",
-    sbtPlugin := true,
-    scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
-    scriptedBufferLog := false,
-    scriptedLaunchOpts += ("-Dplugin.version=" + version.value)
+    sbtPlugin := true
   )
   .jvmPlatform(
-    scalaVersions = Seq(scala212, scala3)
+    scalaVersions = Seq(scala212),
+    settings = Seq(
+      scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
+      scriptedBufferLog := false,
+      scriptedLaunchOpts += ("-Dplugin.version=" + version.value)
+    )
+  )
+  .jvmPlatform(
+    scalaVersions = Seq(scala3),
+    settings = Seq(
+      scripted := Def.task(()).value
+    )
   )
 
 lazy val plugin = (projectMatrix in file("plugin"))
@@ -131,13 +139,22 @@ lazy val plugin = (projectMatrix in file("plugin"))
     commonSettings,
     name := "sbt-giter8",
     description := "sbt plugin for testing giter8 templates",
-    sbtPlugin := true,
-    scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
-    scriptedBufferLog := false,
-    scriptedLaunchOpts += ("-Dplugin.version=" + version.value)
+    sbtPlugin := true
   )
   .jvmPlatform(
-    scalaVersions = Seq(scala212, scala3)
+    scalaVersions = Seq(scala212),
+    settings = Seq(
+      scriptedLaunchOpts ++= javaVmArgs.filter(a => Seq("-Xmx", "-Xms", "-XX").exists(a.startsWith)),
+      scriptedBufferLog := false,
+      scriptedLaunchOpts += ("-Dplugin.version=" + version.value)
+    )
+  )
+  .jvmPlatform(
+    scalaVersions = Seq(scala3),
+    // sbt 2.x scripted-sbt resolution does not match sbt 1.x fixture projects; giter8 scripted is exercised on 2.12.
+    settings = Seq(
+      scripted := Def.task(()).value
+    )
   )
 
 lazy val gitsupport = (projectMatrix in file("cli-git"))

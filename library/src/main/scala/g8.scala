@@ -211,13 +211,17 @@ object G8 {
         case x => x
       }
 
-      val ignored = relative
+      // `relative` may use '\' on Windows; normalize so we split path segments correctly and
+      // StringTemplate does not interpret '\$' as an escape before a property.
+      val relNorm = relative.replace('\\', '/')
+
+      val ignored = relNorm
         .split("/")
         .map(part => applyTemplate(formatize(part), fileParams))
         .exists(_.isEmpty)
 
       if (ignored) None
-      else Some(new File(toPath, applyTemplate(formatize(relative), fileParams)))
+      else Some(new File(toPath, applyTemplate(formatize(relNorm), fileParams)))
     } catch {
       case e: STException =>
         // add the current relative path to the exception for debugging purposes

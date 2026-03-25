@@ -1,4 +1,3 @@
-> show scriptedDependencies
 > g8Test
 > writeInvalidFile
 -> g8Test

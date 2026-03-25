@@ -21,13 +21,9 @@ import giter8.Giter8PluginCompat._
 import sbt._
 import sbt.Path.relativeTo
 import sbt.sbtgiter8.ScriptedCompat
-import sbt.ScriptedPlugin.autoImport.scriptedBufferLog
-import sbt.ScriptedPlugin.autoImport.scriptedLaunchOpts
-import sbt.ScriptedPlugin.autoImport.scriptedDependencies
-import sbt.ScriptedPlugin.autoImport.sbtTestDirectory
 
 object Giter8Plugin extends sbt.AutoPlugin {
-  override val requires = sbt.plugins.JvmPlugin && sbt.ScriptedPlugin
+  override val requires = sbt.plugins.JvmPlugin
   override val trigger  = allRequirements
 
   import Keys._
@@ -46,13 +42,6 @@ object Giter8Plugin extends sbt.AutoPlugin {
   }
 
   import autoImport._
-
-  override lazy val globalSettings = Seq(
-    // Avoid hiding the scripted test command output on failure.
-    // This makes CI failures easier to diagnose.
-    scriptedBufferLog := false,
-    scriptedLaunchOpts := Seq()
-  )
 
   lazy val baseGiter8Settings: Seq[Def.Setting[?]] = Seq(
     g8 := {
@@ -111,11 +100,14 @@ object Giter8Plugin extends sbt.AutoPlugin {
     }
   )
 
-  lazy val giter8TestSettings: Seq[Def.Setting[?]] = ScriptedPlugin.projectSettings ++ Seq(
-    Test / g8Test := { ScriptedPlugin.autoImport.scripted.evaluated },
+  /** Wired by [[Giter8ScriptedPlugin]] when `ScriptedPlugin` is enabled (e.g. for `g8Test`). */
+  private[giter8] lazy val giter8TestSettings: Seq[Def.Setting[?]] = {
+    import sbt.ScriptedPlugin.autoImport.{scriptedBufferLog, scriptedDependencies, sbtTestDirectory}
+    sbt.ScriptedPlugin.projectSettings ++ Seq(
+    Test / g8Test := { sbt.ScriptedPlugin.autoImport.scripted.evaluated },
     Test / g8Test / aggregate := false,
     scriptedDependencies := Def.uncached {
-      val x = (Test / g8).value
+      val _ = (Test / g8).value
     },
     Test / g8 := {
       val base  = (Compile / g8 / unmanagedSourceDirectories).value
@@ -174,6 +166,22 @@ object Giter8Plugin extends sbt.AutoPlugin {
     },
     Test / g8 / scriptedBufferLog := false
   )
+  }
 
-  override lazy val projectSettings: Seq[Def.Setting[?]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
+  override lazy val projectSettings: Seq[Def.Setting[?]] = inConfig(Compile)(baseGiter8Settings)
+}
+
+/** Enables `g8Test` / scripted integration; requires [[Giter8Plugin]] and `ScriptedPlugin`. */
+object Giter8ScriptedPlugin extends sbt.AutoPlugin {
+  override val requires = Giter8Plugin && sbt.ScriptedPlugin
+  override val trigger  = allRequirements
+
+  import sbt.ScriptedPlugin.autoImport._
+
+  override lazy val globalSettings = Seq(
+    scriptedBufferLog := false,
+    scriptedLaunchOpts := Seq()
+  )
+
+  override lazy val projectSettings: Seq[Def.Setting[?]] = Giter8Plugin.giter8TestSettings
 }
