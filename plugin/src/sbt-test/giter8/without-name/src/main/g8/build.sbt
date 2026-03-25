@@ -1,3 +1,5 @@
 name := "Example SBT project"
-// Intentionally don't hard-pin `scalaVersion` in this fixture.
-// The scripted tests should compile using the Scala version configured by sbt.
+
+// Scripted smoke-test projects must declare a Scala version.
+// Pin to a version compatible with the CI JDK (17+).
+scalaVersion := "2.13.14"

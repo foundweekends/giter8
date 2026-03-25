@@ -15,7 +15,8 @@
  * limitations under the License.
  */
 
-// Keep the fixture lightweight: don't hard-pin `scalaVersion` (e.g. 2.11) because
-// these scripted tests run on modern JDKs (like JDK 17) where old Scala versions fail.
-// The template's smoke-test doesn't need these extra dependencies.
 name := "$name$"
+
+// Scripted smoke-test projects must declare a Scala version.
+// Pin to a version compatible with the CI JDK (17+).
+scalaVersion := "2.13.14"
