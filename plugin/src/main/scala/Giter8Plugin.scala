@@ -48,7 +48,9 @@ object Giter8Plugin extends sbt.AutoPlugin {
   import autoImport._
 
   override lazy val globalSettings = Seq(
-    scriptedBufferLog := true,
+    // Avoid hiding the scripted test command output on failure.
+    // This makes CI failures easier to diagnose.
+    scriptedBufferLog := false,
     scriptedLaunchOpts := Seq()
   )
 
@@ -170,7 +172,7 @@ object Giter8Plugin extends sbt.AutoPlugin {
         .find(_.isFile)
         .getOrElse(defaultTestScript)
     },
-    Test / g8 / scriptedBufferLog := true
+    Test / g8 / scriptedBufferLog := false
   )
 
   override lazy val projectSettings: Seq[Def.Setting[?]] = inConfig(Compile)(baseGiter8Settings) ++ giter8TestSettings
