@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 
+// Keep the fixture lightweight: don't hard-pin `scalaVersion` (e.g. 2.11) because
+// these scripted tests run on modern JDKs (like JDK 17) where old Scala versions fail.
+// The template's smoke-test doesn't need these extra dependencies.
 name := "$name$"
-
-scalaVersion := "2.11.12"
-
-libraryDependencies += "net.databinder" %% "unfiltered" % "$unfiltered$"
-
-libraryDependencies += "net.databinder.dispatch" %% "dispatch-core" % "$dispatch$"

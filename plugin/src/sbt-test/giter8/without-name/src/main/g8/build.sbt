@@ -1,3 +1,3 @@
 name := "Example SBT project"
-
-scalaVersion := "2.11.12"
+// Intentionally don't hard-pin `scalaVersion` in this fixture.
+// The scripted tests should compile using the Scala version configured by sbt.
