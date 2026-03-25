@@ -19,12 +19,12 @@ object Dependencies {
     "org.scalatest" %% "scalatest-funsuite" % "3.2.19" % Test,
     "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test
   )
-  val scalamock                              = "org.scalamock" %% "scalamock" % "7.5.5"
-  val verify                                 = "com.eed3si9n.verify" %% "verify" % "1.0.0"
-  val sbtIo                                  = "org.scala-sbt" %% "io" % "1.10.5"
-  val scala212                               = "2.12.21"
-  val scala213                               = "2.13.18"
-  val scala3                                 = "3.7.4"
+  val scalamock = "org.scalamock" %% "scalamock" % "7.5.5"
+  val verify    = "com.eed3si9n.verify" %% "verify" % "1.0.0"
+  val sbtIo     = "org.scala-sbt" %% "io" % "1.10.5"
+  val scala212  = "2.12.21"
+  val scala213  = "2.13.18"
+  val scala3    = "3.7.4"
   // Scripted tests fork this sbt version; 1.3.x breaks on modern JDKs (Security Manager, classfile parser).
   val sbt1                                   = "1.10.7"
   val scalaXml                               = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
