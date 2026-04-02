@@ -37,5 +37,5 @@ object Dependencies {
   val logback      = "ch.qos.logback" % "logback-classic" % "1.2.3"
   val coursier     = ("io.get-coursier" %% "coursier" % "2.1.24").cross(CrossVersion.for3Use2_13)
   val coursierCli  = ("io.get-coursier" %% "coursier-cli" % "2.1.24").cross(CrossVersion.for3Use2_13)
-  val launcherIntf = "org.scala-sbt" % "launcher-interface" % "1.6.0"
+  val launcherIntf = "org.scala-sbt" % "launcher-interface" % "1.6.1"
 }
