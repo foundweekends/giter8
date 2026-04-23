@@ -14,10 +14,10 @@ object Dependencies {
   val scopt      = "com.github.scopt" %% "scopt" % "4.1.0"
   val scalacheck = "org.scalacheck" %% "scalacheck" % "1.19.0"
   val scalatest  = Seq(
-    "org.scalatest" %% "scalatest-flatspec" % "3.2.19" % Test,
-    "org.scalatest" %% "scalatest-funspec" % "3.2.19" % Test,
-    "org.scalatest" %% "scalatest-funsuite" % "3.2.19" % Test,
-    "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.19" % Test
+    "org.scalatest" %% "scalatest-flatspec" % "3.2.20" % Test,
+    "org.scalatest" %% "scalatest-funspec" % "3.2.20" % Test,
+    "org.scalatest" %% "scalatest-funsuite" % "3.2.20" % Test,
+    "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.20" % Test
   )
   val scalamock                              = "org.scalamock" %% "scalamock" % "7.5.5"
   val verify                                 = "com.eed3si9n.verify" %% "verify" % "1.0.0"
