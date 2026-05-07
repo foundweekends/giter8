@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   val stringTemplate = "org.antlr" % "ST4" % "4.3.4"
-  val commonsIo      = "commons-io" % "commons-io" % "2.21.0"
+  val commonsIo      = "commons-io" % "commons-io" % "2.22.0"
   // We excluded sshd-sftp to avoid https://github.com/advisories/GHSA-fhw8-8j55-vwgq
   // Either that or we need to bump to jgit 6.x
   val jgit = "org.eclipse.jgit" % "org.eclipse.jgit" % "5.13.5.202508271544-r" excludeAll (
