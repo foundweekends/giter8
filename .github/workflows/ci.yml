@@ -23,7 +23,7 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         distribution: zulu
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - uses: coursier/cache-action@v8
     - uses: sbt/setup-sbt@v1
     - if: matrix.os == 'ubuntu-latest'
@@ -50,7 +50,7 @@ jobs:
       with:
         java-version: 17
         distribution: adopt
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 10
     - uses: coursier/cache-action@v8
