@@ -25,7 +25,7 @@ jobs:
         distribution: zulu
     - uses: actions/checkout@v7
     - uses: coursier/cache-action@v8
-    - uses: sbt/setup-sbt@v1
+    - uses: sbt/setup-sbt@v1.5.5
     - if: matrix.os == 'ubuntu-latest'
       run: sbt -v "all scalafmtSbtCheck scalafmtCheckAll"
     - run:
@@ -54,7 +54,7 @@ jobs:
       with:
         fetch-depth: 10
     - uses: coursier/cache-action@v8
-    - uses: sbt/setup-sbt@v1
+    - uses: sbt/setup-sbt@v1.5.5
     - run: sbt makeSite
     - id: generate_token
       uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
