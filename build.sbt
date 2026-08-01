@@ -4,13 +4,16 @@ import scala.sys.process.ProcessLogger
 val g8version = "0.18.0-SNAPSHOT"
 
 val javaVmArgs: List[String] = {
-  import scala.collection.JavaConverters._
+  import scala.jdk.CollectionConverters._
   java.lang.management.ManagementFactory.getRuntimeMXBean.getInputArguments.asScala.toList
 }
 
-val coursierBootstrap      = taskKey[File]("create bootstrap jar")
-val coursierBootstrapBatch = taskKey[File]("create bootstrap jar")
-val coursierBootstrapTest  = taskKey[Unit]("test bootstrap jar")
+@transient
+val coursierBootstrap = taskKey[HashedVirtualFileRef]("create bootstrap jar")
+@transient
+val coursierBootstrapBatch = taskKey[HashedVirtualFileRef]("create bootstrap jar")
+@transient
+val coursierBootstrapTest = taskKey[Unit]("test bootstrap jar")
 
 val sbtLauncherVersion = settingKey[String]("")
 
@@ -18,19 +21,19 @@ ThisBuild / organization := "org.foundweekends.giter8"
 ThisBuild / version := g8version
 ThisBuild / scalaVersion := scala212
 ThisBuild / organizationName := "foundweekends"
-ThisBuild / organizationHomepage := Some(url("https://foundweekends.org/"))
+ThisBuild / organizationHomepage := Some(uri("https://foundweekends.org/"))
 ThisBuild / Compile / packageBin / publishArtifact := true
-ThisBuild / homepage := Some(url("https://www.foundweekends.org/giter8/"))
+ThisBuild / homepage := Some(uri("https://www.foundweekends.org/giter8/"))
 ThisBuild / publishMavenStyle := true
 ThisBuild / Test / publishArtifact := false
 ThisBuild / Test / parallelExecution := false
-ThisBuild / licenses := Seq("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+ThisBuild / licenses := Seq("Apache-2.0" -> uri("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 ThisBuild / developers := List(
-  Developer("n8han", "Nathan Hamblen", "@n8han", url("https://github.com/n8han")),
-  Developer("eed3si9n", "Eugene Yokota", "@eed3si9n", url("https://github.com/eed3si9n"))
+  Developer("n8han", "Nathan Hamblen", "@n8han", uri("https://github.com/n8han")),
+  Developer("eed3si9n", "Eugene Yokota", "@eed3si9n", uri("https://github.com/eed3si9n"))
 )
 ThisBuild / scmInfo := Some(
-  ScmInfo(url("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git")
+  ScmInfo(uri("https://github.com/foundweekends/giter8"), "git@github.com:foundweekends/giter8.git")
 )
 
 lazy val commonSettings = Def.settings(
@@ -66,7 +69,7 @@ lazy val root = (project in file("."))
       plugin,
       gitsupport,
       launcher
-    ).flatMap(_.projectRefs) *
+    ).flatMap(_.projectRefs)*
   )
   .settings(
     commonSettings,
@@ -179,6 +182,7 @@ lazy val lib = (projectMatrix in file("library"))
     commonSettings,
     name := "giter8-lib",
     description := "shared library for app and plugin",
+    exportJars := false,
     libraryDependencies ++= scalatest,
     libraryDependencies ++= Seq(
       stringTemplate,
@@ -253,7 +257,7 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
             "-f"
           ).mkString(" ", " ", "")
         )
-        .map((_: Unit) => t)
+        .map((_: Unit | sbt.internal.worker.ClientJobParams) => fileConverter.value.toVirtualFile(t.toPath))
     }.value,
     coursierBootstrap := coursierBootstrap
       .dependsOn(Def.task {
@@ -263,7 +267,7 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
       .value,
     coursierBootstrapBatch := {
       val _ = coursierBootstrap.value
-      target.value / "g8.bat"
+      fileConverter.value.toVirtualFile((target.value / "g8.bat").toPath)
     },
     coursierBootstrap / artifact := {
       val o = (coursierBootstrap / artifact).value
@@ -274,7 +278,7 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
       o.withExtension("bat")
     },
     coursierBootstrapTest := {
-      case class Res(out: Seq[String], err: Seq[String], exitCode: Int)
+      type Res = (out: Seq[String], err: Seq[String], exitCode: Int)
 
       def runWithLog(p: sys.process.ProcessBuilder): Res = {
         val outLog = List.newBuilder[String]
@@ -286,16 +290,21 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
             override def buffer[T](f: => T)      = f
           })
 
-        Res(outLog.result(), errLog.result(), res)
+        (out = outLog.result(), err = errLog.result(), exitCode = res)
       }
 
-      val binary = Def.taskIf {
-        if (scala.util.Properties.isWin) {
-          coursierBootstrapBatch.value.getAbsolutePath
-        } else {
-          coursierBootstrap.value.getAbsolutePath
-        }
-      }.value
+      val binary = fileConverter.value
+        .toPath(
+          Def.taskIf {
+            if (scala.util.Properties.isWin) {
+              coursierBootstrapBatch.value
+            } else {
+              coursierBootstrap.value
+            }
+          }.value
+        )
+        .toFile
+        .getAbsolutePath
       val res1 = runWithLog(sys.process.Process(binary))
       assert(res1.exitCode == 1)
       assert(res1.err.contains("Error: Missing argument <template>"), res1.err)
@@ -304,9 +313,9 @@ lazy val bootstrap = (projectMatrix in file("bootstrap"))
       assert(res2.exitCode == 0)
       assert(res2.out.contains("Usage: g8 [options] <template>"))
     },
-    Test / test := {
+    Test / testFull := Def.uncached {
       coursierBootstrapTest.value
-      (Test / test).value
+      (Test / testFull).value
     },
     addArtifact(coursierBootstrap / artifact, coursierBootstrap),
     addArtifact(coursierBootstrapBatch / artifact, coursierBootstrapBatch)
