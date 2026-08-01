@@ -3,7 +3,7 @@ import Keys._
 
 object G8SitePlugin extends sbt.AutoPlugin {
   override lazy val projectSettings = Seq(
-    TaskKey[Unit]("makeSite") := {
+    TaskKey[Unit]("makeSite") := Def.uncached {
       val output = target.value / "site"
       IO.delete(output)
       val src     = (LocalRootProject / baseDirectory).value / "docs"
