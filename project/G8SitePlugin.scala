@@ -4,7 +4,7 @@ import Keys._
 object G8SitePlugin extends sbt.AutoPlugin {
   override lazy val projectSettings = Seq(
     TaskKey[Unit]("makeSite") := Def.uncached {
-      val output = target.value / "site"
+      val output = file("target") / "site"
       IO.delete(output)
       val src     = (LocalRootProject / baseDirectory).value / "docs"
       val storage = pamflet.FileStorage(src, Nil)
