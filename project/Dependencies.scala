@@ -23,7 +23,7 @@ object Dependencies {
   val verify                                 = "com.eed3si9n.verify" %% "verify" % "1.0.0"
   val sbtIo                                  = "org.scala-sbt" %% "io" % "1.13.0"
   val scala212                               = "2.12.21"
-  val scala213                               = "2.13.18"
+  val scala213                               = "3.9.0"
   val scala3                                 = "3.8.4"
   val sbt1                                   = "1.3.13"
   val sbt2                                   = "2.0.3"
