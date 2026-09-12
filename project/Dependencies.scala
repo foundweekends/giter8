@@ -26,7 +26,7 @@ object Dependencies {
   val scala213                               = "2.13.18"
   val scala3                                 = "3.8.4"
   val sbt1                                   = "1.3.13"
-  val sbt2                                   = "2.0.3"
+  val sbt2                                   = "2.0.8"
   val scalaXml                               = "org.scala-lang.modules" %% "scala-xml" % "2.1.0"
   def parserCombinator(scalaVersion: String) = "org.scala-lang.modules" %% "scala-parser-combinators" % {
     CrossVersion.partialVersion(scalaVersion) match {
