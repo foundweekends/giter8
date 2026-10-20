@@ -11,7 +11,7 @@ object Dependencies {
   val jgitSshApache = ("org.eclipse.jgit" % "org.eclipse.jgit.ssh.apache" % "5.13.5.202508271544-r").excludeAll(
     ExclusionRule("org.apache.sshd", "sshd-sftp")
   )
-  val scopt      = "com.github.scopt" %% "scopt" % "4.1.0"
+  val scopt      = "com.github.scopt" %% "scopt" % "4.2.0"
   val scalacheck = "org.scalacheck" %% "scalacheck" % "1.20.0"
   val scalatest  = Seq(
     "org.scalatest" %% "scalatest-flatspec" % "3.2.20" % Test,
