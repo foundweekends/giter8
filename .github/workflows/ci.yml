@@ -24,7 +24,7 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: zulu
     - uses: actions/checkout@v7
-    - uses: coursier/cache-action@v8
+    - uses: coursier/cache-action@v9
     - uses: sbt/setup-sbt@v1
     - if: matrix.os == 'ubuntu-latest'
       run: sbt -v --server "all scalafmtSbtCheck scalafmtCheckAll"
@@ -55,7 +55,7 @@ jobs:
     - uses: actions/checkout@v7
       with:
         fetch-depth: 10
-    - uses: coursier/cache-action@v8
+    - uses: coursier/cache-action@v9
     - uses: sbt/setup-sbt@v1
     - run: sbt --server makeSite
     - id: generate_token
