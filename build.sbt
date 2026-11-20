@@ -219,7 +219,9 @@ lazy val launcher = (projectMatrix in file("launcher"))
     testFrameworks += new TestFramework("verify.runner.Framework"),
     run / fork := true,
     Test / fork := true,
-    Test / javaOptions ++= Seq(s"""-DG8_HOME=${target.value / "home"}""")
+    Test / javaOptions ++= Def.uncached(
+      Seq(s"""-DG8_HOME=${target.value / "home"}""")
+    )
     // assemblyMergeStrategy in assembly := {
     //   case "plugin.properties" => MergeStrategy.concat
     //   case "module-info.class" => MergeStrategy.discard
