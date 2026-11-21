@@ -74,33 +74,47 @@ class Runner {
 
     head("g8", giter8.BuildInfo.version)
 
-    arg[String]("<template>") action { (repo, config) =>
-      config.copy(repo = repo)
-    } text "git or file URL, or GitHub user/repo"
+    arg[String]("<template>")
+      .action { (repo, config) =>
+        config.copy(repo = repo)
+      }
+      .text("git or file URL, or GitHub user/repo")
 
-    opt[String]('b', "branch") action { (b, config) =>
-      config.copy(ref = Some(Ref.Branch(b)))
-    } text "Resolve a template within a given branch"
+    opt[String]('b', "branch")
+      .action { (b, config) =>
+        config.copy(ref = Some(Ref.Branch(b)))
+      }
+      .text("Resolve a template within a given branch")
 
-    opt[String]('t', "tag") action { (t, config) =>
-      config.copy(ref = Some(Ref.Tag(t)))
-    } text "Resolve a template within a given tag"
+    opt[String]('t', "tag")
+      .action { (t, config) =>
+        config.copy(ref = Some(Ref.Tag(t)))
+      }
+      .text("Resolve a template within a given tag")
 
-    opt[String]('d', "directory") action { (d, config) =>
-      config.copy(directory = Some(d))
-    } text "Resolve a template within the given subdirectory in the repo"
+    opt[String]('d', "directory")
+      .action { (d, config) =>
+        config.copy(directory = Some(d))
+      }
+      .text("Resolve a template within the given subdirectory in the repo")
 
-    opt[String]('o', "out") action { (o, config) =>
-      config.copy(out = Some(o))
-    } text "Output directory"
+    opt[String]('o', "out")
+      .action { (o, config) =>
+        config.copy(out = Some(o))
+      }
+      .text("Output directory")
 
-    opt[Unit]('f', "force") action { (_, config) =>
-      config.copy(forceOverwrite = true)
-    } text "Force overwrite of any existing files in output directory"
+    opt[Unit]('f', "force")
+      .action { (_, config) =>
+        config.copy(forceOverwrite = true)
+      }
+      .text("Force overwrite of any existing files in output directory")
 
-    opt[String]('h', "known-hosts") action { (h, config) =>
-      config.copy(knownHosts = Some(h))
-    } text "SSH known hosts file. If unset the location will be guessed."
+    opt[String]('h', "known-hosts")
+      .action { (h, config) =>
+        config.copy(knownHosts = Some(h))
+      }
+      .text("SSH known hosts file. If unset the location will be guessed.")
 
     version("version").text("Display version number")
 

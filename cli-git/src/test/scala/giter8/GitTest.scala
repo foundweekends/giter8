@@ -33,9 +33,9 @@ class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues
     val branch      = Some(Branch("fooBranch"))
     val destination = new File(".")
 
-    interactorMock.getRemoteBranches _ expects repository.url returning Success(Seq(branch.get.name))
-    interactorMock.cloneRepository _ expects (repository.url, destination) returning Success(())
-    interactorMock.checkoutBranch _ expects (destination, "fooBranch") returning Success(())
+    (interactorMock.getRemoteBranches _).expects(repository.url).returning(Success(Seq(branch.get.name)))
+    (interactorMock.cloneRepository _).expects(repository.url, destination).returning(Success(()))
+    (interactorMock.checkoutBranch _).expects(destination, "fooBranch").returning(Success(()))
 
     git.clone(repository, branch, destination)
   }
@@ -45,7 +45,7 @@ class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues
     val branch      = Some(Branch("nonExisting"))
     val destination = new File(".")
 
-    interactorMock.getRemoteBranches _ expects repository.url returning Success(Seq("someOtherBranch"))
+    (interactorMock.getRemoteBranches _).expects(repository.url).returning(Success(Seq("someOtherBranch")))
     git.clone(repository, branch, destination).failure.exception.getClass shouldBe classOf[NoBranchError]
   }
 
@@ -54,9 +54,9 @@ class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues
     val tag         = Some(Tag("v1.0.0"))
     val destination = new File(".")
 
-    interactorMock.getRemoteTags _ expects repository.url returning Success(Seq(tag.get.name))
-    interactorMock.cloneRepository _ expects (repository.url, destination) returning Success(())
-    interactorMock.checkoutTag _ expects (destination, "v1.0.0") returning Success(())
+    (interactorMock.getRemoteTags _).expects(repository.url).returning(Success(Seq(tag.get.name)))
+    (interactorMock.cloneRepository _).expects(repository.url, destination).returning(Success(()))
+    (interactorMock.checkoutTag _).expects(destination, "v1.0.0").returning(Success(()))
 
     git.clone(repository, tag, destination)
   }
@@ -66,7 +66,7 @@ class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues
     val tag         = Some(Tag("nonExisting"))
     val destination = new File(".")
 
-    interactorMock.getRemoteTags _ expects repository.url returning Success(Seq("someOtherBranch"))
+    (interactorMock.getRemoteTags _).expects(repository.url).returning(Success(Seq("someOtherBranch")))
     git.clone(repository, tag, destination).failure.exception.getClass shouldBe classOf[NoTagError]
   }
 
@@ -74,9 +74,9 @@ class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues
     val repository  = Remote("url")
     val destination = new File(".")
 
-    interactorMock.getDefaultBranch _ expects destination returning Success("default")
-    interactorMock.cloneRepository _ expects (repository.url, destination) returning Success(())
-    interactorMock.checkoutBranch _ expects (destination, "default") returning Success(())
+    (interactorMock.getDefaultBranch _).expects(destination).returning(Success("default"))
+    (interactorMock.cloneRepository _).expects(repository.url, destination).returning(Success(()))
+    (interactorMock.checkoutBranch _).expects(destination, "default").returning(Success(()))
 
     git.clone(repository, None, destination)
   }
@@ -95,10 +95,10 @@ class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues
     val branch      = Some(Branch("someBranch"))
     val destination = new File(".")
 
-    interactorMock.getRemoteBranches _ expects repository.publicUrl returning Failure(TransportError(""))
-    interactorMock.getRemoteBranches _ expects repository.privateUrl returning Success(Seq(branch.get.name))
-    interactorMock.cloneRepository _ expects (repository.privateUrl, destination) returning Success(())
-    interactorMock.checkoutBranch _ expects (destination, "someBranch") returning Success(())
+    (interactorMock.getRemoteBranches _).expects(repository.publicUrl).returning(Failure(TransportError("")))
+    (interactorMock.getRemoteBranches _).expects(repository.privateUrl).returning(Success(Seq(branch.get.name)))
+    (interactorMock.cloneRepository _).expects(repository.privateUrl, destination).returning(Success(()))
+    (interactorMock.checkoutBranch _).expects(destination, "someBranch").returning(Success(()))
 
     git.clone(repository, branch, destination)
 
@@ -110,10 +110,10 @@ class GitTest extends AnyFlatSpec with Matchers with EitherValues with TryValues
     val branch      = None
     val destination = new File(".")
 
-    interactorMock.cloneRepository _ expects (repository.publicUrl, destination) returning Failure(TransportError(""))
-    interactorMock.cloneRepository _ expects (repository.privateUrl, destination) returning Success(())
-    interactorMock.getDefaultBranch _ expects destination returning Success("default")
-    interactorMock.checkoutBranch _ expects (destination, "default") returning Success(())
+    (interactorMock.cloneRepository _).expects(repository.publicUrl, destination).returning(Failure(TransportError("")))
+    (interactorMock.cloneRepository _).expects(repository.privateUrl, destination).returning(Success(()))
+    (interactorMock.getDefaultBranch _).expects(destination).returning(Success("default"))
+    (interactorMock.checkoutBranch _).expects(destination, "default").returning(Success(()))
 
     git.clone(repository, branch, destination)
 
