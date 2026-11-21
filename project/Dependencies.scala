@@ -19,7 +19,7 @@ object Dependencies {
     "org.scalatest" %% "scalatest-funsuite" % "3.2.20" % Test,
     "org.scalatest" %% "scalatest-shouldmatchers" % "3.2.20" % Test
   )
-  val scalamock                              = "org.scalamock" %% "scalamock" % "7.6.3"
+  val scalamock                              = "org.scalamock" %% "scalamock-scalatest" % "7.6.3"
   val verify                                 = "com.eed3si9n.verify" %% "verify" % "1.0.0"
   val sbtIo                                  = "org.scala-sbt" %% "io" % "1.13.6"
   val scala212                               = "2.12.21"
