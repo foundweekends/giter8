@@ -61,7 +61,7 @@ object GitRepository {
       s"Expected protocol to be 'file' or empty in URI $uri"
     )
     val part = uri.getSchemeSpecificPart
-    if (!(part startsWith "/") && (part contains ":")) new File("///" + part)
+    if (!part.startsWith("/") && part.contains(":")) new File("///" + part)
     else {
       if (part.startsWith("//")) new File(part.drop(2))
       else new File(part)
